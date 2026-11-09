@@ -1,0 +1,371 @@
+{
+  "source": "public/sites/sandwich-bar",
+  "destination": "public/sites/sea-crown",
+  "original_count": 78,
+  "preserved_count": 18,
+  "unused_count": 60,
+  "unused_bytes": 24120033,
+  "migrated": [
+    {
+      "file": "fonts/a218039a3287bcfd-s.p.4a23d71b.woff2",
+      "sha256": "3DC5D0C52428FE1696264907A1054EBBAAC07F8CBE45832C105F819C2AE397C0",
+      "bytes": 7900,
+      "destination": "fonts/Poppins-Regular.woff2"
+    },
+    {
+      "file": "fonts/8e6fa89aa22d24ec-s.p.3aec397d.woff2",
+      "sha256": "289E0AFC8BE731A86822349E54557296F145926496BD2138DB1BAC0DB77F77A2",
+      "bytes": 7740,
+      "destination": "fonts/Poppins-Medium.woff2"
+    },
+    {
+      "file": "fonts/e2334d715941921e-s.p.d82a9aff.woff2",
+      "sha256": "872E862918591A9E824DC03ED92F05729435FFBB8EBBB10EFF7EDA26592B1798",
+      "bytes": 7992,
+      "destination": "fonts/Poppins-SemiBold.woff2"
+    },
+    {
+      "file": "fonts/47fe1b7cd6e6ed85-s.p.855a563b.woff2",
+      "sha256": "197A3CBD7290C242C5C765268CDD69A9A39867FDC80CD13071F243A81C56FB76",
+      "bytes": 7848,
+      "destination": "fonts/Poppins-Bold.woff2"
+    },
+    {
+      "file": "fonts/tomatoes.ttf",
+      "sha256": "60E3C7EABFC0D04EC966A5AE6ECDACA2D83FC31499A564100B1D4C32826F9612",
+      "bytes": 206768,
+      "destination": "fonts/Tomatoes-Regular.ttf"
+    },
+    {
+      "file": "logos/1aa10546b4fc68291e3f0247ff3330126382d1d8-516x291.png",
+      "sha256": "CA49F238DD7D7B029CDA5515A30996F323375858B9FD07A6DA7AC50D6AE1712C",
+      "bytes": 14679,
+      "destination": "logos/1aa10546b4fc68291e3f0247ff3330126382d1d8-516x291.png"
+    },
+    {
+      "file": "logos/1b51fccae3bb986ecd7b2babc30bdb9fa4e0a1eb-250x250.png",
+      "sha256": "393878B62914BB98F5C7FE866442FA0D879114810FAC59E644B077E1776E85BC",
+      "bytes": 71807,
+      "destination": "logos/1b51fccae3bb986ecd7b2babc30bdb9fa4e0a1eb-250x250.png"
+    },
+    {
+      "file": "logos/3225f98bb2824873cd8c0745a9bab2aa81adef14-516x294.png",
+      "sha256": "C026C5AC79B7D0211BD019124128872F5D50CAEB0C3EB599A8788428CEAECA84",
+      "bytes": 2071,
+      "destination": "logos/3225f98bb2824873cd8c0745a9bab2aa81adef14-516x294.png"
+    },
+    {
+      "file": "logos/3ecdee6b02c2d874a5d914639f564b40e6962f2e-516x218.png",
+      "sha256": "D1068075BAC99CE6C16599D9B03A630B09F8C52E65EBF8B3E646CCAEC797C6AD",
+      "bytes": 15750,
+      "destination": "logos/3ecdee6b02c2d874a5d914639f564b40e6962f2e-516x218.png"
+    },
+    {
+      "file": "logos/53d8e43b85c7219178ed41e21a001ac29e429fb2-516x266.png",
+      "sha256": "42500A88A17678A5FD7FB3573BF7ED7BF4EDF006500BD0CAEB1D44CD975AA3C4",
+      "bytes": 15909,
+      "destination": "logos/53d8e43b85c7219178ed41e21a001ac29e429fb2-516x266.png"
+    },
+    {
+      "file": "logos/6042d4ef84949f5323fc286f64fbb296eb408ef3-516x79.png",
+      "sha256": "679453F112A070EE8D9D2C80222DBB7CD6BF6A18E56E91C84E08E8501FA7E54D",
+      "bytes": 8403,
+      "destination": "logos/6042d4ef84949f5323fc286f64fbb296eb408ef3-516x79.png"
+    },
+    {
+      "file": "logos/6177c654c669dc560c85b135fe2f57521117b534-413x161.png",
+      "sha256": "C94E4D99B63C97454AE6A8D8FCC48A46FB4860DEC46FB819396D8DE4E5F03E87",
+      "bytes": 5745,
+      "destination": "logos/6177c654c669dc560c85b135fe2f57521117b534-413x161.png"
+    },
+    {
+      "file": "logos/6dc5ab73073464029c3dd61ecf6b41aea571142f-334x150.png",
+      "sha256": "F7B852FEDB5482B4AF0F29F48400E692C1C0176779A44A5CEE756A1FAC66D40A",
+      "bytes": 41693,
+      "destination": "logos/6dc5ab73073464029c3dd61ecf6b41aea571142f-334x150.png"
+    },
+    {
+      "file": "logos/8f2d539fe79fb48710785569e1981c28416943c0-516x74.png",
+      "sha256": "6980C3B3723845A4D63A1AA7401A275B95B7C1E5BF13630891DA46B812D83C92",
+      "bytes": 6927,
+      "destination": "logos/8f2d539fe79fb48710785569e1981c28416943c0-516x74.png"
+    },
+    {
+      "file": "logos/c0f37bba6d4b62706d95b480aab6c5785cfa3216-360x283.png",
+      "sha256": "DB4B7E6604A19F6D90FFC310C5ECE8349DD131B9035D8D30E80A53B095484343",
+      "bytes": 36926,
+      "destination": "logos/c0f37bba6d4b62706d95b480aab6c5785cfa3216-360x283.png"
+    },
+    {
+      "file": "logos/c8ce01ecb99ac0e453c4da51a8afc54903dd8b49-516x101.png",
+      "sha256": "EC68CC5FB0FB9237CF07EBA345B0E62E1EACAD163DE40E090685782B2BAB7CCC",
+      "bytes": 4665,
+      "destination": "logos/c8ce01ecb99ac0e453c4da51a8afc54903dd8b49-516x101.png"
+    },
+    {
+      "file": "logos/f5d1d771b252beead6619b492973a815981f2f78-358x358.png",
+      "sha256": "BC09E85F4073B27F25DD6A74A14495AF841C635E1F8D18662D75BCA9FC4E953B",
+      "bytes": 6441,
+      "destination": "logos/f5d1d771b252beead6619b492973a815981f2f78-358x358.png"
+    },
+    {
+      "file": "movingcar.svg",
+      "sha256": "E530F19E2D6015071C6890E7957290D54BD2D59E2260642F521ABB48162C4E6A",
+      "bytes": 212849,
+      "destination": "illustrations/movingcar.svg"
+    }
+  ],
+  "unused": [
+    {
+      "file": "drinkmenu.jpeg",
+      "bytes": 44006
+    },
+    {
+      "file": "footer-bg.svg",
+      "bytes": 988913
+    },
+    {
+      "file": "logo-white.jpeg",
+      "bytes": 72995
+    },
+    {
+      "file": "logo.jpeg",
+      "bytes": 86822
+    },
+    {
+      "file": "Mannetjes-broodje-beige.png",
+      "bytes": 229532
+    },
+    {
+      "file": "menu-catering-page-1.webp",
+      "bytes": 167988
+    },
+    {
+      "file": "menu-catering.pdf",
+      "bytes": 182640
+    },
+    {
+      "file": "menu-page-1.png",
+      "bytes": 343511
+    },
+    {
+      "file": "menu.pdf",
+      "bytes": 85042
+    },
+    {
+      "file": "The Sandwichbar - Vrijstaand 1.webp",
+      "bytes": 503830
+    },
+    {
+      "file": "The Sandwichbar - Vrijstaand 2.webp",
+      "bytes": 339370
+    },
+    {
+      "file": "The Sandwichbar - Vrijstaand 3.webp",
+      "bytes": 225524
+    },
+    {
+      "file": "The Sandwichbar 01.webp",
+      "bytes": 386014
+    },
+    {
+      "file": "The Sandwichbar 02.webp",
+      "bytes": 261122
+    },
+    {
+      "file": "The Sandwichbar 03.webp",
+      "bytes": 750188
+    },
+    {
+      "file": "The Sandwichbar 04.webp",
+      "bytes": 761678
+    },
+    {
+      "file": "The Sandwichbar 05.webp",
+      "bytes": 333610
+    },
+    {
+      "file": "The Sandwichbar 06.webp",
+      "bytes": 558042
+    },
+    {
+      "file": "The Sandwichbar 07.webp",
+      "bytes": 789544
+    },
+    {
+      "file": "The Sandwichbar 08.webp",
+      "bytes": 271276
+    },
+    {
+      "file": "tsb1-location.webp",
+      "bytes": 163664
+    },
+    {
+      "file": "tsb2-location.webp",
+      "bytes": 216024
+    },
+    {
+      "file": "fonts/0a7740363b4d4863-s.95e4158a.woff2",
+      "bytes": 39384
+    },
+    {
+      "file": "fonts/0da9c7f357bd9d4d-s.b2288445.woff2",
+      "bytes": 5496
+    },
+    {
+      "file": "fonts/41e95f694c5c4549-s.666bad7d.woff2",
+      "bytes": 39504
+    },
+    {
+      "file": "fonts/5f9d24ebef5d5292-s.bd593fbe.woff2",
+      "bytes": 5552
+    },
+    {
+      "file": "fonts/6c55a692938ebbbc-s.0a77efb4.woff2",
+      "bytes": 5640
+    },
+    {
+      "file": "fonts/798ea22d9983e047-s.b460e02c.woff2",
+      "bytes": 5448
+    },
+    {
+      "file": "fonts/b53057dbf91a7acf-s.c55744ae.woff2",
+      "bytes": 39204
+    },
+    {
+      "file": "fonts/bdc7e24a509eb931-s.43b0b13e.woff2",
+      "bytes": 39160
+    },
+    {
+      "file": "locatieshoot/the-sandwich-bar-14.webp",
+      "bytes": 447734
+    },
+    {
+      "file": "locatieshoot/the-sandwich-bar-26.webp",
+      "bytes": 476636
+    },
+    {
+      "file": "locatieshoot/the-sandwich-bar-27.webp",
+      "bytes": 465850
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-01.webp",
+      "bytes": 351230
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-02.webp",
+      "bytes": 554828
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-03.webp",
+      "bytes": 397900
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-04.webp",
+      "bytes": 325396
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-05.webp",
+      "bytes": 315838
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-06.webp",
+      "bytes": 376842
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-07.webp",
+      "bytes": 285776
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-08.webp",
+      "bytes": 313238
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-09.webp",
+      "bytes": 216542
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-10.webp",
+      "bytes": 99744
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-11.webp",
+      "bytes": 241806
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-12.webp",
+      "bytes": 181178
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-13.webp",
+      "bytes": 162320
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-15.webp",
+      "bytes": 215162
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-16.webp",
+      "bytes": 155238
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-17.webp",
+      "bytes": 267294
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-18.webp",
+      "bytes": 298028
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-19.webp",
+      "bytes": 150822
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-20.webp",
+      "bytes": 359444
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-21.webp",
+      "bytes": 221724
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-22.webp",
+      "bytes": 175312
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-23.webp",
+      "bytes": 151086
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-24.webp",
+      "bytes": 384806
+    },
+    {
+      "file": "locatieshoot/the-sandwichbar-25.webp",
+      "bytes": 162340
+    },
+    {
+      "file": "videos/059635aa13249854e2808561c6b57e37e270ea9f.mp4",
+      "bytes": 2151261
+    },
+    {
+      "file": "videos/4c5cc010c2661f7b07af1bcf8385fc6b2cf81430.mp4",
+      "bytes": 4518293
+    },
+    {
+      "file": "videos/720ee7345673ebfb5532009b1c1e1fa514ea922c.mp4",
+      "bytes": 1755642
+    }
+  ],
+  "completed": true,
+  "source_directory": "src/components/sites/sea-crown",
+  "runtime_asset_count": 43,
+  "retained_file_count": 45,
+  "validation": [
+    "Production build passed after deleting the old directory",
+    "43 runtime asset URLs checked across both languages",
+    "All 18 migrated assets retain original SHA-256 hashes",
+    "All retained assets are present byte-for-byte in dist",
+    "Legacy source, public and dist directories are absent"
+  ]
+}

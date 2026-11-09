@@ -1,0 +1,156 @@
+{
+  "vi": {
+    "hero": "Thưởng thức cua, tôm, mực và tôm hùm tại The Sea's Crown — nơi hương vị biển cả làm trọn vẹn những bữa ăn bên gia đình, bạn bè.",
+    "heroButton": "Khám phá thực đơn",
+    "slogan": "HẢI SẢN TƯƠI NGON MỖI NGÀY",
+    "about": [
+      "The Sea's Crown mang hương vị biển cả đến bàn ăn với cua, tôm, mực, tôm hùm và cua hoàng đế. Từ món hấp giữ vị ngọt tự nhiên đến món nướng đậm đà, mỗi lựa chọn đều dành cho những ai yêu thích hải sản.",
+      "Một bữa cơm gia đình, cuộc hẹn cùng bạn bè hay dịp sum họp đặc biệt — hãy cùng nhau chọn món, chia sẻ câu chuyện và tận hưởng bữa ăn tại nhà hàng."
+    ],
+    "cateringTitle": "Tiệc hải sản cho những dịp sum họp",
+    "catering": [
+      "Từ sinh nhật, liên hoan đến những buổi gặp gỡ đối tác, The Sea's Crown cùng bạn lựa chọn thực đơn hải sản phù hợp với số lượng khách và sở thích của cả bàn.",
+      "Chia sẻ ngày tổ chức, số khách dự kiến và các món yêu thích. Đội ngũ nhà hàng sẽ trao đổi về thực đơn, khẩu phần và chi phí trước khi bạn xác nhận đặt tiệc."
+    ],
+    "cateringLinks": [
+      "Đặt tiệc ngay",
+      "Nhận tư vấn thực đơn"
+    ],
+    "memberTitle": "Trở thành thành viên",
+    "member": [
+      "Kết nối cùng nhà hàng để mỗi lần ghé thăm là một dịp thưởng thức và sum họp đáng nhớ.",
+      "Cập nhật thông tin món ăn và các chương trình dành cho thành viên theo từng thời điểm.",
+      "Liên hệ đội ngũ nhà hàng khi ghé thăm để tìm hiểu cách đăng ký và quyền lợi đang áp dụng.",
+      "Bạn đã là thành viên? Xem thông tin tài khoản tại đây."
+    ],
+    "memberButton": "Xem tài khoản",
+    "sandwichTitle": "Đặc sản",
+    "sandwiches": [
+      {
+        "title": "Cua hoàng đế",
+        "description": "Thịt cua chắc ngọt, cùng cả bàn thưởng thức hương vị biển cả."
+      },
+      {
+        "title": "Tôm hùm",
+        "description": "Vị ngọt đặc trưng, lựa chọn cho những bữa ăn và dịp sum họp đặc biệt."
+      },
+      {
+        "title": "Tôm sốt tỏi",
+        "description": "Tôm ngọt thịt hòa cùng hương tỏi thơm, đậm đà và dễ thưởng thức."
+      }
+    ],
+    "tiktokTitle": "Theo dõi trên TikTok",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq": [
+      {
+        "question": "Nhà hàng có những món hải sản nào?",
+        "answer": "Thực đơn có cua, tôm, mực, tôm hùm và cua hoàng đế, với nhiều cách chế biến để bạn lựa chọn. Vui lòng xem thực đơn hoặc liên hệ nhà hàng để biết các món đang phục vụ."
+      },
+      {
+        "question": "Làm thế nào để đặt bàn?",
+        "answer": "Bạn có thể gọi số điện thoại trong phần thông tin chi nhánh. Hãy cho nhà hàng biết ngày, giờ và số khách dự kiến để được hỗ trợ."
+      },
+      {
+        "question": "Nhà hàng có nhận đặt tiệc không?",
+        "answer": "Có. Bạn có thể gửi yêu cầu tại trang Đặt tiệc hoặc liên hệ qua thông tin trên website. Nhà hàng sẽ trao đổi thực đơn, số khách và chi phí trước khi xác nhận."
+      },
+      {
+        "question": "Tôi nên chọn món như thế nào cho cả bàn?",
+        "answer": "Bạn có thể kết hợp cua, tôm, mực hoặc tôm hùm theo sở thích của mọi người. Hãy chia sẻ số khách và nhu cầu để đội ngũ nhà hàng tư vấn món cùng khẩu phần phù hợp."
+      },
+      {
+        "question": "Nếu có người dị ứng hải sản thì sao?",
+        "answer": "Vui lòng thông báo rõ loại dị ứng và các yêu cầu ăn uống trước khi đặt món. Đội ngũ nhà hàng sẽ trao đổi với bạn về thành phần và cách chuẩn bị món; không nên mặc định món ăn phù hợp khi chưa được xác nhận."
+      },
+      {
+        "question": "Làm thế nào để biết giá và khẩu phần?",
+        "answer": "Vui lòng tham khảo thực đơn và liên hệ nhà hàng để xác nhận món đang phục vụ, khẩu phần và giá trước khi đặt, đặc biệt với các món theo trọng lượng hoặc yêu cầu riêng."
+      },
+      {
+        "question": "Giờ mở cửa của nhà hàng là khi nào?",
+        "answer": "Bạn có thể xem giờ hoạt động theo từng ngày tại phần thông tin chi nhánh trên website. Vui lòng liên hệ trước nếu muốn đặt bàn hoặc tổ chức tiệc."
+      },
+      {
+        "question": "Tôi có thể thay đổi hoặc hủy đơn đặt tiệc không?",
+        "answer": "Vui lòng liên hệ nhà hàng qua email trước ít nhất 24 giờ để trao đổi yêu cầu thay đổi hoặc hủy đơn. Các điều kiện áp dụng được xác nhận theo thông tin đặt tiệc."
+      }
+    ]
+  },
+  "en": {
+    "hero": "Enjoy crab, prawns, squid and lobster at The Sea's Crown — bringing the flavours of the sea to meals shared with family and friends.",
+    "heroButton": "Explore the menu",
+    "slogan": "FRESH SEAFOOD, EVERY DAY",
+    "about": [
+      "The Sea's Crown brings the flavours of the sea to your table with crab, prawns, squid, lobster and king crab. From gently steamed seafood to richly flavoured grilled dishes, there is plenty for seafood lovers to enjoy.",
+      "A family meal, an evening with friends or a special gathering — choose dishes together, share stories and enjoy your time at the restaurant."
+    ],
+    "cateringTitle": "Seafood feasts for shared occasions",
+    "catering": [
+      "From birthdays and team celebrations to business gatherings, The Sea's Crown helps you choose a seafood menu to suit your group and preferences.",
+      "Share your event date, guest count and favourite dishes. Our team will discuss the menu, portions and costs with you before you confirm your booking."
+    ],
+    "cateringLinks": [
+      "Plan your event",
+      "Discuss your menu"
+    ],
+    "memberTitle": "Become a member",
+    "member": [
+      "Stay connected with the restaurant and make every visit an occasion to enjoy and share.",
+      "Find out about dishes and member programmes available at the time of your visit.",
+      "Speak with our restaurant team to learn how to join and which benefits currently apply.",
+      "Already a member? View your account details here."
+    ],
+    "memberButton": "View account",
+    "sandwichTitle": "Signature",
+    "sandwiches": [
+      {
+        "title": "King crab",
+        "description": "Sweet, firm crab meat to share around the table."
+      },
+      {
+        "title": "Lobster",
+        "description": "Distinctively sweet seafood for memorable meals and special gatherings."
+      },
+      {
+        "title": "Garlic prawns",
+        "description": "Sweet prawns with fragrant garlic and a rich, savoury flavour."
+      }
+    ],
+    "tiktokTitle": "Follow us on TikTok",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "question": "Which seafood dishes do you serve?",
+        "answer": "The menu features crab, prawns, squid, lobster and king crab, prepared in a variety of ways. Browse the menu or contact the restaurant to find out which dishes are currently available."
+      },
+      {
+        "question": "How can I reserve a table?",
+        "answer": "Call the number listed in the location details. Let the restaurant know your preferred date, time and guest count so the team can help."
+      },
+      {
+        "question": "Can I book a group meal or event?",
+        "answer": "Yes. Submit a request on the Catering page or use the contact details on this website. The restaurant will discuss the menu, guest count and cost before confirming your booking."
+      },
+      {
+        "question": "How should I choose dishes for a group?",
+        "answer": "Combine crab, prawns, squid or lobster to suit your guests. Share your guest count and preferences so our team can suggest dishes and suitable portions."
+      },
+      {
+        "question": "What if a guest has a seafood allergy?",
+        "answer": "Please tell the restaurant about specific allergies and dietary requirements before ordering. The team will discuss ingredients and preparation with you; do not assume a dish is suitable without confirmation."
+      },
+      {
+        "question": "How can I check prices and portions?",
+        "answer": "Browse the menu and contact the restaurant to confirm availability, portions and prices before ordering, particularly for dishes sold by weight or special requests."
+      },
+      {
+        "question": "What are your opening hours?",
+        "answer": "Daily opening hours are listed in the location section of this website. Please contact the restaurant ahead of your visit to arrange a table or event."
+      },
+      {
+        "question": "Can I change or cancel my event booking?",
+        "answer": "Please email the restaurant at least 24 hours in advance to discuss a change or cancellation. Applicable conditions are confirmed with your event booking."
+      }
+    ]
+  }
+}

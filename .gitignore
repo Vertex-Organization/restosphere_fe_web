@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Temporary working files
+/tmp/
+
 # Agent tools
 .agents/
 

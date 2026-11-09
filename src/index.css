@@ -1,9 +1,18 @@
-@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/a218039a3287bcfd-s.p.4a23d71b.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
-@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/8e6fa89aa22d24ec-s.p.3aec397d.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
-@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/e2334d715941921e-s.p.d82a9aff.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
-@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/47fe1b7cd6e6ed85-s.p.855a563b.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
-@font-face{font-family:Tomatoes;src:url('/sites/sandwich-bar/fonts/tomatoes.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
-:root{font-family:Poppins,sans-serif;line-height:1.5;color:var(--color-plum);background:var(--color-cream);font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;--color-cream:#fdf4e5;--color-plum:#4d343f;--color-dark:#382628;--color-muted:#685d5e}
+@font-face{font-family:Poppins;src:url('/sites/sea-crown/fonts/Poppins-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sea-crown/fonts/Poppins-Medium.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sea-crown/fonts/Poppins-SemiBold.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sea-crown/fonts/Poppins-Bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:Tomatoes;src:url('/sites/sea-crown/fonts/Tomatoes-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro';src:url('/sites/sea-crown/fonts/BeVietnamPro-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro';src:url('/sites/sea-crown/fonts/BeVietnamPro-Medium.ttf') format('truetype');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro';src:url('/sites/sea-crown/fonts/BeVietnamPro-SemiBold.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:'Be Vietnam Pro';src:url('/sites/sea-crown/fonts/BeVietnamPro-Bold.ttf') format('truetype');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:'Dancing Script';src:url('/sites/sea-crown/fonts/DancingScript.ttf') format('truetype');font-style:normal;font-weight:400 700;font-display:swap}
+:root{font-family:Poppins,sans-serif;line-height:1.5;color:var(--color-plum);background:var(--color-cream);font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;--color-cream:#ffffff;--color-plum:#b40000;--color-dark:#870000;--color-muted:#6b4545;--color-gold:#ffc400}
+:root:lang(vi){font-family:'Be Vietnam Pro',sans-serif}
+html:lang(vi) .sb-hero h1{font-family:Poppins,sans-serif}
+html:lang(vi) :is(.sb-slider-heading h2 span,.sb-locations h2 span,.sb-membership h2 span,.sb-tiktok h2 span){font-family:'Dancing Script',cursive}
+html:lang(vi) .sb-slogan text{font-family:'Be Vietnam Pro',sans-serif}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:120px}
 body{margin:0;min-width:320px}
@@ -14,7 +23,7 @@ button{cursor:pointer;color:inherit}
 button:disabled{cursor:not-allowed}
 a{color:inherit;text-decoration:none}
 img,video{display:block;max-width:100%}
-button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #c68846;outline-offset:5px}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffc400;outline-offset:5px}
 ::selection{background:var(--color-plum);color:var(--color-cream)}
 .skip-link{position:fixed;top:10px;left:10px;z-index:10000;background:var(--color-cream);padding:12px 20px;border-radius:30px;transform:translateY(-160%)}
 .skip-link:focus{transform:translateY(0)}

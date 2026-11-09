@@ -1,0 +1,23 @@
+.sb-footer-physics {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  pointer-events: auto;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.sb-footer-physics[data-hovering="true"] { cursor: grab; }
+.sb-footer-physics[data-dragging="true"] { cursor: grabbing; }
+
+/* Keep the photo behind the bubbles while footer links remain clickable. */
+.sb-footer { isolation: isolate; }
+.sb-footer .sb-footer-content { z-index: auto; }
+.sb-footer :is(.sb-footer-nav, .sb-footer-contact, .sb-footer-follow, .sb-desktop-credit, .sb-mobile-credit) {
+  position: relative;
+  z-index: 2;
+}
