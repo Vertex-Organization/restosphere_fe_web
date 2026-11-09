@@ -1,0 +1,89 @@
+# The Sea's Crown — Frontend MVP
+
+Frontend React + TypeScript + Vite cho hệ thống quản lý nhà hàng hải sản,
+một thương hiệu, một chi nhánh. Cấu trúc dựa trên phần P0 của Project Overview
+v1.2 ngày 09/11/2026. Tài liệu còn ở trạng thái dự thảo; các quyết định nghiệp vụ
+đề xuất cần được nhóm duyệt khi triển khai.
+
+Luồng chính: đặt bàn → xác nhận → mở lượt → gọi món → bếp → phục vụ →
+thanh toán → trả bàn.
+
+Các module MVP hiện là khung thư mục. Trang `/auth/login` dùng thương hiệu The Sea's Crown trên bố cục tham khảo The Pizza Company; xác thực và API nghiệp vụ chưa được tích hợp.
+
+## Chạy dự án
+
+```powershell
+npm ci
+Copy-Item .env.example .env.local
+npm run dev
+```
+
+Sửa `VITE_API_BASE_URL` trong `.env.local` theo địa chỉ backend của nhóm.
+
+```powershell
+npm run lint
+npm run build
+npm run preview
+```
+
+## Cấu trúc MVP
+
+```text
+public/                      # File tĩnh phục vụ trực tiếp
+src/
+├── components/
+│   ├── ui/                  # Thành phần dùng chung: Button, Modal, Table...
+│   ├── auth/                # Đăng nhập nhân viên
+│   ├── menu/                # Thực đơn, trạng thái món, biểu mẫu quản trị món
+│   ├── reservations/        # Form đặt bàn, danh sách và xác nhận đặt bàn
+│   ├── tables/              # Sơ đồ bàn, khu vực, mở/hủy lượt phục vụ
+│   ├── orders/              # Giỏ tạm, đợt gọi món, hủy và xác nhận đã phục vụ
+│   ├── kitchen/             # Hàng đợi bếp, cập nhật chế biến và tạm hết món
+│   └── billing/             # Tạm tính, thanh toán, xem phiếu đã thu
+├── pages/
+│   ├── public/              # Giới thiệu, thực đơn, gửi yêu cầu đặt bàn
+│   ├── auth/                # Trang đăng nhập; hiện dùng giao diện tham khảo
+│   └── internal/
+│       ├── reservations/    # Lễ tân xử lý đặt bàn, nhận khách
+│       ├── tables/          # Sơ đồ bàn, lượt phục vụ, quản trị khu vực và bàn
+│       ├── orders/          # Phục vụ nhập món và theo dõi phục vụ
+│       ├── kitchen/         # Màn hình bếp
+│       ├── menu/            # Quản lý danh mục món, món và giá
+│       └── billing/         # Thu ngân thanh toán, tra cứu phiếu
+├── layouts/                 # Bố cục công khai và nội bộ, điều chỉnh theo vai trò
+├── routes/                  # Route và kiểm tra đăng nhập/quyền ở giao diện
+├── api/                     # HTTP dùng chung và API theo nghiệp vụ
+├── hooks/                   # Hook dùng lại, gồm polling màn hình 3–5 giây
+├── App.tsx
+├── index.css
+└── main.tsx
+```
+
+## Quy ước
+
+- `pages` ghép component thành màn hình; `components` chứa giao diện theo nghiệp vụ.
+- Giới thiệu, xem thực đơn và gửi yêu cầu đặt bàn là các trang công khai,
+  không cần tài khoản khách. Đăng nhập dành cho nhân viên.
+- Màn hình nội bộ dùng chung theo nghiệp vụ và phân quyền cho năm vai trò:
+  lễ tân, phục vụ, bếp, thu ngân, quản lý. Backend kiểm tra quyền cho mọi API nội bộ.
+- Khu vực, bàn và lượt phục vụ đặt chung trong nhóm `tables`;
+  danh mục món và món đặt chung trong `menu`.
+- `billing` gồm tạm tính, thu tiền mặt/chuyển khoản và tra cứu phiếu đã thanh toán.
+- Các thư mục trống có `.gitkeep`; xóa marker khi đã thêm file thực tế.
+  Chỉ tạo file API, hook và thư mục con khi bắt đầu triển khai chức năng tương ứng.
+- Báo cáo doanh thu và quản lý tài khoản nhân viên thuộc P1; tài khoản khách thuộc P2.
+  Kho, khuyến mãi, thanh toán online và các mục ngoài phạm vi giữ theo tài liệu MVP.
+
+## Giao diện đăng nhập tham khảo
+
+Nguồn: https://thepizzacompany.vn/auth/login?returnUrl=https%3A%2F%2Fthepizzacompany.vn%2F
+
+- Route local: `/auth/login`. `/` là đường dẫn mở nhanh trang này; `returnUrl` chỉ nhận đường dẫn cùng origin của nhà hàng.
+- Chạy `npm run dev`, mở `http://localhost:5173/auth/login`.
+- Trang: `src/pages/auth/LoginPage.tsx` và `LoginPage.css`.
+- Component: `src/components/auth/AuthHeader.tsx`, `LoginForm.tsx`.
+- Font, nền và icon tham khảo được lưu tại `public/sites/thepizzacompany-vn/`. Logo chữ và biểu tượng vương miện/sóng dùng tên The Sea's Crown; favicon đặt trong `public/branding/`.
+- Có kiểm tra trường trống/số điện thoại, hiện/ẩn mật khẩu và menu ngôn ngữ bằng chuột/bàn phím.
+- Form hợp lệ hiển thị trạng thái chưa hỗ trợ đăng nhập; không gửi hoặc lưu thông tin tài khoản.
+- Các nút đăng ký, quên mật khẩu và đăng nhập mạng xã hội hiển thị thông báo khi chưa có tính năng tương ứng; không dẫn người dùng sang website nguồn. Bản tiếng Anh hiện chưa khả dụng.
+- Bằng chứng khảo sát, so sánh và kiểm tra trình duyệt: [docs/research/thepizzacompany-vn/brief.md](docs/research/thepizzacompany-vn/brief.md).

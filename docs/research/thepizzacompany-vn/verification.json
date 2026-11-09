@@ -1,0 +1,928 @@
+{
+  "checkedAt": "2026-11-09T03:31:52.645Z",
+  "origin": "http://127.0.0.1:5173",
+  "comparison": [
+    {
+      "label": "1440x1000",
+      "local": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "pageWidth": 1440,
+        "card": {
+          "x": 320,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 320,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 344,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 344,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 344,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/location.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/flag-vn.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Nhà hàng hải sản\nThe Sea's Crown\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Sea's Crown.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "pageWidth": 1440,
+        "card": {
+          "x": 320,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 320,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 344,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 344,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 344,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F455-Logo.png&w=384&q=75",
+            "width": 384,
+            "height": 111
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=1200&q=75",
+            "width": 1152,
+            "height": 115
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Chọn địa điểm của bạn\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Pizza Company.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    },
+    {
+      "label": "390x844",
+      "local": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "pageWidth": 390,
+        "card": {
+          "x": 16,
+          "y": 72,
+          "width": 358,
+          "height": 477.796875
+        },
+        "form": {
+          "x": 16,
+          "y": 123.796875,
+          "width": 358,
+          "height": 426
+        },
+        "phone": {
+          "x": 32,
+          "y": 167.796875,
+          "width": 326,
+          "height": 40
+        },
+        "password": {
+          "x": 32,
+          "y": 251.796875,
+          "width": 326,
+          "height": 40
+        },
+        "submit": {
+          "x": 32,
+          "y": 347.796875,
+          "width": 326,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "pageWidth": 390,
+        "card": {
+          "x": 16,
+          "y": 72,
+          "width": 358,
+          "height": 478.359375
+        },
+        "form": {
+          "x": 16,
+          "y": 124.359375,
+          "width": 358,
+          "height": 426
+        },
+        "phone": {
+          "x": 32,
+          "y": 168.359375,
+          "width": 326,
+          "height": 40
+        },
+        "password": {
+          "x": 32,
+          "y": 252.359375,
+          "width": 326,
+          "height": 40
+        },
+        "submit": {
+          "x": 32,
+          "y": 348.359375,
+          "width": 326,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=256&q=75",
+            "width": 195,
+            "height": 19
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    },
+    {
+      "label": "1920x1080",
+      "local": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "pageWidth": 1920,
+        "card": {
+          "x": 560,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 560,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 584,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 584,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 584,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/location.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/flag-vn.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Nhà hàng hải sản\nThe Sea's Crown\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Sea's Crown.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 1920,
+          "height": 1080
+        },
+        "pageWidth": 1920,
+        "card": {
+          "x": 560,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 560,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 584,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 584,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 584,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F455-Logo.png&w=384&q=75",
+            "width": 384,
+            "height": 111
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=1920&q=75",
+            "width": 1280,
+            "height": 128
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Chọn địa điểm của bạn\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Pizza Company.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    },
+    {
+      "label": "360x800",
+      "local": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "pageWidth": 360,
+        "card": {
+          "x": 16,
+          "y": 72,
+          "width": 328,
+          "height": 468.796875
+        },
+        "form": {
+          "x": 16,
+          "y": 120.796875,
+          "width": 328,
+          "height": 420
+        },
+        "phone": {
+          "x": 32,
+          "y": 164.796875,
+          "width": 296,
+          "height": 37
+        },
+        "password": {
+          "x": 32,
+          "y": 245.796875,
+          "width": 296,
+          "height": 37
+        },
+        "submit": {
+          "x": 32,
+          "y": 338.796875,
+          "width": 296,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 360,
+          "height": 800
+        },
+        "pageWidth": 360,
+        "card": {
+          "x": 16,
+          "y": 72,
+          "width": 328,
+          "height": 469.3125
+        },
+        "form": {
+          "x": 16,
+          "y": 121.3125,
+          "width": 328,
+          "height": 420
+        },
+        "phone": {
+          "x": 32,
+          "y": 165.3125,
+          "width": 296,
+          "height": 37
+        },
+        "password": {
+          "x": 32,
+          "y": 246.3125,
+          "width": 296,
+          "height": 37
+        },
+        "submit": {
+          "x": 32,
+          "y": 339.3125,
+          "width": 296,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=256&q=75",
+            "width": 180,
+            "height": 18
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    },
+    {
+      "label": "768x1024",
+      "local": {
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "pageWidth": 768,
+        "card": {
+          "x": 16,
+          "y": 72,
+          "width": 736,
+          "height": 595.59375
+        },
+        "form": {
+          "x": 16,
+          "y": 161.59375,
+          "width": 736,
+          "height": 506
+        },
+        "phone": {
+          "x": 40,
+          "y": 285.59375,
+          "width": 688,
+          "height": 40
+        },
+        "password": {
+          "x": 40,
+          "y": 369.59375,
+          "width": 688,
+          "height": 40
+        },
+        "submit": {
+          "x": 40,
+          "y": 465.59375,
+          "width": 688,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Sea's Crown.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 768,
+          "height": 1024
+        },
+        "pageWidth": 784,
+        "card": {
+          "x": -16,
+          "y": 72,
+          "width": 800,
+          "height": 602
+        },
+        "form": {
+          "x": -16,
+          "y": 168,
+          "width": 800,
+          "height": 506
+        },
+        "phone": {
+          "x": 8,
+          "y": 292,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 8,
+          "y": 376,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 8,
+          "y": 472,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=640&q=75",
+            "width": 614,
+            "height": 61
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Đăng nhập\nĐĂNG NHẬP\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Pizza Company.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    },
+    {
+      "label": "1024x900",
+      "local": {
+        "viewport": {
+          "width": 1024,
+          "height": 900
+        },
+        "pageWidth": 1024,
+        "card": {
+          "x": 112,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 112,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 136,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 136,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 136,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/location.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/flag-vn.svg",
+            "width": 24,
+            "height": 24
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/back-hover.svg",
+            "width": 52,
+            "height": 52
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/eye-off.svg",
+            "width": 20,
+            "height": 20
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "http://127.0.0.1:5173/sites/thepizzacompany-vn/apple.avif",
+            "width": 48,
+            "height": 48
+          }
+        ],
+        "text": "Nhà hàng hải sản\nThe Sea's Crown\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nTHE SEA'S CROWN\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Sea's Crown.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\n\nBạn chưa có tài khoản. Đăng ký tài khoản\n\nĐăng nhập với"
+      },
+      "source": {
+        "viewport": {
+          "width": 1024,
+          "height": 900
+        },
+        "pageWidth": 1024,
+        "card": {
+          "x": 112,
+          "y": 204,
+          "width": 800,
+          "height": 678
+        },
+        "form": {
+          "x": 112,
+          "y": 300,
+          "width": 800,
+          "height": 582
+        },
+        "phone": {
+          "x": 136,
+          "y": 440,
+          "width": 752,
+          "height": 40
+        },
+        "password": {
+          "x": 136,
+          "y": 524,
+          "width": 752,
+          "height": 40
+        },
+        "submit": {
+          "x": 136,
+          "y": 652,
+          "width": 752,
+          "height": 40
+        },
+        "images": [
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F455-Logo.png&w=384&q=75",
+            "width": 384,
+            "height": 111
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=1024&q=75",
+            "width": 819,
+            "height": 81
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-google.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+            "width": 41,
+            "height": 40
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+            "width": 48,
+            "height": 48
+          },
+          {
+            "src": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+            "width": 48,
+            "height": 46
+          }
+        ],
+        "text": "Chọn địa điểm của bạn\nViệt Nam\nĐăng nhập\nĐĂNG NHẬP\nChào mừng bạn quay lại 👋\n\nHãy đăng nhập để tiếp tục thưởng thức món ngon từ The Pizza Company.\n\nĐiện thoại\nMật khẩu\n\nQuên mật khẩu\n\nĐăng nhập\nBạn chưa có tài khoản. Đăng ký tài khoản\nĐăng nhập với"
+      }
+    }
+  ],
+  "checks": {
+    "viewports": 6,
+    "restaurantBrand": true,
+    "backButtonHover": true,
+    "emptyAndInvalidFields": true,
+    "passwordToggle": true,
+    "localOnlySubmission": true,
+    "languageMenuMouseAndKeyboard": true,
+    "noSourceNavigation": true,
+    "unavailableActionsFeedback": true,
+    "rootAlias": true,
+    "safeReturnUrl": true,
+    "unknownRoute": true,
+    "noRuntimeErrors": true,
+    "noFailedLocalAssets": true,
+    "noHorizontalOverflow": true
+  },
+  "errors": [],
+  "failures": []
+}

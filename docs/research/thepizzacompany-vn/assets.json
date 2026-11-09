@@ -1,0 +1,162 @@
+[
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F825-tpcbackground1440x546px_desktop.png&w=2400&q=75",
+    "original": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/825-tpcbackground1440x546px_desktop.png",
+    "local": "/sites/thepizzacompany-vn/background-desktop.avif",
+    "bytes": 3444,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F455-Logo.png&w=384&q=75",
+    "original": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/455-Logo.png",
+    "local": "/sites/thepizzacompany-vn/logo.avif",
+    "bytes": 12457,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/static/media/52113425495054e9-s.woff2",
+    "original": "/_next/static/media/52113425495054e9-s.woff2",
+    "local": "/sites/thepizzacompany-vn/poppins-semibold.woff2",
+    "bytes": 28080,
+    "contentType": "font/woff2"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/static/media/04f8684504628330-s.woff2",
+    "original": "/_next/static/media/04f8684504628330-s.woff2",
+    "local": "/sites/thepizzacompany-vn/poppins-regular.woff2",
+    "bytes": 21440,
+    "contentType": "font/woff2"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/static/media/7fc5050a863cadc4-s.woff2",
+    "original": "/_next/static/media/7fc5050a863cadc4-s.woff2",
+    "local": "/sites/thepizzacompany-vn/tpc-go-bold.woff2",
+    "bytes": 17108,
+    "contentType": "font/woff2"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F526-tpcbannermodal1600x160px-01.png&w=1200&q=75",
+    "original": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/526-tpcbannermodal1600x160px-01.png",
+    "local": "/sites/thepizzacompany-vn/login-banner.avif",
+    "bytes": 5571,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/static/media/c6847983d6969b56-s.woff2",
+    "original": "/_next/static/media/c6847983d6969b56-s.woff2",
+    "local": "/sites/thepizzacompany-vn/poppins-medium.woff2",
+    "bytes": 27644,
+    "contentType": "font/woff2"
+  },
+  {
+    "source": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/569-border-caro.png",
+    "original": "/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/569-border-caro.png",
+    "local": "/sites/thepizzacompany-vn/checker-border.png",
+    "bytes": 1735,
+    "contentType": "image/png"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Flogo-qsr.png&w=48&q=75",
+    "original": "/icons/logo-qsr.png",
+    "local": "/sites/thepizzacompany-vn/qsr.avif",
+    "bytes": 2311,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/icons/icon-google.svg",
+    "original": "/icons/icon-google.svg",
+    "local": "/sites/thepizzacompany-vn/google.svg",
+    "bytes": 1542,
+    "contentType": "image/svg+xml"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=%2Ficons%2Ficon-apple.png&w=48&q=75",
+    "original": "/icons/icon-apple.png",
+    "local": "/sites/thepizzacompany-vn/apple.avif",
+    "bytes": 605,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/icons/icon-facebook.svg",
+    "original": "/icons/icon-facebook.svg",
+    "local": "/sites/thepizzacompany-vn/facebook.svg",
+    "bytes": 1398,
+    "contentType": "image/svg+xml"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=%2Fimages%2Ftaptap.png&w=48&q=75",
+    "original": "/images/taptap.png",
+    "local": "/sites/thepizzacompany-vn/taptap.avif",
+    "bytes": 547,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/_next/image?url=https%3A%2F%2Fapi.qsrvietnam.com%2Ffiles%2Fecom%2F0192fda4-ba1b-76ef-bb1a-64c043a8e4a4%2Fimages%2F825-tpcbackground1440x546px_mobile.png&w=2400&q=75",
+    "original": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/825-tpcbackground1440x546px_mobile.png",
+    "local": "/sites/thepizzacompany-vn/background-mobile.avif",
+    "bytes": 2255,
+    "contentType": "image/avif"
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "header location icon",
+    "local": "/sites/thepizzacompany-vn/location.svg",
+    "bytes": 599,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "header Vietnam flag",
+    "local": "/sites/thepizzacompany-vn/flag-vn.svg",
+    "bytes": 1007,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "language menu English flag",
+    "local": "/sites/thepizzacompany-vn/flag-us.svg",
+    "bytes": 2376,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "login toolbar back icon",
+    "local": "/sites/thepizzacompany-vn/back.svg",
+    "bytes": 1296,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "password hidden icon",
+    "local": "/sites/thepizzacompany-vn/eye-off.svg",
+    "bytes": 1406,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "password revealed icon",
+    "local": "/sites/thepizzacompany-vn/eye-on.svg",
+    "bytes": 752,
+    "contentType": "image/svg+xml",
+    "note": "Original inline SVG extracted; inherited colors resolved for standalone use."
+  },
+  {
+    "source": "https://api.qsrvietnam.com/files/ecom/0192fda4-ba1b-76ef-bb1a-64c043a8e4a4/images/401-303-favicon_thepizzacompany_vn_64x64.png",
+    "local": "/sites/thepizzacompany-vn/favicon.png",
+    "bytes": 4814,
+    "contentType": "image/png"
+  },
+  {
+    "source": "https://thepizzacompany.vn/auth/login",
+    "fragment": "toolbar hover SVG",
+    "local": "/sites/thepizzacompany-vn/back-hover.svg",
+    "bytes": 1279,
+    "contentType": "image/svg+xml",
+    "note": "Source hover colors applied to original back SVG geometry."
+  }
+]
