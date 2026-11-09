@@ -1,0 +1,112 @@
+{
+  "checkedAt": "2026-11-09T05:30:14.275Z",
+  "origin": "http://localhost:5173",
+  "checks": [
+    "empty/invalid email validation does not call API",
+    "real backend rejects incorrect credentials with useful feedback",
+    "real login + /me, duplicate submit prevention, redirect and centered success toast",
+    "reload restores authenticated user without replaying the toast",
+    "real expired session refreshes once and stores the rotated refresh token",
+    "real /me 401 refreshes and retries successfully once",
+    "authenticated header and account dropdown fit six viewport sizes; Escape closes it",
+    "failed logout reports an error and preserves the session (simulated)",
+    "real logout revokes refresh token and clears the browser session",
+    "real mobile login, top toast auto-dismiss after five seconds, and logout",
+    "network failure displays an error and releases the loading state (simulated)",
+    "invalid refresh token clears session without a retry loop (simulated)",
+    "repeated /me 401 stops after one refresh and one retry (simulated)",
+    "temporary refresh failure preserves session and releases loading state (simulated)"
+  ],
+  "responses": [
+    {
+      "path": "/api/v1/auth/login",
+      "status": 401
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/refresh",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 401
+    },
+    {
+      "path": "/api/v1/auth/refresh",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/logout",
+      "status": 503
+    },
+    {
+      "path": "/api/v1/auth/logout",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/logout",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/auth/refresh",
+      "status": 401
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 401
+    },
+    {
+      "path": "/api/v1/auth/refresh",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 401
+    },
+    {
+      "path": "/api/v1/auth/refresh",
+      "status": 503
+    }
+  ],
+  "errors": [],
+  "note": "Live backend for login/me/refresh/logout; failure injection is labeled simulated. Credentials and tokens are never written to this report.",
+  "manualChecks": {
+    "productionPreviewRouteStatus": 200,
+    "productionPreviewApiProxyStatusWithoutSession": 401
+  }
+}

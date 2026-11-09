@@ -38,7 +38,7 @@ export default function AuthHeader() {
           <span>Nhà hàng hải sản</span>
         </div>
 
-        <a className="pc-logo" href="/" aria-label="Trang chủ The Sea's Crown">
+        <a className="pc-logo" href="/menu/combo" aria-label="Trang chủ The Sea's Crown">
           <RestaurantBrand />
         </a>
 

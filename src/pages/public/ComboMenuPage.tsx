@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MenuHeader from '../../components/menu/MenuHeader'
 import MenuHero from '../../components/menu/MenuHero'
 import MenuFooter from '../../components/menu/MenuFooter'
@@ -7,6 +7,9 @@ import MenuCategoryBar from '../../components/menu/MenuCategoryBar'
 import MenuItemDialog from '../../components/menu/MenuItemDialog'
 import MenuOverlay from '../../components/menu/MenuOverlay'
 import RestaurantBrand from '../../components/ui/RestaurantBrand'
+import Toast from '../../components/ui/Toast'
+import useAuth from '../../hooks/useAuth'
+import { logout } from '../../api/auth'
 import { allMenuItems, heroSlides, menuCategories, menuSections } from '../../components/menu/menuData'
 import type { MenuItem } from '../../components/menu/menuTypes'
 import './ComboMenuPage.css'
@@ -30,6 +33,8 @@ function SectionHeading({ name, group = false }: { name: string; group?: boolean
 }
 
 export default function ComboMenuPage() {
+  const { user, loading: authLoading } = useAuth()
+  const [loggingOut, setLoggingOut] = useState(false)
   const [activeCategory, setActiveCategory] = useState(() => window.location.pathname.split('/')[2] || 'combo')
   const [activeTag, setActiveTag] = useState(() => new URLSearchParams(window.location.search).get('tag') || '')
   const [activeGroups, setActiveGroups] = useState<Record<string, string>>({})
@@ -39,9 +44,14 @@ export default function ComboMenuPage() {
   const [campaign, setCampaign] = useState<{ name: string; image: string; description: string } | null>(null)
   const [cart, setCart] = useState<CartLine[]>([])
   const [search, setSearch] = useState('')
-  const [notice, setNotice] = useState('')
+  const [notice, setNoticeState] = useState<{ message: string; tone: 'success' | 'info' | 'error' }>(() => ({
+    message: sessionStorage.getItem('sea-crown.login-success') === 'true' ? 'Đăng nhập thành công. Chào mừng bạn quay lại!' : '',
+    tone: 'success',
+  }))
   const [checkoutNotice, setCheckoutNotice] = useState('')
   const contentRef = useRef<HTMLDivElement>(null)
+  const setNotice = useCallback((message: string) => setNoticeState({ message, tone: 'info' }), [])
+  const closeNotice = useCallback(() => setNoticeState({ message: '', tone: 'info' }), [])
 
   const sections = useMemo(() => activeTag ? menuSections.map((section) => ({ ...section, groups: section.groups.map((group) => ({ ...group, items: group.items.filter((item) => item.tags.some((tag) => tag.slug === activeTag)) })).filter((group) => group.items.length) })).filter((section) => section.groups.length) : menuSections, [activeTag])
   const results = useMemo(() => allMenuItems.filter((item) => normalize(`${item.name} ${item.description}`).includes(normalize(search.trim()))).slice(0, 30), [search])
@@ -55,10 +65,21 @@ export default function ComboMenuPage() {
   }, [])
 
   useEffect(() => {
-    if (!notice) return
-    const timer = window.setTimeout(() => setNotice(''), 6000)
-    return () => window.clearTimeout(timer)
-  }, [notice])
+    sessionStorage.removeItem('sea-crown.login-success')
+  }, [])
+
+  async function handleLogout() {
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await logout()
+      setNoticeState({ message: 'Đã đăng xuất tài khoản.', tone: 'success' })
+    } catch (error) {
+      setNoticeState({ message: error instanceof Error ? error.message : 'Không thể đăng xuất. Vui lòng thử lại.', tone: 'error' })
+    } finally {
+      setLoggingOut(false)
+    }
+  }
 
   useEffect(() => {
     const restore = () => {
@@ -123,7 +144,7 @@ export default function ComboMenuPage() {
   return (
     <div className="sc-menu-page">
       <div className="sc-menu-background" aria-hidden="true" />
-      <MenuHeader onSearch={() => setOverlay('search')} onCart={() => { setCheckoutNotice(''); setOverlay('cart') }} onMenu={() => contentRef.current?.scrollIntoView({ behavior: 'smooth' })} cartCount={cartCount} onNotice={setNotice} />
+      <MenuHeader onSearch={() => setOverlay('search')} onCart={() => { setCheckoutNotice(''); setOverlay('cart') }} cartCount={cartCount} onNotice={setNotice} user={user} authLoading={authLoading} loggingOut={loggingOut} onLogout={handleLogout} />
       <MenuHero slides={heroSlides} onSelect={openCampaign} />
       <div className="sc-category-spacer" aria-hidden="true" />
       <MenuCategoryBar categories={menuCategories} active={activeCategory} onSelect={chooseCategory} />
@@ -177,7 +198,7 @@ export default function ComboMenuPage() {
       </MenuOverlay>}
 
       {campaign && <MenuOverlay title={campaign.name} onClose={() => setCampaign(null)}><img className="sc-campaign-detail-image" src={campaign.image} alt={campaign.name} /><p className="sc-campaign-description">{campaign.description}</p><button className="sc-menu-primary" type="button" onClick={() => { setCampaign(null); chooseCategory({ id: 'combo' }) }}>Xem combo trong thực đơn</button></MenuOverlay>}
-      {notice && <div className="sc-menu-notice" role="status"><span>{notice}</span><button type="button" aria-label="Đóng thông báo" onClick={() => setNotice('')}>×</button></div>}
+      <Toast message={notice.message} tone={notice.tone} onClose={closeNotice} />
     </div>
   )
 }

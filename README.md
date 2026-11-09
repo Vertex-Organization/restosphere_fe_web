@@ -8,7 +8,7 @@ v1.2 ngày 09/11/2026. Tài liệu còn ở trạng thái dự thảo; các quy�
 Luồng chính: đặt bàn → xác nhận → mở lượt → gọi món → bếp → phục vụ →
 thanh toán → trả bàn.
 
-Các module nội bộ MVP hiện là khung thư mục. Đã có trang `/auth/login` và thực đơn công khai `/menu/combo`, dùng thương hiệu The Sea's Crown trên bố cục tham khảo The Pizza Company. Xác thực, đặt món và API nghiệp vụ chưa được tích hợp.
+Các module nội bộ MVP hiện là khung thư mục. Đã có trang `/auth/login` và thực đơn công khai `/menu/combo`, dùng thương hiệu The Sea's Crown trên bố cục tham khảo The Pizza Company. Đăng nhập, tài khoản, làm mới phiên và đăng xuất đã nối backend; thực đơn và giỏ hàng vẫn dùng dữ liệu mẫu.
 
 ## Chạy dự án
 
@@ -18,7 +18,10 @@ Copy-Item .env.example .env.local
 npm run dev
 ```
 
-Sửa `VITE_API_BASE_URL` trong `.env.local` theo địa chỉ backend của nhóm.
+Mặc định frontend gọi `/api/v1` qua proxy đến `http://localhost:8080`.
+Đổi `VITE_API_PROXY_TARGET` trong `.env.local` nếu backend dùng địa chỉ khác.
+Giữ `VITE_API_BASE_URL=/api/v1` khi dùng proxy để tránh lỗi CORS.
+Khởi động lại Vite sau khi đổi biến môi trường.
 
 ```powershell
 npm run lint
@@ -83,10 +86,31 @@ Nguồn: https://thepizzacompany.vn/auth/login?returnUrl=https%3A%2F%2Fthepizzac
 - Trang: `src/pages/auth/LoginPage.tsx` và `LoginPage.css`.
 - Component: `src/components/auth/AuthHeader.tsx`, `LoginForm.tsx`.
 - Font, nền và icon tham khảo được lưu tại `public/sites/thepizzacompany-vn/`. Logo chữ và biểu tượng vương miện/sóng dùng tên The Sea's Crown; favicon đặt trong `public/branding/`.
-- Có kiểm tra trường trống/số điện thoại, hiện/ẩn mật khẩu và menu ngôn ngữ bằng chuột/bàn phím.
-- Form hợp lệ hiển thị trạng thái chưa hỗ trợ đăng nhập; không gửi hoặc lưu thông tin tài khoản.
+- Đăng nhập bằng email và mật khẩu theo Swagger backend, có kiểm tra dữ liệu, hiện/ẩn mật khẩu, trạng thái đang xử lý và lỗi đăng nhập.
+- Đăng nhập thành công chuyển đến `/menu/combo`, hiện thông báo nền trắng/viền xanh ở giữa phía trên và tự ẩn sau 5 giây. Tải lại trang không lặp thông báo.
+- Token chỉ lưu trong `sessionStorage` của tab; không lưu mật khẩu. Tự lấy thông tin tài khoản và làm mới access token khi hết hạn, tối đa một lần thử lại sau lỗi 401.
+- Biểu tượng tài khoản trên menu hiển thị tên/email và nút đăng xuất, kể cả trên mobile. Đăng xuất thành công thu hồi refresh token phía backend và xóa phiên ở frontend.
 - Các nút đăng ký, quên mật khẩu và đăng nhập mạng xã hội hiển thị thông báo khi chưa có tính năng tương ứng; không dẫn người dùng sang website nguồn. Bản tiếng Anh hiện chưa khả dụng.
 - Bằng chứng khảo sát, so sánh và kiểm tra trình duyệt: [docs/research/thepizzacompany-vn/brief.md](docs/research/thepizzacompany-vn/brief.md).
+
+## API hiện có
+
+Swagger local: http://localhost:8080/swagger-ui/index.html
+
+| Endpoint | Giao diện sử dụng |
+| --- | --- |
+| `POST /api/v1/auth/login` | Form email/mật khẩu |
+| `GET /api/v1/auth/me` | Tên và email trong menu tài khoản, khôi phục phiên khi tải lại |
+| `POST /api/v1/auth/refresh` | Tự làm mới phiên và lưu refresh token mới |
+| `POST /api/v1/auth/logout` | Nút đăng xuất trong menu tài khoản |
+
+Swagger hiện chưa có endpoint cho thực đơn, giỏ hàng, đăng ký hoặc mạng xã hội,
+nên các phần này chưa gọi backend. Chi tiết triển khai và kiểm tra thật:
+[docs/verification/auth-api/README.md](docs/verification/auth-api/README.md).
+
+`npm run dev` và `npm run preview` đã cấu hình proxy `/api`. Khi deploy bản
+`dist`, web server cần chuyển tiếp `/api` đến backend. Nếu đặt
+`VITE_API_BASE_URL` thành URL khác origin, backend phải cho phép CORS tương ứng.
 
 ## Giao diện thực đơn tham khảo
 

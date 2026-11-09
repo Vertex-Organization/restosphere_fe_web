@@ -35,8 +35,17 @@
 .sc-header-action:hover > svg { transform: scale(1.05); }
 .sc-header-action:hover .sc-header-icon-surface { fill: #fff; stroke: #cde1cb; }
 .sc-header-cart-count { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 20px; background: #008556; color: white; font-size: 10px; font-weight: 600; }
+.sc-header-account-control { position: relative; flex: none; }
+.sc-header-account-dot { position: absolute; top: 1px; right: 2px; width: 9px; height: 9px; border: 2px solid #fff; border-radius: 50%; background: #008556; }
+.sc-header-account-panel { position: absolute; z-index: 45; top: calc(100% + 10px); right: 0; width: min(280px, calc(100vw - 32px)); border: 1px solid #dce8dc; border-radius: 10px; padding: 16px; background: #fff; box-shadow: 0 8px 24px #0002; }
+.sc-header-account-panel > p { margin-bottom: 6px; color: #008556; font-size: 12px; }
+.sc-header-account-panel > strong { display: block; overflow-wrap: anywhere; font-size: 15px; font-weight: 500; }
+.sc-header-account-panel > span { display: block; overflow-wrap: anywhere; color: #696969; font-size: 12px; }
+.sc-menu-header .sc-header-account-panel > button { width: 100%; margin-top: 14px; border-top: 1px solid #edf1ed; padding-top: 12px; color: #008556; font-size: 14px; text-align: left; }
+.sc-menu-header .sc-header-account-panel > button:disabled { opacity: .6; cursor: wait; }
 @media (max-width: 1023px) {
   .sc-header-utility-links, .sc-header-links, .sc-menu-header .sc-header-account { display: none; }
+  .sc-menu-header .sc-header-account--signed-in { display: block; }
   .sc-header-nav-inner { padding-top: 16px; padding-bottom: 16px; }
   .sc-header-brand { height: 34px; }
   .sc-header-brand .restaurant-brand-mark { width: 27px; height: 32px; }

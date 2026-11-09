@@ -13,7 +13,7 @@ function getReturnUrl() {
       // Fall back to the restaurant homepage for an invalid return URL.
     }
   }
-  return '/'
+  return '/menu/combo'
 }
 
 export default function LoginPage() {

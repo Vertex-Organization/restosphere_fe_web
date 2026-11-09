@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import RestaurantBrand from '../ui/RestaurantBrand'
+import type { AuthUser } from '../../api/auth'
 import './MenuHeader.css'
 
 type MenuHeaderProps = {
   onSearch: () => void
   onCart: () => void
-  onMenu: () => void
   cartCount: number
   onNotice?: (message: string) => void
+  user: AuthUser | null
+  authLoading: boolean
+  loggingOut: boolean
+  onLogout: () => Promise<void>
 }
 
 function ToolbarIcon({ type }: { type: 'search' | 'user' | 'cart' }) {
@@ -21,10 +25,32 @@ function ToolbarIcon({ type }: { type: 'search' | 'user' | 'cart' }) {
   )
 }
 
-export default function MenuHeader({ onSearch, onCart, cartCount, onNotice }: MenuHeaderProps) {
+export default function MenuHeader({ onSearch, onCart, cartCount, onNotice, user, authLoading, loggingOut, onLogout }: MenuHeaderProps) {
   const [compact, setCompact] = useState(() => window.scrollY > 44)
   const [languageOpen, setLanguageOpen] = useState(false)
   const languageRef = useRef<HTMLDivElement>(null)
+  const [accountOpen, setAccountOpen] = useState(false)
+  const accountRef = useRef<HTMLDivElement>(null)
+  const accountTrigger = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!accountOpen) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (!accountRef.current?.contains(event.target as Node)) setAccountOpen(false)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setAccountOpen(false)
+        accountTrigger.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [accountOpen])
 
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > 44)
@@ -86,7 +112,17 @@ export default function MenuHeader({ onSearch, onCart, cartCount, onNotice }: Me
           <a className="sc-header-brand" href="/menu/combo" aria-label="The Sea's Crown — Trang chủ"><RestaurantBrand /></a>
           <div className="sc-header-actions">
             <button type="button" className="sc-header-action" aria-label="Tìm kiếm món ăn" onClick={onSearch}><ToolbarIcon type="search" /></button>
-            <a className="sc-header-action sc-header-account" href="/auth/login?returnUrl=%2Fmenu%2Fcombo" aria-label="Đăng nhập"><ToolbarIcon type="user" /></a>
+            {user ? <div className="sc-header-account-control" ref={accountRef}>
+              <button ref={accountTrigger} type="button" className="sc-header-action sc-header-account sc-header-account--signed-in" aria-label={`Tài khoản ${user.fullName || user.email}`} aria-expanded={accountOpen} aria-controls="sc-account-panel" onClick={() => setAccountOpen(!accountOpen)}>
+                <ToolbarIcon type="user" /><span className="sc-header-account-dot" aria-hidden="true" />
+              </button>
+              {accountOpen && <div className="sc-header-account-panel" id="sc-account-panel">
+                <p>Đã đăng nhập</p>
+                <strong>{user.fullName || user.email}</strong>
+                <span>{user.email}</span>
+                <button type="button" disabled={loggingOut} onClick={() => { void onLogout() }}>{loggingOut ? 'Đang đăng xuất…' : 'Đăng xuất'}</button>
+              </div>}
+            </div> : authLoading ? <button type="button" disabled className="sc-header-action sc-header-account" aria-label="Đang tải tài khoản"><ToolbarIcon type="user" /></button> : <a className="sc-header-action sc-header-account" href="/auth/login?returnUrl=%2Fmenu%2Fcombo" aria-label="Đăng nhập"><ToolbarIcon type="user" /></a>}
             <button type="button" className="sc-header-action" aria-label={`Giỏ hàng${cartCount ? `, ${cartCount} món` : ''}`} onClick={onCart}>
               <ToolbarIcon type="cart" />
               {cartCount > 0 && <span className="sc-header-cart-count">{cartCount > 99 ? '99+' : cartCount}</span>}

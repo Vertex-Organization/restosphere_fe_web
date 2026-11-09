@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { login } from '../../api/auth'
 
 const assets = '/sites/thepizzacompany-vn'
 const providers = [
@@ -8,65 +9,86 @@ const providers = [
   { name: 'Apple', image: 'apple.avif' },
 ]
 
-function validatePhone(value: string) {
-  if (!value.trim()) return 'Vui lòng nhập số điện thoại'
-  if (!/^(?:0|\+84|84)[35789]\d{8}$/.test(value.trim())) {
-    return 'Số điện thoại di động không hợp lệ'
+function validateEmail(value: string) {
+  if (!value.trim()) return 'Vui lòng nhập email'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) || value.trim().length > 254) {
+    return 'Địa chỉ email không hợp lệ'
   }
   return ''
 }
 
 export default function LoginForm() {
-  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [notice, setNotice] = useState('')
-  const phoneRef = useRef<HTMLInputElement>(null)
+  const [notice, setNotice] = useState<{ message: string; error?: boolean } | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false)
+  const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
-  const phoneError = submitted ? validatePhone(phone) : ''
+  const emailError = submitted ? validateEmail(email) : ''
   const passwordError = submitted && !password ? 'Vui lòng nhập mật khẩu' : ''
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setSubmitted(true)
-    setNotice('')
+  function showNotice(message: string) {
+    setNotice({ message })
+  }
 
-    if (validatePhone(phone)) {
-      phoneRef.current?.focus()
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (submittingRef.current) return
+    setSubmitted(true)
+    setNotice(null)
+
+    if (validateEmail(email)) {
+      emailRef.current?.focus()
     } else if (!password) {
       passwordRef.current?.focus()
     } else {
-      setNotice('Bản giao diện này chưa hỗ trợ đăng nhập tài khoản.')
+      submittingRef.current = true
+      setSubmitting(true)
+      try {
+        await login(email, password)
+        sessionStorage.setItem('sea-crown.login-success', 'true')
+        window.location.assign('/menu/combo')
+      } catch (error) {
+        setNotice({ message: error instanceof Error ? error.message : 'Không thể đăng nhập. Vui lòng thử lại.', error: true })
+        submittingRef.current = false
+        setSubmitting(false)
+      }
     }
   }
 
   return (
     <div className="pc-form-content" id="login-form">
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate aria-busy={submitting}>
         <h2 className="pc-welcome">Chào mừng bạn quay lại 👋</h2>
         <p className="pc-intro">Hãy đăng nhập để tiếp tục thưởng thức món ngon từ The Sea's Crown.</p>
 
         <div className="pc-fields">
           <div className="pc-field">
-            <label htmlFor="pc-phone">Điện thoại</label>
+            <label htmlFor="pc-email">Email</label>
             <input
-              ref={phoneRef}
-              id="pc-phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
+              ref={emailRef}
+              id="pc-email"
+              name="email"
+              type="email"
+              inputMode="email"
               autoComplete="username"
-              placeholder="Nhập số điện thoại"
-              value={phone}
-              aria-invalid={!!phoneError}
-              aria-describedby={phoneError ? 'pc-phone-error' : undefined}
+              autoCapitalize="none"
+              spellCheck={false}
+              maxLength={254}
+              placeholder="Nhập email"
+              value={email}
+              disabled={submitting}
+              aria-invalid={!!emailError}
+              aria-describedby={emailError ? 'pc-email-error' : undefined}
               onChange={(event) => {
-                setPhone(event.target.value)
-                setNotice('')
+                setEmail(event.target.value)
+                setNotice(null)
               }}
             />
-            {phoneError && <p className="pc-error" id="pc-phone-error">{phoneError}</p>}
+            {emailError && <p className="pc-error" id="pc-email-error">{emailError}</p>}
           </div>
 
           <div className="pc-field">
@@ -80,11 +102,13 @@ export default function LoginForm() {
                 autoComplete="current-password"
                 placeholder="Nhập mật khẩu"
                 value={password}
+                maxLength={128}
+                disabled={submitting}
                 aria-invalid={!!passwordError}
                 aria-describedby={passwordError ? 'pc-password-error' : undefined}
                 onChange={(event) => {
                   setPassword(event.target.value)
-                  setNotice('')
+                  setNotice(null)
                 }}
               />
               <button
@@ -92,6 +116,7 @@ export default function LoginForm() {
                 className="pc-password-toggle"
                 aria-label={passwordVisible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 aria-pressed={passwordVisible}
+                disabled={submitting}
                 onClick={() => setPasswordVisible(!passwordVisible)}
               >
                 <img src={`${assets}/${passwordVisible ? 'eye-on.svg' : 'eye-off.svg'}`} width="20" height="20" alt="" />
@@ -102,22 +127,22 @@ export default function LoginForm() {
         </div>
 
         <p className="pc-forgot-row">
-          <button className="pc-link pc-text-button pc-forgot" type="button" onClick={() => setNotice('Vui lòng liên hệ nhà hàng để được hỗ trợ khôi phục mật khẩu.')}>
+          <button className="pc-link pc-text-button pc-forgot" type="button" onClick={() => showNotice('Vui lòng liên hệ nhà hàng để được hỗ trợ khôi phục mật khẩu.')}>
             Quên mật khẩu
           </button>
         </p>
 
-        <button type="submit" className="pc-submit">Đăng nhập</button>
+        <button type="submit" className="pc-submit" disabled={submitting}>{submitting ? 'Đang đăng nhập…' : 'Đăng nhập'}</button>
         {notice && (
-          <p className="pc-notice" role="status">
-            {notice}
+          <p className={`pc-notice${notice.error ? ' pc-notice--error' : ''}`} role={notice.error ? 'alert' : 'status'}>
+            {notice.message}
           </p>
         )}
       </form>
 
       <p className="pc-register">
         Bạn chưa có tài khoản.{' '}
-        <button className="pc-link pc-text-button" type="button" onClick={() => setNotice('Chức năng đăng ký tài khoản hiện chưa khả dụng.')}>
+        <button className="pc-link pc-text-button" type="button" onClick={() => showNotice('Chức năng đăng ký tài khoản hiện chưa khả dụng.')}>
           Đăng ký tài khoản
         </button>
       </p>
@@ -131,7 +156,7 @@ export default function LoginForm() {
               type="button"
               aria-label={`Đăng nhập với ${provider.name}`}
               title={`Đăng nhập với ${provider.name}`}
-              onClick={() => setNotice(`Đăng nhập với ${provider.name} hiện chưa khả dụng.`)}
+              onClick={() => showNotice(`Đăng nhập với ${provider.name} hiện chưa khả dụng.`)}
             >
               <img src={`${assets}/${provider.image}`} width="40" height="40" alt={provider.name} />
             </button>
