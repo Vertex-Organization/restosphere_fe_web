@@ -1,0 +1,368 @@
+.sc-menu-footer {
+  font-family: 'PC Poppins', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #595959;
+}
+
+.sc-footer-ribbon {
+  height: 16px;
+  background: url('/sites/thepizzacompany-vn/checker-border.png') center / auto 16px repeat-x;
+}
+
+.sc-footer-content {
+  padding: 16px 0;
+}
+
+.sc-menu-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sc-menu-footer a:hover,
+.sc-menu-footer button:hover {
+  color: #008556;
+}
+
+.sc-menu-footer a:focus-visible,
+.sc-menu-footer button:focus-visible,
+.sc-footer-floating a:focus-visible,
+.sc-footer-floating button:focus-visible {
+  outline: 2px solid #008556;
+  outline-offset: 4px;
+}
+
+.sc-footer-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sc-footer-brand-column {
+  position: relative;
+  min-width: 0;
+  padding-right: 42px;
+}
+
+.sc-footer-brand-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 50px;
+}
+
+.sc-footer-brand-link .restaurant-brand-name {
+  font-size: 19px;
+}
+
+.sc-footer-restaurant-info {
+  margin: 16px 0 0;
+  line-height: 1.4;
+}
+
+.sc-footer-back-top {
+  position: absolute;
+  top: 9px;
+  right: 0;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6.4px 6.4px 20.8px 6.4px;
+  background: #b7dfb8;
+  color: #262626;
+  cursor: pointer;
+}
+
+.sc-footer-menu-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 16px;
+}
+
+.sc-footer-column {
+  min-width: 0;
+}
+
+.sc-footer-column h4 {
+  margin: 0;
+  color: #262626;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.sc-footer-links {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sc-footer-links li + li {
+  margin-top: 8px;
+}
+
+.sc-footer-links a,
+.sc-footer-links span,
+.sc-footer-links button {
+  line-height: 1.4;
+}
+
+.sc-footer-links button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sc-footer-contact-column {
+  grid-column: 1 / -1;
+}
+
+.sc-footer-contact-notice {
+  margin: 12px 0 0;
+  color: #008556;
+  font-size: 14px;
+}
+
+.sc-footer-bottom {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.sc-footer-copyright {
+  padding-top: 12px;
+  border-top: 1px solid #9d9d9d;
+  text-align: center;
+}
+
+.sc-footer-bottom p {
+  margin: 0;
+  color: #262626;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sc-footer-bottom .sc-footer-reference-note {
+  margin-top: 12px;
+  color: #595959;
+  font-size: 12px;
+}
+
+.sc-footer-social {
+  padding-top: 12px;
+  border-top: 1px solid #9d9d9d;
+  text-align: center;
+}
+
+.sc-footer-social-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.sc-footer-social-links a {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.sc-footer-social-links img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.sc-footer-floating {
+  position: fixed;
+  z-index: 50;
+  right: 16px;
+  bottom: 16px;
+  font-family: 'PC Poppins', Arial, sans-serif;
+}
+
+.sc-footer-support-toggle {
+  display: block;
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sc-footer-support-toggle svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sc-footer-support-panel {
+  position: absolute;
+  right: 16px;
+  bottom: calc(100% + 4px);
+  width: 200px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 4px 16px #0000001a;
+  color: #595959;
+}
+
+.sc-footer-support-panel p {
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid #59595933;
+  color: #595959;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.sc-footer-support-panel a {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.sc-footer-support-panel a + a {
+  border-top: 1px solid #59595933;
+}
+
+.sc-footer-support-panel a:hover {
+  background: #f3f8f1;
+}
+
+.sc-footer-support-panel img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .sc-footer-content {
+    padding: 40px 0;
+  }
+
+  .sc-footer-back-top {
+    display: none;
+  }
+
+  .sc-footer-brand-column {
+    padding-right: 0;
+  }
+
+  .sc-footer-menu-columns {
+    grid-template-columns: 1fr 1fr 1.2fr;
+  }
+
+  .sc-footer-contact-column {
+    grid-column: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sc-footer-main {
+    flex-direction: row;
+    gap: 40px;
+    min-height: 247px;
+  }
+
+  .sc-footer-brand-column {
+    display: flex;
+    flex: 0 0 240px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .sc-footer-brand-link .restaurant-brand-name {
+    font-size: 20px;
+  }
+
+  .sc-footer-menu-columns {
+    flex: 1;
+    grid-template-columns: 1fr 1fr 1.3fr;
+    gap: 16px;
+  }
+
+  .sc-footer-column h4 {
+    font-size: 18px;
+  }
+
+  .sc-footer-links {
+    margin-top: 16px;
+  }
+
+  .sc-footer-links li + li {
+    margin-top: 12px;
+  }
+
+  .sc-footer-bottom {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    min-height: 73px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #9d9d9d;
+  }
+
+  .sc-footer-copyright {
+    max-width: 460px;
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .sc-footer-social {
+    padding: 0;
+    border: 0;
+    text-align: right;
+  }
+
+  .sc-footer-social-links {
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  .sc-footer-support-toggle {
+    width: 110px;
+    height: 110px;
+  }
+
+  .sc-footer-support-panel a {
+    font-size: 16px;
+  }
+
+  .sc-footer-support-panel img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sc-footer-main {
+    gap: 90px;
+  }
+
+  .sc-footer-brand-column {
+    flex-basis: 300px;
+  }
+}

@@ -8,7 +8,7 @@ v1.2 ngày 09/11/2026. Tài liệu còn ở trạng thái dự thảo; các quy�
 Luồng chính: đặt bàn → xác nhận → mở lượt → gọi món → bếp → phục vụ →
 thanh toán → trả bàn.
 
-Các module MVP hiện là khung thư mục. Trang `/auth/login` dùng thương hiệu The Sea's Crown trên bố cục tham khảo The Pizza Company; xác thực và API nghiệp vụ chưa được tích hợp.
+Các module nội bộ MVP hiện là khung thư mục. Đã có trang `/auth/login` và thực đơn công khai `/menu/combo`, dùng thương hiệu The Sea's Crown trên bố cục tham khảo The Pizza Company. Xác thực, đặt món và API nghiệp vụ chưa được tích hợp.
 
 ## Chạy dự án
 
@@ -34,7 +34,7 @@ src/
 ├── components/
 │   ├── ui/                  # Thành phần dùng chung: Button, Modal, Table...
 │   ├── auth/                # Đăng nhập nhân viên
-│   ├── menu/                # Thực đơn, trạng thái món, biểu mẫu quản trị món
+│   ├── menu/                # Thành phần thực đơn công khai và dữ liệu mẫu
 │   ├── reservations/        # Form đặt bàn, danh sách và xác nhận đặt bàn
 │   ├── tables/              # Sơ đồ bàn, khu vực, mở/hủy lượt phục vụ
 │   ├── orders/              # Giỏ tạm, đợt gọi món, hủy và xác nhận đã phục vụ
@@ -87,3 +87,16 @@ Nguồn: https://thepizzacompany.vn/auth/login?returnUrl=https%3A%2F%2Fthepizzac
 - Form hợp lệ hiển thị trạng thái chưa hỗ trợ đăng nhập; không gửi hoặc lưu thông tin tài khoản.
 - Các nút đăng ký, quên mật khẩu và đăng nhập mạng xã hội hiển thị thông báo khi chưa có tính năng tương ứng; không dẫn người dùng sang website nguồn. Bản tiếng Anh hiện chưa khả dụng.
 - Bằng chứng khảo sát, so sánh và kiểm tra trình duyệt: [docs/research/thepizzacompany-vn/brief.md](docs/research/thepizzacompany-vn/brief.md).
+
+## Giao diện thực đơn tham khảo
+
+Nguồn: https://thepizzacompany.vn/menu/combo
+
+- Chạy `npm run dev`, mở `http://localhost:5173/menu/combo`.
+- Trang: `src/pages/public/ComboMenuPage.tsx`; các thành phần nằm trong `src/components/menu/`.
+- Có carousel 6 banner, thanh danh mục cuộn ngang và ghim khi cuộn, lọc nhóm, tìm món, đánh dấu yêu thích, chọn thành phần/biến thể và giỏ hàng minh họa.
+- Các đường dẫn `/menu/pizza`, `/menu/pizza-caro`, `/menu/my-y`, `/menu/ga-ngon-vibe`, `/menu/khai-vi`, `/menu/salad`, `/menu/nui-bo-lo`, `/menu/thuc-uong` mở vị trí tương ứng trong cùng thực đơn. Truy vấn `?tag=moi`, `ban-chay`, `chay`, `cay` lọc nhãn món.
+- `menuData.ts` chứa dữ liệu tĩnh trích từ nguồn: 8 danh mục, 121 thẻ món (119 món riêng biệt), gồm 11 combo và lựa chọn bắt buộc của từng combo. Ảnh, tên món, giá và chương trình là nội dung mẫu của website nguồn, cần thay bằng thực đơn của nhà hàng khi tích hợp API.
+- Chi tiết món mở trong hộp thoại tại local. Giỏ hàng và yêu thích chỉ tồn tại trong phiên trang; nút đặt hàng thông báo chưa hỗ trợ và không gửi đơn.
+- Liên kết thông tin, mạng xã hội và hỗ trợ ngoài phạm vi dẫn sang website nguồn, có ghi chú tham khảo ở footer. Thông tin liên hệ nhà hàng đang chờ cập nhật.
+- Đã đối chiếu desktop/mobile, kiểm tra 6 kích thước màn hình, luồng giỏ hàng và điều hướng đăng nhập. Xem [khảo sát và bằng chứng kiểm tra](docs/research/thepizzacompany-vn/menu-combo/brief.md).

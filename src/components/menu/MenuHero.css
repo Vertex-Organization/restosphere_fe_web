@@ -1,0 +1,22 @@
+.sc-hero-window { position: relative; aspect-ratio: 5 / 2; overflow: hidden; border-radius: 16px; touch-action: pan-y; }
+.sc-hero-track { display: flex; width: 100%; height: 100%; transition: transform .6s ease; }
+.sc-hero-track-reset { transition: none; }
+.sc-hero-slide { flex: 0 0 100%; min-width: 0; height: 100%; }
+.sc-hero-select { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.sc-hero-select img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sc-hero-select:focus-visible { outline: 3px solid #008556; outline-offset: -4px; }
+.sc-hero-arrow { position: absolute; top: 50%; z-index: 1; display: flex; align-items: center; width: 36px; height: 36px; border: 0; padding: 0; border-radius: 50%; background: #0000003d; transform: translateY(-50%); cursor: pointer; transition: filter .3s; }
+.sc-hero-arrow img { display: block; width: 100%; height: auto; }
+.sc-hero-arrow:hover { filter: brightness(1.25); }
+.sc-hero-arrow:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+.sc-hero-prev { left: 16px; }
+.sc-hero-next { right: 16px; transform: translateY(-50%) rotate(180deg); }
+.sc-hero-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1023px) {
+  .sc-hero-arrow { width: 24px; height: 24px; }
+  .sc-hero-prev { left: 8px; }
+  .sc-hero-next { right: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-hero-track { transition: none; }
+}

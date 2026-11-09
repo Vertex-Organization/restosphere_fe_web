@@ -1,0 +1,70 @@
+{
+  "source": "https://thepizzacompany.vn/menu/combo",
+  "capturedOn": "2026-11-09",
+  "counts": {
+    "sections": 8,
+    "cards": 121,
+    "uniqueItems": 119,
+    "combos": 11,
+    "heroSlides": 6
+  },
+  "desktop": {
+    "viewport": {
+      "w": 1440,
+      "h": 1000
+    },
+    "hero": {
+      "x": 120,
+      "y": 141,
+      "w": 1200,
+      "h": 480
+    },
+    "firstBanner": {
+      "x": 120,
+      "y": 1004,
+      "w": 1200,
+      "h": 200
+    }
+  },
+  "mobile": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "hero": {
+      "x": 16,
+      "y": 111,
+      "w": 358,
+      "h": 143.1875
+    },
+    "firstBanner": {
+      "x": 16,
+      "y": 517.1875,
+      "w": 358,
+      "h": 59.65625
+    }
+  },
+  "carousel": {
+    "delayMs": 4000,
+    "transitionMs": 600,
+    "loop": true
+  },
+  "priceCheck": {
+    "itemId": "01a0ebd4-8ee6-77ad-b07b-d09d7e893bdd",
+    "basePrice": 336000,
+    "choices": [
+      {
+        "id": "01a0eaec-60e1-76de-90ce-4a488c97163f",
+        "name": "Pizza Croissant Hải Sản Pesto Xanh",
+        "priceDelta": 40000
+      },
+      {
+        "id": "016f5e66-e800-7703-93d3-2a2e218c56a4",
+        "name": "Gà Nướng BBQ Vắt Chanh (2 miếng)",
+        "priceDelta": 0
+      }
+    ],
+    "totalForTwo": 752000,
+    "totalForThree": 1128000
+  }
+}

@@ -1,0 +1,17 @@
+.restaurant-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #008556;
+}
+
+.restaurant-brand-mark {
+  flex: none;
+}
+
+.restaurant-brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}

@@ -1,35 +1,3 @@
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-regular.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-medium.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-semibold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Navigation';
-  src: url('/sites/thepizzacompany-vn/tpc-go-bold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
 .pc-page {
   --pc-primary: #4da648;
   --pc-primary-hover: #008556;
@@ -97,21 +65,6 @@
 }
 .pc-logo {
   justify-self: center;
-}
-.restaurant-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #008556;
-}
-.restaurant-brand-mark {
-  flex: none;
-}
-.restaurant-brand-name {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
 }
 .pc-language {
   position: relative;

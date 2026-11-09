@@ -1,0 +1,53 @@
+.sc-menu-header { display: contents; }
+.sc-header-utility { background: #f5f5f5; padding: 10px 0; }
+.sc-header-utility-inner { display: flex; justify-content: space-between; align-items: center; }
+.sc-menu-header button, .sc-menu-header a { color: inherit; font: inherit; }
+.sc-menu-header button { border: 0; padding: 0; background: none; cursor: pointer; }
+.sc-menu-header a { text-decoration: none; }
+.sc-menu-header button:focus-visible, .sc-menu-header a:focus-visible { outline: 2px solid #008556; outline-offset: 4px; }
+.sc-header-location { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px !important; font-weight: 600 !important; text-decoration: underline; }
+.sc-header-location img { flex: none; }
+.sc-header-location span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-header-utility-links { display: flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 500; }
+.sc-header-utility-links > button:hover, .sc-header-links a:hover { color: #008556; }
+.sc-header-divider { width: 1px; height: 12px; background: currentColor; }
+.sc-header-language { position: relative; }
+.sc-header-language button { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.sc-header-language-options { position: absolute; z-index: 40; right: 0; top: calc(100% + 12px); min-width: 154px; padding: 6px; border: 1px solid #e7e7e7; border-radius: 8px; background: white; box-shadow: 0 8px 20px #0002; }
+.sc-header-language-options button { width: 100%; padding: 8px; border-radius: 4px; text-align: left; }
+.sc-header-language-options button:not(:disabled):hover { background: #f2f7f3; }
+.sc-header-language-options button span { margin-left: auto; color: #008556; }
+.sc-header-language-options button:disabled { opacity: .4; cursor: default; }
+.sc-header-nav { position: sticky; top: 0; z-index: 22; margin-top: 1px; }
+.sc-header-nav-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; padding-top: 24px; padding-bottom: 24px; }
+.sc-header-nav-compact .sc-header-nav-inner { padding-top: 8px; padding-bottom: 8px; }
+.sc-header-nav-compact { background: #fff; }
+.sc-header-links { display: flex; align-items: center; gap: 32px; font-size: 18px; white-space: nowrap; }
+.sc-header-home { font-weight: 600 !important; }
+.sc-header-brand { display: flex; justify-self: center; align-items: center; height: 48px; }
+.sc-header-brand .restaurant-brand { gap: 7px; }
+.sc-header-brand .restaurant-brand-mark { width: 36px; height: 40px; }
+.sc-header-brand .restaurant-brand-name { font-size: 19px; }
+.sc-header-actions { display: flex; justify-content: flex-end; align-items: center; gap: 24px; }
+.sc-menu-header .sc-header-action { position: relative; display: block; width: 42px; height: 42px; flex: none; }
+.sc-header-action > svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 2px 1px #00000014); transition: transform .3s; }
+.sc-header-icon-surface { fill: #ffffff80; transition: fill .3s; }
+.sc-header-action:hover > svg { transform: scale(1.05); }
+.sc-header-action:hover .sc-header-icon-surface { fill: #fff; stroke: #cde1cb; }
+.sc-header-cart-count { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 20px; background: #008556; color: white; font-size: 10px; font-weight: 600; }
+@media (max-width: 1023px) {
+  .sc-header-utility-links, .sc-header-links, .sc-menu-header .sc-header-account { display: none; }
+  .sc-header-nav-inner { padding-top: 16px; padding-bottom: 16px; }
+  .sc-header-brand { height: 34px; }
+  .sc-header-brand .restaurant-brand-mark { width: 27px; height: 32px; }
+  .sc-header-brand .restaurant-brand-name { font-size: 14px; }
+  .sc-header-brand .restaurant-brand { gap: 4px; }
+  .sc-header-actions { gap: 8px; }
+  .sc-menu-header .sc-header-action { width: 34px; height: 34px; }
+  .sc-header-location span { max-width: 372px; }
+}
+@media (max-width: 374px) {
+  .sc-header-brand .restaurant-brand-name { font-size: 13px; }
+  .sc-header-brand .restaurant-brand-mark { width: 23px; }
+  .sc-header-actions { gap: 4px; }
+}

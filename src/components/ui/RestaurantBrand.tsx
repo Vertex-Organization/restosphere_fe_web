@@ -1,3 +1,5 @@
+import './RestaurantBrand.css'
+
 export default function RestaurantBrand() {
   return (
     <span className="restaurant-brand">
