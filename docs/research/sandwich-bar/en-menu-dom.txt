@@ -1,0 +1,76 @@
+<html {}>
+ <head {}>
+  <meta {}>
+  <meta {"name": "viewport"}>
+  <link {}>
+  <link {"href": "/_next/static/chunks/475d9feb0ff63adb.css?dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+  <link {"href": "/_next/static/chunks/0c7c0a765aca78df.js?dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+  <link {"href": "https://www.googletagmanager.com/gtag/js?id=G-DEFPCXB0RN"}>
+  <meta {"name": "next-size-adjust"}>
+  <title {}>
+   The Sandwich Bar - Belegde broodjes en Catering
+  <meta {"name": "description"}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {"name": "twitter:card"}>
+  <meta {"name": "twitter:title"}>
+  <meta {"name": "twitter:description"}>
+  <meta {"name": "twitter:image"}>
+  <link {"href": "/icon?c9bfc39cabb255e3", "type": "image/png"}>
+ <body {}>
+  <div {}>
+  <div {"class": "poppins_f213ca71-module__cyaqIW__className antialiased"}>
+   <div {"class": "fixed inset-0 z-[9000] bg-plum overflow-hidden"}>
+    <div {"class": "absolute h-px bg-cream/80", "style": "top:calc(50% + 64px);left:-400px;width:0"}>
+    <div {"class": "absolute inset-0 flex items-center"}>
+     <img {"src": "/images/movingcar.svg", "alt": "", "class": "h-32 w-auto invert sepia-[.5] saturate-[2] brightness-[.8]", "style": "transform:translateX(-400px)"}>
+   <nav {"class": "pointer-events-none fixed inset-x-0 top-0 z-50"}>
+    <div {"class": "relative flex items-start justify-between px-10 pt-10"}>
+     <div {"class": "pointer-events-auto flex flex-col gap-5"}>
+      <a {"href": "https://instagram.com/thesandwichbarams", "class": "flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream"}>
+       <svg {"width": "22", "height": "22"}>
+        <rect {"width": "20", "height": "20"}>
+        <circle {}>
+        <circle {}>
+      <a {"href": "http://tiktok.com/@thesandwichbaramsterdam", "class": "flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream"}>
+       <svg {"width": "22", "height": "22"}>
+        <path {}>
+      <div {"class": "flex items-center text-xs text-cream/50 pt-1"}>
+       <a {"class": "px-2 py-1 transition-colors duration-200 hover:text-cream ", "href": "/nl/menu"}>
+        NL
+       <span {}>
+        /
+       <a {"class": "px-2 py-1 transition-colors duration-200 hover:text-cream text-cream font-semibold", "href": "/en/menu"}>
+        EN
+     <div {"class": "pointer-events-auto absolute left-1/2 top-6", "style": "transform:translate(calc(-50% + 0px), 0px);transition:transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)"}>
+      <a {"href": "/en"}>
+       <img {"alt": "The Sandwich Bar Catering", "width": "160", "height": "80", "class": "h-auto w-24 md:w-30 rounded-full", "style": "color:transparent", "src": "/_next/image?url=%2Fimages%2Flogo.jpeg&w=384&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "pointer-events-auto flex flex-col md:flex-row items-end md:items-center gap-3"}>
+      <div {"style": "display:inline-block"}>
+       <a {"class": "rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block", "href": "/en/menu"}>
+        Menu
+      <div {"style": "display:inline-block"}>
+       <a {"class": "rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block", "href": "/en/catering"}>
+        Catering
+   <main {"class": "min-h-screen bg-cream pt-24"}>
+    <div {"class": "py-8 max-w-4xl mx-auto px-4"}>
+     <h1 {"class": "mb-4 text-left text-4xl font-bold text-plum md:text-5xl"}>
+      Our Menu
+    <section {"id": "menu", "class": "px-4 py-12"}>
+     <div {"class": "mx-auto max-w-5xl flex flex-col md:flex-row gap-6 items-start"}>
+      <div {"class": "w-full md:flex-[2] min-w-0"}>
+       <template {}>
+       <div {"class": "w-full animate-pulse rounded-2xl bg-white/50", "style": "aspect-ratio:1 / 1.41"}>
+      <div {"class": "w-full md:flex-[1] min-w-0"}>
+       <img {"alt": "Drink menu", "width": "0", "height": "0", "class": "w-full h-auto rounded-2xl shadow-lg", "style": "color:transparent", "src": "/_next/image?url=%2Fimages%2Fdrinkmenu.jpeg&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+   <div {"class": "pointer-events-none fixed inset-0 z-[9999] overflow-clip"}>
+    <div {"class": "absolute inset-0 text-plum"}>
+     <svg {"width": "100%", "class": "absolute top-[-15%] left-[-15%] h-[130%] w-[130%]"}>
+      <path {}>
+  <template {}>
+  <template {}>

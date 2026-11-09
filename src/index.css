@@ -1,61 +1,22 @@
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-regular.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-medium.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Poppins';
-  src: url('/sites/thepizzacompany-vn/poppins-semibold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'PC Navigation';
-  src: url('/sites/thepizzacompany-vn/tpc-go-bold.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-:root {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
-  color: #1f2937;
-  background: #fff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  min-height: 100svh;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
+@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/a218039a3287bcfd-s.p.4a23d71b.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/8e6fa89aa22d24ec-s.p.3aec397d.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/e2334d715941921e-s.p.d82a9aff.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:Poppins;src:url('/sites/sandwich-bar/fonts/47fe1b7cd6e6ed85-s.p.855a563b.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:Tomatoes;src:url('/sites/sandwich-bar/fonts/tomatoes.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+:root{font-family:Poppins,sans-serif;line-height:1.5;color:var(--color-plum);background:var(--color-cream);font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;--color-cream:#fdf4e5;--color-plum:#4d343f;--color-dark:#382628;--color-muted:#685d5e}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{margin:0;min-width:320px}
+body,h1,h2,h3,h4,p{margin:0}
+button,input,select,textarea{font:inherit}
+button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer;color:inherit}
+button:disabled{cursor:not-allowed}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #c68846;outline-offset:5px}
+::selection{background:var(--color-plum);color:var(--color-cream)}
+.skip-link{position:fixed;top:10px;left:10px;z-index:10000;background:var(--color-cream);padding:12px 20px;border-radius:30px;transform:translateY(-160%)}
+.skip-link:focus{transform:translateY(0)}
+.not-found{min-height:70vh;padding:180px 24px 100px;text-align:center}.not-found h1{font-size:96px}.not-found p{margin-bottom:24px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

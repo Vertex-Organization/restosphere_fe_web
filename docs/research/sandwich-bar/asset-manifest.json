@@ -1,0 +1,570 @@
+[
+  {
+    "url": "https://www.thesandwichbar.nl/images/Mannetjes-broodje-beige.png",
+    "path": "public/sites/sandwich-bar/Mannetjes-broodje-beige.png",
+    "contentType": "image/png",
+    "bytes": 229532,
+    "dimensions": [
+      2557,
+      2934
+    ],
+    "format": "PNG"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar - Vrijstaand 1.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar - Vrijstaand 1.webp",
+    "contentType": "image/webp",
+    "bytes": 503830,
+    "dimensions": [
+      2400,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar - Vrijstaand 2.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar - Vrijstaand 2.webp",
+    "contentType": "image/webp",
+    "bytes": 339370,
+    "dimensions": [
+      2400,
+      1008
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar - Vrijstaand 3.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar - Vrijstaand 3.webp",
+    "contentType": "image/webp",
+    "bytes": 225524,
+    "dimensions": [
+      2400,
+      988
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 01.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 01.webp",
+    "contentType": "image/webp",
+    "bytes": 386014,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 02.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 02.webp",
+    "contentType": "image/webp",
+    "bytes": 261122,
+    "dimensions": [
+      1606,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 03.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 03.webp",
+    "contentType": "image/webp",
+    "bytes": 750188,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 04.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 04.webp",
+    "contentType": "image/webp",
+    "bytes": 761678,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 05.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 05.webp",
+    "contentType": "image/webp",
+    "bytes": 333610,
+    "dimensions": [
+      1619,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 06.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 06.webp",
+    "contentType": "image/webp",
+    "bytes": 558042,
+    "dimensions": [
+      1599,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 07.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 07.webp",
+    "contentType": "image/webp",
+    "bytes": 789544,
+    "dimensions": [
+      1602,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/The Sandwichbar 08.webp",
+    "path": "public/sites/sandwich-bar/The Sandwichbar 08.webp",
+    "contentType": "image/webp",
+    "bytes": 271276,
+    "dimensions": [
+      1602,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/drinkmenu.jpeg",
+    "path": "public/sites/sandwich-bar/drinkmenu.jpeg",
+    "contentType": "image/jpeg",
+    "bytes": 44006,
+    "dimensions": [
+      354,
+      1280
+    ],
+    "format": "JPEG"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/footer-bg.svg",
+    "path": "public/sites/sandwich-bar/footer-bg.svg",
+    "contentType": "image/svg+xml",
+    "bytes": 988913
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwich-bar-14.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwich-bar-14.webp",
+    "contentType": "image/webp",
+    "bytes": 447734,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwich-bar-26.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwich-bar-26.webp",
+    "contentType": "image/webp",
+    "bytes": 476636,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwich-bar-27.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwich-bar-27.webp",
+    "contentType": "image/webp",
+    "bytes": 465850,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-01.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-01.webp",
+    "contentType": "image/webp",
+    "bytes": 351230,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-02.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-02.webp",
+    "contentType": "image/webp",
+    "bytes": 554828,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-03.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-03.webp",
+    "contentType": "image/webp",
+    "bytes": 397900,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-04.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-04.webp",
+    "contentType": "image/webp",
+    "bytes": 325396,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-05.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-05.webp",
+    "contentType": "image/webp",
+    "bytes": 315838,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-06.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-06.webp",
+    "contentType": "image/webp",
+    "bytes": 376842,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-07.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-07.webp",
+    "contentType": "image/webp",
+    "bytes": 285776,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-08.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-08.webp",
+    "contentType": "image/webp",
+    "bytes": 313238,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-09.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-09.webp",
+    "contentType": "image/webp",
+    "bytes": 216542,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-10.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-10.webp",
+    "contentType": "image/webp",
+    "bytes": 99744,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-11.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-11.webp",
+    "contentType": "image/webp",
+    "bytes": 241806,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-12.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-12.webp",
+    "contentType": "image/webp",
+    "bytes": 181178,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-13.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-13.webp",
+    "contentType": "image/webp",
+    "bytes": 162320,
+    "dimensions": [
+      1601,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-15.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-15.webp",
+    "contentType": "image/webp",
+    "bytes": 215162,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-16.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-16.webp",
+    "contentType": "image/webp",
+    "bytes": 155238,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-17.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-17.webp",
+    "contentType": "image/webp",
+    "bytes": 267294,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-18.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-18.webp",
+    "contentType": "image/webp",
+    "bytes": 298028,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-19.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-19.webp",
+    "contentType": "image/webp",
+    "bytes": 150822,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-20.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-20.webp",
+    "contentType": "image/webp",
+    "bytes": 359444,
+    "dimensions": [
+      1602,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-21.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-21.webp",
+    "contentType": "image/webp",
+    "bytes": 221724,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-22.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-22.webp",
+    "contentType": "image/webp",
+    "bytes": 175312,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-23.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-23.webp",
+    "contentType": "image/webp",
+    "bytes": 151086,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-24.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-24.webp",
+    "contentType": "image/webp",
+    "bytes": 384806,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/locatieshoot/the-sandwichbar-25.webp",
+    "path": "public/sites/sandwich-bar/locatieshoot/the-sandwichbar-25.webp",
+    "contentType": "image/webp",
+    "bytes": 162340,
+    "dimensions": [
+      1500,
+      2400
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/logo.jpeg",
+    "path": "public/sites/sandwich-bar/logo.jpeg",
+    "contentType": "image/jpeg",
+    "bytes": 86822,
+    "dimensions": [
+      1280,
+      1275
+    ],
+    "format": "JPEG"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/movingcar.svg",
+    "path": "public/sites/sandwich-bar/movingcar.svg",
+    "contentType": "image/svg+xml",
+    "bytes": 212849
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/tsb1-location.webp",
+    "path": "public/sites/sandwich-bar/tsb1-location.webp",
+    "contentType": "image/webp",
+    "bytes": 163664,
+    "dimensions": [
+      1264,
+      842
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/tsb2-location.webp",
+    "path": "public/sites/sandwich-bar/tsb2-location.webp",
+    "contentType": "image/webp",
+    "bytes": 216024,
+    "dimensions": [
+      896,
+      1195
+    ],
+    "format": "WEBP"
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/41e95f694c5c4549-s.666bad7d.woff2",
+    "path": "public/sites/sandwich-bar/fonts/41e95f694c5c4549-s.666bad7d.woff2",
+    "contentType": "font/woff2",
+    "bytes": 39504
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/6c55a692938ebbbc-s.0a77efb4.woff2",
+    "path": "public/sites/sandwich-bar/fonts/6c55a692938ebbbc-s.0a77efb4.woff2",
+    "contentType": "font/woff2",
+    "bytes": 5640
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/a218039a3287bcfd-s.p.4a23d71b.woff2",
+    "path": "public/sites/sandwich-bar/fonts/a218039a3287bcfd-s.p.4a23d71b.woff2",
+    "contentType": "font/woff2",
+    "bytes": 7900
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/bdc7e24a509eb931-s.43b0b13e.woff2",
+    "path": "public/sites/sandwich-bar/fonts/bdc7e24a509eb931-s.43b0b13e.woff2",
+    "contentType": "font/woff2",
+    "bytes": 39160
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/0da9c7f357bd9d4d-s.b2288445.woff2",
+    "path": "public/sites/sandwich-bar/fonts/0da9c7f357bd9d4d-s.b2288445.woff2",
+    "contentType": "font/woff2",
+    "bytes": 5496
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/8e6fa89aa22d24ec-s.p.3aec397d.woff2",
+    "path": "public/sites/sandwich-bar/fonts/8e6fa89aa22d24ec-s.p.3aec397d.woff2",
+    "contentType": "font/woff2",
+    "bytes": 7740
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/0a7740363b4d4863-s.95e4158a.woff2",
+    "path": "public/sites/sandwich-bar/fonts/0a7740363b4d4863-s.95e4158a.woff2",
+    "contentType": "font/woff2",
+    "bytes": 39384
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/5f9d24ebef5d5292-s.bd593fbe.woff2",
+    "path": "public/sites/sandwich-bar/fonts/5f9d24ebef5d5292-s.bd593fbe.woff2",
+    "contentType": "font/woff2",
+    "bytes": 5552
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/e2334d715941921e-s.p.d82a9aff.woff2",
+    "path": "public/sites/sandwich-bar/fonts/e2334d715941921e-s.p.d82a9aff.woff2",
+    "contentType": "font/woff2",
+    "bytes": 7992
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/b53057dbf91a7acf-s.c55744ae.woff2",
+    "path": "public/sites/sandwich-bar/fonts/b53057dbf91a7acf-s.c55744ae.woff2",
+    "contentType": "font/woff2",
+    "bytes": 39204
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/798ea22d9983e047-s.b460e02c.woff2",
+    "path": "public/sites/sandwich-bar/fonts/798ea22d9983e047-s.b460e02c.woff2",
+    "contentType": "font/woff2",
+    "bytes": 5448
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/_next/static/media/47fe1b7cd6e6ed85-s.p.855a563b.woff2",
+    "path": "public/sites/sandwich-bar/fonts/47fe1b7cd6e6ed85-s.p.855a563b.woff2",
+    "contentType": "font/woff2",
+    "bytes": 7848
+  },
+  {
+    "url": "https://www.thesandwichbar.nl/images/logo-white.jpeg",
+    "path": "public/sites/sandwich-bar/logo-white.jpeg",
+    "contentType": "image/jpeg",
+    "bytes": 72995,
+    "dimensions": [
+      1280,
+      1275
+    ],
+    "format": "JPEG"
+  }
+]

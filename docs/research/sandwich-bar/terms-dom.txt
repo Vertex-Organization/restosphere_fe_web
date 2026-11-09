@@ -1,0 +1,81 @@
+<body >
+ <div >
+ <div class="poppins_f213ca71-module__cyaqIW__className antialiased">
+  <div class="fixed inset-0 z-[9000] bg-plum overflow-hidden">
+   <div class="absolute h-px bg-cream/80" style="top:calc(50% + 64px);left:-400px;width:0">
+   <div class="absolute inset-0 flex items-center">
+    <img src="/images/movingcar.svg" alt="" class="h-32 w-auto invert sepia-[.5] saturate-[2] brightness-[.8]" style="transform:translateX(-400px)">
+  <nav class="pointer-events-none fixed inset-x-0 top-0 z-50">
+   <div class="relative flex items-start justify-between px-10 pt-10">
+    <div class="pointer-events-auto flex flex-col gap-5">
+     <a href="https://instagram.com/thesandwichbarams" class="flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream">
+     <a href="http://tiktok.com/@thesandwichbaramsterdam" class="flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream">
+     <div class="flex items-center text-xs text-cream/50 pt-1">
+      <a class="px-2 py-1 transition-colors duration-200 hover:text-cream text-cream font-semibold" href="/nl/terms">
+       NL
+      <span >
+       /
+      <a class="px-2 py-1 transition-colors duration-200 hover:text-cream " href="/en/terms">
+       EN
+    <div class="pointer-events-auto absolute left-1/2 top-6" style="transform:translate(calc(-50% + 0px), 0px);transition:transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)">
+     <a href="/nl">
+      <img alt="The Sandwich Bar Catering" class="h-auto w-24 md:w-30 rounded-full" style="color:transparent" src="/_next/image?url=%2Fimages%2Flogo.jpeg&w=384&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg">
+    <div class="pointer-events-auto flex flex-col md:flex-row items-end md:items-center gap-3">
+     <div style="display:inline-block">
+      <a class="rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block" href="/nl/menu">
+       Menu
+     <div style="display:inline-block">
+      <a class="rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block" href="/nl/catering">
+       Catering
+  <main class="min-h-screen bg-cream px-4 pt-24">
+   <div class="mx-auto max-w-3xl py-16">
+    <h1 class="mb-10 text-4xl font-bold text-dark md:text-5xl">
+     Terms and Conditions
+    <div class="space-y-8 text-base leading-relaxed text-muted">
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       1. Company Information
+      <p >
+       This website is operated by The Sandwich Bar Nassaukade B.V., registered with the Dutch Chamber of Commerce under number 81264782, with VAT ID NL81264782B01.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       2. Services
+      <p >
+       We provide catering services to businesses, including but not limited to lunches, buffets, and event catering.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       3. Orders and Payment
+      <p >
+       Orders must be placed at least 24 hours in advance. Payments can be made via bank transfer (IBAN: NL05 INGB 0006 8499 73). All prices are listed in EUR, excluding VAT unless otherwise stated.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       4. Delivery
+      <p >
+       Deliveries are made within Amsterdam and surrounding areas. Free delivery is available for orders above €150,- (some areas excluded: 1026–1028, 1035, 1101–1109). Specific delivery times are agreed upon when ordering. We reserve the right to cancel or delay orders due to unforeseen circumstances.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       5. Cancellation and Refunds
+      <p >
+       Due to the perishable nature of our products, cancellations must be made at least 24 hours in advance. Refunds are subject to approval and depend on the timing of cancellation.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       6. Liability
+      <p >
+       We are not liable for any damages resulting from allergies or misuse of our products. Customers are responsible for providing accurate dietary information.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       7. Complaints
+      <p >
+       Complaints must be reported within 24 hours after delivery via
+       <a href="mailto:orders@thesandwichbar.nl" class="underline hover:text-dark transition-colors">
+        orders@thesandwichbar.nl
+       . We aim to respond within 2 business days.
+     <section >
+      <h2 class="mb-3 text-xl font-semibold text-dark">
+       8. Applicable Law
+      <p >
+       Dutch law applies. Any disputes will be handled by the competent court in Amsterdam.
+  <div class="pointer-events-none fixed inset-0 z-[9999] overflow-clip">
+   <div class="absolute inset-0 text-plum">
+ <template >
+ <template >

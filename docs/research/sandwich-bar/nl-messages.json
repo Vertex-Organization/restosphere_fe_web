@@ -1,0 +1,131 @@
+{
+  "nav": {
+    "about": "Over ons",
+    "menu": "Menu",
+    "catering": "Catering"
+  },
+  "footer": {
+    "home": "Home",
+    "menu": "Menu",
+    "catering": "Catering",
+    "privacy": "Privacy",
+    "legal": "Juridisch",
+    "followUs": "Volg ons",
+    "generalContact": "Algemeen",
+    "notForCatering": "Niet voor catering bestellingen",
+    "openNow": "Nu open",
+    "currentlyClosed": "Momenteel gesloten",
+    "tagline": "Verse sandwiches, warme sfeer en alles van The Sandwich Bar — volg ons voor dagelijkse specials en momenten achter de toonbank.",
+    "siteBy": "Site door"
+  },
+  "contact": {
+    "title": "Bezoek ons",
+    "address": "Adres",
+    "phone": "Telefoon",
+    "email": "E-mail",
+    "openingHours": "Openingstijden"
+  },
+  "menuSection": {
+    "title": "Ons Menu",
+    "downloadPdf": "Menu downloaden"
+  },
+  "testimonials": {
+    "title": "Wat mensen zeggen"
+  },
+  "aboutPage": {
+    "title": "Over ons",
+    "p1": "Welkom bij The Sandwich Bar — waar elke sandwich met zorg, verse ingrediënten en veel liefde wordt gemaakt.",
+    "p2": "Opgericht met een simpele missie: de beste sandwiches van de stad maken. We halen ons brood van lokale bakkers, ons vlees van betrouwbare boerderijen en onze groenten van nabijgelegen telers.",
+    "p3": "Of je nu snel een lunch pakt of rustig wil zitten, wij zorgen dat je dag iets lekkerder wordt."
+  },
+  "aboutSection": {
+    "p1": "The Sandwich Bar is dé plek in Amsterdam voor een verse, klassieke sandwich — bereid met hoogwaardige, lokaal ingekochte ingrediënten. Van een simpele kaas tot onze beroemde pittige kip, aangevuld met verse sappen en baristakoffie van Bocca Amsterdam.",
+    "p2": "Kom langs voor een snelle lunch of een relaxed moment met vrienden. Haast? Bel van tevoren en wij zorgen dat je sandwich klaarstaat."
+  },
+  "sandwichSlider": {
+    "titlePrefix": "Onze",
+    "titleAccent": "Sandwiches",
+    "prevSlide": "Vorige sandwich",
+    "nextSlide": "Volgende sandwich",
+    "goToSlide": "Ga naar sandwich {n}"
+  },
+  "socialMedia": {
+    "title": "Volg ons op",
+    "watchOnTikTok": "Bekijk op TikTok",
+    "soundOn": "Geluid aan",
+    "soundOff": "Geluid uit",
+    "pause": "Pauzeren",
+    "play": "Afspelen"
+  },
+  "catering": {
+    "label": "Catering",
+    "title": "Op zoek naar de beste sandwich catering in Amsterdam?",
+    "p1": "The Sandwich Bar staat voor je klaar! Ons toegewijde team van professionals verzorgt met plezier jouw kantoorvergadering, bedrijfsevent, verjaardag, bruiloft of elke andere gelegenheid met heerlijke, vers bereide sandwiches. We bezorgen onze lunchcatering door heel Amsterdam (en op aanvraag ook in omliggende gebieden).",
+    "p2": "Bij The Sandwich Bar geloven we in kwaliteit en variatie. Ons menu biedt een breed scala aan smaken en ingrediënten, en we houden graag rekening met dieetwensen – waaronder glutenvrije, vegetarische en veganistische opties.",
+    "orderNow": "Bestel direct",
+    "freeTestLunch": "Bestel een gratis test lunch"
+  },
+  "cateringPage": {
+    "heroLabel": "Catering",
+    "heroTitle": "Catering zoals het hoort te zijn, vers, flexibel, en altijd op tijd",
+    "heroSubtitle": "The Sandwich Bar catering levert rijk belegde broodjes aan jouw team – zonder poespas én budgetvriendelijk. Ontdek het zelf met een gratis proeflunch box: 5 vers gemaakte broodjes, direct op kantoor bezorgd. Zin om te proeven?",
+    "heroContactLabel": "Vragen? Neem contact op:",
+    "heroContactEmail": "orders@thesandwichbar.nl",
+    "heroContactPhone1": "06-15657447",
+    "heroContactPhone2": "06-15004988",
+    "logosTitle": "Zij gingen je al voor",
+    "menuTitle": "Catering menu",
+    "menuSubtitle": "Bekijk ons complete catering aanbod.",
+    "formTitle": "Bestel je gratis proeflunch box",
+    "formSubtitle": "Vul het formulier in en wij bezorgen 5 vers gemaakte broodjes op jouw kantoor.",
+    "formNote": "Het is niet mogelijk om een test box voor vandaag te bestellen — minimaal één dag van te voren bestellen.",
+    "companyName": "Bedrijfsnaam",
+    "yourName": "Jouw naam",
+    "email": "Email",
+    "phone": "Telefoon",
+    "deliveryDate": "Bezorgdatum",
+    "deliveryTime": "Bezorgtijd",
+    "address": "Adres",
+    "postalCode": "Postcode",
+    "submit": "Aanvraag versturen",
+    "submitting": "Versturen...",
+    "successTitle": "Aanvraag ontvangen!",
+    "successMessage": "We nemen snel contact met je op om je gratis proeflunch box te bevestigen.",
+    "errorMessage": "Er is iets misgegaan. Probeer het opnieuw of stuur een mail naar orders@thesandwichbar.nl"
+  },
+  "member": {
+    "label": "Loyaliteitsprogramma",
+    "titleWord": "Word",
+    "titleAccent": "member",
+    "p1": "Voor elke euro die je bij ons uitgeeft in een van onze vestigingen, ontvang je 1 loyalty punt.",
+    "p2": "Deze gespaarde punten kun je weer inwisselen voor leuke beloningen. Denk aan een broodje naar keuze, koffiebonen van BOCCA of een te gekke sandwich bar hoodie.",
+    "p3": "Zie jij jezelf al schitteren in onze hoodie? Meld je via de QR code in een van onze vestigingen aan wanneer je langskomt en begin met sparen!",
+    "ctaLabel": "Ben je al member en wil je je saldo checken?",
+    "ctaButton": "Check je saldo"
+  },
+  "faq": {
+    "title": "Veelgestelde\nVragen"
+  },
+  "location": {
+    "titlePrefix": "Onze",
+    "titleAccent": "Locaties",
+    "openingHours": "Openingstijden",
+    "open": "Open",
+    "closed": "Gesloten",
+    "openInMaps": "Open in Google Maps",
+    "comingSoon": "Binnenkort open",
+    "openingOn": "Opent {date}",
+    "days": {
+      "monday": "Maandag",
+      "tuesday": "Dinsdag",
+      "wednesday": "Woensdag",
+      "thursday": "Donderdag",
+      "friday": "Vrijdag",
+      "saturday": "Zaterdag",
+      "sunday": "Zondag"
+    }
+  },
+  "photoMarquee": {
+    "label": "even binnenkijken"
+  }
+}

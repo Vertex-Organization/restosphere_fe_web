@@ -1,0 +1,283 @@
+<body >
+ <div >
+ <div class="poppins_f213ca71-module__cyaqIW__className antialiased">
+  <div class="fixed inset-0 z-[9000] bg-plum overflow-hidden">
+   <div class="absolute h-px bg-cream/80" style="top:calc(50% + 64px);left:-400px;width:0">
+   <div class="absolute inset-0 flex items-center">
+    <img src="/images/movingcar.svg" alt="" class="h-32 w-auto invert sepia-[.5] saturate-[2] brightness-[.8]" style="transform:translateX(-400px)">
+  <nav class="pointer-events-none fixed inset-x-0 top-0 z-50">
+   <div class="relative flex items-start justify-between px-10 pt-10">
+    <div class="pointer-events-auto flex flex-col gap-5">
+     <a href="https://instagram.com/thesandwichbarams" class="flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream">
+     <a href="http://tiktok.com/@thesandwichbaramsterdam" class="flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream">
+     <div class="flex items-center text-xs text-cream/50 pt-1">
+      <a class="px-2 py-1 transition-colors duration-200 hover:text-cream text-cream font-semibold" href="/nl/catering">
+       NL
+      <span >
+       /
+      <a class="px-2 py-1 transition-colors duration-200 hover:text-cream " href="/en/catering">
+       EN
+    <div class="pointer-events-auto absolute left-1/2 top-6" style="transform:translate(calc(-50% + 0px), 0px);transition:transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)">
+     <a href="/nl">
+      <img alt="The Sandwich Bar Catering" class="h-auto w-24 md:w-30 rounded-full" style="color:transparent" src="/_next/image?url=%2Fimages%2Flogo.jpeg&w=384&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg">
+    <div class="pointer-events-auto flex flex-col md:flex-row items-end md:items-center gap-3">
+     <div style="display:inline-block">
+      <a class="rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block" href="/nl/menu">
+       Menu
+     <div style="display:inline-block">
+      <a class="rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block" href="/nl/catering">
+       Catering
+  <main class="min-h-screen bg-cream">
+   <section class="bg-plum overflow-hidden px-6 pt-0 pb-0">
+    <div class="lg:hidden -mx-6">
+     <img src="/images/The Sandwichbar 01.webp" alt="" class="w-full object-cover" style="aspect-ratio:4/3">
+    <div class="mx-auto max-w-7xl">
+     <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+      <div class="pt-10 pb-20 lg:pt-36">
+       <span class="mb-4 inline-block text-sm font-semibold uppercase tracking-widest text-cream/50">
+        Catering
+       <h1 class="mb-6 text-3xl font-bold uppercase leading-tightest tracking-tight text-cream md:text-6xl lg:text-7xl">
+        Catering zoals het hoort te zijn, vers, flexibel, en altijd op tijd
+       <p class="mb-8 max-w-lg text-md md:text-lg leading-relaxed text-cream/75">
+        The Sandwich Bar catering levert rijk belegde broodjes aan jouw team – zonder poespas én budgetvriendelijk. Ontdek het zelf met een gratis proeflunch box: 5 vers gemaakte broodjes, direct op kantoor bezorgd. Zin om te proeven?
+       <div class="flex flex-wrap mb-8">
+        <a class="rounded-full border border-cream /40 bg-cream/10 px-7 py-3 text-sm font-semibold text-cream transition-colors duration-200 hover:bg-cream hover:text-muted" href="https://catering.thesandwichbar.nl">
+         Bestel direct
+       <div class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-widest text-cream/40">
+         Vragen? Neem contact op:
+        <div class="flex flex-wrap gap-x-4 gap-y-1">
+         <a href="mailto:orders@thesandwichbar.nl" class="text-sm font-medium text-cream/80 hover:text-cream transition-colors">
+          orders@thesandwichbar.nl
+         <a href="tel:0615657447" class="text-sm font-medium text-cream/80 hover:text-cream transition-colors">
+          06-15657447
+         <a href="tel:0615004988" class="text-sm font-medium text-cream/80 hover:text-cream transition-colors">
+          06-15004988
+      <div class="hidden lg:block" style="height:100vh">
+       <div class="relative flex h-full w-full gap-3 overflow-hidden">
+        <div class="flex-1 overflow-hidden">
+         <div class="flex flex-col gap-3">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 01.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 03.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 05.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 07.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 01.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 03.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 05.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 07.webp" alt="" class="h-full w-full object-cover">
+        <div class="flex-1 overflow-hidden" style="margin-top:-50%">
+         <div class="flex flex-col gap-3">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 02.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 04.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 06.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 08.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 02.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 04.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 06.webp" alt="" class="h-full w-full object-cover">
+          <div class="overflow-hidden rounded-xl" style="aspect-ratio:2/3">
+           <img src="/images/The Sandwichbar 08.webp" alt="" class="h-full w-full object-cover">
+   <section class="bg-cream px-6 py-20">
+    <div class="mx-auto max-w-6xl">
+     <p class="mb-12 text-center text-xs font-semibold uppercase tracking-widest text-muted/60">
+      Zij gingen je al voor
+     <div class="logo-wall">
+      <div class="logo-wall__collection">
+       <div class="logo-wall__list">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+        <div class="logo-wall__item">
+         <div class="logo-wall__logo">
+          <div class="logo-wall__logo-before">
+   <section id="catering-menu" class="bg-plum px-6 py-24">
+    <div class="mx-auto max-w-6xl">
+     <div class="mb-10 flex flex-col items-center gap-3 text-center">
+      <h2 class="text-4xl font-bold uppercase leading-tight tracking-tight text-cream md:text-5xl">
+       Catering menu
+      <p class="max-w-2xl text-lg leading-relaxed text-cream/75">
+       Bekijk ons complete catering aanbod.
+     <div class="mx-auto max-w-3xl">
+      <template >
+      <div class="w-full animate-pulse rounded-2xl bg-white/50" style="aspect-ratio:1 / 1.41">
+   <section class="bg-cream px-6 pb-24">
+    <div class="mx-auto max-w-6xl">
+     <div class="border-t border-dark/10 pt-16">
+      <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
+       <div class="flex flex-col gap-6">
+        <span class="text-sm font-semibold uppercase tracking-widest text-muted/60">
+         Catering
+        <h2 class="text-4xl font-bold uppercase leading-tight tracking-tight text-dark md:text-5xl">
+         Bestel je gratis proeflunch box
+        <p class="text-lg leading-relaxed text-muted">
+         Vul het formulier in en wij bezorgen 5 vers gemaakte broodjes op jouw kantoor.
+       <div >
+        <form class="flex flex-col gap-5">
+         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div >
+           <label for="companyName" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Bedrijfsnaam
+            <span class="text-plum">
+             *
+           <input id="companyName" type="text" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="companyName" value="">
+          <div >
+           <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Jouw naam
+            <span class="text-plum">
+             *
+           <input id="name" type="text" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="name" value="">
+         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div >
+           <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Email
+            <span class="text-plum">
+             *
+           <input id="email" type="email" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="email" value="">
+          <div >
+           <label for="phone" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Telefoon
+            <span class="text-plum">
+             *
+           <input id="phone" type="tel" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="phone" value="">
+         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="min-w-0">
+           <label for="deliveryDate" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Bezorgdatum
+            <span class="text-plum">
+             *
+           <input id="deliveryDate" type="date" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="deliveryDate" value="">
+           <p class="mt-1.5 text-xs text-muted/70">
+            Het is niet mogelijk om een test box voor vandaag te bestellen — minimaal één dag van te voren bestellen.
+          <div class="min-w-0">
+           <label for="deliveryTime" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Bezorgtijd
+            <span class="text-plum">
+             *
+           <input id="deliveryTime" type="time" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="deliveryTime" value="">
+         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div >
+           <label for="address" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Adres
+            <span class="text-plum">
+             *
+           <input id="address" type="text" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="address" value="">
+          <div >
+           <label for="postalCode" class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+            Postcode
+            <span class="text-plum">
+             *
+           <input id="postalCode" type="text" required="" class="w-full rounded-xl border border-dark/15 bg-white px-4 py-3 text-sm text-dark placeholder-muted/60 outline-none transition-colors duration-200 focus:border-plum focus:ring-2 focus:ring-plum/20" name="postalCode" value="">
+         <div class="pt-2">
+          <button type="submit" class="rounded-full border border-plum/30 bg-plum px-7 py-3 text-sm font-semibold text-cream transition-colors duration-200 hover:bg-dark disabled:opacity-60">
+           Aanvraag versturen
+   <footer class="relative overflow-hidden bg-plum text-cream">
+    <img src="/images/footer-bg.svg" alt="" class="pointer-events-none absolute -bottom-70 opacity-20 -right-90 w-[55%] max-w-none select-none">
+    <div class="canvas-matter">
+     <div class="canvas-matter__target">
+    <div class="relative z-10 mx-auto max-w-7xl px-8 md:px-0 pt-16 pb-10">
+     <div class="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
+      <div class="col-span-4 flex flex-col justify-between">
+       <p class="font-poppins font-bold leading-none text-cream" style="font-size:clamp(2rem, 7vw, 4rem)">
+        THE
+        SANDWICH
+        BAR
+       <p class="mt-8 hidden text-xs uppercase tracking-widest text-cream/50 md:block">
+        Site door
+        <a href="https://mikdevelopment.nl" class="font-bold hover:text-orange-500/80 transition-colors">
+         Mik Development
+      <div class="col-span-2 flex flex-col gap-2 md:pt-1">
+       <a class="text-xl text-cream/70 transition-colors duration-150 hover:text-cream" href="/">
+        Home
+       <a class="text-xl text-cream/70 transition-colors duration-150 hover:text-cream" href="/menu">
+        Menu
+       <a class="text-xl text-cream/70 transition-colors duration-150 hover:text-cream" href="/catering">
+        Catering
+      <div class="col-span-3 flex flex-col gap-5 md:pt-1">
+       <div class="flex flex-col gap-1.5">
+        <p class="mb-1 text-xs uppercase tracking-widest text-cream/40">
+         Catering
+        <a href="mailto:orders@thesandwichbar.nl" class="text-sm text-cream/70 transition-colors duration-150 hover:text-cream">
+         orders@thesandwichbar.nl
+        <a href="tel:+31615657447" class="text-sm text-cream/70 transition-colors duration-150 hover:text-cream">
+         06-15657447
+        <a href="tel:+31615004988" class="text-sm text-cream/70 transition-colors duration-150 hover:text-cream">
+         06-15004988
+       <div class="flex flex-col gap-1.5 mt-2">
+        <a class="text-xs text-cream/40 transition-colors duration-150 hover:text-cream/70" href="/privacy">
+         Privacy
+        <a class="text-xs text-cream/40 transition-colors duration-150 hover:text-cream/70" href="/terms">
+         Juridisch
+      <div class="col-span-3 flex flex-col gap-6 md:pt-1">
+       <p class="max-w-xs text-sm leading-relaxed text-cream/60">
+        Verse sandwiches, warme sfeer en alles van The Sandwich Bar — volg ons voor dagelijkse specials en momenten achter de toonbank.
+       <div >
+        <p class="mb-3 text-xs uppercase tracking-widest text-cream/40">
+         Volg ons
+        <div class="flex items-center gap-3">
+         <a href="https://instagram.com/thesandwichbarams" class="flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/60 transition-colors duration-150 hover:border-cream/50 hover:text-cream">
+         <a href="http://tiktok.com/@thesandwichbaramsterdam" class="flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/60 transition-colors duration-150 hover:border-cream/50 hover:text-cream">
+    <p class="relative z-10 px-8 pb-6 text-xs uppercase tracking-widest text-cream/50 md:hidden">
+     Site door
+     <a href="https://mikdevelopment.nl" class="font-bold hover:text-orange-500/80 transition-colors">
+      Mik Development
+    <div class="pointer-events-none relative z-10" style="height:clamp(180px, 25vw, 340px)">
+  <div class="pointer-events-none fixed inset-0 z-[9999] overflow-clip">
+   <div class="absolute inset-0 text-plum">
+ <template >
+ <template >

@@ -1,0 +1,74 @@
+.sandwich-menu-page {
+  min-height: 100vh;
+  padding-top: 96px;
+  background: var(--color-cream, #f6f1e7);
+  color: var(--color-plum, #4f283d);
+}
+
+.sandwich-menu-heading {
+  width: 100%;
+  max-width: 896px;
+  margin-inline: auto;
+  padding: 32px 16px;
+}
+
+.sandwich-menu-heading h1 {
+  margin: 0 0 16px;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.sandwich-menu-documents {
+  padding: 48px 16px;
+}
+
+.sandwich-menu-document-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  max-width: 1024px;
+  margin-inline: auto;
+}
+
+.sandwich-menu-lunch-document,
+.sandwich-menu-drink-document {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+  overflow: hidden;
+}
+
+.sandwich-menu-document-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sandwich-menu-document-grid a:focus-visible {
+  outline: 3px solid var(--color-plum, #4f283d);
+  outline-offset: 5px;
+}
+
+@media (min-width: 768px) {
+  .sandwich-menu-heading h1 {
+    font-size: 48px;
+    line-height: 48px;
+  }
+
+  .sandwich-menu-document-grid {
+    flex-direction: row;
+  }
+
+  .sandwich-menu-lunch-document {
+    flex: 2;
+  }
+
+  .sandwich-menu-drink-document {
+    flex: 1;
+  }
+}

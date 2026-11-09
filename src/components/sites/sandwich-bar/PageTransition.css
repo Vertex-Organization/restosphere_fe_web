@@ -1,0 +1,16 @@
+.sb-page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: clip;
+  pointer-events: none;
+  color: var(--color-plum);
+}
+
+.sb-page-transition svg {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+}

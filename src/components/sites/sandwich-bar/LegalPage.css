@@ -1,0 +1,12 @@
+.sb-legal-page { min-height: 100vh; padding: 96px 16px 0; background: var(--color-cream); }
+.sb-legal-content { width: 100%; max-width: 768px; padding: 64px 0; margin: 0 auto; }
+.sb-legal-content h1 { margin: 0 0 40px; font-size: 48px; font-weight: 700; line-height: 1; color: var(--color-dark); }
+.sb-legal-content .sb-legal-intro { margin: 0 0 32px; }
+.sb-legal-content p { margin: 0; font-size: 16px; line-height: 1.625; color: var(--color-muted); }
+.sb-legal-sections { display: flex; flex-direction: column; gap: 32px; }
+.sb-legal-sections h2 { margin: 0 0 12px; color: var(--color-dark); font-size: 20px; font-weight: 600; line-height: 28px; }
+.sb-legal-sections a { text-decoration: underline; text-underline-offset: 2px; transition: color .15s; }
+.sb-legal-sections a:hover { color: var(--color-dark); }
+.sb-legal-sections address { font-style: normal; }
+.sb-legal-sections .sb-legal-company-number { margin-top: 8px; }
+@media (max-width: 767px) { .sb-legal-content h1 { font-size: 36px; line-height: 40px; } }

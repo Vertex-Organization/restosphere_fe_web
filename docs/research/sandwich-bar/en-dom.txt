@@ -1,0 +1,665 @@
+<html {}>
+ <head {}>
+  <meta {}>
+  <meta {"name": "viewport"}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {"href": "/_next/static/chunks/475d9feb0ff63adb.css?dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+  <link {"href": "/_next/static/chunks/0c7c0a765aca78df.js?dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+  <link {"href": "https://www.googletagmanager.com/gtag/js?id=G-DEFPCXB0RN"}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {}>
+  <link {"href": "/images/footer-bg.svg"}>
+  <meta {"name": "next-size-adjust"}>
+  <title {}>
+   The Sandwich Bar - Belegde broodjes en Catering
+  <meta {"name": "description"}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {}>
+  <meta {"name": "twitter:card"}>
+  <meta {"name": "twitter:title"}>
+  <meta {"name": "twitter:description"}>
+  <meta {"name": "twitter:image"}>
+  <link {"href": "/icon?c9bfc39cabb255e3", "type": "image/png"}>
+ <body {}>
+  <div {}>
+  <div {"class": "poppins_f213ca71-module__cyaqIW__className antialiased"}>
+   <div {"class": "fixed inset-0 z-[9000] bg-plum overflow-hidden"}>
+    <div {"class": "absolute h-px bg-cream/80", "style": "top:calc(50% + 64px);left:-400px;width:0"}>
+    <div {"class": "absolute inset-0 flex items-center"}>
+     <img {"src": "/images/movingcar.svg", "alt": "", "class": "h-32 w-auto invert sepia-[.5] saturate-[2] brightness-[.8]", "style": "transform:translateX(-400px)"}>
+   <nav {"class": "pointer-events-none fixed inset-x-0 top-0 z-50"}>
+    <div {"class": "relative flex items-start justify-between px-10 pt-10"}>
+     <div {"class": "pointer-events-auto flex flex-col gap-5"}>
+      <a {"href": "https://instagram.com/thesandwichbarams", "class": "flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream"}>
+       <svg {"width": "22", "height": "22"}>
+        <rect {"width": "20", "height": "20"}>
+        <circle {}>
+        <circle {}>
+      <a {"href": "http://tiktok.com/@thesandwichbaramsterdam", "class": "flex items-center justify-center w-10 h-10 rounded-full bg-cream/10 text-cream/70 backdrop-blur-sm transition-colors duration-200 hover:bg-cream/20 hover:text-cream"}>
+       <svg {"width": "22", "height": "22"}>
+        <path {}>
+      <div {"class": "flex items-center text-xs text-cream/50 pt-1"}>
+       <a {"class": "px-2 py-1 transition-colors duration-200 hover:text-cream ", "href": "/nl"}>
+        NL
+       <span {}>
+        /
+       <a {"class": "px-2 py-1 transition-colors duration-200 hover:text-cream text-cream font-semibold", "href": "/en"}>
+        EN
+     <div {"class": "pointer-events-auto absolute left-1/2 top-6", "style": "transform:translate(calc(-50% + 0px), 0px);transition:transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)"}>
+      <a {"href": "/en"}>
+       <img {"alt": "The Sandwich Bar Catering", "width": "160", "height": "80", "class": "h-auto w-24 md:w-30 rounded-full", "style": "color:transparent", "src": "/_next/image?url=%2Fimages%2Flogo.jpeg&w=384&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "pointer-events-auto flex flex-col md:flex-row items-end md:items-center gap-3"}>
+      <div {"style": "display:inline-block"}>
+       <a {"class": "rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block", "href": "/en/menu"}>
+        Menu
+      <div {"style": "display:inline-block"}>
+       <a {"class": "rounded-full border border-cream bg-cream px-5 py-2 text-sm font-semibold text-plum backdrop-blur-sm transition-colors duration-200 hover:bg-plum hover:text-cream hover:border-plum inline-block", "href": "/en/catering"}>
+        Catering
+   <section {"class": "hero-clip relative h-[130vh] w-full overflow-hidden"}>
+    <img {"alt": "The Sandwich Bar", "class": "object-cover object-[center_65%]", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%2004.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+    <div {"class": "absolute inset-0 bg-black/20"}>
+    <div {"class": "absolute top-[38%] left-[50%] z-[20] flex items-center justify-center px-6 -translate-x-1/2 -translate-y-1/2"}>
+     <h1 {"class": "text-center text-7xl font-bold tracking-tighter text-cream uppercase md:text-9xl leading-none"}>
+      The Sandwich Bar
+    <div {"class": "absolute rounded-xl p-10 bottom-[35vh] right-10 z-[20] flex flex-col items-end gap-4 text-right"}>
+     <p {"class": "max-w-xs text-sm text-cream md:text-base"}>
+      Welcome to The Sandwich Bar, the place in Amsterdam for a classic sandwich! With us, locals can still come in for a simple cheese sandwich.
+     <a {"class": "btn-bubble-arrow", "href": "/en/menu"}>
+      <div {"class": "btn-bubble-arrow__arrow"}>
+       <svg {"width": "100%", "class": "btn-bubble-arrow__arrow-svg"}>
+        <polyline {}>
+        <line {}>
+      <div {"class": "btn-bubble-arrow__content"}>
+       <span {"class": "btn-bubble-arrow__content-text"}>
+        Our Menu
+      <div {"class": "btn-bubble-arrow__arrow is--duplicate stroke-plum"}>
+       <svg {"width": "100%", "class": "btn-bubble-arrow__arrow-svg"}>
+        <polyline {}>
+        <line {}>
+   <section {"class": "relative z-10 -mt-[22.95vw] md:-mt-[16.95vw] overflow-hidden"}>
+    <div {"class": "relative w-full"}>
+     <svg {"width": "100%", "class": "block text-plum", "style": "overflow:visible"}>
+      <path {"class": "fill-cream"}>
+      <path {}>
+     <svg {"width": "100%", "class": "absolute inset-0 h-full w-full pt-1 md:pt-3", "style": "overflow:visible"}>
+      <defs {}>
+       <path {"id": "slogan-curve"}>
+      <text {"width": "100%", "class": "fill-cream", "style": "font-size:8rem;font-weight:700;font-family:Poppins, sans-serif;letter-spacing:0.001em"}>
+       <textpath {"href": "#slogan-curve"}>
+        ALWAYS FRESH · ALWAYS FRESH · ALWAYS FRESH · ALWAYS FRESH ·
+   <section {"class": "bg-cream pb-20 px-6 relative"}>
+    <div {"class": "mx-auto max-w-3xl flex flex-col items-center gap-10 text-center"}>
+     <div {"class": "relative w-2/3 aspect-[5/3]"}>
+      <img {"alt": "The Sandwich Bar locatie", "class": "object-cover object-[center_17%]", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-20.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "flex flex-col gap-6 max-w-2xl text-plum text-lg leading-relaxed [&>p]:m-0"}>
+      <p {}>
+       The Sandwich Bar is the place in Amsterdam for a fresh, classic sandwich — made with high-quality, locally sourced ingredients. From a simple cheese to our famous spicy chicken, complemented by fresh juices and barista coffee from Bocca Amsterdam.
+      <p {}>
+       Come by for a quick lunch or a relaxed moment with friends. In a hurry? Call ahead and we'll have your sandwich ready.
+    <div {"class": "hidden md:block", "style": "position:absolute;right:80px;bottom:40px;z-index:11;touch-action:none;will-change:transform;cursor:grab"}>
+     <div {"class": "sticker-idle", "style": "--base-rot:5deg;--jiggle-delay:1.1s;transform:rotate(5deg) scale(1);transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1), filter 0.3s ease;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.18));transform-origin:center center"}>
+      <div {"class": "p-3 select-none overflow-hidden"}>
+       <img {"alt": "Mannetje met broodje", "width": "250", "height": "168", "class": "pointer-events-none block invert opacity-80", "style": "color:transparent;width:250px;height:auto;mix-blend-mode:lighten", "src": "/_next/image?url=%2Fimages%2FMannetjes-broodje-beige.png&w=512&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+   <section {"class": "bg-plum px-6 py-24 overflow-hidden"}>
+    <div {"class": "mx-auto max-w-6xl flex flex-col lg:flex-row items-center gap-16"}>
+     <div {"class": "w-full lg:w-2/5 flex-shrink-0"}>
+      <div {"class": "relative w-full aspect-[3/5] overflow-hidden"}>
+       <img {"alt": "The Sandwich Bar catering", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%2002.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "flex flex-col gap-8 lg:w-3/5"}>
+      <div {"class": "flex flex-col gap-2"}>
+       <span {"class": "text-sm font-semibold uppercase tracking-widest text-cream/50"}>
+        Catering
+       <h2 {"class": "text-4xl md:text-5xl font-bold tracking-tight text-cream uppercase leading-tight"}>
+        Looking for the best sandwich catering in Amsterdam?
+      <div {"class": "flex flex-col gap-5 text-cream/75 text-lg leading-relaxed [&>p]:m-0"}>
+       <p {}>
+        The Sandwich Bar is here for you! Our dedicated team of professionals is happy to take care of your office meeting, corporate event, birthday, wedding, or any other occasion with delicious, freshly prepared sandwiches. We deliver our lunch catering throughout Amsterdam (and on request in surrounding areas).
+       <p {}>
+        At The Sandwich Bar we believe in quality and variety. Our menu offers a wide range of flavours and ingredients, and we are happy to accommodate dietary requirements — including gluten-free, vegetarian, and vegan options.
+      <div {"class": "flex flex-wrap gap-4 pt-2"}>
+       <a {"class": "rounded-full border border-cream /40 bg-cream/10 px-7 py-3 text-sm font-semibold text-cream transition-colors duration-200 hover:bg-cream hover:text-muted", "href": "https://catering.thesandwichbar.nl"}>
+        Order now
+       <a {"class": "rounded-full border border-cream/40 bg-transparent px-7 py-3 text-sm font-semibold text-cream transition-colors duration-200 hover:bg-cream hover:text-muted", "href": "/en/catering"}>
+        Order a free test lunch
+   <section {"class": "bg-cream py-16 md:py-24 overflow-hidden"}>
+    <div {"class": "flex w-max will-change-transform"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-26.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-01.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-06.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-17.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-03.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-09.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-21.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-13.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-27.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-04.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-08.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-24.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-02.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-11.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-18.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-05.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-15.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-23.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-07.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-19.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-14.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-22.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-10.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-16.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-25.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-12.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-26.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-01.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-06.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-17.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-03.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-09.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-21.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-13.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-27.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-04.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-08.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-24.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-02.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-11.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-18.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-05.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-15.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-23.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-07.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-19.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwich-bar-14.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-22.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-10.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-16.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-25.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "relative mr-4 md:mr-6 h-64 md:h-96 aspect-[2/3] flex-none"}>
+      <img {"alt": "", "class": "object-cover", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Flocatieshoot%2Fthe-sandwichbar-12.webp&w=3840&q=50&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+   <section {"class": "relative overflow-hidden min-h-[600px] flex items-center"}>
+    <div {"class": "absolute inset-0"}>
+     <img {"alt": "", "class": "object-cover scale-105 blur-sm", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%2007.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+     <div {"class": "absolute inset-0 bg-plum/50"}>
+    <div {"class": "relative w-full px-6 py-24"}>
+     <div {"class": "mx-auto max-w-6xl flex flex-col lg:flex-row lg:items-center gap-12"}>
+      <div {"class": "lg:w-2/5 flex flex-col gap-4"}>
+       <h2 {"class": "text-5xl md:text-6xl font-bold tracking-tight text-cream uppercase leading-tight"}>
+        Become a
+        <br {}>
+        <span {"class": "font-tomatoes lowercase text-6xl md:text-8xl leading-none"}>
+         member
+      <div {"class": "lg:w-3/5 bg-cream rounded-3xl px-8 py-10 shadow-2xl flex flex-col gap-6"}>
+       <p {"class": "text-plum text-lg leading-relaxed"}>
+        For every euro you spend at one of our locations, you earn 1 loyalty point.
+       <p {"class": "text-muted text-base leading-relaxed"}>
+        You can redeem your saved points for great rewards — think a sandwich of your choice, BOCCA coffee beans, or an awesome sandwich bar hoodie.
+       <p {"class": "text-muted text-base leading-relaxed"}>
+        Can you already picture yourself rocking our hoodie? Scan the QR code at any of our locations when you visit and start earning!
+       <hr {"class": "border-plum/10"}>
+       <div {"class": "flex flex-col sm:flex-row sm:items-center gap-4"}>
+        <p {"class": "text-sm text-muted leading-snug flex-1"}>
+         Already a member and want to check your balance?
+        <a {"class": "inline-flex shrink-0 items-center justify-center rounded-full bg-plum px-7 py-3 text-sm font-semibold text-cream transition-colors duration-200 hover:bg-dark", "href": "https://the-sandwich-bar.app.piggy.eu/"}>
+         Check your balance
+   <section {"class": "relative w-full min-h-[70vh] md:min-h-screen overflow-hidden bg-cream flex flex-col py-16"}>
+    <svg {"class": "absolute inset-0 w-full h-full pointer-events-none"}>
+     <path {}>
+    <div {"class": "max-w-7xl mx-auto px-6 w-full"}>
+     <div {"class": "flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"}>
+      <h2 {"class": "text-4xl md:text-5xl font-bold text-plum uppercase leading-tight"}>
+       Our
+       <br {}>
+       <span {"class": "font-tomatoes lowercase text-6xl"}>
+        Sandwiches
+      <div {"class": "flex items-center gap-3"}>
+       <button {"class": "w-12 h-12 rounded-full border-2 border-plum flex items-center justify-center text-plum transition-all duration-200 hover:bg-plum hover:text-cream disabled:opacity-25 disabled:cursor-not-allowed"}>
+        <svg {"width": "18", "height": "18"}>
+         <polyline {}>
+       <button {"class": "w-12 h-12 rounded-full border-2 border-plum flex items-center justify-center text-plum transition-all duration-200 hover:bg-plum hover:text-cream disabled:opacity-25 disabled:cursor-not-allowed"}>
+        <svg {"width": "18", "height": "18"}>
+         <polyline {}>
+    <div {"class": "flex flex-1 will-change-transform cursor-grab active:cursor-grabbing select-none mt-0"}>
+     <div {"class": "flex-none flex flex-col items-center justify-center", "style": "width:100vw"}>
+      <div {"class": "relative w-56 md:w-96 lg:w-[480px] aspect-square pointer-events-none"}>
+       <img {"alt": "Avocado Special", "class": "object-contain drop-shadow-2xl", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%20-%20Vrijstaand%201.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+      <h3 {"class": "mt-0 text-3xl md:text-4xl font-bold text-plum text-center leading-tight"}>
+       Avocado Special
+      <p {"class": "mt-3 text-base md:text-lg text-muted text-center leading-relaxed"}>
+       egg · red onion · radish · sriracha mayonnaise · alfalfa sprouts
+     <div {"class": "flex-none flex flex-col items-center justify-center", "style": "width:100vw"}>
+      <div {"class": "relative w-56 md:w-96 lg:w-[480px] aspect-square pointer-events-none"}>
+       <img {"alt": "Spicy Chicken", "class": "object-contain drop-shadow-2xl", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%20-%20Vrijstaand%202.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+      <h3 {"class": "mt-0 text-3xl md:text-4xl font-bold text-plum text-center leading-tight"}>
+       Spicy Chicken
+      <p {"class": "mt-3 text-base md:text-lg text-muted text-center leading-relaxed"}>
+       red onion · sriracha mayonnaise
+     <div {"class": "flex-none flex flex-col items-center justify-center", "style": "width:100vw"}>
+      <div {"class": "relative w-56 md:w-96 lg:w-[480px] aspect-square pointer-events-none"}>
+       <img {"alt": "Mortadella", "class": "object-contain drop-shadow-2xl", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2FThe%20Sandwichbar%20-%20Vrijstaand%203.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+      <h3 {"class": "mt-0 text-3xl md:text-4xl font-bold text-plum text-center leading-tight"}>
+       Mortadella
+      <p {"class": "mt-3 text-base md:text-lg text-muted text-center leading-relaxed"}>
+       mortadella · ricotta pesto · burrata · parmesan and pistachio
+    <div {"class": "flex items-center justify-center gap-2 mt-4 md:mt-10"}>
+     <button {"class": "rounded-full transition-all duration-300 w-6 h-2 bg-plum"}>
+     <button {"class": "rounded-full transition-all duration-300 w-2 h-2 bg-plum/30 hover:bg-plum/60"}>
+     <button {"class": "rounded-full transition-all duration-300 w-2 h-2 bg-plum/30 hover:bg-plum/60"}>
+   <section {"class": "flex items-center justify-center bg-dark py-24"}>
+    <div {"class": "flex w-full max-w-[80em] flex-col px-12"}>
+     <h2 {"class": "mb-12 text-center text-4xl font-bold uppercase tracking-tight text-cream md:text-5xl"}>
+      Follow us on
+      <span {"class": "font-tomatoes lowercase"}>
+       TikTok
+     <div {"class": "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"}>
+      <div {"class": "relative w-full"}>
+       <div {"class": "relative w-full"}>
+        <a {"href": "https://www.tiktok.com/@thesandwichbaramsterdam", "class": "group relative block w-full overflow-hidden rounded-xl text-cream will-change-transform"}>
+         <video {"src": "https://cdn.sanity.io/files/76cxrt7m/production/4c5cc010c2661f7b07af1bcf8385fc6b2cf81430.mp4", "class": "w-full object-cover", "style": "aspect-ratio:9/16", "autoplay": "", "muted": "", "loop": ""}>
+         <div {"class": "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"}>
+         <div {"class": "absolute bottom-0 left-0 right-0 p-5"}>
+          <h3 {"class": "text-sm font-semibold leading-snug text-cream drop-shadow"}>
+           TT1
+      <div {"class": "relative w-full"}>
+       <div {"class": "relative w-full"}>
+        <a {"href": "https://www.tiktok.com/@thesandwichbaramsterdam", "class": "group relative block w-full overflow-hidden rounded-xl text-cream will-change-transform"}>
+         <video {"src": "https://cdn.sanity.io/files/76cxrt7m/production/059635aa13249854e2808561c6b57e37e270ea9f.mp4", "class": "w-full object-cover", "style": "aspect-ratio:9/16", "autoplay": "", "muted": "", "loop": ""}>
+         <div {"class": "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"}>
+         <div {"class": "absolute bottom-0 left-0 right-0 p-5"}>
+          <h3 {"class": "text-sm font-semibold leading-snug text-cream drop-shadow"}>
+           TT2
+      <div {"class": "relative w-full"}>
+       <div {"class": "relative w-full"}>
+        <a {"href": "https://www.tiktok.com/@thesandwichbaramsterdam", "class": "group relative block w-full overflow-hidden rounded-xl text-cream will-change-transform"}>
+         <video {"src": "https://cdn.sanity.io/files/76cxrt7m/production/720ee7345673ebfb5532009b1c1e1fa514ea922c.mp4", "class": "w-full object-cover", "style": "aspect-ratio:9/16", "autoplay": "", "muted": "", "loop": ""}>
+         <div {"class": "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"}>
+         <div {"class": "absolute bottom-0 left-0 right-0 p-5"}>
+          <h3 {"class": "text-sm font-semibold leading-snug text-cream drop-shadow"}>
+           TT3
+      <div {"class": "relative w-full"}>
+       <div {"class": "relative w-full"}>
+        <a {"href": "https://www.tiktok.com/@thesandwichbaramsterdam", "class": "group relative block w-full overflow-hidden rounded-xl text-cream will-change-transform"}>
+         <video {"src": "https://cdn.sanity.io/files/76cxrt7m/production/4c5cc010c2661f7b07af1bcf8385fc6b2cf81430.mp4", "class": "w-full object-cover", "style": "aspect-ratio:9/16", "autoplay": "", "muted": "", "loop": ""}>
+         <div {"class": "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"}>
+         <div {"class": "absolute bottom-0 left-0 right-0 p-5"}>
+          <h3 {"class": "text-sm font-semibold leading-snug text-cream drop-shadow"}>
+           TT4
+   <section {"class": "relative w-full bg-cream py-20 px-6 overflow-hidden"}>
+    <svg {"class": "absolute inset-0 w-full h-full pointer-events-none"}>
+     <path {}>
+    <div {"class": "relative max-w-7xl mx-auto"}>
+     <div {"class": "mb-12"}>
+      <h2 {"class": "text-4xl md:text-5xl font-bold text-plum uppercase leading-tight"}>
+       Our
+       <br {}>
+       <span {"class": "font-tomatoes lowercase text-6xl md:text-7xl"}>
+        Locations
+     <div {"class": "grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16"}>
+      <div {"class": "flex flex-col"}>
+       <div {"class": "relative w-full aspect-[4/3] rounded-2xl overflow-hidden"}>
+        <img {"alt": "Nassaukade", "class": "object-cover transition-all duration-300 ", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Ftsb1-location.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+       <div {"class": "mt-6 px-1"}>
+        <p {"class": "text-lg font-semibold text-plum mb-1"}>
+         Nassaukade
+        <p {"class": "text-sm text-muted"}>
+         Nassaukade 378H, Amsterdam
+        <a {"href": "https://maps.app.goo.gl/CKT2jVSsXiU84Gni9", "class": "inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-plum border-b border-plum/40 pb-0.5 hover:border-plum transition-colors"}>
+         <svg {"width": "14", "height": "14"}>
+          <path {}>
+          <circle {}>
+         Open in Google Maps
+        <div {"class": "mt-6 bg-white/50 backdrop-blur-sm rounded-2xl p-4 w-full border border-plum/10"}>
+         <div {"class": "flex items-center justify-between px-1 mb-3"}>
+          <h4 {"class": "text-sm font-semibold text-dark uppercase tracking-widest"}>
+           Opening hours
+          <div {"class": "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#008214]"}>
+           <span {"class": "absolute inset-0 rounded-full opacity-10 bg-[#008214]"}>
+           <span {"class": "relative w-2 h-2 rounded-full bg-[#008214]"}>
+           <span {"class": "relative"}>
+            Open
+         <div {"class": "flex flex-col gap-0.5"}>
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors bg-plum/8 font-semibold text-dark"}>
+           <span {}>
+            Monday
+           <span {"class": "text-dark"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Tuesday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Wednesday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Thursday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Friday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Saturday
+           <span {"class": "text-muted"}>
+            09:00–17:30
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Sunday
+           <span {"class": "text-muted"}>
+            09:00–17:30
+      <div {"class": "flex flex-col"}>
+       <div {"class": "relative w-full aspect-[4/3] rounded-2xl overflow-hidden"}>
+        <img {"alt": "Amstelveenseweg", "class": "object-cover transition-all duration-300 ", "style": "position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent", "src": "/_next/image?url=%2Fimages%2Ftsb2-location.webp&w=3840&q=75&dpl=dpl_E8ReXKrmNjJd5S3Z6A6PCUTGN6qg"}>
+       <div {"class": "mt-6 px-1"}>
+        <p {"class": "text-lg font-semibold text-plum mb-1"}>
+         Amstelveenseweg
+        <p {"class": "text-sm text-muted"}>
+         Amstelveenseweg 156, Amsterdam
+        <a {"href": "https://maps.app.goo.gl/mBG7LVu3xHNkC4DNA", "class": "inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-plum border-b border-plum/40 pb-0.5 hover:border-plum transition-colors"}>
+         <svg {"width": "14", "height": "14"}>
+          <path {}>
+          <circle {}>
+         Open in Google Maps
+        <div {"class": "mt-6 bg-white/50 backdrop-blur-sm rounded-2xl p-4 w-full border border-plum/10"}>
+         <div {"class": "flex items-center justify-between px-1 mb-3"}>
+          <h4 {"class": "text-sm font-semibold text-dark uppercase tracking-widest"}>
+           Opening hours
+          <div {"class": "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#008214]"}>
+           <span {"class": "absolute inset-0 rounded-full opacity-10 bg-[#008214]"}>
+           <span {"class": "relative w-2 h-2 rounded-full bg-[#008214]"}>
+           <span {"class": "relative"}>
+            Open
+         <div {"class": "flex flex-col gap-0.5"}>
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors bg-plum/8 font-semibold text-dark"}>
+           <span {}>
+            Monday
+           <span {"class": "text-dark"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Tuesday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Wednesday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Thursday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Friday
+           <span {"class": "text-muted"}>
+            09:00–17:00
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Saturday
+           <span {"class": "text-muted"}>
+            09:00–17:30
+          <div {"class": "flex justify-between items-center px-3 py-2 rounded-full text-sm transition-colors text-muted font-normal"}>
+           <span {}>
+            Sunday
+           <span {"class": "text-muted"}>
+            09:00–17:30
+   <section {"class": "px-8 py-16 md:py-20", "style": "background:color-mix(in srgb, var(--color-plum) 18%, var(--color-cream))"}>
+    <div {"class": "mx-auto max-w-7xl"}>
+     <h2 {"class": "mb-10 font-poppins text-center text-3xl md:text-5xl font-bold uppercase leading-none text-plum md:mb-12"}>
+      Frequently
+Asked
+     <div {"class": "grid grid-cols-1 gap-3 md:grid-cols-2"}>
+      <div {"class": "flex flex-col gap-3"}>
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          What kind of sandwiches do you offer?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           We offer a wide range of freshly made sandwiches, from a classic beef carpaccio baguette to our well-known spicy chicken sandwich. We also have vegetarian and vegan options available. Our bread selection includes white baguettes, brown spelt buns, and gluten-free bread.
+In addition to our sandwiches, we also offer one salad, one yogurt bowl (also available vegan), cold-pressed juices, croissants, sweet snacks, and soft drinks.
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          Do you also offer catering?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           Yes, we provide catering for businesses, events, and meetings in and around Amsterdam. You can easily place your order through our catering platform: https://catering.thesandwichbar.nl.
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          How can I place a catering order?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           You can easily place a catering order through our catering platform: https://catering.thesandwichbar.nl
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          Can you accommodate dietary requirements?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           Absolutely! We are happy to accommodate dietary requirements such as vegetarian, vegan, gluten-free, or allergies. Please indicate this when placing your order under “comments“ section.
+      <div {"class": "flex flex-col gap-3"}>
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          Where do you deliver?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           We deliver our sandwiches and catering orders in Amsterdam. Delivery costs may vary depending on the location. Delivery to areas around Amsterdam is also possible upon request. Please send us an email at orders@thesandwichbar.nl or feel free to call our catering mobile number to discuss the options.
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          What are your opening hours?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           Our opening hours vary by day. Please check our website and locations for the most up-to-date times.
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          Can I still cancel my catering order?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           Cancellations must be made by email at least 24 hours in advance
+       <div {"class": "overflow-hidden rounded-2xl bg-cream shadow-sm"}>
+        <button {"type": "button", "class": "flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left text-plum"}>
+         <span {"class": "font-poppins text-base font-semibold leading-snug"}>
+          Do you also cut the sandwiches for catering in half?
+         <span {"class": "relative flex h-6 w-6 shrink-0 items-center justify-center"}>
+          <span {"class": "absolute h-0.5 w-4 rounded-full bg-plum transition-transform duration-300"}>
+          <span {"class": "absolute h-4 w-0.5 rounded-full bg-plum transition-all duration-300 rotate-0 opacity-100"}>
+        <div {"class": "grid transition-all duration-300 ease-in-out grid-rows-[0fr]"}>
+         <div {"class": "overflow-hidden"}>
+          <p {"class": "px-6 pb-6 font-poppins text-sm leading-relaxed text-plum/75"}>
+           Unfortunately, we do not cut our sandwiches in half. We prepare all of our sandwiches according to a standard procedure, which allows us to handle multiple orders at the same time efficiently and consistently. Therefore, unfortunately, we are unable to make individual exceptions to this.
+   <footer {"class": "relative overflow-hidden bg-plum text-cream"}>
+    <img {"src": "/images/footer-bg.svg", "alt": "", "class": "pointer-events-none absolute -bottom-70 opacity-20 -right-90 w-[55%] max-w-none select-none"}>
+    <div {"class": "canvas-matter"}>
+     <div {"class": "canvas-matter__target"}>
+    <div {"class": "relative z-10 mx-auto max-w-7xl px-8 md:px-0 pt-16 pb-10"}>
+     <div {"class": "grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16"}>
+      <div {"class": "col-span-4 flex flex-col justify-between"}>
+       <p {"class": "font-poppins font-bold leading-none text-cream", "style": "font-size:clamp(2rem, 7vw, 4rem)"}>
+        THE
+        <br {}>
+        SANDWICH
+        <br {}>
+        BAR
+       <p {"class": "mt-8 hidden text-xs uppercase tracking-widest text-cream/50 md:block"}>
+        Site by
+        <a {"href": "https://mikdevelopment.nl", "class": "font-bold hover:text-orange-500/80 transition-colors"}>
+         Mik Development
+      <div {"class": "col-span-2 flex flex-col gap-2 md:pt-1"}>
+       <a {"class": "text-xl text-cream/70 transition-colors duration-150 hover:text-cream", "href": "/"}>
+        Home
+       <a {"class": "text-xl text-cream/70 transition-colors duration-150 hover:text-cream", "href": "/menu"}>
+        Menu
+       <a {"class": "text-xl text-cream/70 transition-colors duration-150 hover:text-cream", "href": "/catering"}>
+        Catering
+      <div {"class": "col-span-3 flex flex-col gap-5 md:pt-1"}>
+       <div {"class": "flex flex-col gap-1.5"}>
+        <p {"class": "mb-1 text-xs uppercase tracking-widest text-cream/40"}>
+         General
+        <a {"href": "mailto:info@thesandwichbar.nl", "class": "text-sm text-cream/70 transition-colors duration-150 hover:text-cream"}>
+         info@thesandwichbar.nl
+        <div {}>
+         <a {"href": "tel:0207790114(Nassaukade)&0203585387(Amstelveenseweg)", "class": "text-sm text-cream/70 transition-colors duration-150 hover:text-cream"}>
+          020 779 0114 (Nassaukade)                                          & 020 358 53 87 (Amstelveenseweg)
+         <p {"class": "mt-0.5 text-xs text-cream/30"}>
+          Not for catering orders
+       <div {"class": "flex flex-col gap-1.5"}>
+        <p {"class": "mb-1 text-xs uppercase tracking-widest text-cream/40"}>
+         Catering
+        <a {"href": "mailto:orders@thesandwichbar.nl", "class": "text-sm text-cream/70 transition-colors duration-150 hover:text-cream"}>
+         orders@thesandwichbar.nl
+        <a {"href": "tel:+31615657447", "class": "text-sm text-cream/70 transition-colors duration-150 hover:text-cream"}>
+         06-15657447
+        <a {"href": "tel:+31615004988", "class": "text-sm text-cream/70 transition-colors duration-150 hover:text-cream"}>
+         06-15004988
+       <div {"class": "flex flex-col gap-1.5 mt-2"}>
+        <a {"class": "text-xs text-cream/40 transition-colors duration-150 hover:text-cream/70", "href": "/privacy"}>
+         Privacy
+        <a {"class": "text-xs text-cream/40 transition-colors duration-150 hover:text-cream/70", "href": "/terms"}>
+         Legal
+      <div {"class": "col-span-3 flex flex-col gap-6 md:pt-1"}>
+       <p {"class": "max-w-xs text-sm leading-relaxed text-cream/60"}>
+        Fresh sandwiches, warm vibes, and all things The Sandwich Bar — follow along for daily specials and behind-the-counter moments.
+       <div {}>
+        <p {"class": "mb-3 text-xs uppercase tracking-widest text-cream/40"}>
+         Follow us
+        <div {"class": "flex items-center gap-3"}>
+         <a {"href": "https://instagram.com/thesandwichbarams", "class": "flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/60 transition-colors duration-150 hover:border-cream/50 hover:text-cream"}>
+          <svg {"width": "18", "height": "18"}>
+           <rect {"width": "20", "height": "20"}>
+           <circle {}>
+           <circle {}>
+         <a {"href": "http://tiktok.com/@thesandwichbaramsterdam", "class": "flex h-9 w-9 items-center justify-center rounded-full border border-cream/20 text-cream/60 transition-colors duration-150 hover:border-cream/50 hover:text-cream"}>
+          <svg {"width": "18", "height": "18"}>
+           <path {}>
+    <p {"class": "relative z-10 px-8 pb-6 text-xs uppercase tracking-widest text-cream/50 md:hidden"}>
+     Site by
+     <a {"href": "https://mikdevelopment.nl", "class": "font-bold hover:text-orange-500/80 transition-colors"}>
+      Mik Development
+    <div {"class": "pointer-events-none relative z-10", "style": "height:clamp(180px, 25vw, 340px)"}>
+   <div {"class": "pointer-events-none fixed inset-0 z-[9999] overflow-clip"}>
+    <div {"class": "absolute inset-0 text-plum"}>
+     <svg {"width": "100%", "class": "absolute top-[-15%] left-[-15%] h-[130%] w-[130%]"}>
+      <path {}>
+  <template {}>
+  <template {}>

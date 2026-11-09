@@ -1,0 +1,228 @@
+[
+  [
+    "$",
+    "$L1a",
+    null,
+    {
+      "data": {
+        "_id": "hero",
+        "_type": "hero",
+        "buttonLink": null,
+        "buttonText": "Bekijk ons menu",
+        "subtitle": "Welkom bij The Sandwich Bar, dé plek in Amsterdam voor betaalbare, rijk belegde broodjes! Bij ons kunnen locals nog gewoon terecht voor een simpel pistoletje kaas. ",
+        "title": "The Sandwich Bar"
+      }
+    }
+  ],
+  [
+    "$",
+    "$L1b",
+    null,
+    {
+      "data": {
+        "_id": "0ca770d0-8b2b-4736-be16-07134c977ce4",
+        "_type": "slogan",
+        "text": "Vers belegd, elke dag"
+      }
+    }
+  ],
+  [
+    "$",
+    "$L1c",
+    null,
+    {
+      "data": {
+        "_id": "aboutSection",
+        "_type": "aboutSection",
+        "body": [
+          {
+            "_key": "a1",
+            "_type": "block",
+            "children": [
+              {
+                "_key": "a1s1",
+                "_type": "span",
+                "marks": [],
+                "text": "The Sandwich Bar is dé plek in Amsterdam voor verse, betaalbare en rijk belegde broodjes — bereid met hoogwaardige, lokaal ingekochte ingrediënten. Van een simpel pistoletje met kaas tot ons bekende broodje pittige kip, aangevuld met verse cold pressed juices en barista koffie van Bocca Amsterdam."
+              }
+            ],
+            "markDefs": [],
+            "style": "normal"
+          },
+          {
+            "_key": "a2",
+            "_type": "block",
+            "children": [
+              {
+                "_key": "a2s1",
+                "_type": "span",
+                "marks": [],
+                "text": "Kom langs voor een to-go lunch of een relaxed moment met je vrienden. Haast? Bel van tevoren en wij zorgen dat je broodjes klaar staan."
+              }
+            ],
+            "markDefs": [],
+            "style": "normal"
+          }
+        ]
+      }
+    }
+  ],
+  [
+    "$",
+    "$L1d",
+    null,
+    {
+      "data": {
+        "_id": "cateringSection",
+        "_type": "cateringSection",
+        "body": [
+          {
+            "_key": "c1",
+            "_type": "block",
+            "children": [
+              {
+                "_key": "c1s1",
+                "_type": "span",
+                "marks": [],
+                "text": "The Sandwich Bar staat voor je klaar! Ons toegewijde team van professionals verzorgt met plezier jouw kantoorvergadering, bedrijfsevent, verjaardag, bruiloft of elke andere gelegenheid met heerlijke, vers bereide sandwiches. We bezorgen onze lunchcatering door heel Amsterdam (en op aanvraag ook in omliggende gebieden)."
+              }
+            ],
+            "markDefs": [],
+            "style": "normal"
+          },
+          {
+            "_key": "c2",
+            "_type": "block",
+            "children": [
+              {
+                "_key": "c2s1",
+                "_type": "span",
+                "marks": [],
+                "text": "Bij The Sandwich Bar geloven we in kwaliteit en variatie. Ons menu biedt een breed scala aan smaken en ingrediënten, en we houden graag rekening met dieetwensen – waaronder glutenvrije, vegetarische en veganistische opties."
+              }
+            ],
+            "markDefs": [],
+            "style": "normal"
+          }
+        ],
+        "freeTestLunchText": "Bestel een gratis test lunch",
+        "label": "Catering",
+        "orderNowText": "Bestel direct",
+        "title": "Op zoek naar de beste sandwich catering in Amsterdam?"
+      }
+    }
+  ],
+  [
+    "$",
+    "$L1e",
+    null,
+    {}
+  ],
+  [
+    "$",
+    "$L1f",
+    null,
+    {}
+  ],
+  [
+    "$",
+    "$L20",
+    null,
+    {}
+  ],
+  [
+    "$",
+    "$L21",
+    null,
+    {
+      "videos": [
+        {
+          "id": "c3e18699cb47",
+          "title": "TT1",
+          "videoUrl": "https://cdn.sanity.io/files/76cxrt7m/production/4c5cc010c2661f7b07af1bcf8385fc6b2cf81430.mp4"
+        },
+        {
+          "id": "100ce4225d91",
+          "title": "TT2",
+          "videoUrl": "https://cdn.sanity.io/files/76cxrt7m/production/059635aa13249854e2808561c6b57e37e270ea9f.mp4"
+        },
+        {
+          "id": "1171a6aa6f63",
+          "title": "TT3",
+          "videoUrl": "https://cdn.sanity.io/files/76cxrt7m/production/720ee7345673ebfb5532009b1c1e1fa514ea922c.mp4"
+        },
+        {
+          "id": "977ec8c2f47c",
+          "title": "TT4",
+          "videoUrl": "https://cdn.sanity.io/files/76cxrt7m/production/4c5cc010c2661f7b07af1bcf8385fc6b2cf81430.mp4"
+        }
+      ]
+    }
+  ],
+  [
+    "$",
+    "$L22",
+    null,
+    {
+      "data": null
+    }
+  ],
+  [
+    "$",
+    "$L23",
+    null,
+    {}
+  ],
+  [
+    "$",
+    "$L24",
+    null,
+    {
+      "openingHours": null,
+      "phone": "020 779 0114 (Nassaukade)                                          & 020 358 53 87 (Amstelveenseweg)",
+      "email": "info@thesandwichbar.nl",
+      "faqItems": [
+        {
+          "_key": "faq-nl-1",
+          "answer": "Wij bieden een breed assortiment aan vers belegde broodjes aan, van een klassiek broodje rundercarpaccio tot ons bekende broodje pittige kip. Ook hebben we vegetarische en vegan opties. Het broodassortiment bestaat uit witte pistoletjes, bruine spelt bollen en glutenvrije brood. Naast belegde broodjes, bieden we nog één salade, één yoghurt bowl (ook vegan mogelijk), cold pressed juices, croissants, zoetige snacks en frisdranken aan.",
+          "question": "Wat voor broodjes bieden jullie aan?"
+        },
+        {
+          "_key": "faq-nl-2",
+          "answer": "Ja, wij verzorgen catering voor bedrijven, evenementen en bijeenkomsten in en rondom Amsterdam. Je kunt eenvoudig je bestelling plaatsen via ons catering platform: https://catering.thesandwichbar.nl                                      ",
+          "question": "Bieden jullie ook catering aan?"
+        },
+        {
+          "_key": "faq-nl-3",
+          "answer": "Je kunt eenvoudig een cateringbestelling plaatsen via ons catering platform: https://catering.thesandwichbar.nl",
+          "question": "Hoe kan ik een cateringbestelling plaatsen?"
+        },
+        {
+          "_key": "faq-nl-4",
+          "answer": "Zeker! We houden graag rekening met dieetwensen zoals vegetarisch, vegan, glutenvrij of allergieën. Geef dit aan wanneer je je bestelling plaatst bij 'comments/opmerkingen'.",
+          "question": "Kunnen jullie rekening houden met dieetwensen?"
+        },
+        {
+          "_key": "faq-nl-5",
+          "answer": "Wij bezorgen onze broodjes en catering bestellingen in Amsterdam. Bezorgkosten kunnen variëren afhankelijk van de locatie. Levering in gebieden rondom Amsterdam ook mogelijk op aanvraag. Stuur ons een e-mail naar orders@thesandwichbar.nl of bel gerust ons catering 06 nummer om de opties te bespreken.",
+          "question": "Waar bezorgen jullie?"
+        },
+        {
+          "_key": "faq-nl-6",
+          "answer": "Onze openingstijden verschillen per dag. Check onze website en locaties voor de meest actuele tijden.",
+          "question": "Wat zijn jullie openingstijden?"
+        },
+        {
+          "_key": "786042d58146",
+          "answer": "Annuleringen dienen minimaal 24 uur van te voren via de e-mail gedaan te worden.",
+          "question": "Kan ik mijn catering bestelling nog annuleren?"
+        },
+        {
+          "_key": "2dc363f22342",
+          "answer": "Helaas snijden wij de broodjes niet door midden. Wij bereiden al onze broodjes volgens een vaste werkwijze, zodat we meerdere bestellingen tegelijk, efficient en consistent kunnen klaarmaken. Daarom kunnen we hierin helaas geen individuele uitzonderingen maken. ",
+          "question": "Snijden jullie de broodjes voor catering ook doormidden?"
+        }
+      ]
+    }
+  ]
+]
