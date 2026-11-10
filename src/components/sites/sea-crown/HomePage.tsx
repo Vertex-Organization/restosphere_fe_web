@@ -23,7 +23,11 @@ const gallery = [
   'images/grilled-squid.jpg', 'images/garlic-prawns.jpg',
 ]
 const videos = ['videos/seafood-stir-fry.mp4', 'videos/prawn-plating.mp4', 'videos/seafood-cooking.mp4', 'videos/seafood-stir-fry.mp4']
-const featuredImages = ['images/king-crab.jpg', 'images/lobster-dish.jpg', 'images/garlic-prawns.jpg']
+const featuredImages = [
+  'images/signature/king-crab.webp',
+  'images/signature/lobster.webp',
+  'images/signature/garlic-prawns.webp',
+]
 
 function ScrollPath({ location = false }: { location?: boolean }) {
   const svg = useRef<SVGSVGElement>(null)
@@ -202,7 +206,7 @@ function SandwichSlider({ language }: { language: Language }) {
     <ScrollPath />
     <div className="sb-slider-heading"><h2>{data.sandwichTitle}<br /><span>{en ? 'Seafood' : 'Hải sản'}</span></h2><div className="sb-slider-arrows"><button disabled={index === 0} onClick={() => goTo(index - 1)} aria-label={en ? 'Previous dish' : 'Món trước'}><Chevron /></button><button disabled={index === last} onClick={() => goTo(index + 1)} aria-label={en ? 'Next dish' : 'Món tiếp theo'}><Chevron right /></button></div></div>
     <div className="sb-slider-track" ref={track}>
-      {data.sandwiches.map((sandwich, i) => <article key={sandwich.title} className="sb-slide" aria-hidden={i !== index}><img src={asset(featuredImages[i])} width="480" height="480" draggable="false" alt={(en ? ['King crab', 'Lobster', 'Garlic prawns'] : ['Cua hoàng đế', 'Tôm hùm', 'Tôm sốt tỏi'])[i]} loading="lazy" /><h3>{sandwich.title}</h3><p>{sandwich.description}</p></article>)}
+      {data.sandwiches.map((sandwich, i) => <article key={sandwich.title} className="sb-slide" aria-hidden={i !== index}><img src={asset(featuredImages[i])} width="480" height="480" draggable="false" alt={(en ? ['Plate of king crab with garlic butter', 'Plate of grilled lobster', 'Plate of garlic butter prawns'] : ['Đĩa cua hoàng đế ăn kèm bơ tỏi', 'Đĩa tôm hùm nướng', 'Đĩa tôm sốt bơ tỏi'])[i]} loading="lazy" /><h3>{sandwich.title}</h3><p>{sandwich.description}</p></article>)}
     </div><div className="sb-slider-dots">{data.sandwiches.map((sandwich, i) => <button key={sandwich.title} className={i === index ? 'is-active' : ''} aria-label={`${en ? 'Go to dish' : 'Đến món'} ${i + 1}`} aria-current={i === index ? 'true' : undefined} onClick={() => goTo(i)} />)}</div>
   </section>
 }
@@ -281,8 +285,8 @@ function Locations({ language }: { language: Language }) {
   const open = minutes >= 540 && minutes < (day > 4 ? 1050 : 1020)
   const days = en ? ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] : ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ nhật']
   return <section className="sb-locations"><ScrollPath location /><div className="sb-wide"><h2>{en ? 'Our' : 'Chi nhánh'}<br /><span>{en ? 'Locations' : 'của chúng tôi'}</span></h2><div className="sb-location-grid">{[
-    { title: 'Nassaukade', address: 'Nassaukade 378H, Amsterdam', map: 'CKT2jVSsXiU84Gni9', image: 'images/crab.jpg' },
-    { title: 'Amstelveenseweg', address: 'Amstelveenseweg 156, Amsterdam', map: 'mBG7LVu3xHNkC4DNA', image: 'images/grilled-squid.jpg' },
+    { title: 'Nassaukade', address: 'Nassaukade 378H, Amsterdam', map: 'CKT2jVSsXiU84Gni9', image: 'images/locations/nassaukade.webp' },
+    { title: 'Amstelveenseweg', address: 'Amstelveenseweg 156, Amsterdam', map: 'mBG7LVu3xHNkC4DNA', image: 'images/locations/amstelveenseweg.webp' },
   ].map(location => <article key={location.title}><img className="sb-location-photo" src={asset(location.image)} alt={location.title} loading="lazy" /><div className="sb-location-details"><h3>{location.title}</h3><p>{location.address}</p><a className="sb-map-link" href={`https://maps.app.goo.gl/${location.map}`} target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>{en ? 'Open in Google Maps' : 'Xem trên Google Maps'}</a><div className="sb-opening-hours"><div className="sb-hours-heading"><h4>{en ? 'Opening hours' : 'Giờ mở cửa'}</h4><span className={open ? 'sb-open' : 'sb-closed'}><i />{open ? (en ? 'Open' : 'Đang mở') : en ? 'Closed' : 'Đã đóng'}</span></div>{days.map((name, i) => <div key={name} className={`sb-day${i === day ? ' is-today' : ''}`}><span>{name}</span><span>09:00–{i > 4 ? '17:30' : '17:00'}</span></div>)}</div></div></article>)}</div></div></section>
 }
 

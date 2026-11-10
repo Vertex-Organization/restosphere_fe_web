@@ -17,6 +17,7 @@ dist-ssr
 
 # Agent tools
 .agents/
+.claude/
 
 # Environment variables
 .env*
