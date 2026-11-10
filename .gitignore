@@ -12,12 +12,24 @@ dist
 dist-ssr
 *.local
 
+# Build caches
+.cache/
+.vite/
+.vite-temp/
+*.tsbuildinfo
+
 # Temporary working files
 /tmp/
+/temp/
 
 # Agent tools
 .agents/
 .claude/
+/.codex/
+/skills/
+
+# Local credentials
+/.aws/
 
 # Environment variables
 .env*
