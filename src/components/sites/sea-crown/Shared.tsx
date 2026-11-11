@@ -65,8 +65,8 @@ export function Header({ language, page }: { language: Language; page: string })
     return () => window.removeEventListener('pointermove', move)
   }, [])
   return <header className="sb-header"><nav aria-label={language === 'en' ? 'Main navigation' : 'Điều hướng chính'}>
-    <div className="sb-header-left"><SocialLinks /><div className="sb-languages"><a lang="vi" href={`/vi${page === '/' ? '' : page}`} aria-current={language === 'vi' ? 'true' : undefined}>VI</a><span>/</span><a lang="en" href={`/en${page === '/' ? '' : page}`} aria-current={language === 'en' ? 'true' : undefined}>EN</a></div></div>
-    <a className="sb-logo" ref={logo} href={`/${language}`} aria-label={language === 'en' ? "The Sea's Crown — Home" : "The Sea's Crown — Trang chủ"}><img src={asset('images/logo.png')} width="160" height="116" alt="The Sea's Crown" /></a>
+    <div className="sb-header-left"><SocialLinks /><div className="sb-languages"><a lang="vi" href={`/vi${page === '/' ? '' : page}`} aria-current={language === 'vi' ? 'true' : undefined} data-page-transition>VI</a><span>/</span><a lang="en" href={`/en${page === '/' ? '' : page}`} aria-current={language === 'en' ? 'true' : undefined} data-page-transition>EN</a></div></div>
+    <a className="sb-logo" ref={logo} href={`/${language}`} data-page-transition aria-label={language === 'en' ? "The Sea's Crown — Home" : "The Sea's Crown — Trang chủ"}><img src={asset('images/logo.png')} width="160" height="116" alt="The Sea's Crown" /></a>
     <div className="sb-header-right"><MagneticLink href={`/${language}/menu`} current={page === '/menu'}>{language === 'en' ? 'Menu' : 'Thực đơn'}</MagneticLink><MagneticLink href={`/${language}/catering`} current={page === '/catering'}>{language === 'en' ? 'Catering' : 'Đặt tiệc'}</MagneticLink></div>
   </nav></header>
 }

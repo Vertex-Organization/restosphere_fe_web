@@ -54,6 +54,11 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
       if (url.pathname === activePath.current && url.hash) return
       event.preventDefault()
       if (busy.current || url.pathname === activePath.current) return
+      // Only links that opt in (logo, language switcher) get the SVG wipe.
+      if (!anchor.hasAttribute('data-page-transition')) {
+        commit(url, false)
+        return
+      }
       busy.current = true
       setAnimating(true)
       const shape = path.current
