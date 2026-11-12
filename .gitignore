@@ -12,11 +12,25 @@ dist
 dist-ssr
 *.local
 
-# Build caches
+# Build, lint and package caches
 .cache/
 .vite/
 .vite-temp/
 *.tsbuildinfo
+.eslintcache
+.stylelintcache
+.npm/
+*.tgz
+
+# Test output
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# Deploy tooling
+.vercel/
+.netlify/
 
 # Temporary working files
 /tmp/
@@ -28,6 +42,8 @@ dist-ssr
 /.codex/
 /skills/
 /.taste-skill/
+CLAUDE.md
+CLAUDE.local.md
 
 # Local credentials
 /.aws/
@@ -41,6 +57,12 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 *.suo
 *.ntvs*
 *.njsproj

@@ -3,12 +3,13 @@ import { createSeedData, dayKey, DEMO_PASSWORD, isValidKitchenData } from './moc
 import { applyKitchenCommand } from './rules'
 import type { KitchenService } from './service'
 import { KitchenError, type CommandResult, type KitchenData, type StaffMember } from './types'
+import { KITCHEN_DATA_KEY } from './storageKey'
 
 // Local mock of the kitchen backend. Data lives in localStorage so several
 // tabs (e.g. two cooks) share one store; it is NOT synchronised with the
 // waiter app, which keeps its own mock data on the device.
 
-const DATA_KEY = 'restosphere.kitchen.demo.v3'
+const DATA_KEY = KITCHEN_DATA_KEY
 const OFFLINE_KEY = 'restosphere.kitchen.dev.offline'
 const LOCAL_EVENT = 'restosphere:kitchen-data'
 

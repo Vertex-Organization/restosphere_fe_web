@@ -1,0 +1,151 @@
+/* Horizontal dish rail & section header used on the menu page.
+   Expects --menu-gutter from the page (side padding the track bleeds into). */
+
+.menu-rail {
+  padding-top: 48px;
+  scroll-margin-top: 24px;
+}
+
+.menu-rail-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--color-gold, #ffc400);
+}
+
+.menu-rail-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.menu-rail-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-plum, #b40000);
+}
+
+.menu-rail-count {
+  font-size: 14px;
+  color: var(--color-muted, #6b4545);
+}
+
+.menu-rail-arrows {
+  display: none;
+  gap: 8px;
+  margin-left: auto;
+  align-self: center;
+}
+
+.menu-rail-arrows button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0 0 3px;
+  border: 1px solid var(--menu-line);
+  border-radius: 50%;
+  background: var(--color-cream, #fff);
+  color: var(--color-dark, #870000);
+  font-size: 24px;
+  line-height: 1;
+  transition: background .2s, color .2s, border-color .2s, opacity .2s;
+}
+
+.menu-rail-arrows button:not(:disabled):hover {
+  border-color: var(--color-plum, #b40000);
+  background: var(--color-plum, #b40000);
+  color: var(--color-cream, #fff);
+}
+
+.menu-rail-arrows button:disabled {
+  opacity: .35;
+}
+
+/* The track bleeds to both screen edges so cards drift in and out of view. */
+.menu-track {
+  display: flex;
+  gap: 18px;
+  margin: 20px calc(var(--menu-gutter) * -1) 0;
+  padding: 4px var(--menu-gutter) 20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(180 0 0 / 25%) transparent;
+  list-style: none;
+}
+
+/* Endless rail: no scrollbar (it would jump on each loop), soft edges. */
+.menu-track.is-looping {
+  padding-inline: 0;
+  scrollbar-width: none;
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+
+.menu-track.is-looping::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-track.is-looping > .menu-card:first-child {
+  margin-left: var(--menu-gutter);
+}
+
+.menu-empty {
+  padding: 32px 0 12px;
+  color: var(--color-muted, #6b4545);
+}
+
+/* Cards */
+
+.menu-card {
+  min-width: 0;
+  animation: menu-rise .5s cubic-bezier(.23, 1, .32, 1) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.menu-track .menu-card {
+  flex: 0 0 auto;
+}
+
+.menu-track .menu-card--food {
+  width: min(78vw, 300px);
+}
+
+.menu-track .menu-card--drink {
+  width: min(44vw, 190px);
+}
+
+@keyframes menu-rise {
+  from { opacity: 0; transform: translateX(24px); }
+}
+
+@media (min-width: 768px) {
+  .menu-rail-header h2 {
+    font-size: 32px;
+  }
+
+  .menu-rail-arrows {
+    display: flex;
+  }
+
+  .menu-track .menu-card--food {
+    width: 300px;
+  }
+
+  .menu-track .menu-card--drink {
+    width: 200px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .menu-track .menu-card--food {
+    width: 340px;
+  }
+
+  .menu-track .menu-card--drink {
+    width: 220px;
+  }
+}
