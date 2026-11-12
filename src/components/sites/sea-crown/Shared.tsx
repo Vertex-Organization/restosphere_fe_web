@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import FooterPlayground from './FooterPlayground'
+import { IntroCrab } from './IntroCrab'
 import { asset, external, type Language } from './siteData'
 import './Shared.css'
 
@@ -74,10 +75,10 @@ export function Header({ language, page }: { language: Language; page: string })
 export function Intro() {
   const panel = useRef<HTMLDivElement>(null)
   const line = useRef<HTMLDivElement>(null)
-  const car = useRef<HTMLImageElement>(null)
+  const crab = useRef<SVGSVGElement>(null)
   const firstVisit = useRef<boolean | null>(null)
   useLayoutEffect(() => {
-    if (!panel.current || !line.current || !car.current) return
+    if (!panel.current || !line.current || !crab.current) return
     if (firstVisit.current === null) {
       try { firstVisit.current = !sessionStorage.getItem('intro-seen'); sessionStorage.setItem('intro-seen', '1') } catch { firstVisit.current = true }
     }
@@ -90,15 +91,24 @@ export function Intro() {
       const hero = Array.from(document.querySelectorAll('[data-hero-title], [data-hero-subtitle], [data-hero-button]'))
       if (hero.length) gsap.set(hero, { autoAlpha: 0, y: 20 })
       gsap.set(panel.current, { display: 'block', xPercent: 0 })
-      gsap.set(car.current, { x: -400, transformOrigin: '15% 100%' })
+      gsap.set(crab.current, { x: -400, transformOrigin: '50% 100%' })
     })
     const start = () => {
       context.add(() => {
+        const shape = crab.current
+        if (!shape) return
+        // One step = one half-cycle of the tripod gait; 24 steps span the 2.2s run.
+        const step = { duration: .09, ease: 'sine.inOut', yoyo: true, repeat: 23 }
+        const legs = (phase: 'a' | 'b') => shape.querySelectorAll(`[data-crab-leg="${phase}"]`)
         timeline = gsap.timeline()
           .to(line.current, { width: window.innerWidth + 400, duration: 1.8, ease: 'power2.in' }, 0)
-          .to(car.current, { x: window.innerWidth + 400, duration: 2.2, ease: 'power3.in' }, 0)
-          .to(car.current, { rotation: -7, duration: .55, ease: 'power1.out' }, .25)
-          .to(car.current, { rotation: 0, duration: .18, ease: 'power3.in' }, 1.55)
+          .to(shape, { x: window.innerWidth + 400, duration: 2.2, ease: 'power3.in' }, 0)
+          .to(shape, { rotation: -5, duration: .55, ease: 'power1.out' }, .25)
+          .to(shape, { rotation: 0, duration: .18, ease: 'power3.in' }, 1.55)
+          .fromTo(legs('a'), { rotation: 0 }, { rotation: 12, transformOrigin: '100% 15%', ...step }, 0)
+          .fromTo(legs('b'), { rotation: 12 }, { rotation: 0, transformOrigin: '100% 15%', ...step }, 0)
+          .to(shape.querySelector('[data-crab-body]'), { y: -4, ...step }, 0)
+          .to(shape.querySelectorAll('[data-crab-claw]'), { rotation: 10, transformOrigin: '100% 100%', duration: .18, ease: 'sine.inOut', yoyo: true, repeat: 11 }, 0)
           .to(panel.current, { xPercent: 200, duration: 1.4, ease: 'power3.inOut' }, 2.2)
           .call(() => {
             if (panel.current) panel.current.style.display = 'none'
@@ -110,7 +120,7 @@ export function Intro() {
     else window.addEventListener('load', start, { once: true })
     return () => { window.removeEventListener('load', start); timeline?.kill(); context.revert() }
   }, [])
-  return <div className="sb-intro" ref={panel} aria-hidden="true"><div className="sb-intro-line" ref={line} /><img src={asset('illustrations/movingcar.svg')} ref={car} alt="" /></div>
+  return <div className="sb-intro" ref={panel} aria-hidden="true"><div className="sb-intro-line" ref={line} /><IntroCrab ref={crab} /></div>
 }
 
 export function BubbleLink({ href, children }: { href: string; children: React.ReactNode }) {
