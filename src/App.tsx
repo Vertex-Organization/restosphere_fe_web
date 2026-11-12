@@ -7,10 +7,12 @@ import LegalPage from './components/sites/sea-crown/LegalPage'
 import { useSiteLocation } from './components/sites/sea-crown/LocationContext'
 import { PageTransitionProvider } from './components/sites/sea-crown/PageTransition'
 import type { Language } from './components/sites/sea-crown/siteData'
+import { isCashierPath } from './routes/cashierRouter'
 import { isKitchenPath } from './routes/kitchenRouter'
 
-// Internal staff module, loaded only on /kitchen so customers never download it.
+// Internal staff modules, loaded only on their own paths so customers never download them.
 const KitchenApp = lazy(() => import('./pages/internal/kitchen/KitchenApp'))
+const CashierApp = lazy(() => import('./pages/internal/billing/CashierApp'))
 
 function Site() {
   const { pathname: route } = useSiteLocation()
@@ -45,8 +47,9 @@ function Site() {
 }
 
 function App() {
-  // Customer pages and /kitchen are separate apps; moving between them is a full page load.
+  // Customer pages, /kitchen and /cashier are separate apps; moving between them is a full page load.
   if (isKitchenPath(window.location.pathname)) return <Suspense fallback={null}><KitchenApp /></Suspense>
+  if (isCashierPath(window.location.pathname)) return <Suspense fallback={null}><CashierApp /></Suspense>
   return <PageTransitionProvider><Site /></PageTransitionProvider>
 }
 
