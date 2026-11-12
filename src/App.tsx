@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Footer, Header, Intro, SmoothScrolling } from './components/sites/sea-crown/Shared'
 import HomePage from './components/sites/sea-crown/HomePage'
 import MenuPage from './components/sites/sea-crown/MenuPage'
@@ -7,6 +7,10 @@ import LegalPage from './components/sites/sea-crown/LegalPage'
 import { useSiteLocation } from './components/sites/sea-crown/LocationContext'
 import { PageTransitionProvider } from './components/sites/sea-crown/PageTransition'
 import type { Language } from './components/sites/sea-crown/siteData'
+import { isKitchenPath } from './routes/kitchenRouter'
+
+// Internal staff module, loaded only on /kitchen so customers never download it.
+const KitchenApp = lazy(() => import('./pages/internal/kitchen/KitchenApp'))
 
 function Site() {
   const { pathname: route } = useSiteLocation()
@@ -41,6 +45,8 @@ function Site() {
 }
 
 function App() {
+  // Customer pages and /kitchen are separate apps; moving between them is a full page load.
+  if (isKitchenPath(window.location.pathname)) return <Suspense fallback={null}><KitchenApp /></Suspense>
   return <PageTransitionProvider><Site /></PageTransitionProvider>
 }
 
