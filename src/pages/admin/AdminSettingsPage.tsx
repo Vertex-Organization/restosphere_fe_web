@@ -1,0 +1,18 @@
+import { useState } from 'react'
+import { useAdminData } from '../../hooks/admin/AdminDataProvider'
+import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
+
+export default function AdminSettingsPage() {
+  const { data } = useAdminData()
+  const source = data?.settings
+  const [settings, setSettings] = useState(() => source)
+  const [message, setMessage] = useState('')
+  if (!settings || !source) return null
+  const update = <K extends keyof typeof settings>(key: K, value: typeof settings[K]) => { setSettings((current) => current ? { ...current, [key]: value } : current); setMessage('') }
+  const save = () => setMessage('Thiết lập đã được kiểm tra ở Frontend nhưng chưa lưu: Backend chưa có API cấu hình Admin.')
+  return <>
+    <PageHeader title="Cài đặt" description="Các thiết lập nhỏ gọn phù hợp với tính năng đang tồn tại." actions={<><Button onClick={() => { setSettings(source); setMessage('') }}>Hủy thay đổi</Button><Button tone="primary" onClick={save}>Lưu cài đặt</Button></>} />
+    <DemoNotice>Không có SMTP password hoặc cấu hình bí mật nào được lưu trên trình duyệt.</DemoNotice>
+    <div className="a-settings-stack"><SectionCard title="Đặt bàn trực tuyến" description="Customer Web đang có luồng gửi yêu cầu đặt bàn."><div className="a-setting-row"><div><h3>Nhận yêu cầu đặt bàn</h3><p>Cho phép khách gửi yêu cầu qua biểu mẫu hiện có.</p></div><label className="a-switch"><input type="checkbox" checked={settings.onlineReservations} onChange={(event) => update('onlineReservations', event.target.checked)} /><span aria-hidden="true" /></label></div><div className="a-setting-row"><div><h3>Thời gian giữ bàn</h3><p>Giá trị hiển thị cho quy trình giữ bàn; cần Backend áp dụng vào nghiệp vụ.</p></div><label className="a-compact-field"><span className="a-sr-only">Thời gian giữ bàn</span><select className="a-select" value={settings.tableHoldMinutes} onChange={(event) => update('tableHoldMinutes', Number(event.target.value))}><option value={10}>10 phút</option><option value={15}>15 phút</option><option value={20}>20 phút</option><option value={30}>30 phút</option></select></label></div></SectionCard><SectionCard title="Email thông báo" description="Trạng thái tích hợp dịch vụ gửi email."><div className="a-integration-state"><span><Icon name="offline" size={18} /></span><div><h3>SMTP chưa được tích hợp</h3><p>Source chưa có API quản trị SMTP an toàn. Cấu hình người gửi và mật khẩu không được mở tại Frontend.</p></div><strong>Chưa kết nối</strong></div><div className="a-setting-row is-disabled"><div><h3>Gửi email thông báo</h3><p>Tùy chọn sẽ khả dụng khi Backend có dịch vụ email.</p></div><label className="a-switch"><input type="checkbox" checked={settings.emailNotifications} disabled onChange={() => undefined} /><span aria-hidden="true" /></label></div></SectionCard><SectionCard title="Cài đặt chung" description="Giá trị hiển thị đang được các module sử dụng."><div className="a-setting-row"><div><h3>Múi giờ hệ thống</h3><p>Dùng để hiển thị thời gian trong Admin Web.</p></div><select className="a-select" value={settings.timezone} onChange={(event) => update('timezone', event.target.value)}><option value="Asia/Ho_Chi_Minh">Asia/Ho_Chi_Minh</option><option value="Europe/Amsterdam">Europe/Amsterdam</option></select></div><div className="a-setting-row"><div><h3>Đơn vị tiền tệ</h3><p>Đồng bộ với dữ liệu thanh toán khi Backend hỗ trợ cấu hình chung.</p></div><select className="a-select" value={settings.currency} onChange={(event) => update('currency', event.target.value)}><option value="VND">VND</option><option value="EUR">EUR</option></select></div></SectionCard>{message && <p className="a-inline-warning a-form-message" role="status">{message}</p>}</div>
+  </>
+}

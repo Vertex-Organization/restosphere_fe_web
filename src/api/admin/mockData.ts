@@ -1,0 +1,37 @@
+import type { AdminData } from './types'
+
+export const MOCK_ADMIN_DATA: AdminData = {
+  users: [
+    { id: 'u-1001', fullName: 'Nguyễn Minh Anh', email: 'minh.anh@demo.example', role: 'ADMIN', status: 'ACTIVE', createdAt: '2026-11-08T08:15:00+07:00', initials: 'MA' },
+    { id: 'u-1002', fullName: 'Trần Quốc Huy', email: 'quoc.huy@demo.example', role: 'MANAGER', status: 'ACTIVE', createdAt: '2026-11-06T14:30:00+07:00', initials: 'QH' },
+    { id: 'u-1003', fullName: 'Lê Thanh Hà', email: 'thanh.ha@demo.example', role: 'CASHIER', status: 'ACTIVE', createdAt: '2026-11-05T10:20:00+07:00', initials: 'TH' },
+    { id: 'u-1004', fullName: 'Phạm Gia Bảo', email: 'gia.bao@demo.example', role: 'KITCHEN', status: 'ACTIVE', createdAt: '2026-11-03T16:45:00+07:00', initials: 'GB' },
+    { id: 'u-1005', fullName: 'Võ Ngọc Lan', email: 'ngoc.lan@demo.example', role: 'WAITER', status: 'LOCKED', createdAt: '2026-10-29T09:10:00+07:00', initials: 'NL' },
+    { id: 'u-1006', fullName: 'Đỗ Hoàng Nam', email: 'hoang.nam@demo.example', role: 'RECEPTIONIST', status: 'ACTIVE', createdAt: '2026-10-24T11:35:00+07:00', initials: 'HN' },
+    { id: 'u-1007', fullName: 'Bùi Thu Trang', email: 'thu.trang@demo.example', role: 'CUSTOMER', status: 'ACTIVE', createdAt: '2026-10-20T19:05:00+07:00', initials: 'TT' },
+    { id: 'u-1008', fullName: 'Hoàng Đức Long', email: 'duc.long@demo.example', role: 'CUSTOMER', status: 'ACTIVE', createdAt: '2026-10-14T12:40:00+07:00', initials: 'ĐL' },
+    { id: 'u-1009', fullName: 'Ngô Khánh Vy', email: 'khanh.vy@demo.example', role: 'WAITER', status: 'LOCKED', createdAt: '2026-10-09T07:55:00+07:00', initials: 'KV' },
+    { id: 'u-1010', fullName: 'Dương Hải Yến', email: 'hai.yen@demo.example', role: 'CUSTOMER', status: 'ACTIVE', createdAt: '2026-10-01T18:20:00+07:00', initials: 'HY' },
+  ],
+  restaurant: {
+    name: "The Sea's Crown",
+    description: 'Nhà hàng hải sản với thực đơn gọi món và dịch vụ đặt tiệc.',
+    address: 'Amsterdam',
+    hotline: '',
+    email: '',
+    openingHours: '',
+    facebook: '',
+    instagram: '',
+    tiktok: '',
+    logoUrl: '/sites/sea-crown/images/logo.png',
+    coverUrl: '/sites/sea-crown/images/seafood-feast.jpg',
+  },
+  settings: {
+    onlineReservations: true,
+    tableHoldMinutes: 15,
+    timezone: 'Asia/Ho_Chi_Minh',
+    currency: 'VND',
+    emailNotifications: false,
+  },
+  auditLogs: [],
+}
