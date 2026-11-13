@@ -30,7 +30,19 @@ export function SmoothScrolling() {
 }
 
 export function SocialIcon({ kind }: { kind: 'instagram' | 'tiktok' }) {
-  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{kind === 'instagram' ? <><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" /></> : <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />}</svg>
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {kind === 'instagram' ? (
+        <>
+          <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+          <circle cx="12" cy="12" r="4.2" />
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+        </>
+      ) : (
+        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+      )}
+    </svg>
+  )
 }
 
 function SocialLinks() {
