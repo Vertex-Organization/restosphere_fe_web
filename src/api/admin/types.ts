@@ -30,6 +30,9 @@ export interface RestaurantProfile {
 export interface AdminSettings {
   onlineReservations: boolean
   tableHoldMinutes: number
+  noShowMinutes: number
+  bufferMinutes: number
+  billing: { serviceChargePercent: number; vatPercent: number; bankAccount: string }
   timezone: string
   currency: string
   emailNotifications: boolean

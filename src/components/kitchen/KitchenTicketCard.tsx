@@ -33,10 +33,11 @@ interface ActiveProps {
   isPending: (key: string) => boolean
   onStart: (items: Item[]) => void
   onComplete: (items: Item[]) => void
+  onReject: (item: Item) => void
 }
 
 /** Left column: items still to start or being cooked. */
-export function KitchenTicketCard({ ticket, data, now, isPending, onStart, onComplete }: ActiveProps) {
+export function KitchenTicketCard({ ticket, data, now, isPending, onStart, onComplete, onReject }: ActiveProps) {
   const { order, items } = ticket
   const submitted = items.filter((i) => i.status === 'SUBMITTED')
   const preparing = items.filter((i) => i.status === 'PREPARING')
@@ -58,7 +59,7 @@ export function KitchenTicketCard({ ticket, data, now, isPending, onStart, onCom
       <ul className="k-items">
         {items.map((item) => (
           <KitchenOrderItem key={item.id} item={item} menu={menuOf(data, item)} now={now} variant="active" cookName={cook(data, item.startedBy)}
-            pending={isPending(item.id)} onStart={() => onStart([item])} onComplete={() => onComplete([item])} />
+            pending={isPending(item.id)} onStart={() => onStart([item])} onComplete={() => onComplete([item])} onReject={() => onReject(item)} />
         ))}
       </ul>
       <footer className="k-ticket-foot">

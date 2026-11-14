@@ -4,15 +4,93 @@ import { employeeName, isLateOrder, orderStatus, tableForOrder } from '../../api
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
-import { DataTable, Filter, Link, PageHeading, Panel, RowAction, Search, Status } from '../../components/manager/ui'
-import { matchesSearch, statusOptions } from '../../api/manager/labels'
+import { Icon, Link, PageHeading, Panel, Search, Status } from '../../components/manager/ui'
+import { matchesSearch } from '../../api/manager/labels'
 import { OrderDetail } from '../../components/manager/OrderDetail'
 
 export default function OrdersPage({ selectedId }: { selectedId: string }) {
-  const { data: d } = useManagerData(); const now = useNow()
-  const [query, setQuery] = useState(''); const [status, setStatus] = useState(''); const [lateOnly, setLateOnly] = useState(false); const [selected, setSelected] = useState(selectedId)
+  const { data: d } = useManagerData()
+  const now = useNow()
+  const [query, setQuery] = useState('')
+  const [status, setStatus] = useState('')
+  const [lateOnly, setLateOnly] = useState(false)
+  const [selected, setSelected] = useState(selectedId)
   if (!d) return null
-  const rows = d.orders.filter(o => matchesSearch(query, o.id, tableForOrder(d, o), employeeName(d, o.employeeId)) && (!status || orderStatus(o) === status) && (!lateOnly || isLateOrder(o, now)))
+
+  const counts = {
+    all: d.orders.length,
+    late: d.orders.filter(order => isLateOrder(order, now)).length,
+    PREPARING: d.orders.filter(order => orderStatus(order) === 'PREPARING').length,
+    READY: d.orders.filter(order => orderStatus(order) === 'READY').length,
+    SERVED: d.orders.filter(order => orderStatus(order) === 'SERVED').length,
+  }
+  const filters = [
+    { id: 'all', label: 'Tất cả đơn', count: counts.all, icon: 'receipt' as const },
+    { id: 'late', label: 'Cần kiểm tra', count: counts.late, icon: 'clock' as const, tone: 'danger' },
+    { id: 'PREPARING', label: 'Đang chế biến', count: counts.PREPARING, icon: 'utensils' as const, tone: 'warning' },
+    { id: 'READY', label: 'Chờ phục vụ', count: counts.READY, icon: 'checkCircle' as const, tone: 'success' },
+    { id: 'SERVED', label: 'Đã phục vụ', count: counts.SERVED, icon: 'check' as const },
+  ]
+  const activeFilter = lateOnly ? 'late' : status || 'all'
+  const chooseFilter = (id: string) => {
+    setLateOnly(id === 'late')
+    setStatus(['PREPARING', 'READY', 'SERVED'].includes(id) ? id : '')
+  }
+  const rows = d.orders
+    .filter(order => matchesSearch(query, order.id, tableForOrder(d, order), employeeName(d, order.employeeId)) && (!status || orderStatus(order) === status) && (!lateOnly || isLateOrder(order, now)))
+    .sort((a, b) => {
+      const rank = (order: typeof a) => isLateOrder(order, now) ? 0 : orderStatus(order) === 'READY' ? 1 : orderStatus(order) === 'PREPARING' ? 2 : 3
+      return rank(a) - rank(b) || a.at.localeCompare(b.at)
+    })
   const selectedOrder = d.orders.find(o => o.id === selected)
-  return <><PageHeading title="Giám sát đơn hàng" description="Theo dõi lượt gọi món, trạng thái chế biến và các đơn cần kiểm tra." actions={<Link className="k-btn" to={managerPath('kitchen')}>Xem giám sát bếp</Link>} /><Panel title="Danh sách đơn hàng" aside={<span className="m-muted">{rows.length} đơn</span>}><div className="m-toolbar"><Search value={query} onChange={setQuery} placeholder="Tìm mã đơn, bàn, nhân viên…" /><Filter label="Trạng thái đơn" value={status} onChange={setStatus} options={statusOptions(['PREPARING', 'READY', 'SERVED'])} /><label className="m-checkbox"><input type="checkbox" checked={lateOnly} onChange={e => setLateOnly(e.target.checked)} />Chỉ đơn quá 25 phút</label></div><DataTable headers={['Mã đơn', 'Bàn', 'Nhân viên', 'Giờ gửi', 'Số món', 'Trạng thái', 'Thời gian chờ', '']} empty={!rows.length} count={rows.length}>{rows.map(o => <tr key={o.id} className={isLateOrder(o, now) ? 'm-row-warning' : ''}><td className="m-code">{o.id}<small>Lượt gọi {o.round}</small></td><td><span className="m-table-code">{tableForOrder(d, o)}</span></td><td>{employeeName(d, o.employeeId)}</td><td className="m-num">{time(o.at)}</td><td>{o.items.reduce((n, i) => n + i.quantity, 0)} món</td><td><Status value={orderStatus(o)} /></td><td>{orderStatus(o) === 'SERVED' ? '—' : <span className={isLateOrder(o, now) ? 'm-danger' : 'm-muted'}>{minutes(o.at, now)} phút{isLateOrder(o, now) && ' · Cần kiểm tra'}</span>}</td><td><RowAction onClick={() => setSelected(o.id)} /></td></tr>)}</DataTable></Panel>{selectedOrder && <OrderDetail order={selectedOrder} data={d} onClose={() => setSelected('')} />}</>
+  return <div className="m-orders-page">
+    <PageHeading title="Giám sát đơn hàng" description="Theo dõi tiến độ món theo từng bàn và ưu tiên đơn chờ lâu." actions={<Link className="k-btn" to={managerPath('kitchen')}>Mở màn hình bếp</Link>} />
+
+    <div className="m-orders-filters" aria-label="Lọc nhanh danh sách đơn hàng">{filters.map(filter => <button
+      key={filter.id}
+      type="button"
+      className={`m-orders-filter ${filter.tone ? `is-${filter.tone}` : ''}`}
+      aria-pressed={activeFilter === filter.id}
+      onClick={() => chooseFilter(filter.id)}
+    >
+      <span><Icon name={filter.icon} size={16} />{filter.label}</span>
+      <strong>{filter.count}</strong>
+    </button>)}</div>
+
+    <Panel className="m-orders-panel" title="Danh sách đơn hàng" aside={<span className="m-muted">{rows.length} đơn phù hợp</span>}>
+      <div className="m-orders-toolbar"><Search value={query} onChange={setQuery} placeholder="Tìm mã đơn, bàn, nhân viên…" /><p>Đơn quá 25 phút được xếp lên đầu.</p></div>
+      {rows.length ? <div className="m-orders-list">
+        <div className="m-orders-list-head" aria-hidden="true"><span>Đơn · bàn</span><span>Tiến độ món</span><span>Nhân viên</span><span>Thời gian</span><span /></div>
+        {rows.map(order => {
+          const late = isLateOrder(order, now)
+          const state = orderStatus(order)
+          const table = tableForOrder(d, order)
+          const total = order.items.reduce((sum, item) => sum + item.quantity, 0)
+          const stages = [
+            { status: 'SUBMITTED', label: 'Món mới', tone: 'info' },
+            { status: 'PREPARING', label: 'Đang làm', tone: 'warning' },
+            { status: 'READY', label: 'Chờ phục vụ', tone: 'success' },
+            { status: 'SERVED', label: 'Đã phục vụ', tone: 'neutral' },
+          ].map(stage => ({ ...stage, count: order.items.filter(item => item.status === stage.status).reduce((sum, item) => sum + item.quantity, 0) }))
+          const progressLabel = stages.filter(stage => stage.count).map(stage => `${stage.count} ${stage.label.toLowerCase()}`).join(', ')
+          return <button type="button" className={`m-order-pulse ${late ? 'is-late' : `is-${state.toLowerCase()}`}`} key={order.id} onClick={() => setSelected(order.id)}>
+            <span className="m-order-identity">
+              <b>{table}</b>
+              <span><strong>{order.id}</strong><small>Lượt {order.round} · gửi {time(order.at)}</small></span>
+            </span>
+            <span className="m-order-progress-cell">
+              <span className="m-order-progress-top"><Status value={state} /><small>{total} món</small></span>
+              <span className="m-order-progress" role="img" aria-label={`Tiến độ ${order.id}: ${progressLabel || 'không có món đang xử lý'}`}>{stages.map(stage => stage.count > 0 && <i key={stage.status} className={`is-${stage.tone}`} style={{ width: `${stage.count / Math.max(1, total) * 100}%` }} />)}</span>
+              <span className="m-order-stage-labels">{stages.filter(stage => stage.count).map(stage => <small key={stage.status}><i className={`is-${stage.tone}`} />{stage.count} {stage.label.toLowerCase()}</small>)}</span>
+            </span>
+            <span className="m-order-owner"><Icon name="user" size={15} /><span><strong>{employeeName(d, order.employeeId)}</strong><small>Nhân viên gọi món</small></span></span>
+            <span className={`m-order-wait ${late ? 'is-late' : ''}`}><strong>{state === 'SERVED' ? 'Xong' : `${minutes(order.at, now)} phút`}</strong><small>{late ? 'Cần kiểm tra' : state === 'SERVED' ? 'Đã phục vụ' : 'Thời gian chờ'}</small></span>
+            <Icon name="chevronRight" size={15} />
+          </button>
+        })}
+      </div> : <div className="m-empty"><Icon name="inbox" size={24} /><p>Không có đơn hàng phù hợp với bộ lọc.</p></div>}
+      <div className="m-table-footer">Hiển thị {rows.length} kết quả</div>
+    </Panel>
+    {selectedOrder && <OrderDetail order={selectedOrder} data={d} onClose={() => setSelected('')} />}
+  </div>
 }

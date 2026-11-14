@@ -19,7 +19,7 @@ export interface StaffMember {
   permissions: KitchenPermission[]
 }
 
-export type OrderItemStatus = 'DRAFT' | 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'CANCELLED'
+export type OrderItemStatus = 'DRAFT' | 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'REJECTED' | 'CANCELLED' | 'VOIDED'
 /** DRAFT items stay on the waiter's device and never reach the kitchen. */
 export type SentItemStatus = Exclude<OrderItemStatus, 'DRAFT'>
 
@@ -64,6 +64,10 @@ export interface KitchenOrderItem {
   cancelledAt?: string
   cancelledBy?: string
   cancellationReason?: string
+  /** Kitchen refused the item before cooking it. */
+  rejectedAt?: string
+  rejectedBy?: string
+  rejectionReason?: string
   history: StatusChange[]
 }
 
@@ -105,11 +109,12 @@ export interface Incident {
   code: string
   type: IncidentType
   severity: IncidentSeverity
+  title: string
   description: string
   orderId?: string
   itemId?: string
-  reportedBy: string
-  reportedAt: string
+  reporterId: string
+  at: string
   status: IncidentStatus
   /** Who was told about it; the kitchen cannot cancel items from here. */
   notifiedStaffIds: string[]
@@ -133,6 +138,8 @@ export interface KitchenNotification {
 /** Messages the kitchen sends to other roles (shown only in the dev simulator). */
 export interface OutboxMessage {
   id: string
+  /** Notification kind of the receiving role (see docs/domain-contract.md). */
+  kind: string
   audience: StaffRole
   staffId?: string
   title: string
@@ -176,6 +183,7 @@ export interface IncidentInput {
 export type KitchenCommand =
   | { type: 'start'; items: ItemRef[] }
   | { type: 'complete'; items: ItemRef[] }
+  | { type: 'reject'; itemId: string; version: number; reason: string }
   | { type: 'report-incident'; input: IncidentInput }
   | { type: 'set-menu-status'; menuItemId: string; status: 'AVAILABLE' | 'SOLD_OUT' }
   | { type: 'request-menu-status'; menuItemId: string; status: 'AVAILABLE' | 'SOLD_OUT' }

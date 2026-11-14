@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { buildBoard, filterActive, type KitchenFilter } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
+import { RejectItemDialog } from '../../../components/kitchen/KitchenOrderItem'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenBoardColumn } from '../../../components/kitchen/KitchenBoardColumn'
 import { KitchenFilters, type FilterOption } from '../../../components/kitchen/KitchenFilters'
@@ -13,6 +14,7 @@ const refs = (items: KitchenOrderItem[]) => items.map((i) => ({ id: i.id, versio
 export default function KitchenBoardPage() {
   const { data, run, isPending } = useKitchenSnapshot()
   const now = useNow()
+  const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
   const [filter, setFilter] = useState<KitchenFilter>('all')
   const [tab, setTab] = useState<'active' | 'ready'>('active')
   const board = buildBoard(data, now)
@@ -31,6 +33,7 @@ export default function KitchenBoardPage() {
 
   return (
     <div className="k-board" data-tab={tab}>
+      {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
       <div className="k-board-tabs" role="tablist" aria-label="Cột của bảng bếp">
         <button type="button" role="tab" className="k-board-tab" aria-selected={tab === 'active'} aria-controls="kitchen-active" onClick={() => setTab('active')}>
           Nhận món · {board.active.length}
@@ -46,7 +49,7 @@ export default function KitchenBoardPage() {
         isEmpty={!visible.length}
         empty={filter === 'all' ? 'Chưa có món cần chế biến.' : 'Không có phiếu nào khớp bộ lọc.'}>
         {visible.map((ticket) => (
-          <KitchenTicketCard key={ticket.order.id} ticket={ticket} data={data} now={now} isPending={isPending} onStart={start} onComplete={complete} />
+          <KitchenTicketCard key={ticket.order.id} ticket={ticket} data={data} now={now} isPending={isPending} onStart={start} onComplete={complete} onReject={setRejectItem} />
         ))}
       </KitchenBoardColumn>
 

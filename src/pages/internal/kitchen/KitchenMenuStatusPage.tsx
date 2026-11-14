@@ -38,7 +38,7 @@ export default function KitchenMenuStatusPage() {
 
   const action = (menu: MenuItem) => {
     const busy = isPending(`menu:${menu.id}`)
-    if (menu.status === 'DISCONTINUED') return <span className="k-muted">Do Admin quản lý</span>
+    if (menu.status === 'DISCONTINUED') return <span className="k-muted">Do Quản lý (Manager) quản lý</span>
     if (canEdit) {
       if (menu.status === 'SOLD_OUT') {
         return <button type="button" className="k-btn k-btn--outline" disabled={busy} onClick={() => { void setStatus(menu, 'AVAILABLE') }}>Mở bán lại</button>
@@ -69,7 +69,7 @@ export default function KitchenMenuStatusPage() {
       <p className="k-callout">
         <Icon name="info" size={14} />
         {canEdit
-          ? 'Bạn có thể báo món tạm hết hoặc mở bán lại. Giá, thêm hoặc xóa món do Admin quản lý.'
+          ? 'Bạn có thể báo món tạm hết hoặc mở bán lại. Giá, thêm hoặc xóa món do Quản lý (Manager) quản lý.'
           : 'Bạn chỉ xem được tình trạng món. Gửi yêu cầu để Bếp trưởng hoặc Quản lý ca cập nhật.'}
       </p>
       <div className="k-toolbar">

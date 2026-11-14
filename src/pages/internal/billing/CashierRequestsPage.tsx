@@ -151,7 +151,7 @@ function RequestDetail({ request: r }: { request: CashierRequest }) {
             {r.decisionNote && <q>{r.decisionNote}</q>}
           </li>
         )}
-        {r.status === 'CANCELLED' && (
+        {r.status === 'WITHDRAWN' && (
           <li className="c-tl c-tl--muted"><b>Đã rút yêu cầu</b><span>{staffName(data, r.decidedBy)} · {r.decidedAt ? formatTime(r.decidedAt) : ''}</span></li>
         )}
       </ol>

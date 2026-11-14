@@ -8,7 +8,7 @@ import { CashierError, type CashierData, type CashierStaff, type CommandResult }
 // tabs (two cashiers, or the dev simulator beside the counter) share one
 // store. It is NOT a payment integration: nothing here moves real money.
 
-const DATA_KEY = 'restosphere.cashier.demo.v2'
+const DATA_KEY = 'restosphere.cashier.demo.v6'
 const OFFLINE_KEY = 'restosphere.cashier.dev.offline'
 const LOCAL_EVENT = 'restosphere:cashier-data'
 

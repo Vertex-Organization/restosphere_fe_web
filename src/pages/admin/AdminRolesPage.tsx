@@ -8,8 +8,8 @@ const EMPTY_USERS: AdminUser[] = []
 
 const ROLE_INFO: Record<AdminRole, { description: string; access: string }> = {
   CUSTOMER: { description: 'Tài khoản khách hàng', access: 'Customer Web' },
-  RECEPTIONIST: { description: 'Tiếp nhận và điều phối đặt bàn', access: 'Manager Web theo quyền' },
-  WAITER: { description: 'Phục vụ bàn và theo dõi đơn', access: 'Manager Web theo quyền' },
+  RECEPTIONIST: { description: 'Tiếp nhận và điều phối đặt bàn', access: 'Ứng dụng di động (Staff app)' },
+  WAITER: { description: 'Phục vụ bàn và theo dõi đơn', access: 'Ứng dụng di động (Staff app)' },
   KITCHEN: { description: 'Xử lý món ăn tại bếp', access: 'Kitchen Web' },
   CASHIER: { description: 'Lập hóa đơn và xử lý thanh toán', access: 'Cashier Web' },
   MANAGER: { description: 'Điều phối hoạt động nhà hàng', access: 'Manager Web' },

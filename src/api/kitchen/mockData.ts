@@ -232,14 +232,14 @@ export function createSeedData(now: Date): KitchenData {
 
   const incidents: Incident[] = [
     {
-      id: 'inc-2', code: 'SC-002', type: 'OUT_OF_STOCK', severity: 'HIGH', orderId: 'o-K105', itemId: 'i-K105-3',
-      description: 'Hết gà ta cho món Gà nướng muối ớt.', reportedBy: 'NV011', reportedAt: ago(now, 11), status: 'RESOLVED',
+      id: 'inc-2', code: 'SC-002', type: 'OUT_OF_STOCK', severity: 'HIGH', title: 'Hết nguyên liệu', orderId: 'o-K105', itemId: 'i-K105-3',
+      description: 'Hết gà ta cho món Gà nướng muối ớt.', reporterId: 'NV011', at: ago(now, 11), status: 'RESOLVED',
       notifiedStaffIds: ['NV001', 'NV002'],
       response: { by: 'NV001', at: ago(now, 10), text: 'Đã hủy món, phục vụ báo khách đổi món. Món chuyển sang tạm hết.' },
     },
     {
-      id: 'inc-1', code: 'SC-001', type: 'EQUIPMENT', severity: 'MEDIUM',
-      description: 'Bếp nướng số 2 lửa không đều, nướng chậm hơn bình thường.', reportedBy: 'NV010', reportedAt: ago(now, 52),
+      id: 'inc-1', code: 'SC-001', type: 'EQUIPMENT', severity: 'MEDIUM', title: 'Thiết bị hỏng',
+      description: 'Bếp nướng số 2 lửa không đều, nướng chậm hơn bình thường.', reporterId: 'NV010', at: ago(now, 52),
       status: 'ACKNOWLEDGED', notifiedStaffIds: ['NV001'],
       response: { by: 'NV001', at: ago(now, 45), text: 'Đã gọi kỹ thuật, tạm dùng bếp nướng số 1.' },
     },
@@ -255,8 +255,8 @@ export function createSeedData(now: Date): KitchenData {
   ]
 
   const outbox: OutboxMessage[] = [
-    { id: 'out-2', audience: 'WAITER', staffId: 'NV002', title: 'Sự cố SC-002: Hết nguyên liệu (Cao)', body: 'Bàn A05 · #K105 · Gà nướng muối ớt — Hết gà ta cho món Gà nướng muối ớt.', at: ago(now, 11) },
-    { id: 'out-1', audience: 'MANAGER', staffId: 'NV001', title: 'Sự cố SC-001: Thiết bị hỏng (Trung bình)', body: 'Bếp nướng số 2 lửa không đều, nướng chậm hơn bình thường.', at: ago(now, 52) },
+    { id: 'out-2', kind: 'INCIDENT', audience: 'WAITER', staffId: 'NV002', title: 'Sự cố SC-002: Hết nguyên liệu (Cao)', body: 'Bàn A05 · #K105 · Gà nướng muối ớt — Hết gà ta cho món Gà nướng muối ớt.', at: ago(now, 11) },
+    { id: 'out-1', kind: 'INCIDENT', audience: 'MANAGER', staffId: 'NV001', title: 'Sự cố SC-001: Thiết bị hỏng (Trung bình)', body: 'Bếp nướng số 2 lửa không đều, nướng chậm hơn bình thường.', at: ago(now, 52) },
   ]
 
   return {
@@ -276,12 +276,15 @@ export function isValidKitchenData(value: unknown): value is KitchenData {
   const lists = [data.staff, data.orders, data.items, data.menuCategories, data.menuItems, data.menuRequests, data.incidents, data.notifications, data.outbox]
   if (data.schema !== 1 || !isString(data.seedDay) || !Number.isFinite(data.revision) || !Number.isInteger(data.nextId)
     || !Number.isInteger(data.nextTicket) || !lists.every(Array.isArray)) return false
-  const statuses = ['SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'CANCELLED']
+  const statuses = ['SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'REJECTED', 'CANCELLED', 'VOIDED']
   return data.orders!.every((o) => o && isString(o.id) && isString(o.code) && isString(o.tableCode) && isDate(o.submittedAt))
     && data.items!.every((i) => i && isString(i.id) && isString(i.name) && isString(i.note) && statuses.includes(i.status)
       && Number.isInteger(i.version) && Number.isInteger(i.quantity) && Array.isArray(i.history)
+      && (i.status !== 'REJECTED' || (isString(i.rejectionReason) && !!i.rejectionReason.trim() && isDate(i.rejectedAt) && isString(i.rejectedBy)))
       && data.orders!.some((o) => o.id === i.orderId))
     && data.staff!.every((s) => s && isString(s.id) && isString(s.name) && Array.isArray(s.permissions))
     && data.menuItems!.every((m) => m && isString(m.id) && isString(m.name) && isString(m.status))
     && data.notifications!.every((n) => n && isString(n.id) && Array.isArray(n.readBy))
+    && data.incidents!.every((i) => i && isString(i.id) && isString(i.code) && isString(i.title) && isString(i.reporterId) && isDate(i.at)
+      && ['OPEN', 'ACKNOWLEDGED', 'RESOLVED'].includes(i.status) && (!i.response || (isString(i.response.by) && isDate(i.response.at) && isString(i.response.text))))
 }

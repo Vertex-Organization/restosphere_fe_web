@@ -65,7 +65,10 @@ export default function CashierShiftPage() {
 
 function OpenShift() {
   const { user, run, isPending } = useCashierSnapshot()
+  const { data } = useCashierSnapshot()
   const [float, setFloat] = useState<number | null>(null)
+  const mine = data.scheduledShifts.filter((s) => s.cashierId === user.id)
+  const [scheduledShiftId, setScheduledShiftId] = useState(mine[0]?.id ?? '')
   const [error, setError] = useState('')
   const canManage = hasPermission(user, 'shifts.manage')
   const busy = isPending('shift')
@@ -73,7 +76,7 @@ function OpenShift() {
   const submit = async () => {
     if (busy) return
     if (float === null) return setError('Nhập tiền đầu ca (nhập 0 nếu không có).')
-    const outcome = await run({ type: 'open-shift', openingFloat: float }, ['shift'])
+    const outcome = await run({ type: 'open-shift', openingFloat: float, scheduledShiftId: scheduledShiftId || undefined }, ['shift'])
     if (outcome && !outcome.ok) setError(outcome.error)
   }
 
@@ -85,6 +88,14 @@ function OpenShift() {
         <p className="k-muted">Mở ca để bắt đầu thu tiền. Tiền đầu ca là tiền lẻ trong két để thối, không tính vào doanh thu.</p>
       </div>
       <form className="c-open-shift-form" noValidate onSubmit={(e) => { e.preventDefault(); void submit() }}>
+        {mine.length > 0 && (
+          <label className="k-field">
+            <span>Ca đã xếp</span>
+            <select className="k-input" value={scheduledShiftId} onChange={(e) => setScheduledShiftId(e.target.value)} disabled={!canManage}>
+              {mine.map((s) => <option key={s.id} value={s.id}>{s.name} · {s.start}–{s.end}</option>)}
+            </select>
+          </label>
+        )}
         <MoneyInput label="Tiền đầu ca" value={float} onChange={(v) => { setFloat(v); setError('') }} autoFocus disabled={!canManage} placeholder="0" />
         <div className="c-quick c-quick--3">
           {QUICK_FLOATS.map((v) => (
@@ -145,7 +156,7 @@ function CurrentShift({ shift }: { shift: CashierShift }) {
   return (
     <>
       <div className="c-stats">
-        <Stat icon="clock" label={`Ca ${shift.code}`} value={<span className="c-stat-open">Đang mở</span>}
+        <Stat icon="clock" label={`Ca ${shift.code}${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name ? ` · ${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name}` : ''}`} value={<span className="c-stat-open">Đang mở</span>}
           sub={`Từ ${formatTime(shift.openedAt)} · ${shortDuration(minutesBetween(shift.openedAt, now))}`} tone="success" />
         <Stat icon="receipt" label="Doanh thu ca" value={formatVnd(s.revenue)} sub="Tiền mặt + chuyển khoản" />
         <Stat icon="list" label="Giao dịch" value={s.count} sub={extras || 'Không có giao dịch treo'} />

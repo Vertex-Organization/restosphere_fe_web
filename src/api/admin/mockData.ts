@@ -29,6 +29,9 @@ export const MOCK_ADMIN_DATA: AdminData = {
   settings: {
     onlineReservations: true,
     tableHoldMinutes: 15,
+    noShowMinutes: 30,
+    bufferMinutes: 15,
+    billing: { serviceChargePercent: 0, vatPercent: 0, bankAccount: '' },
     timezone: 'Asia/Ho_Chi_Minh',
     currency: 'VND',
     emailNotifications: false,
