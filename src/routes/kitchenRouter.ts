@@ -1,10 +1,11 @@
 import { useMemo, useSyncExternalStore } from 'react'
+import { legacyStaffUrl, WORKSPACES } from './staffRouter'
 
 // Minimal history router for the /kitchen module. The project has no routing
 // library (the customer site also navigates with pushState), so the kitchen
 // keeps the same approach instead of adding a dependency.
 
-export const KITCHEN_BASE = '/kitchen'
+export const KITCHEN_BASE = WORKSPACES.KITCHEN.base
 
 export type KitchenRoute =
   | { name: 'board' }
@@ -14,7 +15,6 @@ export type KitchenRoute =
   | { name: 'menu-status' }
   | { name: 'notifications' }
   | { name: 'profile' }
-  | { name: 'login' }
   | { name: 'dev' }
   | { name: 'not-found' }
 
@@ -34,7 +34,9 @@ function subscribe(listener: () => void) {
 
 const currentUrl = () => window.location.pathname + window.location.search
 
-export function navigate(to: string, options: { replace?: boolean } = {}) {
+export function navigate(target: string, options: { replace?: boolean } = {}) {
+  // Links saved before the /staff restructure (e.g. in stored notifications) still work.
+  const to = legacyStaffUrl(target) ?? target
   if (to === currentUrl()) return
   if (options.replace) window.history.replaceState(null, '', to)
   else window.history.pushState(null, '', to)
@@ -61,7 +63,6 @@ export function matchKitchenRoute(pathname: string): KitchenRoute {
     case 'menu-status': return { name: 'menu-status' }
     case 'notifications': return { name: 'notifications' }
     case 'profile': return { name: 'profile' }
-    case 'login': return { name: 'login' }
     case 'dev': return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
     default: return { name: 'not-found' }
   }
@@ -77,6 +78,5 @@ export const kitchenPaths = {
   menuStatus: `${KITCHEN_BASE}/menu-status`,
   notifications: `${KITCHEN_BASE}/notifications`,
   profile: `${KITCHEN_BASE}/profile`,
-  login: `${KITCHEN_BASE}/login`,
   dev: `${KITCHEN_BASE}/dev`,
 }

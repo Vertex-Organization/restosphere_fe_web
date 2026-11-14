@@ -1,10 +1,10 @@
 import { useEffect, type ReactNode } from 'react'
-import { useManagerUser, managerSignOut } from '../../api/manager/auth'
+import { useManagerUser } from '../../api/manager/auth'
 import { Button } from '../../components/manager/ui'
 import { ManagerDataProvider } from '../../hooks/manager/ManagerDataProvider'
+import { useStaffGate } from '../../hooks/staff/useStaffGate'
 import { ManagerLayout } from '../../layouts/ManagerLayout'
-import { matchManagerRoute, navigate, useManagerUrl, type ManagerPage } from '../../routes/managerRouter'
-import ManagerLoginPage from './ManagerLoginPage'
+import { managerPath, matchManagerRoute, navigate, useManagerUrl, type ManagerPage } from '../../routes/managerRouter'
 import ManagerDashboardPage from './ManagerDashboardPage'
 import OperationsPage from './OperationsPage'
 import ReservationsPage from './ReservationsPage'
@@ -24,7 +24,6 @@ import '../../components/kitchen/kitchen.css'
 import '../../components/billing/billing.css'
 import '../../components/manager/manager.css'
 
-function Redirect({ to }: { to: string }) { useEffect(() => { navigate(to, { replace: true }) }, [to]); return null }
 function renderPage(page: ManagerPage | 'not-found', id: string): ReactNode {
   switch (page) {
     case 'dashboard': return <ManagerDashboardPage />
@@ -42,11 +41,11 @@ function renderPage(page: ManagerPage | 'not-found', id: string): ReactNode {
     case 'incidents': return <IncidentsPage key={id} selectedId={id} />
     case 'notifications': return <NotificationsPage />
     case 'profile': return <ProfilePage />
-    default: return <div className="m-empty"><h1>Không tìm thấy trang</h1><p>Đường dẫn này không thuộc không gian quản lý.</p><Button onClick={() => navigate('/manager')}>Về tổng quan</Button></div>
+    default: return <div className="m-empty"><h1>Không tìm thấy trang</h1><p>Đường dẫn này không thuộc không gian quản lý.</p><Button onClick={() => navigate(managerPath('dashboard'))}>Về tổng quan</Button></div>
   }
 }
 export default function ManagerApp() {
-  const { url, pathname, params } = useManagerUrl(); const user = useManagerUser(); const route = matchManagerRoute(pathname)
+  const { pathname, params } = useManagerUrl(); const user = useManagerUser(); const route = matchManagerRoute(pathname)
   useEffect(() => {
     const root = document.documentElement
     root.classList.add('m-html'); root.lang = 'vi'; root.dataset.type = 'software'
@@ -61,12 +60,8 @@ export default function ManagerApp() {
     document.title = 'RestoSphere · Quản lý nhà hàng'
     return () => { root.classList.remove('m-html'); delete root.dataset.type; nodes.forEach(n => n.remove()); if (description && previousDescription) description.content = previousDescription; if (theme && previousTheme) theme.content = previousTheme }
   }, [])
-  if (route === 'login') {
-    const requested = params.get('next')
-    const next = requested && (requested === '/manager' || requested.startsWith('/manager/')) && !requested.startsWith('/manager/login') ? requested : '/manager'
-    return user?.role === 'MANAGER' ? <Redirect to={next} /> : <ManagerLoginPage next={next} />
-  }
-  if (!user) return <Redirect to={`/manager/login?next=${encodeURIComponent(url)}`} />
-  if (user.role !== 'MANAGER') return <div className="kds m-login"><div className="m-login-card"><h1>Không có quyền truy cập</h1><p>Tài khoản hiện tại không có vai trò Quản lý nhà hàng.</p><Button onClick={() => { managerSignOut(); navigate('/manager/login', { replace: true }) }}>Đăng nhập tài khoản khác</Button></div></div>
+  // Sign-in happens once at /staff/login; this workspace only checks the role.
+  const blocked = useStaffGate('MANAGER', !!user)
+  if (blocked || !user) return blocked
   return <ManagerDataProvider key={user.id}><ManagerLayout page={route}>{renderPage(route, params.get('id') ?? '')}</ManagerLayout></ManagerDataProvider>
 }

@@ -4,9 +4,7 @@ import type {
 } from './types'
 
 // Demo data for the kitchen workspace. Identities, menu and table codes match
-// the RestoSphere staff app demo (waiter / waiter2, password 123456).
-
-export const DEMO_PASSWORD = '123456'
+// the RestoSphere staff app demo. Sign-in accounts live in api/staff/mockAccounts.ts.
 
 export function dayKey(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, '0')

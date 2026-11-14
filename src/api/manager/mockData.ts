@@ -1,5 +1,9 @@
+import { WORKSPACES } from '../../routes/staffRouter'
 import { addDays, businessDay, dayAt } from './dates'
 import type { ManagerData, ManagerUser } from './types'
+
+/** Manager workspace base, for notification links. */
+const M = WORKSPACES.MANAGER.base
 
 // Every person, transaction and operational record here is a mock fixture.
 export const MOCK_USERS: ManagerUser[] = [
@@ -68,11 +72,11 @@ export function createManagerData(now = new Date()): ManagerData {
   payments.push({ id: 'TT-FAILED', billId: bills[0].id, at: bills[0].at, amount: payments[0].amount, method: 'TRANSFER', status: 'FAILED' })
   return { schema: 1, revision: 1, seedDay: today, areas: [{ id: 'A', name: 'Khu A · Tầng trệt' }, { id: 'B', name: 'Khu B · Tầng 1' }], tables, sessions, orders, reservations, employees, categories, menu, approvals, incidents, shifts, bills, payments,
     notifications: [
-      { id: 'TB-01', title: 'Yêu cầu giảm giá cần phê duyệt', body: 'PD-021 · Thu ngân Ngô Thanh Tâm', at: ago(5), path: '/manager/approvals?id=PD-021', kind: 'APPROVAL', readBy: [] },
-      { id: 'TB-02', title: 'Bếp báo hết nguyên liệu', body: 'SC-008 · Cua biển', at: ago(10), path: '/manager/incidents?id=SC-008', kind: 'INCIDENT', readBy: [] },
-      { id: 'TB-03', title: 'Bàn A03 chờ món quá 25 phút', body: 'ORD-087 · Cần kiểm tra với bếp', at: ago(7), path: '/manager/orders?id=ORD-087', kind: 'ORDER', readBy: [] },
-      { id: 'TB-04', title: 'Bếp xin báo tạm hết món', body: 'Phụ bếp Đỗ Thị Lan · Cua biển', at: ago(14), path: '/manager/approvals', kind: 'MENU_REQUEST', readBy: [] },
-      { id: 'TB-05', title: 'Thu ngân đã đóng ca', body: 'CA-011 · Ngô Thanh Tâm · Khớp tiền mặt', at: ago(40), path: '/manager/shifts', kind: 'CASHIER_SHIFT_CLOSED', readBy: [] },
-      { id: 'TB-06', title: 'Yêu cầu đã được rút', body: 'PD-020 · Thu ngân Ngô Thanh Tâm', at: ago(55), path: '/manager/approvals', kind: 'REQUEST_WITHDRAWN', readBy: [] },
+      { id: 'TB-01', title: 'Yêu cầu giảm giá cần phê duyệt', body: 'PD-021 · Thu ngân Ngô Thanh Tâm', at: ago(5), path: `${M}/approvals?id=PD-021`, kind: 'APPROVAL', readBy: [] },
+      { id: 'TB-02', title: 'Bếp báo hết nguyên liệu', body: 'SC-008 · Cua biển', at: ago(10), path: `${M}/incidents?id=SC-008`, kind: 'INCIDENT', readBy: [] },
+      { id: 'TB-03', title: 'Bàn A03 chờ món quá 25 phút', body: 'ORD-087 · Cần kiểm tra với bếp', at: ago(7), path: `${M}/orders?id=ORD-087`, kind: 'ORDER', readBy: [] },
+      { id: 'TB-04', title: 'Bếp xin báo tạm hết món', body: 'Phụ bếp Đỗ Thị Lan · Cua biển', at: ago(14), path: `${M}/approvals`, kind: 'MENU_REQUEST', readBy: [] },
+      { id: 'TB-05', title: 'Thu ngân đã đóng ca', body: 'CA-011 · Ngô Thanh Tâm · Khớp tiền mặt', at: ago(40), path: `${M}/shifts`, kind: 'CASHIER_SHIFT_CLOSED', readBy: [] },
+      { id: 'TB-06', title: 'Yêu cầu đã được rút', body: 'PD-020 · Thu ngân Ngô Thanh Tâm', at: ago(55), path: `${M}/approvals`, kind: 'REQUEST_WITHDRAWN', readBy: [] },
     ], outbox: [], history: [{ id: 'LS-01', at: ago(10), actorId: 'NV010', entityId: 'SC-008', text: 'Báo sự cố hết nguyên liệu cua biển' }, { id: 'LS-02', at: ago(16), actorId: 'NV015', entityId: 'DB-041', text: 'Xác nhận đặt bàn RS0041 · Bàn A10' }, { id: 'LS-03', at: ago(22), actorId: 'NV002', entityId: 'SC-009', text: 'Tiếp nhận xử lý máy in khu B' }] }
 }

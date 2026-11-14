@@ -1,11 +1,10 @@
 import { lazy, Suspense, useEffect, type ReactNode } from 'react'
 import { CashierDataProvider } from '../../../hooks/billing/CashierDataProvider'
+import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { useCashierUser } from '../../../hooks/billing/useCashierAuth'
 import { CashierLayout } from '../../../layouts/CashierLayout'
-import { cashierPaths, matchCashierRoute, navigate, useCashierUrl, type CashierRoute } from '../../../routes/cashierRouter'
-import CashierAccessDenied from './CashierAccessDenied'
+import { cashierPaths, matchCashierRoute, useCashierUrl, type CashierRoute } from '../../../routes/cashierRouter'
 import CashierBillPage from './CashierBillPage'
-import CashierLoginPage from './CashierLoginPage'
 import CashierNotificationsPage from './CashierNotificationsPage'
 import CashierPaymentPage from './CashierPaymentPage'
 import CashierPosPage from './CashierPosPage'
@@ -23,11 +22,6 @@ import '../../../components/billing/billing.css'
 // Development-only simulator of the other roles; removed from production builds.
 const CashierDevPage = import.meta.env.DEV ? lazy(() => import('./CashierDevPage')) : null
 
-function Redirect({ to }: { to: string }) {
-  useEffect(() => { navigate(to, { replace: true }) }, [to])
-  return null
-}
-
 const TITLES: Record<CashierRoute['name'], string> = {
   pos: 'Quầy thu ngân',
   bill: 'Chi tiết hóa đơn',
@@ -39,7 +33,6 @@ const TITLES: Record<CashierRoute['name'], string> = {
   shift: 'Ca thu ngân',
   notifications: 'Thông báo',
   profile: 'Cá nhân',
-  login: 'Đăng nhập',
   dev: 'Mô phỏng (dev)',
   'not-found': 'Không tìm thấy trang',
 }
@@ -67,9 +60,10 @@ function page(route: CashierRoute, params: URLSearchParams): ReactNode {
   }
 }
 
-/** Entry of the /cashier module: its own shell, never the customer header/footer. */
+/** Entry of the cashier workspace (/staff/cashier): its own shell, never the customer header/footer.
+ * Sign-in happens once at /staff/login; this module only checks the role. */
 export default function CashierApp() {
-  const { url, pathname, params } = useCashierUrl()
+  const { pathname, params } = useCashierUrl()
   const route = matchCashierRoute(pathname)
   const user = useCashierUser()
 
@@ -80,14 +74,8 @@ export default function CashierApp() {
     return () => root.classList.remove('kds-html')
   }, [])
 
-  if (route.name === 'login') {
-    const next = params.get('next')
-    const target = next && next.startsWith('/cashier') && !next.startsWith(cashierPaths.login) ? next : cashierPaths.pos
-    if (user?.role === 'CASHIER') return <Redirect to={target} />
-    return <CashierLoginPage next={target} />
-  }
-  if (!user) return <Redirect to={`${cashierPaths.login}?next=${encodeURIComponent(url)}`} />
-  if (user.role !== 'CASHIER') return <CashierAccessDenied user={user} />
+  const blocked = useStaffGate('CASHIER', !!user)
+  if (blocked || !user) return blocked
 
   // Two-pane screens manage their own scroll areas and fill the viewport.
   const fill = route.name === 'pos' || route.name === 'transactions' || route.name === 'requests' || route.name === 'notifications'

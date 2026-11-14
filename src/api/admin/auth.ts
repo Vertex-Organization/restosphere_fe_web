@@ -1,45 +1,25 @@
 import { useSyncExternalStore } from 'react'
 import type { AuthUser } from '../auth'
+import { getStaffSession, leaveStaffArea, subscribeStaffAuth } from '../staff/auth'
 
-const SESSION_KEY = 'restosphere.admin.demo-session.v1'
-const DEMO_EMAIL = 'admin@restosphere.test'
-const DEMO_PASSWORD = 'Admin@123'
+// The admin workspace has no sign-in of its own: it reads the shared staff
+// session (/staff/login). The backend must enforce the ADMIN role.
 
-const DEMO_ADMIN: AuthUser = {
-  id: 'admin-demo-01',
-  email: DEMO_EMAIL,
-  fullName: 'Nguyễn Minh Anh',
-  role: 'ADMIN',
+let cached: { id: string; user: AuthUser } | null = null
+
+function getAdminUser(): AuthUser | null {
+  const session = getStaffSession()
+  if (!session || session.role !== 'ADMIN') return null
+  if (cached?.id !== session.id) {
+    cached = { id: session.id, user: { id: session.id, email: session.email ?? '', fullName: session.name, role: 'ADMIN' } }
+  }
+  return cached.user
 }
-
-const listeners = new Set<() => void>()
-
-function restore(): AuthUser | null {
-  try { return sessionStorage.getItem(SESSION_KEY) === DEMO_ADMIN.id ? DEMO_ADMIN : null }
-  catch { return null }
-}
-
-let currentUser = restore()
-const emit = () => listeners.forEach((listener) => listener())
 
 export function useAdminUser() {
-  return useSyncExternalStore((listener) => { listeners.add(listener); return () => { listeners.delete(listener) } }, () => currentUser)
-}
-
-export async function adminSignIn(email: string, password: string) {
-  await new Promise((resolve) => window.setTimeout(resolve, 300))
-  if (email.trim().toLowerCase() !== DEMO_EMAIL || password !== DEMO_PASSWORD) throw new Error('Email hoặc mật khẩu demo không đúng.')
-  try { sessionStorage.setItem(SESSION_KEY, DEMO_ADMIN.id) }
-  catch { throw new Error('Trình duyệt không cho phép lưu phiên demo.') }
-  currentUser = DEMO_ADMIN
-  emit()
-  return DEMO_ADMIN
+  return useSyncExternalStore(subscribeStaffAuth, getAdminUser)
 }
 
 export function adminSignOut() {
-  try { sessionStorage.removeItem(SESSION_KEY) } catch { /* Session memory still clears below. */ }
-  currentUser = null
-  emit()
+  leaveStaffArea()
 }
-
-export const ADMIN_DEMO_CREDENTIALS = { email: DEMO_EMAIL, password: DEMO_PASSWORD }

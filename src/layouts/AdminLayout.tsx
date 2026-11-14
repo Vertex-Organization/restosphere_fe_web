@@ -4,7 +4,8 @@ import { adminSignOut } from '../api/admin/auth'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { AdminLink, ErrorState, Icon, LoadingState } from '../components/admin/ui'
 import { useAdminData } from '../hooks/admin/AdminDataProvider'
-import { adminPath, navigate, type AdminPage } from '../routes/adminRouter'
+import { adminPath, type AdminPage } from '../routes/adminRouter'
+import { WORKSPACES } from '../routes/staffRouter'
 import type { IconName } from '../components/billing/Icon'
 
 const NAV_ITEMS: { page: AdminPage; label: string; icon: IconName }[] = [
@@ -62,19 +63,19 @@ export function AdminLayout({ page, user, children }: { page: AdminPage | 'not-f
     return () => { document.removeEventListener('keydown', onKeyDown); previous?.focus() }
   }, [mobileOpen])
 
-  const signOut = () => { adminSignOut(); navigate('/admin/login', { replace: true }) }
+  const signOut = adminSignOut
 
   return <div className={`a-app ${collapsed ? 'a-app--collapsed' : ''}`}>
     <a className="a-skip" href="#admin-main">Đến nội dung chính</a>
     {mobileOpen && <button type="button" className="a-nav-backdrop" aria-label="Đóng điều hướng" onClick={() => setMobileOpen(false)} />}
     <aside ref={sidebar} className={`a-sidebar ${mobileOpen ? 'is-open' : ''}`} aria-label="Điều hướng quản trị">
-      <AdminLink className="a-brand" to="/admin" onClick={() => setMobileOpen(false)}><BrandLogo width={148} /><span>Không gian Admin</span></AdminLink>
+      <AdminLink className="a-brand" to={adminPath('dashboard')} onClick={() => setMobileOpen(false)}><BrandLogo width={148} /><span>Không gian Admin</span></AdminLink>
       <nav className="a-nav-list">{NAV_ITEMS.map((item) => <AdminLink key={item.page} className="a-nav-item" to={adminPath(item.page)} title={item.label} aria-current={item.page === page ? 'page' : undefined} onClick={() => setMobileOpen(false)}><Icon name={item.icon} size={18} /><span>{item.label}</span></AdminLink>)}</nav>
       <div className="a-sidebar-foot"><div className="a-restaurant-chip"><span><Icon name="utensils" size={17} /></span><div><strong>{data?.restaurant.name ?? 'RestoSphere'}</strong><small>Nhà hàng đang quản lý</small></div></div><button type="button" className="a-nav-item a-collapse" aria-expanded={!collapsed} aria-label={collapsed ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên'} onClick={() => setCollapsed((value) => !value)}><Icon name={collapsed ? 'chevronRight' : 'chevronLeft'} size={18} /><span>Thu gọn thanh bên</span></button></div>
     </aside>
 
     <div className="a-shell">
-      <header className="a-topbar"><div className="a-topbar-left"><button type="button" className="a-icon-button a-menu-button" aria-label="Mở điều hướng" aria-expanded={mobileOpen} onClick={() => setMobileOpen((value) => !value)}><Icon name="list" size={20} /></button><div className="a-breadcrumb"><span>Quản trị</span><Icon name="chevronRight" size={13} /><strong>{title}</strong></div></div><div className="a-topbar-right"><label className="a-role-switcher"><span className="a-sr-only">Chuyển giao diện</span><Icon name="refresh" size={15} /><select aria-label="Chuyển giao diện" defaultValue="/admin" onChange={(event) => window.location.assign(event.target.value)}><option value="/admin">Admin</option><option value="/manager">Manager</option><option value="/kitchen">Kitchen</option><option value="/cashier">Cashier</option><option value="/">Customer</option></select></label><div className="a-account-wrap"><button type="button" className="a-account" aria-expanded={accountOpen} onClick={() => setAccountOpen((value) => !value)}><span className="a-avatar">{initials(user.fullName)}</span><span><strong>{user.fullName}</strong><small>Quản trị hệ thống</small></span><Icon name="chevronDown" size={13} /></button>{accountOpen && <div className="a-account-menu"><div><strong>{user.fullName}</strong><span>{user.email}</span></div><button type="button" onClick={signOut}><Icon name="logout" size={16} />Đăng xuất</button></div>}</div></div></header>
+      <header className="a-topbar"><div className="a-topbar-left"><button type="button" className="a-icon-button a-menu-button" aria-label="Mở điều hướng" aria-expanded={mobileOpen} onClick={() => setMobileOpen((value) => !value)}><Icon name="list" size={20} /></button><div className="a-breadcrumb"><span>Quản trị</span><Icon name="chevronRight" size={13} /><strong>{title}</strong></div></div><div className="a-topbar-right"><label className="a-role-switcher"><span className="a-sr-only">Chuyển giao diện</span><Icon name="refresh" size={15} /><select aria-label="Chuyển giao diện" defaultValue={WORKSPACES.ADMIN.base} onChange={(event) => window.location.assign(event.target.value)}><option value={WORKSPACES.ADMIN.base}>Admin</option><option value={WORKSPACES.MANAGER.base}>Manager</option><option value={WORKSPACES.KITCHEN.base}>Kitchen</option><option value={WORKSPACES.CASHIER.base}>Cashier</option><option value="/">Customer</option></select></label><div className="a-account-wrap"><button type="button" className="a-account" aria-expanded={accountOpen} onClick={() => setAccountOpen((value) => !value)}><span className="a-avatar">{initials(user.fullName)}</span><span><strong>{user.fullName}</strong><small>Quản trị hệ thống</small></span><Icon name="chevronDown" size={13} /></button>{accountOpen && <div className="a-account-menu"><div><strong>{user.fullName}</strong><span>{user.email}</span></div><button type="button" onClick={signOut}><Icon name="logout" size={16} />Đăng xuất</button></div>}</div></div></header>
       <main ref={main} id="admin-main" tabIndex={-1} className="a-content">{error ? <ErrorState message={error} onRetry={reload} /> : loading ? <LoadingState /> : children}<footer className="a-workspace-footer"><span>RestoSphere · Admin Web</span><span>Dữ liệu nghiệp vụ đang dùng adapter mô phỏng</span></footer></main>
     </div>
   </div>

@@ -1,10 +1,10 @@
 import { useEffect, type ReactNode } from 'react'
 import { AdminDataProvider } from '../../hooks/admin/AdminDataProvider'
+import { useStaffGate } from '../../hooks/staff/useStaffGate'
 import { AdminLayout } from '../../layouts/AdminLayout'
 import { Button, Icon } from '../../components/admin/ui'
-import { adminSignOut, useAdminUser } from '../../api/admin/auth'
-import { matchAdminRoute, navigate, useAdminUrl, type AdminPage } from '../../routes/adminRouter'
-import AdminLoginPage from './AdminLoginPage'
+import { useAdminUser } from '../../api/admin/auth'
+import { adminPath, matchAdminRoute, navigate, useAdminUrl, type AdminPage } from '../../routes/adminRouter'
 import AdminDashboardPage from './AdminDashboardPage'
 import AdminUsersPage from './AdminUsersPage'
 import AdminRolesPage from './AdminRolesPage'
@@ -12,11 +12,6 @@ import AdminRestaurantPage from './AdminRestaurantPage'
 import AdminSettingsPage from './AdminSettingsPage'
 import AdminAuditLogsPage from './AdminAuditLogsPage'
 import '../../components/admin/admin.css'
-
-function Redirect({ to }: { to: string }) {
-  useEffect(() => { navigate(to, { replace: true }) }, [to])
-  return null
-}
 
 function renderPage(page: AdminPage | 'not-found'): ReactNode {
   switch (page) {
@@ -26,12 +21,12 @@ function renderPage(page: AdminPage | 'not-found'): ReactNode {
     case 'restaurant': return <AdminRestaurantPage />
     case 'settings': return <AdminSettingsPage />
     case 'audit-logs': return <AdminAuditLogsPage />
-    default: return <div className="a-empty a-not-found"><span className="a-empty-icon"><Icon name="alert" size={22} /></span><div><h1>Không tìm thấy trang</h1><p>Đường dẫn này không thuộc không gian Admin.</p></div><Button onClick={() => navigate('/admin')}>Về tổng quan</Button></div>
+    default: return <div className="a-empty a-not-found"><span className="a-empty-icon"><Icon name="alert" size={22} /></span><div><h1>Không tìm thấy trang</h1><p>Đường dẫn này không thuộc không gian Admin.</p></div><Button onClick={() => navigate(adminPath('dashboard'))}>Về tổng quan</Button></div>
   }
 }
 
 export default function AdminApp() {
-  const { url, pathname, params } = useAdminUrl()
+  const { pathname } = useAdminUrl()
   const route = matchAdminRoute(pathname)
   const user = useAdminUser()
 
@@ -52,16 +47,9 @@ export default function AdminApp() {
     return () => { root.classList.remove('a-html'); delete root.dataset.type; delete root.dataset.radius; nodes.forEach((node) => node.remove()); if (theme && oldTheme) theme.content = oldTheme; if (description && oldDescription) description.content = oldDescription }
   }, [])
 
-  if (route === 'login') {
-    const requested = params.get('next')
-    const next = requested && (requested === '/admin' || requested.startsWith('/admin/')) && !requested.startsWith('/admin/login') ? requested : '/admin'
-    if (user?.role === 'ADMIN') return <Redirect to={next} />
-    return <AdminLoginPage next={next} />
-  }
-
-  if (!user) return <Redirect to={`/admin/login?next=${encodeURIComponent(url)}`} />
-
-  if (user.role !== 'ADMIN') return <main className="a-access-denied"><div><span className="a-empty-icon"><Icon name="alert" size={22} /></span><h1>Không có quyền truy cập</h1><p>Phiên demo hiện tại không có vai trò ADMIN.</p><Button tone="primary" onClick={() => { adminSignOut(); navigate('/admin/login', { replace: true }) }}>Đăng nhập tài khoản khác</Button></div></main>
+  // Sign-in happens once at /staff/login; this workspace only checks the role.
+  const blocked = useStaffGate('ADMIN', !!user)
+  if (blocked || !user) return blocked
 
   return <AdminDataProvider><AdminLayout page={route} user={user}>{renderPage(route)}</AdminLayout></AdminDataProvider>
 }

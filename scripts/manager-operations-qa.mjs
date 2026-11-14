@@ -1,4 +1,4 @@
-// Focused authenticated visual check for /manager/operations.
+// Focused authenticated visual check for /staff/manager/operations (signs in at /staff/login).
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync, spawn } from 'node:child_process'
@@ -54,7 +54,7 @@ try {
   await run('Page.enable')
   await run('Runtime.enable')
   await size(1440, 900)
-  await run('Page.navigate', { url: `${base}/manager/operations` })
+  await run('Page.navigate', { url: `${base}/staff/manager/operations` })
   await until('!!document.querySelector("[name=username]")', 'login')
   await setInput('[name=username]', 'manager')
   await setInput('[name=password]', 'Manager@123')
@@ -74,7 +74,7 @@ try {
     screens.push(probe)
   }
   await size(1440, 900)
-  await run('Page.navigate', { url: `${base}/manager/orders` })
+  await run('Page.navigate', { url: `${base}/staff/manager/orders` })
   await until('!!document.querySelector(".m-orders-list")', 'orders page')
   await evaluate('document.fonts.ready')
   const orderScreens = []
@@ -94,7 +94,7 @@ try {
   await evaluate('document.querySelector(".m-order-pulse").click()')
   await until('!!document.querySelector("dialog[open]")', 'order detail dialog')
   assert.deepEqual(exceptions, [])
-  const report = { operations: { route: '/manager/operations', screens }, orders: { route: '/manager/orders', screens: orderScreens, detailDialog: true }, exceptions }
+  const report = { operations: { route: '/staff/manager/operations', screens }, orders: { route: '/staff/manager/orders', screens: orderScreens, detailDialog: true }, exceptions }
   fs.writeFileSync(path.join(out, 'operations-qa.json'), JSON.stringify(report, null, 2))
   console.log(JSON.stringify(report, null, 2))
 } finally {
