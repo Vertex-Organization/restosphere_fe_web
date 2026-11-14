@@ -17,13 +17,14 @@ type Filter = 'all' | 'unread' | 'payment' | 'error' | 'request'
 const FILTERS: { id: Filter; label: string; kinds?: CashierNotificationKind[] }[] = [
   { id: 'all', label: 'Tất cả' },
   { id: 'unread', label: 'Chưa đọc' },
-  { id: 'payment', label: 'Thanh toán', kinds: ['PAYMENT_REQUEST', 'TRANSFER_RECEIVED'] },
+  { id: 'payment', label: 'Thanh toán', kinds: ['PAYMENT_REQUEST', 'PAYMENT_REQUEST_WITHDRAWN', 'TRANSFER_RECEIVED'] },
   { id: 'error', label: 'Lỗi', kinds: ['TRANSFER_FAILED'] },
   { id: 'request', label: 'Yêu cầu', kinds: ['REQUEST_DECIDED'] },
 ]
 
 const LOOK: Record<CashierNotificationKind, { icon: IconName; tone: string }> = {
   PAYMENT_REQUEST: { icon: 'receipt', tone: 'primary' },
+  PAYMENT_REQUEST_WITHDRAWN: { icon: 'xCircle', tone: 'warning' },
   TRANSFER_RECEIVED: { icon: 'bank', tone: 'success' },
   TRANSFER_FAILED: { icon: 'xCircle', tone: 'danger' },
   REQUEST_DECIDED: { icon: 'clipboard', tone: 'warning' },

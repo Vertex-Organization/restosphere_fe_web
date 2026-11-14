@@ -8,7 +8,7 @@ import { DiscountDialog } from '../../../components/billing/BillDialogs'
 import { BillLines, BillTotals } from '../../../components/billing/BillParts'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
-import { Alert, BillStatusBadge } from '../../../components/billing/ui'
+import { Alert, BillStatusBadge, Dialog } from '../../../components/billing/ui'
 import { formatTime, searchable } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
@@ -169,6 +169,8 @@ function BillPanel({ billId }: { billId: string }) {
   const { data, user, run, isPending } = useCashierSnapshot()
   const now = useNow()
   const [discountOpen, setDiscountOpen] = useState(false)
+  const [returnReason, setReturnReason] = useState('')
+  const [returnOpen, setReturnOpen] = useState(false)
   const view = billView(data, billId)
   if (!view) {
     return <section className="c-bill c-bill--empty"><div className="c-empty"><p>Không tìm thấy hóa đơn.</p></div></section>
@@ -239,6 +241,11 @@ function BillPanel({ billId }: { billId: string }) {
           </div>
           {!paid && (
             <div className="c-side-tools">
+              {bill.status === 'PAYMENT_REQUESTED' && hasPermission(user, 'bills.prepare') && !view.payments.some(p => p.status === 'PENDING' || p.status === 'SUCCEEDED') && (
+                <button type="button" className="k-btn k-btn--danger" onClick={() => setReturnOpen(true)} disabled={busy}>
+                  Trả lại cho phục vụ
+                </button>
+              )}
               <button type="button" className="k-btn" onClick={() => setDiscountOpen(true)} disabled={!!discountReason} title={discountReason || undefined}>
                 <Icon name="percent" />Giảm giá
               </button>
@@ -249,6 +256,16 @@ function BillPanel({ billId }: { billId: string }) {
       </div>
 
       {discountOpen && <DiscountDialog view={view} user={user} config={data.config} onClose={() => setDiscountOpen(false)} />}
+      {returnOpen && (
+        <Dialog title="Trả lại yêu cầu thanh toán" subtitle={`Bàn ${table.code} · ${bill.code}`} onClose={() => { setReturnOpen(false); setReturnReason('') }}
+          footer={<><button type="button" className="k-btn" onClick={() => { setReturnOpen(false); setReturnReason('') }}>Quay lại</button><button type="submit" className="k-btn k-btn--danger" disabled={returnReason.trim().length < 5}>Trả lại</button></>}
+          onSubmit={() => {
+            void run({ type: 'return-payment-request', billId: bill.id, billVersion: bill.version, reason: returnReason }, [`bill:${bill.id}`])
+              .then((ok) => { if (ok) { setReturnOpen(false); setReturnReason('') } })
+          }}>
+          <label className="k-field"><span className="k-label">Lý do trả lại cho phục vụ</span><textarea className="k-input" required minLength={5} maxLength={200} value={returnReason} onChange={(e) => setReturnReason(e.target.value)} placeholder="Ví dụ: Bàn muốn gọi thêm món, cần kiểm tra lại món..." /></label>
+        </Dialog>
+      )}
     </section>
   )
 }

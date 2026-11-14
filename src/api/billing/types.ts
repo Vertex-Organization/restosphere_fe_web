@@ -170,7 +170,7 @@ export interface Payment {
 }
 
 export type RequestType = 'DISCOUNT' | 'BILL_ADJUSTMENT' | 'PAYMENT_VOID'
-export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
+export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'WITHDRAWN'
 
 export interface CashierRequest {
   id: string
@@ -178,6 +178,11 @@ export interface CashierRequest {
   type: RequestType
   status: RequestStatus
   billId: string
+  /** What the request acts on; same shape as the manager's Approval. */
+  targetType: 'BILL' | 'PAYMENT' | 'ORDER_ITEM'
+  targetId: string
+  /** Amount in đồng the request affects (the manager's limit is compared against it). */
+  amount: number
   /** PAYMENT_VOID */
   paymentId?: string
   /** BILL_ADJUSTMENT: the line to remove from the bill. */
@@ -199,6 +204,7 @@ export interface CashierShift {
   status: 'OPEN' | 'CLOSED'
   openedAt: string
   openingFloat: number
+  scheduledShiftId?: string
   closedAt?: string
   /** Snapshot at closing: opening float + cash received. */
   expectedCash?: number
@@ -206,7 +212,16 @@ export interface CashierShift {
   closingNote?: string
 }
 
-export type CashierNotificationKind = 'PAYMENT_REQUEST' | 'TRANSFER_RECEIVED' | 'TRANSFER_FAILED' | 'REQUEST_DECIDED'
+/** A shift the manager assigned to a cashier (the manager module owns the schedule). */
+export interface ScheduledShift {
+  id: string
+  name: string
+  start: string
+  end: string
+  cashierId: string
+}
+
+export type CashierNotificationKind = 'PAYMENT_REQUEST' | 'PAYMENT_REQUEST_WITHDRAWN' | 'TRANSFER_RECEIVED' | 'TRANSFER_FAILED' | 'REQUEST_DECIDED'
 
 export interface CashierNotification {
   id: string
@@ -222,8 +237,11 @@ export interface CashierNotification {
 }
 
 /** Messages the cashier side sends to other roles (shown only in the dev simulator). */
+export type OutboxKind = 'BILL_UPDATED' | 'PAYMENT' | 'PAYMENT_RETURNED' | 'PAYMENT_VOIDED' | 'APPROVAL' | 'REQUEST_WITHDRAWN' | 'CASHIER_SHIFT_CLOSED'
+
 export interface OutboxMessage {
   id: string
+  kind: OutboxKind
   audience: StaffRole
   staffId?: string
   title: string
@@ -281,6 +299,7 @@ export interface CashierData {
   payments: Payment[]
   requests: CashierRequest[]
   shifts: CashierShift[]
+  scheduledShifts: ScheduledShift[]
   notifications: CashierNotification[]
   outbox: OutboxMessage[]
   /** Idempotency keys already processed → payment id, so a retried submit never charges twice. */
@@ -302,11 +321,12 @@ export type CashierCommand =
   | { type: 'request-adjustment'; billId: string; itemId: string; reason: string }
   | { type: 'request-void'; paymentId: string; reason: string }
   | { type: 'withdraw-request'; requestId: string }
+  | { type: 'return-payment-request'; billId: string; billVersion: number; reason: string }
   | { type: 'pay-cash'; billId: string; billVersion: number; amount: number; tendered: number; idempotencyKey: string }
   | { type: 'create-transfer'; billId: string; billVersion: number; amount: number; idempotencyKey: string }
   | { type: 'confirm-transfer'; paymentId: string; bankReference: string }
   | { type: 'cancel-transfer'; paymentId: string }
-  | { type: 'open-shift'; openingFloat: number }
+  | { type: 'open-shift'; openingFloat: number; scheduledShiftId?: string }
   | { type: 'close-shift'; shiftId: string; countedCash: number; note: string }
   | { type: 'read-notifications'; ids?: string[] }
 

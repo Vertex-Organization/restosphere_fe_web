@@ -21,6 +21,7 @@ export type DevEvent =
   | { type: 'add-round'; sessionId: string; lines: RoundLine[] }
   | { type: 'serve-remaining'; sessionId: string }
   | { type: 'waiter-request-payment'; sessionId: string }
+  | { type: 'waiter-withdraw-payment'; sessionId: string }
   | { type: 'bank-confirm'; paymentId: string }
   | { type: 'bank-fail'; paymentId: string; reason: string }
   | { type: 'manager-decide'; requestId: string; approve: boolean; note: string }
@@ -82,7 +83,7 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
         history: [{ at, by: event.waiterId, text: 'Mở bàn, tạo hóa đơn' }],
       }
       data.bills.push(bill)
-      recompute(data, bill)
+      recompute(data, bill, at)
       table.status = 'OCCUPIED'
       summary = `Phục vụ mở Bàn ${table.code} · ${bill.code} · gửi #${order.code}`
       break
@@ -92,7 +93,7 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
       const { session, bill, table } = activeSession(data, event.sessionId)
       if (bill.status !== 'UNPAID') throw new CashierError('INVALID', 'Bàn đã yêu cầu thanh toán, không nhận thêm món.')
       const order = addOrder(data, session.id, session.waiterId, event.lines, at)
-      recompute(data, bill)
+      recompute(data, bill, at)
       touch(bill, at, session.waiterId, `Gọi thêm lượt ${order.sequence} (#${order.code})`)
       summary = `Bàn ${table.code} gọi thêm · lượt ${order.sequence} · #${order.code}`
       break
@@ -122,13 +123,31 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
       bill.status = 'PAYMENT_REQUESTED'
       bill.requestedAt = at
       bill.requestedBy = session.waiterId
-      recompute(data, bill)
+      recompute(data, bill, at)
       touch(bill, at, session.waiterId, 'Phục vụ gửi yêu cầu thanh toán')
       notifyCashiers(data, at, {
         kind: 'PAYMENT_REQUEST', billId: bill.id,
         title: `Bàn ${table.code} yêu cầu thanh toán`, body: `${bill.code} · ${view.dishCount} món · ${formatVnd(bill.totals.total)}`,
       })
       summary = `Phục vụ gửi yêu cầu thanh toán Bàn ${table.code}`
+      break
+    }
+
+    case 'waiter-withdraw-payment': {
+      const { session, bill, table } = activeSession(data, event.sessionId)
+      if (bill.status !== 'PAYMENT_REQUESTED') throw new CashierError('INVALID', 'Bàn chưa có yêu cầu thanh toán để rút.')
+      if (data.payments.some((p) => p.billId === bill.id && (p.status === 'PENDING' || p.status === 'SUCCEEDED'))) {
+        throw new CashierError('CONFLICT', 'Hóa đơn có giao dịch đang xử lý hoặc đã thu tiền.')
+      }
+      bill.status = 'UNPAID'
+      delete bill.requestedAt
+      delete bill.requestedBy
+      touch(bill, at, session.waiterId, 'Phục vụ rút yêu cầu thanh toán')
+      notifyCashiers(data, at, {
+        kind: 'PAYMENT_REQUEST_WITHDRAWN', billId: bill.id,
+        title: `Bàn ${table.code} rút yêu cầu thanh toán`, body: `${bill.code} · phục vụ tiếp tục gọi món`,
+      })
+      summary = `Phục vụ rút yêu cầu thanh toán Bàn ${table.code}`
       break
     }
 
@@ -180,16 +199,16 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
             mode: request.discount.mode, value: request.discount.value, reason: request.reason,
             appliedBy: request.requestedBy, appliedAt: at, requestId: request.id, approvedBy: manager,
           }
-          recompute(data, bill)
+          recompute(data, bill, at)
         } else if (request.type === 'BILL_ADJUSTMENT') {
           const item = data.items.find((i) => i.id === request.itemId)
-          if (!item || item.status === 'CANCELLED' || bill.status === 'PAID' || started) {
+          if (!item || !isBillable(item) || bill.status === 'PAID' || started) {
             throw new CashierError('CONFLICT', 'Hóa đơn đã thay đổi, không thể điều chỉnh.')
           }
-          item.status = 'CANCELLED'
+          item.status = 'VOIDED'
           item.cancelledAt = at
           item.cancellationReason = `Điều chỉnh ${request.code}: ${request.reason}`
-          recompute(data, bill)
+          recompute(data, bill, at)
         } else if (request.type === 'PAYMENT_VOID') {
           const payment = data.payments.find((p) => p.id === request.paymentId)
           if (!payment || payment.status !== 'SUCCEEDED') throw new CashierError('CONFLICT', 'Giao dịch không còn ở trạng thái thành công.')
@@ -201,6 +220,16 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
             bill.status = 'PAYMENT_REQUESTED'
             delete bill.paidAt
           }
+          const session = data.sessions.find((s) => s.id === bill.sessionId)
+          data.outbox.unshift({
+            id: makeId(data, 'out'),
+            at,
+            kind: 'PAYMENT_VOIDED',
+            audience: 'WAITER',
+            staffId: session?.waiterId,
+            title: `Hủy thanh toán ${payment.code} · Bàn ${tableCodeOf(data, bill)}`,
+            body: `${bill.code} · ${formatVnd(payment.amount)}`,
+          })
         }
       }
       request.status = event.approve ? 'APPROVED' : 'REJECTED'

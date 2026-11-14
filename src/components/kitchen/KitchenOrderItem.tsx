@@ -1,9 +1,29 @@
+import { useEffect, useId, useRef, useState } from 'react'
+import { useKitchenSnapshot } from '../../hooks/kitchen/kitchenDataContext'
 import { minutesBetween } from '../../api/kitchen/selectors'
 import type { KitchenOrderItem as Item, MenuItem } from '../../api/kitchen/types'
 import { DishPhoto } from './DishPhoto'
 import { formatDuration, formatTime } from './format'
 import { Icon } from './Icon'
 import { KitchenStatusBadge } from './KitchenStatusBadge'
+
+export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () => void }) {
+  const { run, isPending } = useKitchenSnapshot()
+  const ref = useRef<HTMLDialogElement>(null)
+  const titleId = useId()
+  const [reason, setReason] = useState('')
+  const [error, setError] = useState('')
+  const pending = isPending(item.id)
+  useEffect(() => { const dialog = ref.current; dialog?.showModal(); return () => dialog?.close() }, [])
+  return <dialog ref={ref} aria-labelledby={titleId} className="k-panel" onCancel={(e) => { e.preventDefault(); if (!pending) onClose() }}>
+    <form className="k-form" onSubmit={(e) => { e.preventDefault(); if (pending) return; void run({ type: 'reject', itemId: item.id, version: item.version, reason }, [item.id]).then((ok) => { if (ok) onClose(); else setError('Không thể từ chối món. Kiểm tra trạng thái và lý do, rồi thử lại.') }) }}>
+      <h2 id={titleId} className="k-panel-title">Từ chối {item.name}</h2>
+      <label className="k-field"><span className="k-label">Lý do từ chối</span><textarea className="k-input" required minLength={5} maxLength={200} value={reason} onChange={(e) => setReason(e.target.value)} /></label>
+      {error && <p role="alert" className="k-form-error">{error}</p>}
+      <div className="k-form-row"><button type="button" className="k-btn" disabled={pending} onClick={onClose}>Quay lại</button><button type="submit" className="k-btn k-btn--danger" disabled={pending || reason.trim().length < 5}>Từ chối</button></div>
+    </form>
+  </dialog>
+}
 
 interface Props {
   item: Item
@@ -14,11 +34,12 @@ interface Props {
   pending?: boolean
   onStart?: () => void
   onComplete?: () => void
+  onReject?: () => void
 }
 
 /** One OrderItem line on a ticket, with the single action its status allows.
  * Quantity, name and status share one line so a ticket stays short. */
-export function KitchenOrderItem({ item, menu, now, variant, cookName, pending, onStart, onComplete }: Props) {
+export function KitchenOrderItem({ item, menu, now, variant, cookName, pending, onStart, onComplete, onReject }: Props) {
   const preparing = item.status === 'PREPARING'
   return (
     <li className={`k-item k-item--${item.status.toLowerCase()} k-item--${variant}`}>
@@ -46,6 +67,7 @@ export function KitchenOrderItem({ item, menu, now, variant, cookName, pending, 
           Bắt đầu
         </button>
       )}
+      {variant === 'active' && item.status === 'SUBMITTED' && onReject && <button type="button" className="k-btn k-btn--danger" onClick={onReject} disabled={pending} aria-label={`Từ chối ${item.name}`}>Từ chối</button>}
       {variant === 'active' && preparing && onComplete && (
         <button type="button" className="k-btn k-btn--primary k-item-action" onClick={onComplete} disabled={pending} aria-busy={pending}
           aria-label={`Hoàn thành ${item.quantity} ${item.name}`}>

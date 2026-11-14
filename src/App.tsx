@@ -4,6 +4,7 @@ import HomePage from './components/sites/sea-crown/HomePage'
 import MenuPage from './components/sites/sea-crown/MenuPage'
 import CateringPage from './components/sites/sea-crown/CateringPage'
 import LegalPage from './components/sites/sea-crown/LegalPage'
+import ReservationStatusPage from './components/sites/sea-crown/ReservationStatusPage'
 import { useSiteLocation } from './components/sites/sea-crown/LocationContext'
 import { PageTransitionProvider } from './components/sites/sea-crown/PageTransition'
 import type { Language } from './components/sites/sea-crown/siteData'
@@ -24,7 +25,8 @@ function Site() {
   const language: Language = pathname === '/en' || pathname.startsWith('/en/') ? 'en' : 'vi'
   const page = pathname.replace(/^\/(vi|nl|en)(?=\/|$)/, '') || '/'
   const legal = page === '/privacy' || page === '/terms'
-  const known = ['/', '/menu', '/catering', '/privacy', '/terms'].includes(page)
+  const isStatus = page === '/reservation-status'
+  const known = ['/', '/menu', '/catering', '/privacy', '/terms', '/reservation-status'].includes(page)
 
   useEffect(() => {
     document.documentElement.lang = language
@@ -45,6 +47,7 @@ function Site() {
     {page === '/menu' && <MenuPage key={pathname} language={language} />}
     {page === '/catering' && <CateringPage key={pathname} language={language} />}
     {legal && <LegalPage key={pathname} language={language} kind={page === '/privacy' ? 'privacy' : 'terms'} />}
+    {isStatus && <ReservationStatusPage key={pathname} language={language} />}
     {!known && <main id="main-content" className="not-found"><h1>404</h1><p>{language === 'en' ? 'Page not found' : 'Không tìm thấy trang'}</p><a className="sb-pill" href={`/${language}`}>{language === 'en' ? 'Home' : 'Trang chủ'}</a></main>}
     {(page === '/' || page === '/catering') && <Footer key={`footer:${pathname}`} language={language} />}
   </>
