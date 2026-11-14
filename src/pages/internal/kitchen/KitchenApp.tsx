@@ -1,13 +1,12 @@
 import { lazy, Suspense, useEffect, type ReactNode } from 'react'
+import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { KitchenDataProvider } from '../../../hooks/kitchen/KitchenDataProvider'
 import { useKitchenUser } from '../../../hooks/kitchen/useKitchenAuth'
 import { KitchenLayout } from '../../../layouts/KitchenLayout'
-import { kitchenPaths, matchKitchenRoute, navigate, useKitchenUrl, type KitchenRoute } from '../../../routes/kitchenRouter'
-import KitchenAccessDenied from './KitchenAccessDenied'
+import { kitchenPaths, matchKitchenRoute, useKitchenUrl, type KitchenRoute } from '../../../routes/kitchenRouter'
 import KitchenBoardPage from './KitchenBoardPage'
 import KitchenHistoryPage from './KitchenHistoryPage'
 import KitchenIncidentsPage from './KitchenIncidentsPage'
-import KitchenLoginPage from './KitchenLoginPage'
 import KitchenMenuStatusPage from './KitchenMenuStatusPage'
 import KitchenNotificationsPage from './KitchenNotificationsPage'
 import KitchenProfilePage from './KitchenProfilePage'
@@ -18,11 +17,6 @@ import './kitchenPages.css'
 // Development-only simulator; removed from production builds.
 const KitchenDevPage = import.meta.env.DEV ? lazy(() => import('./KitchenDevPage')) : null
 
-function Redirect({ to }: { to: string }) {
-  useEffect(() => { navigate(to, { replace: true }) }, [to])
-  return null
-}
-
 const TITLES: Record<KitchenRoute['name'], string> = {
   board: 'Bảng bếp',
   ticket: 'Chi tiết phiếu',
@@ -31,7 +25,6 @@ const TITLES: Record<KitchenRoute['name'], string> = {
   'menu-status': 'Tình trạng món',
   notifications: 'Thông báo',
   profile: 'Cá nhân',
-  login: 'Đăng nhập',
   dev: 'Mô phỏng (dev)',
   'not-found': 'Không tìm thấy trang',
 }
@@ -57,7 +50,8 @@ function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactN
   }
 }
 
-/** Entry of the /kitchen module: its own shell, never the customer header/footer. */
+/** Entry of the kitchen workspace (/staff/kitchen): its own shell, never the customer header/footer.
+ * Sign-in happens once at /staff/login; this module only checks the role. */
 export default function KitchenApp() {
   const { url, pathname, params } = useKitchenUrl()
   const route = matchKitchenRoute(pathname)
@@ -70,14 +64,8 @@ export default function KitchenApp() {
     return () => root.classList.remove('kds-html')
   }, [])
 
-  if (route.name === 'login') {
-    const next = params.get('next')
-    const target = next && next.startsWith('/kitchen') && !next.startsWith(kitchenPaths.login) ? next : kitchenPaths.board
-    if (user?.role === 'KITCHEN') return <Redirect to={target} />
-    return <KitchenLoginPage next={target} />
-  }
-  if (!user) return <Redirect to={`${kitchenPaths.login}?next=${encodeURIComponent(url)}`} />
-  if (user.role !== 'KITCHEN') return <KitchenAccessDenied user={user} />
+  const blocked = useStaffGate('KITCHEN', !!user)
+  if (blocked || !user) return blocked
 
   return (
     <KitchenDataProvider key={user.id} user={user}>

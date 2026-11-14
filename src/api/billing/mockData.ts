@@ -11,8 +11,6 @@ import type {
 // synchronised until a real backend exists. Every bill below is computed from
 // its own session's orders, so totals, payments and statuses always agree.
 
-export const DEMO_PASSWORD = '123456'
-
 export function dayKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }

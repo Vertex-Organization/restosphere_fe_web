@@ -12,12 +12,14 @@ import { isCashierPath } from './routes/cashierRouter'
 import { isKitchenPath } from './routes/kitchenRouter'
 import { isManagerPath } from './routes/managerRouter'
 import { isAdminPath } from './routes/adminRouter'
+import { isStaffPath } from './routes/staffRouter'
 
 // Internal staff modules, loaded only on their own paths so customers never download them.
 const KitchenApp = lazy(() => import('./pages/internal/kitchen/KitchenApp'))
 const CashierApp = lazy(() => import('./pages/internal/billing/CashierApp'))
 const ManagerApp = lazy(() => import('./pages/manager/ManagerApp'))
 const AdminApp = lazy(() => import('./pages/admin/AdminApp'))
+const StaffApp = lazy(() => import('./pages/staff/StaffApp'))
 
 function Site() {
   const { pathname: route } = useSiteLocation()
@@ -54,11 +56,14 @@ function Site() {
 }
 
 function App() {
-  // Customer pages, /kitchen and /cashier are separate apps; moving between them is a full page load.
-  if (isAdminPath(window.location.pathname)) return <Suspense fallback={null}><AdminApp /></Suspense>
-  if (isKitchenPath(window.location.pathname)) return <Suspense fallback={null}><KitchenApp /></Suspense>
-  if (isCashierPath(window.location.pathname)) return <Suspense fallback={null}><CashierApp /></Suspense>
-  if (isManagerPath(window.location.pathname)) return <Suspense fallback={null}><ManagerApp /></Suspense>
+  // Customer pages, the staff sign-in (/staff) and each staff workspace (/staff/<role>)
+  // are separate apps; moving between them is a full page load.
+  const path = window.location.pathname
+  if (isAdminPath(path)) return <Suspense fallback={null}><AdminApp /></Suspense>
+  if (isKitchenPath(path)) return <Suspense fallback={null}><KitchenApp /></Suspense>
+  if (isCashierPath(path)) return <Suspense fallback={null}><CashierApp /></Suspense>
+  if (isManagerPath(path)) return <Suspense fallback={null}><ManagerApp /></Suspense>
+  if (isStaffPath(path)) return <Suspense fallback={null}><StaffApp /></Suspense>
   return <PageTransitionProvider><Site /></PageTransitionProvider>
 }
 

@@ -57,15 +57,15 @@ try {
   const click = async (label) => { await evaluate(`(() => { const el=[...document.querySelectorAll('button,a.a-button')].find(e=>e.textContent.trim()===${JSON.stringify(label)}); if(!el) throw Error('Missing control '+${JSON.stringify(label)}); if(el.disabled) throw Error('Disabled control '+${JSON.stringify(label)}); el.click(); return true })()`); await pause(200) }
 
   await size(1366, 768)
-  await goto('/admin/users')
-  assert.equal(await evaluate('location.pathname'), '/admin/login')
-  await click('Điền tài khoản demo')
-  await click('Đăng nhập demo')
+  await goto('/staff/admin/users')
+  await until('location.pathname==="/staff/login" && !!document.querySelector("[name=username]")', 'staff login')
+  await setInput('[name=username]', 'admin@restosphere.test'); await setInput('[name=password]', 'Admin@123')
+  await evaluate('document.querySelector("form").requestSubmit()')
   await until('!!document.querySelector(".a-app")', 'admin login')
-  assert.equal(await evaluate('location.pathname'), '/admin/users')
+  assert.equal(await evaluate('location.pathname'), '/staff/admin/users')
   report.flows.push('Demo login preserves the protected destination')
 
-  await goto('/admin')
+  await goto('/staff/admin')
   for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [820, 1180], [768, 1024], [390, 844], [320, 844]]) {
     await size(width, height); await evaluate('document.fonts.ready'); await shot(`dashboard-${width}`)
     const probe = await evaluate(`({overflow:document.documentElement.scrollWidth>innerWidth,title:document.querySelector('.a-content h1')?.textContent,broken:[...document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src),titleSize:getComputedStyle(document.querySelector('.a-content h1')).fontSize,header:document.querySelector('.a-topbar').getBoundingClientRect().height})`)
@@ -76,13 +76,13 @@ try {
   await size(1366, 768)
   const routes = ['users', 'roles', 'restaurant', 'settings', 'audit-logs']
   for (const route of routes) {
-    await goto(`/admin/${route}`)
+    await goto(`/staff/admin/${route}`)
     const title = await evaluate('document.querySelector(".a-content h1").textContent')
     assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'), false, route)
     await shot(route); report.routes.push({ route, title })
   }
 
-  await goto('/admin/users')
+  await goto('/staff/admin/users')
   await setInput('.a-search input', 'Ngọc Lan'); await pause(120)
   assert.equal(await evaluate('document.querySelectorAll("tbody tr").length'), 1)
   await setInput('.a-search input', 'không có tài khoản'); await pause(120)
@@ -98,17 +98,17 @@ try {
   report.flows.push('Create-account validation')
   await click('Hủy')
 
-  await goto('/admin/roles'); await click('Gán vai trò'); await click('Kiểm tra thay đổi')
+  await goto('/staff/admin/roles'); await click('Gán vai trò'); await click('Kiểm tra thay đổi')
   assert.ok(await evaluate('document.querySelector("[role=dialog]").textContent.includes("Chọn một tài khoản")'))
   report.flows.push('Role assignment validation')
   await click('Hủy')
 
-  await goto('/admin/restaurant')
+  await goto('/staff/admin/restaurant')
   await setInput('[type=url]', 'facebook.com/restosphere'); await click('Lưu thay đổi')
   assert.ok(await evaluate('document.body.textContent.includes("bắt đầu bằng https://")'))
   report.flows.push('Restaurant social URL validation')
 
-  await goto('/admin/settings')
+  await goto('/staff/admin/settings')
   const before = await evaluate('document.querySelector(".a-switch input").checked')
   await evaluate('document.querySelector(".a-switch input").click()')
   assert.notEqual(await evaluate('document.querySelector(".a-switch input").checked'), before)
@@ -118,17 +118,17 @@ try {
 
   await size(390, 844)
   for (const route of ['', ...routes.map((route) => `/${route}`)]) {
-    await goto(`/admin${route}`)
+    await goto(`/staff/admin${route}`)
     assert.equal(await evaluate('document.documentElement.scrollWidth>innerWidth'), false, `Mobile overflow ${route || 'dashboard'}`)
     await shot(`mobile-${route.slice(1) || 'dashboard'}`)
   }
-  await goto('/admin'); await evaluate('document.querySelector(".a-menu-button").click()'); await pause(100)
+  await goto('/staff/admin'); await evaluate('document.querySelector(".a-menu-button").click()'); await pause(100)
   assert.ok(await evaluate('document.querySelector(".a-sidebar").classList.contains("is-open")')); await shot('mobile-navigation')
   report.flows.push('Mobile navigation opens without overflow')
 
-  await size(1366, 768); await goto('/admin'); await evaluate('document.querySelector(".a-account").click()'); await click('Đăng xuất')
-  await until('location.pathname==="/admin/login"', 'logout')
-  await goto('/admin/settings'); assert.equal(await evaluate('location.pathname'), '/admin/login')
+  await size(1366, 768); await goto('/staff/admin'); await evaluate('document.querySelector(".a-account").click()'); await click('Đăng xuất')
+  await until('location.pathname==="/staff/login"', 'logout')
+  await goto('/staff/admin/settings'); await until('location.pathname==="/staff/login"', 'signed out guard')
   report.flows.push('Logout clears the demo session')
   assert.deepEqual(report.exceptions, [], 'Runtime exceptions')
   fs.writeFileSync(path.join(out, 'qa-results.json'), JSON.stringify(report, null, 2))

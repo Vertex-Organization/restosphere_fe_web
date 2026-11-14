@@ -1,5 +1,5 @@
 import { applyDevEvent, type DevEvent } from './devEvents'
-import { createSeedData, dayKey, DEMO_PASSWORD, isValidCashierData } from './mockData'
+import { createSeedData, dayKey, isValidCashierData } from './mockData'
 import { applyCashierCommand } from './rules'
 import type { CashierService } from './service'
 import { CashierError, type CashierData, type CashierStaff, type CommandResult } from './types'
@@ -85,13 +85,6 @@ export const mockCashierService: CashierService = {
 
 /** Demo sign-in against the mock staff list. Replace with the backend auth
  * once it has a CASHIER role (the current API only knows ADMIN/MANAGER/STAFF). */
-export async function mockSignIn(username: string, password: string): Promise<CashierStaff> {
-  await new Promise((resolve) => setTimeout(resolve, 250))
-  const staff = read().staff.find((s) => s.username === username.trim().toLowerCase())
-  if (!staff || password !== DEMO_PASSWORD) throw new CashierError('INVALID', 'Tên đăng nhập hoặc mật khẩu không đúng.')
-  return { ...staff, permissions: [...staff.permissions] }
-}
-
 export function mockFindStaff(id: string): CashierStaff | null {
   const staff = read().staff.find((s) => s.id === id)
   return staff ? { ...staff, permissions: [...staff.permissions] } : null
