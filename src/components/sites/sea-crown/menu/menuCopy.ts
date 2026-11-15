@@ -16,21 +16,20 @@ export const PARTY_RANGE: Record<Exclude<PartySize, 'all'>, [number, number]> = 
 export type SortOrder = 'suggested' | 'price-asc' | 'price-desc'
 export const SORT_ORDERS: SortOrder[] = ['suggested', 'price-asc', 'price-desc']
 
-export type ViewMode = 'grid' | 'rail'
-
 export const COPY = {
   vi: {
     eyebrow: "THE SEA'S CROWN · FINE SEAFOOD",
     title: 'Thực đơn hải sản',
-    intro: 'Khám phá tuyển tập hải sản tươi sống và thức uống tinh tuyển. Chạm vào từng món ăn để xem cách chế biến, khẩu phần và thành phần gây dị ứng.',
+    intro: 'Hải sản tươi sống và thức uống tinh tuyển. Chạm vào một món để xem cách chế biến, khẩu phần và thành phần gây dị ứng.',
     search: 'Tìm món',
     searchPlaceholder: 'Tìm cua, tôm, lẩu, trà…',
-    food: 'Thực đơn Món ăn',
-    drinks: 'Thực đơn Đồ uống',
+    food: 'Món ăn',
+    drinks: 'Đồ uống',
+    jumpTo: 'Đi tới',
     all: 'Tất cả',
-    viewGrid: 'Dạng danh mục',
-    viewRail: 'Băng chuyền',
-    moreFilters: 'Bộ lọc & Sắp xếp',
+    filters: 'Bộ lọc',
+    category: 'Danh mục',
+    removeFilter: (label: string) => `Bỏ lọc: ${label}`,
     features: 'Đặc điểm',
     party: 'Số người',
     partyLabel: { all: 'Tất cả', small: '1–2 người', medium: '3–4 người', large: 'Từ 5 người' } satisfies Record<PartySize, string>,
@@ -41,6 +40,7 @@ export const COPY = {
     clear: 'Xóa bộ lọc',
     count: (n: number) => `${n} món`,
     empty: 'Không có món nào khớp với lựa chọn.',
+    emptyDrinks: 'Không có đồ uống nào khớp với từ khóa.',
     loading: 'Đang tải thực đơn…',
     error: 'Không tải được thực đơn.',
     retry: 'Thử lại',
@@ -64,15 +64,16 @@ export const COPY = {
   en: {
     eyebrow: "THE SEA'S CROWN · FINE SEAFOOD",
     title: 'Our Seafood Menu',
-    intro: 'Explore our curated selection of live seafood and signature drinks. Select any dish to view cooking styles, portions and allergens.',
+    intro: 'Live seafood and signature drinks. Select a dish to see cooking styles, portions and allergens.',
     search: 'Search dishes',
     searchPlaceholder: 'Search crab, prawns, hotpot, tea…',
-    food: 'Food Menu',
-    drinks: 'Drinks Menu',
+    food: 'Food',
+    drinks: 'Drinks',
+    jumpTo: 'Jump to',
     all: 'All',
-    viewGrid: 'By category',
-    viewRail: 'Carousel',
-    moreFilters: 'Filters & Sort',
+    filters: 'Filters',
+    category: 'Category',
+    removeFilter: (label: string) => `Remove filter: ${label}`,
     features: 'Features',
     party: 'Party size',
     partyLabel: { all: 'Any', small: '1–2 guests', medium: '3–4 guests', large: '5+ guests' } satisfies Record<PartySize, string>,
@@ -83,6 +84,7 @@ export const COPY = {
     clear: 'Clear filters',
     count: (n: number) => `${n} ${n === 1 ? 'item' : 'items'}`,
     empty: 'Nothing matches your choices.',
+    emptyDrinks: 'No drinks match your search.',
     loading: 'Loading the menu…',
     error: 'The menu could not be loaded.',
     retry: 'Try again',
@@ -128,5 +130,3 @@ const money = {
 export function formatPrice(dish: Dish, language: Language) {
   return money[language].format(dish.price) + UNIT[language][dish.unit]
 }
-
-

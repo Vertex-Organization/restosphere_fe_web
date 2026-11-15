@@ -3,12 +3,13 @@
 
 .menu-rail {
   padding-top: 48px;
-  scroll-margin-top: 24px;
+  scroll-margin-top: 88px;
 }
 
 .menu-rail-header {
   display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding-bottom: 12px;
@@ -22,7 +23,7 @@
 }
 
 .menu-rail-header h2 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-plum, #b40000);
@@ -33,11 +34,17 @@
   color: var(--color-muted, #6b4545);
 }
 
+.menu-rail-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Phones swipe; the arrows only appear where a mouse is likely. */
 .menu-rail-arrows {
   display: none;
   gap: 8px;
-  margin-left: auto;
-  align-self: center;
 }
 
 .menu-rail-arrows button {
@@ -63,34 +70,86 @@
 
 .menu-rail-arrows button:disabled {
   opacity: .35;
+  cursor: default;
 }
 
-/* The track bleeds to both screen edges so cards drift in and out of view. */
+/* The rail bleeds to both screen edges. */
+.menu-track-wrap {
+  position: relative;
+  margin: 20px calc(var(--menu-gutter) * -1) 0;
+}
+
+/* Soft fade on the side that still has cards. Overlays (not a mask on the
+   scroller) so scrolling never repaints the whole rail. */
+.menu-track-wrap::before,
+.menu-track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 20px;
+  z-index: 1;
+  width: min(64px, var(--menu-gutter));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.menu-track-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--color-cream, #fff), rgb(255 255 255 / 0%));
+}
+
+.menu-track-wrap::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--color-cream, #fff), rgb(255 255 255 / 0%));
+}
+
+.menu-track-wrap.has-before::before,
+.menu-track-wrap.has-after::after {
+  opacity: 1;
+}
+
 .menu-track {
   display: flex;
   gap: 18px;
-  margin: 20px calc(var(--menu-gutter) * -1) 0;
+  margin: 0;
   padding: 4px var(--menu-gutter) 20px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
+  scroll-padding-inline: var(--menu-gutter);
   scrollbar-width: thin;
   scrollbar-color: rgb(180 0 0 / 25%) transparent;
   list-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Endless rail: no scrollbar (it would jump on each loop), soft edges. */
-.menu-track.is-looping {
-  padding-inline: 0;
-  scrollbar-width: none;
-  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+/* Touch screens: native swipe with snapping, which feels right under a finger.
+   Mouse/trackpad: no CSS snap (it tugs the rail after every trackpad flick);
+   drags and arrow clicks settle on a card through their own eased glide. */
+@media (pointer: coarse) {
+  .menu-track {
+    scroll-snap-type: x mandatory;
+  }
 }
 
-.menu-track.is-looping::-webkit-scrollbar {
-  display: none;
+@media (pointer: fine) {
+  .menu-track {
+    cursor: grab;
+  }
 }
 
-.menu-track.is-looping > .menu-card:first-child {
-  margin-left: var(--menu-gutter);
+.menu-track.is-gliding {
+  scroll-snap-type: none;
+}
+
+.menu-track.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+
+.menu-track.is-dragging .menu-card-button {
+  pointer-events: none;
 }
 
 .menu-empty {
@@ -108,6 +167,7 @@
 
 .menu-track .menu-card {
   flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 
 .menu-track .menu-card--food {
@@ -119,16 +179,24 @@
 }
 
 @keyframes menu-rise {
-  from { opacity: 0; transform: translateX(24px); }
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-card {
+    animation: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-rail-arrows {
+    display: flex;
+  }
 }
 
 @media (min-width: 768px) {
   .menu-rail-header h2 {
-    font-size: 32px;
-  }
-
-  .menu-rail-arrows {
-    display: flex;
+    font-size: 30px;
   }
 
   .menu-track .menu-card--food {
@@ -142,10 +210,10 @@
 
 @media (min-width: 1280px) {
   .menu-track .menu-card--food {
-    width: 340px;
+    width: 320px;
   }
 
   .menu-track .menu-card--drink {
-    width: 220px;
+    width: 210px;
   }
 }

@@ -109,20 +109,32 @@ export function FooterPlayground() {
         }
       }
       Events.on(render, 'afterRender', drawTextures)
+      // Physics and drawing run only while the footer is on screen. Both loops
+      // otherwise redraw the canvas every frame for the whole visit, which made
+      // scrolling the rest of the page lag. Render.run/Runner.run do not stop an
+      // existing loop, so every (re)start goes through here and stops first.
+      let visible = false
+      const play = () => {
+        Runner.stop(runner)
+        Render.stop(render)
+        if (motion.matches) { Render.world(render); return }
+        if (!visible) return
+        Render.run(render)
+        if (started) Runner.run(runner, engine)
+      }
+      const visibility = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting === visible) return
+        visible = entry.isIntersecting
+        play()
+      }, { rootMargin: '120px 0px' })
       const start = () => {
         started = true
-        if (!motion.matches) Runner.run(runner, engine)
+        play()
       }
       const scrollTrigger = ScrollTrigger.create({ trigger: footer, start: 'top 90%', once: true, onEnter: start })
       const updateMotion = () => {
-        Runner.stop(runner)
-        Render.stop(render)
         createScene()
-        if (motion.matches) Render.world(render)
-        else {
-          Render.run(render)
-          if (started) Runner.run(runner, engine)
-        }
+        play()
       }
       const resize = () => {
         const nextWidth = Math.max(1, Math.round(footer.clientWidth))
@@ -154,23 +166,40 @@ export function FooterPlayground() {
       const endDrag = () => { canvas.dataset.dragging = 'false' }
       Events.on(mouseConstraint, 'startdrag', beginDrag)
       Events.on(mouseConstraint, 'enddrag', endDrag)
+      // The window-level touchend only exists to release a drag whose finger lifts
+      // outside the canvas. Matter's handler calls preventDefault() on touch events,
+      // so it must never see touches that did not start on the canvas: forwarding
+      // every touchend cancelled the click of every button on the page on phones.
+      let touchStartedOnCanvas = false
+      const markCanvasTouch = () => { touchStartedOnCanvas = true }
+      const releaseCanvasTouch = (event: TouchEvent) => {
+        if (!touchStartedOnCanvas) return
+        touchStartedOnCanvas = false
+        // Ends on the canvas are already handled by Matter's own canvas listener.
+        if (event.target !== canvas) mouseHandlers.mouseup(event)
+      }
       canvas.addEventListener('mousemove', hover)
+      canvas.addEventListener('touchstart', markCanvasTouch, { passive: true })
       window.addEventListener('mouseup', mouseHandlers.mouseup, { passive: true })
-      window.addEventListener('touchend', mouseHandlers.mouseup, { passive: false })
+      window.addEventListener('touchend', releaseCanvasTouch, { passive: false })
+      window.addEventListener('touchcancel', releaseCanvasTouch, { passive: false })
       motion.addEventListener('change', updateMotion)
       const resizeObserver = new ResizeObserver(resize)
       resizeObserver.observe(footer)
       createScene()
-      if (motion.matches) Render.world(render)
-      else Render.run(render)
+      play()
+      visibility.observe(footer)
 
       disposeScene = () => {
+        visibility.disconnect()
         scrollTrigger.kill()
         resizeObserver.disconnect()
         motion.removeEventListener('change', updateMotion)
         canvas.removeEventListener('mousemove', hover)
+        canvas.removeEventListener('touchstart', markCanvasTouch)
         window.removeEventListener('mouseup', mouseHandlers.mouseup)
-        window.removeEventListener('touchend', mouseHandlers.mouseup)
+        window.removeEventListener('touchend', releaseCanvasTouch)
+        window.removeEventListener('touchcancel', releaseCanvasTouch)
         for (const [event, handler] of [
           ['mousemove', mouseHandlers.mousemove], ['mousedown', mouseHandlers.mousedown],
           ['mouseup', mouseHandlers.mouseup], ['wheel', mouseHandlers.mousewheel],

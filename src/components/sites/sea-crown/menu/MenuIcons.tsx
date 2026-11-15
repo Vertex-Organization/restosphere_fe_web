@@ -8,8 +8,6 @@ export type IconName =
   | 'dish'
   | 'cup'
   | 'filter'
-  | 'grid'
-  | 'rail'
 
 const PATHS: Record<IconName, ReactNode> = {
   search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></>,
@@ -19,8 +17,6 @@ const PATHS: Record<IconName, ReactNode> = {
   dish: <><path d="M3 16h18M5 16a7 7 0 0 1 14 0M12 9V7M4 19h16" /></>,
   cup: <><path d="M5 8h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5V8ZM17 10h1.5a2.5 2.5 0 0 1 0 5H17M9 3v2M12 3v2" /></>,
   filter: <path d="M4 6h16M7 12h10M10 18h4" />,
-  grid: <><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" /></>,
-  rail: <><rect x="2.5" y="6" width="6" height="12" rx="1.5" /><rect x="10.5" y="6" width="6" height="12" rx="1.5" /><path d="M19.5 8v8" /></>,
 }
 
 export function MenuIcon({ name, size = 18 }: { name: IconName; size?: number }) {

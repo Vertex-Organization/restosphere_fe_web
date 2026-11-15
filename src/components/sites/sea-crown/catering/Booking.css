@@ -41,7 +41,7 @@
   text-underline-offset: 3px;
 }
 
-/* Chips shared by the dish filter and the occasion picker */
+/* Chips used by the dish filter */
 
 .bk-chips {
   display: flex;
@@ -1255,42 +1255,6 @@
   margin: 0;
 }
 
-.bk-guest-presets {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-top: -8px;
-}
-
-.bk-preset-label {
-  margin-right: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-muted);
-}
-
-.bk-preset-chip {
-  padding: 4px 12px;
-  border: 1px solid color-mix(in srgb, var(--color-plum) 18%, transparent);
-  border-radius: 999px;
-  background: #fff6f3;
-  color: var(--color-dark);
-  font-size: 12.5px;
-  font-weight: 600;
-  transition: background .2s, color .2s, border-color .2s;
-}
-
-.bk-preset-chip:hover {
-  border-color: var(--color-plum);
-}
-
-.bk-preset-chip[aria-pressed='true'] {
-  border-color: var(--color-plum);
-  background: var(--color-plum);
-  color: var(--color-cream);
-}
-
 .bk-smart-banner {
   display: flex;
   flex-wrap: wrap;
@@ -1897,9 +1861,17 @@
     border-radius: 18px;
   }
 
+  /* nowrap matters: a wrapping column sizes each line to its content, so the
+     non-wrapping chip row (~840px) would widen the whole page on phones. */
   .bk-toolbar {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
+  }
+
+  .bk-toolbar > * {
+    min-width: 0;
+    max-width: 100%;
   }
 
   .bk-tabs {
@@ -1912,8 +1884,8 @@
   }
 
   .bk-search {
-    flex: 1 1 auto;
-    max-width: none;
+    flex: 0 0 auto;
+    min-width: 0;
   }
 
   .bk-toolbar .bk-chips {
@@ -1975,5 +1947,45 @@
 
   .bk-done-details {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Narrow dish cards (2 columns on phones, 3–5 columns on tablets/desktop):
+   stack the name above the portion size and the price above a full-width
+   add button, so neither the name nor the button gets squeezed or clipped. */
+.bk-card {
+  container-type: inline-size;
+}
+
+@container (max-width: 250px) {
+  .bk-card-body {
+    padding: 12px 12px 14px;
+  }
+
+  .bk-card-head {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bk-card-name {
+    font-size: 15px;
+  }
+
+  .bk-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .bk-card-price {
+    font-size: 14px;
+  }
+
+  .bk-add,
+  .bk-stepper,
+  .bk-card-unavailable {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
   }
 }

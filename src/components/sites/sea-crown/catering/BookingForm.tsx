@@ -1,12 +1,12 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import type { Dish } from '../../../../api/menu/types'
 import { reservationService } from '../../../../api/reservations/service'
-import type { Occasion, Reservation, SeatingArea } from '../../../../api/reservations/types'
+import type { Reservation, SeatingArea } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
 import type { Language } from '../siteData'
 import {
   AREAS, BOOKING_COPY, cartGuestCoverage, cartTotal, formatMoney, formatQuantity,
-  GUEST_PRESETS, OCCASIONS, stepOf, type Cart,
+  stepOf, type Cart,
 } from './bookingCopy'
 
 type BookingFormProps = {
@@ -78,7 +78,6 @@ export function BookingForm({
   const [date, setDate] = useState(today)
   const [time, setTime] = useState(() => (initialSlots.includes('18:30') ? '18:30' : initialSlots[0] ?? ''))
   const [area, setArea] = useState<SeatingArea>('main')
-  const [occasion, setOccasion] = useState<Occasion>('none')
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState(false)
   const [done, setDone] = useState<Reservation | null>(null)
@@ -115,7 +114,7 @@ export function BookingForm({
     setFailed(false)
     try {
       const reservation = await reservationService.create({
-        date, time, guests, area, occasion,
+        date, time, guests, area, occasion: 'none',
         name: text('name'), phone: text('phone'), email: text('email') || undefined, note: text('note') || undefined,
         items: chosen.map((d) => ({ dishId: d.id, quantity: cart[d.id] })),
       })
@@ -188,10 +187,6 @@ export function BookingForm({
             <dd>{t.areaLabel[done.area]}</dd>
           </div>
           <div>
-            <dt>{t.occasion}</dt>
-            <dd>{t.occasionLabel[done.occasion]}</dd>
-          </div>
-          <div>
             <dt>{t.doneContact}</dt>
             <dd>{done.name} · {done.phone}</dd>
           </div>
@@ -249,21 +244,6 @@ export function BookingForm({
                 <button type="button" onClick={() => setGuestCount(guests + 1)} disabled={guests >= MAX_GUESTS} aria-label={t.more}>+</button>
               </div>
             </div>
-          </div>
-
-          <div className="bk-guest-presets" role="group" aria-label={t.guestPresetsLabel}>
-            <span className="bk-preset-label">{t.guestPresetsLabel}</span>
-            {GUEST_PRESETS.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                className="bk-preset-chip"
-                aria-pressed={guests === preset}
-                onClick={() => setGuestCount(preset)}
-              >
-                {preset} {t.guestUnit}
-              </button>
-            ))}
           </div>
 
           {guests >= PRIVATE_MIN_GUESTS && area !== 'private' && (
@@ -357,17 +337,6 @@ export function BookingForm({
               })}
             </div>
             {privateTooSmall && <p className="bk-error" role="alert">{t.privateTooSmall}</p>}
-          </div>
-
-          <div>
-            <span className="bk-label">{t.occasion}</span>
-            <div className="bk-chips">
-              {OCCASIONS.map((o) => (
-                <button key={o} type="button" className="bk-chip" aria-pressed={occasion === o} onClick={() => setOccasion(o)}>
-                  {t.occasionLabel[o]}
-                </button>
-              ))}
-            </div>
           </div>
         </fieldset>
       </div>

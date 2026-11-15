@@ -45,9 +45,19 @@ function ImageStream({ images, offset = false }: { images: string[]; offset?: bo
       // Include the final gap between the original group and its identical copy.
       const distance = firstGroup.reduce((height, image) => height + image.offsetHeight + 12, 0)
       if (!distance) return
-      animation = gsap.to(element, { y: -distance, duration: offset ? 22 : 28, ease: 'none', repeat: -1 })
+      animation = gsap.to(element, { y: -distance, duration: offset ? 22 : 28, ease: 'none', repeat: -1, paused: !onScreen })
       animation.progress(progress)
     }
+
+    // Only animate while the hero is on screen: the endless tween otherwise keeps
+    // repainting 16 large photos the whole time the visitor reads the rest of the page.
+    let onScreen = true
+    const visibility = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting
+      if (onScreen) animation?.play()
+      else animation?.pause()
+    })
+    visibility.observe(wrapper)
 
     const resize = () => {
       const currentWidth = wrapper.getBoundingClientRect().width
@@ -63,6 +73,7 @@ function ImageStream({ images, offset = false }: { images: string[]; offset?: bo
     return () => {
       cancelAnimationFrame(resizeFrame)
       observer.disconnect()
+      visibility.disconnect()
       motion.removeEventListener('change', animate)
       animation?.kill()
       gsap.set(element, { clearProps: 'transform' })

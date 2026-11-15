@@ -74,13 +74,42 @@
   line-height: 1.65;
 }
 
-.menu-heading-tools {
+.menu-search {
+  margin: 28px auto 0;
+}
+
+/* Quick links to the two rails, with live result counts. */
+.menu-jump {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   justify-content: center;
-  gap: 12px 16px;
-  margin-top: 28px;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.menu-jump a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 6px 16px;
+  border: 1px solid rgb(255 255 255 / 32%);
+  border-radius: 999px;
+  color: var(--color-cream, #fff);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.menu-jump a:hover {
+  border-color: var(--color-gold, #ffc400);
+  background: var(--color-gold, #ffc400);
+  color: var(--color-dark, #870000);
+}
+
+.menu-jump span {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: .8;
 }
 
 .menu-search {
@@ -135,43 +164,11 @@
   color: var(--color-cream, #fff);
 }
 
-.menu-view-switch {
-  display: inline-flex;
-  padding: 3px;
-  border: 1px solid rgb(255 255 255 / 28%);
-  border-radius: 999px;
-  background: rgb(0 0 0 / 18%);
-}
-
-.menu-view-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 6px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: rgb(255 255 255 / 85%);
-  font-size: 13px;
-  font-weight: 600;
-  transition: background .2s ease, color .2s ease;
-}
-
-.menu-view-btn:hover {
-  color: #fff;
-}
-
-.menu-view-btn[aria-pressed='true'] {
-  background: var(--color-gold, #ffc400);
-  color: var(--color-dark, #870000);
-}
-
 .menu-link {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-gold, #ffc400);
+  color: var(--color-plum, #b40000);
   font-size: 14px;
   font-weight: 600;
   text-decoration: underline;
@@ -179,45 +176,111 @@
 }
 
 .menu-link:hover {
-  color: #fff;
+  color: var(--color-dark, #870000);
 }
 
-/* 2. Category Navigation & Filter Bar */
+/* 2. Filters (food rail only) */
 
-.menu-filter-bar {
+.menu-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 16px;
+  border: 1px solid var(--menu-line);
+  border-radius: 999px;
+  background: var(--menu-soft);
+  color: var(--color-dark, #870000);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.menu-filter-toggle:hover,
+.menu-filter-toggle[aria-expanded='true'] {
+  border-color: var(--color-plum, #b40000);
+}
+
+.menu-filter-panel {
   display: grid;
-  gap: 12px;
-  padding-top: 18px;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--menu-line);
+  border-radius: 16px;
+  background: var(--menu-soft);
+  animation: menu-fade-in .2s ease;
 }
 
-.menu-filter-bar-row {
+.menu-filter-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.menu-filter-group legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-muted, #6b4545);
+}
+
+.menu-filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.menu-filter-panel-foot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--menu-line);
 }
 
-/* Category chips scroll sideways on narrow screens instead of wrapping. */
-.menu-chip-scroll {
+.menu-filter-panel-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+/* Removable summary of what is filtered while the panel is closed. */
+.menu-active-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 2px 0;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-@media (max-width: 767px) {
-  .menu-chip-scroll {
-    flex-wrap: nowrap;
-    margin-inline: calc(var(--menu-gutter) * -1);
-    padding-inline: var(--menu-gutter);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+.menu-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-plum, #b40000);
+  border-radius: 999px;
+  background: var(--color-cream, #fff);
+  color: var(--color-dark, #870000);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background .2s ease, color .2s ease;
+}
 
-  .menu-chip-scroll::-webkit-scrollbar {
-    display: none;
-  }
+.menu-active-chip:hover {
+  background: var(--color-plum, #b40000);
+  color: var(--color-cream, #fff);
 }
 
 .menu-toggle {
@@ -252,67 +315,6 @@
   text-decoration-thickness: 1.5px;
 }
 
-.menu-more {
-  position: relative;
-}
-
-.menu-more summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 6px 16px;
-  border: 1px solid var(--menu-line);
-  border-radius: 999px;
-  background: var(--menu-soft);
-  color: var(--color-dark, #870000);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  list-style: none;
-  transition: border-color .2s ease, background .2s ease;
-}
-
-.menu-more summary:hover,
-.menu-more[open] summary {
-  border-color: var(--color-plum, #b40000);
-}
-
-.menu-more summary::-webkit-details-marker {
-  display: none;
-}
-
-.menu-more-panel {
-  display: grid;
-  gap: 14px;
-  margin-top: 12px;
-  padding: 18px 20px;
-  border: 1px solid var(--menu-line);
-  border-radius: 16px;
-  background: var(--menu-soft);
-}
-
-.menu-more-panel fieldset {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.menu-more-panel legend {
-  float: left;
-  width: 100%;
-  margin-bottom: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--color-muted, #6b4545);
-}
 
 .menu-check {
   display: inline-flex;
@@ -343,101 +345,8 @@
   font-weight: 700;
 }
 
-/* 3. Category Sections & Chapters */
 
-.menu-section {
-  padding-top: 48px;
-  scroll-margin-top: 32px;
-}
-
-.menu-chapters {
-  display: grid;
-  gap: 44px;
-  margin-top: 28px;
-}
-
-.menu-chapter {
-  display: grid;
-  gap: 20px;
-}
-
-.menu-chapter-header {
-  display: grid;
-  gap: 6px;
-}
-
-.menu-chapter-title-line {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.menu-chapter-header h3 {
-  font-size: clamp(20px, 2.2vw, 26px);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-dark, #870000);
-}
-
-.menu-chapter-rule {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgb(180 0 0 / 24%), rgb(180 0 0 / 4%));
-}
-
-.menu-chapter-count {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-muted, #6b4545);
-}
-
-.menu-chapter-desc {
-  max-width: 640px;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--color-muted, #6b4545);
-}
-
-/* Balanced Grid Layout */
-.menu-grid {
-  display: grid;
-  gap: 24px 20px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.menu-grid--food {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.menu-grid--drink {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-@media (max-width: 1099px) {
-  .menu-grid--food {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .menu-grid--drink {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 680px) {
-  .menu-grid--food {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .menu-grid--drink {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-}
-
-/* 4. Dish Card */
+/* 3. Dish Card */
 
 .menu-card-button {
   display: flex;
@@ -515,6 +424,15 @@
   padding: 16px 18px 18px;
 }
 
+.menu-card-category {
+  margin-bottom: -4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-muted, #6b4545);
+}
+
 .menu-card-head {
   display: flex;
   align-items: baseline;
@@ -562,16 +480,6 @@
   -webkit-box-orient: vertical;
 }
 
-.menu-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 12px;
-  margin-top: auto;
-  padding-top: 4px;
-}
-
 .menu-card-serves {
   display: inline-flex;
   align-items: center;
@@ -598,7 +506,8 @@
 }
 
 .menu-card--skeleton {
-  height: 360px;
+  flex: 0 0 auto;
+  height: 380px;
   border-radius: 16px;
   background: linear-gradient(100deg, var(--menu-soft) 40%, #fff 50%, var(--menu-soft) 60%) 0 0 / 200% 100%;
   animation: menu-shimmer 1.4s linear infinite;
@@ -608,7 +517,7 @@
   to { background-position: -200% 0; }
 }
 
-/* 5. Chips & Tags */
+/* 4. Chips & Tags */
 
 .menu-chip {
   display: inline-flex;
@@ -643,7 +552,13 @@
   font-weight: 500;
 }
 
-/* 6. States and Footer Notes */
+/* 5. States and Footer Notes */
+
+.menu-empty {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
 
 .menu-state {
   display: grid;
@@ -670,7 +585,7 @@
   text-underline-offset: 3px;
 }
 
-/* 7. Dish Dialog */
+/* 6. Dish Dialog */
 
 html:has(.menu-dialog[open]) {
   overflow: hidden;

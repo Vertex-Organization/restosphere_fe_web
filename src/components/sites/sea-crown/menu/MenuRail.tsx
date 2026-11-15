@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Dish } from '../../../../api/menu/types'
 import type { Language } from '../siteData'
 import { DishCard } from './DishCard'
@@ -11,150 +11,175 @@ type MenuRailProps = {
   variant: 'food' | 'drink'
   dishes: Dish[]
   language: Language
-  /** Auto-scroll speed in px per second. */
-  speed: number
-  /** Stops auto-scrolling, e.g. while a dish dialog is open. */
-  paused?: boolean
-  /** Filter controls shown between the heading and the rail. */
+  /** Category name shown above each dish name. */
+  categoryOf?: (dish: Dish) => string | undefined
+  /** Controls shown at the end of the heading row (e.g. the filter button). */
+  actions?: ReactNode
+  /** Content shown between the heading and the rail (e.g. the open filter panel). */
   children?: ReactNode
+  /** Shown instead of the rail when no dish matches. */
+  empty?: ReactNode
   onOpen: (id: string) => void
 }
 
-/** How long auto-scroll waits after the visitor touches, scrolls or clicks. */
-const RESUME_AFTER_MS = 3500
+/** Mouse movement (px) after which a press becomes a drag instead of a click. */
+const DRAG_THRESHOLD = 6
+/** How far (ms of release speed) a flick carries the rail before it settles. */
+const MOMENTUM_MS = 320
+/** Only pointer samples this recent count towards the release speed. */
+const VELOCITY_WINDOW_MS = 90
+
+const easeOutCubic = (t: number) => 1 - (1 - t) ** 3
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 /**
- * A titled, full-width rail that drifts slowly sideways in an endless loop.
- * The items are rendered twice so the loop has no visible jump; the copy is
- * hidden from assistive technology and keyboard focus. Hovering, focusing,
- * touching or scrolling pauses the drift.
+ * A titled, full-width rail the visitor scrolls themselves: swipe on touch
+ * screens, trackpad or Shift + wheel, drag with the mouse (with momentum),
+ * or the arrow buttons. Nothing moves on its own.
+ *
+ * Touch scrolling stays native (and CSS-snapped, see MenuRail.css). Mouse
+ * drags and arrow clicks run one eased animation that always ends exactly on
+ * a card, so nothing jumps when it stops.
  */
-export function MenuRail({ id, title, variant, dishes, language, speed, paused = false, children, onOpen }: MenuRailProps) {
+export function MenuRail({ id, title, variant, dishes, language, categoryOf, actions, children, empty, onOpen }: MenuRailProps) {
   const t = COPY[language]
   const track = useRef<HTMLUListElement>(null)
-  const [looping, setLooping] = useState(false)
-  const [hovered, setHovered] = useState(false)
-  const [focused, setFocused] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const [reducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-  const holdUntil = useRef(0)
-  const position = useRef(0)
+  const [edges, setEdges] = useState({ start: true, end: true })
 
-  const hold = useCallback(() => { holdUntil.current = performance.now() + RESUME_AFTER_MS }, [])
-
-  /** Width of one full set of items: where the copy starts. */
-  const setWidth = useCallback(() => {
+  const updateEdges = useCallback(() => {
     const list = track.current
-    const first = list?.firstElementChild as HTMLElement | null
-    const copy = list?.querySelector<HTMLElement>('[data-copy-start]')
-    return first && copy ? copy.offsetLeft - first.offsetLeft : 0
+    if (!list) return
+    const max = list.scrollWidth - list.clientWidth
+    const start = list.scrollLeft <= 2
+    const end = list.scrollLeft >= max - 2
+    setEdges((current) => (current.start === start && current.end === end ? current : { start, end }))
   }, [])
 
-  // Loop only when one set of items is wider than the screen.
-  useLayoutEffect(() => {
+  // --- Eased glide -------------------------------------------------------
+  const frame = useRef(0)
+  const glideTarget = useRef<number | null>(null)
+
+  const stopGlide = useCallback(() => {
+    cancelAnimationFrame(frame.current)
+    glideTarget.current = null
+    track.current?.classList.remove('is-gliding')
+  }, [])
+
+  /** Scroll offsets at which each card lines up with the gutter. */
+  const snapPoints = useCallback(() => {
+    const list = track.current
+    if (!list) return [0]
+    const cards = Array.from(list.children) as HTMLElement[]
+    const origin = cards[0]?.offsetLeft ?? 0
+    const max = list.scrollWidth - list.clientWidth
+    const points = cards.map((card) => Math.min(card.offsetLeft - origin, max))
+    return [...new Set([...points, max])]
+  }, [])
+
+  const nearestSnap = useCallback((x: number) => (
+    snapPoints().reduce((best, p) => (Math.abs(p - x) < Math.abs(best - x) ? p : best), 0)
+  ), [snapPoints])
+
+  const glideTo = useCallback((to: number, duration?: number) => {
     const list = track.current
     if (!list) return
-    const measure = () => {
-      const single = setWidth() || list.scrollWidth
-      setLooping(dishes.length > 1 && single > list.clientWidth + 8)
+    cancelAnimationFrame(frame.current)
+    const max = list.scrollWidth - list.clientWidth
+    const target = clamp(Math.round(to), 0, max)
+    const from = list.scrollLeft
+    const distance = target - from
+    if (Math.abs(distance) < 1) { stopGlide(); return }
+    const time = duration ?? clamp(Math.abs(distance) * 0.6, 280, 650)
+    const start = performance.now()
+    glideTarget.current = target
+    // Native snapping would fight the animation, so it is off while gliding.
+    list.classList.add('is-gliding')
+    const step = (now: number) => {
+      const progress = Math.min(1, (now - start) / time)
+      list.scrollLeft = from + distance * easeOutCubic(progress)
+      if (progress < 1) frame.current = requestAnimationFrame(step)
+      else stopGlide()
     }
+    frame.current = requestAnimationFrame(step)
+  }, [stopGlide])
+
+  useEffect(() => stopGlide, [stopGlide])
+
+  // New results start at the beginning; re-measure when the size changes.
+  useEffect(() => {
+    const list = track.current
+    if (!list) return
+    stopGlide()
     list.scrollLeft = 0
-    position.current = 0
-    measure()
-    const observer = new ResizeObserver(measure)
+    updateEdges()
+    const observer = new ResizeObserver(updateEdges)
     observer.observe(list)
     return () => observer.disconnect()
-  }, [dishes, setWidth])
+  }, [dishes, updateEdges, stopGlide])
 
-  // Only animate while the rail is on screen.
-  useEffect(() => {
-    const list = track.current
-    if (!list) return
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting))
-    observer.observe(list)
-    return () => observer.disconnect()
-  }, [dishes.length])
-
-  const running = looping && visible && !paused && !hovered && !focused && !reducedMotion
-
-  useEffect(() => {
-    const list = track.current
-    if (!running || !list) return
-    position.current = list.scrollLeft
-    let last = performance.now()
-    let frame = requestAnimationFrame(function step(now) {
-      const elapsed = Math.min(now - last, 100)
-      last = now
-      // The visitor moved the rail (swipe, trackpad): continue from there.
-      if (Math.abs(list.scrollLeft - position.current) > 2) position.current = list.scrollLeft
-      if (now >= holdUntil.current && !document.hidden) {
-        const width = setWidth()
-        position.current += (speed * elapsed) / 1000
-        if (width && position.current >= width) position.current -= width
-        list.scrollLeft = position.current
-      }
-      frame = requestAnimationFrame(step)
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [running, speed, setWidth])
-
-  // Mouse wheel over the rail scrolls it sideways (eased) instead of the page.
-  // React's onWheel is passive, so the listener is attached by hand.
-  const loopingRef = useRef(looping)
-  const stopGlide = useRef(() => {})
-  useEffect(() => { loopingRef.current = looping }, [looping])
-  useEffect(() => {
-    const list = track.current
-    if (!list) return
-    let target: number | null = null
-    let frame = 0
-    // Lets pointer-leave stop an unfinished glide so the drift takes over at once.
-    stopGlide.current = () => { cancelAnimationFrame(frame); target = null }
-
-    const glide = () => {
-      if (target === null) return
-      const width = loopingRef.current ? setWidth() : 0
-      // Keep both values inside the first set so the loop never hits an end.
-      if (width && target >= width) { target -= width; list.scrollLeft -= width }
-      if (width && target < 0) { target += width; list.scrollLeft += width }
-      const distance = target - list.scrollLeft
-      if (Math.abs(distance) < 0.5) { list.scrollLeft = target; target = null; return }
-      list.scrollLeft += distance * 0.2
-      frame = requestAnimationFrame(glide)
-    }
-
-    const onWheel = (event: WheelEvent) => {
-      // Horizontal trackpad swipes and pinch-zoom keep their native behaviour.
-      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
-      const delta = event.deltaMode === 1 ? event.deltaY * 32 : event.deltaY
-      const max = list.scrollWidth - list.clientWidth
-      const from = target ?? list.scrollLeft
-      // A rail that does not loop hands the wheel back to the page at its ends.
-      if (!loopingRef.current && ((delta < 0 && from <= 0) || (delta > 0 && from >= max))) return
-      // No hold() here: hovering already pauses the drift, and leaving resumes it at once.
-      event.preventDefault()
-      target = loopingRef.current ? from + delta : Math.max(0, Math.min(max, from + delta))
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(glide)
-    }
-
-    list.addEventListener('wheel', onWheel, { passive: false })
-    return () => { list.removeEventListener('wheel', onWheel); cancelAnimationFrame(frame) }
-  }, [dishes.length, hold, setWidth])
-
+  /** Arrow buttons: move by the cards that fit on screen. Repeated clicks chain. */
   const page = (direction: 1 | -1) => {
     const list = track.current
     if (!list) return
-    hold()
-    const amount = list.clientWidth * 0.8
-    // Going back from the start: jump to the same spot in the copy first.
-    if (looping && direction < 0 && list.scrollLeft < amount) list.scrollLeft += setWidth()
-    list.scrollBy({ left: direction * amount, behavior: 'smooth' })
+    const from = glideTarget.current ?? list.scrollLeft
+    const points = snapPoints()
+    const span = list.clientWidth * 0.85
+    const next = direction > 0
+      ? points.filter((p) => p > from + 1 && p <= from + span).pop() ?? points.find((p) => p > from + 1)
+      : points.filter((p) => p < from - 1 && p >= from - span).shift() ?? [...points].reverse().find((p) => p < from - 1)
+    glideTo(next ?? from)
   }
 
-  const items = (copy: boolean) => dishes.map((dish, index) => (
-    <DishCard key={`${copy ? 'copy-' : ''}${dish.id}`} dish={dish} language={language} index={index} variant={variant} copy={copy} onOpen={onOpen} />
-  ))
+  // --- Mouse drag with momentum ------------------------------------------
+  const drag = useRef<{ x: number; left: number; moved: boolean; samples: { x: number; t: number }[] } | null>(null)
+  const suppressClick = useRef(false)
+
+  const onPointerDown = (event: React.PointerEvent<HTMLUListElement>) => {
+    const list = track.current
+    if (!list) return
+    // Any touch or click stops a running glide where it is.
+    stopGlide()
+    if (event.pointerType !== 'mouse' || event.button !== 0) return
+    drag.current = { x: event.clientX, left: list.scrollLeft, moved: false, samples: [{ x: event.clientX, t: event.timeStamp }] }
+  }
+
+  const onPointerMove = (event: React.PointerEvent<HTMLUListElement>) => {
+    const state = drag.current
+    const list = track.current
+    if (!state || !list) return
+    const dx = event.clientX - state.x
+    if (!state.moved && Math.abs(dx) < DRAG_THRESHOLD) return
+    if (!state.moved) {
+      state.moved = true
+      list.classList.add('is-dragging')
+      list.setPointerCapture(event.pointerId)
+    }
+    list.scrollLeft = state.left - dx
+    state.samples.push({ x: event.clientX, t: event.timeStamp })
+    while (state.samples.length > 2 && event.timeStamp - state.samples[0].t > VELOCITY_WINDOW_MS) state.samples.shift()
+  }
+
+  const endDrag = (event: React.PointerEvent<HTMLUListElement>) => {
+    const state = drag.current
+    const list = track.current
+    drag.current = null
+    if (!state?.moved || !list) return
+    list.classList.remove('is-dragging')
+    // Release speed (px/ms) from the last few samples carries the rail on.
+    const first = state.samples[0]
+    const elapsed = event.timeStamp - first.t
+    const velocity = elapsed > 0 && elapsed < VELOCITY_WINDOW_MS * 2 ? (event.clientX - first.x) / elapsed : 0
+    glideTo(nearestSnap(list.scrollLeft - velocity * MOMENTUM_MS))
+    // The click that follows this pointerup must not open a card.
+    suppressClick.current = true
+    setTimeout(() => { suppressClick.current = false }, 0)
+  }
+
+  const onClickCapture = (event: React.MouseEvent) => {
+    if (suppressClick.current) { event.preventDefault(); event.stopPropagation() }
+  }
+
+  const scrollable = !(edges.start && edges.end)
 
   return (
     <section id={id} className={`menu-rail menu-rail--${variant}`} aria-labelledby={`${id}-title`}>
@@ -163,42 +188,42 @@ export function MenuRail({ id, title, variant, dishes, language, speed, paused =
           <h2 id={`${id}-title`}>{title}</h2>
           <span className="menu-rail-count">{t.count(dishes.length)}</span>
         </div>
-        {looping && (
-          <span className="menu-rail-arrows">
-            <button type="button" onClick={() => page(-1)} aria-label={t.previous} aria-controls={`${id}-track`}>‹</button>
-            <button type="button" onClick={() => page(1)} aria-label={t.next} aria-controls={`${id}-track`}>›</button>
-          </span>
-        )}
+        <div className="menu-rail-actions">
+          {actions}
+          {dishes.length > 0 && scrollable && (
+            <span className="menu-rail-arrows">
+              <button type="button" onClick={() => page(-1)} disabled={edges.start} aria-label={t.previous} aria-controls={`${id}-track`}>‹</button>
+              <button type="button" onClick={() => page(1)} disabled={edges.end} aria-label={t.next} aria-controls={`${id}-track`}>›</button>
+            </span>
+          )}
+        </div>
       </header>
       {children}
       {dishes.length
         ? (
-          <ul
-            id={`${id}-track`}
-            className={`menu-track${looping ? ' is-looping' : ''}`}
-            ref={track}
-            // Lenis must leave wheel events here to the rail's own handler.
-            data-lenis-prevent-wheel
-            onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHovered(true) }}
-            onPointerLeave={(e) => {
-              if (e.pointerType !== 'mouse') return
-              // Mouse out: resume drifting immediately, from wherever the rail is now.
-              stopGlide.current()
-              holdUntil.current = 0
-              setHovered(false)
-            }}
-            onTouchStart={hold}
-            onTouchEnd={hold}
-            // Only keyboard focus pauses; a mouse click leaves focus on the card,
-            // which must not keep the rail still after the mouse moves away.
-            onFocus={(e) => { if (e.target.matches(':focus-visible')) setFocused(true) }}
-            onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false) }}
-          >
-            {items(false)}
-            {looping && items(true)}
-          </ul>
+          // Fades are overlays on the wrapper: masking the scroller itself would repaint it every frame.
+          <div className={`menu-track-wrap${edges.start ? '' : ' has-before'}${edges.end ? '' : ' has-after'}`}>
+            <ul
+              id={`${id}-track`}
+              className="menu-track"
+              ref={track}
+              onScroll={updateEdges}
+              // A wheel or trackpad gesture takes over from a running glide.
+              onWheel={() => { if (glideTarget.current !== null) stopGlide() }}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              onClickCapture={onClickCapture}
+              onDragStart={(e) => e.preventDefault()}
+            >
+              {dishes.map((dish, index) => (
+                <DishCard key={dish.id} dish={dish} language={language} index={index} variant={variant} category={categoryOf?.(dish)} onOpen={onOpen} />
+              ))}
+            </ul>
+          </div>
         )
-        : <p className="menu-empty">{t.empty}</p>}
+        : (empty ?? <p className="menu-empty">{t.empty}</p>)}
     </section>
   )
 }
