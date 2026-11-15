@@ -1,13 +1,11 @@
 import type { Dish, Localized } from '../../../../api/menu/types'
-import type { Occasion, SeatingArea } from '../../../../api/reservations/types'
+import type { SeatingArea } from '../../../../api/reservations/types'
 import type { Language } from '../siteData'
 
 /** Pre-ordered dishes: dish id → portions (or kg for per-kg seafood). */
 export type Cart = Record<string, number>
 
 export const AREAS: SeatingArea[] = ['main', 'outdoor', 'private']
-export const OCCASIONS: Occasion[] = ['none', 'birthday', 'family', 'company', 'other']
-export const GUEST_PRESETS = [4, 8, 12, 20, 30] as const
 
 export interface PartySet {
   id: string
@@ -174,7 +172,6 @@ export const BOOKING_COPY = {
     chooseTime: 'Chọn khung giờ bên dưới',
     noSlots: 'Hôm nay đã hết giờ nhận đặt bàn trực tuyến, vui lòng chọn ngày khác.',
     guests: 'Số lượng khách',
-    guestPresetsLabel: 'Chọn nhanh:',
     guestUnit: 'khách',
     fewer: 'Bớt một khách',
     more: 'Thêm một khách',
@@ -195,8 +192,6 @@ export const BOOKING_COPY = {
     } satisfies Record<SeatingArea, string[]>,
     step1: 'Thời gian & Không gian tiệc',
     step2: 'Thông tin người đặt & Thực đơn',
-    occasion: 'Dịp đặc biệt',
-    occasionLabel: { none: 'Bữa ăn thường', birthday: 'Sinh nhật', family: 'Họp mặt gia đình', company: 'Tiệc công ty', other: 'Dịp khác' } satisfies Record<Occasion, string>,
     name: 'Họ và tên người đặt',
     namePlaceholder: 'VD: Nguyễn Văn An',
     phone: 'Số điện thoại liên hệ',
@@ -273,7 +268,6 @@ export const BOOKING_COPY = {
     chooseTime: 'Select a time slot below',
     noSlots: 'No more online slots available for today. Please choose another date.',
     guests: 'Party size',
-    guestPresetsLabel: 'Quick select:',
     guestUnit: 'guests',
     fewer: 'One guest fewer',
     more: 'One guest more',
@@ -294,8 +288,6 @@ export const BOOKING_COPY = {
     } satisfies Record<SeatingArea, string[]>,
     step1: 'Date, Time & Seating Zone',
     step2: 'Host Details & Pre-order Summary',
-    occasion: 'Occasion',
-    occasionLabel: { none: 'Casual dining', birthday: 'Birthday', family: 'Family gathering', company: 'Corporate event', other: 'Other' } satisfies Record<Occasion, string>,
     name: 'Host full name',
     namePlaceholder: 'e.g. Alex Nguyen',
     phone: 'Phone number',
