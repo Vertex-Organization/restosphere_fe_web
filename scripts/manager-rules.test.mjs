@@ -25,11 +25,36 @@ const seed = () => createManagerData(now)
 const execute = (d, c, actor = manager, revision = d.revision) => applyManagerCommand(d, actor, c, revision, now)
 const decision = (id = 'PD-021') => ({ type: 'approval.decide', id, approve: true, reason: 'Đã kiểm tra thông tin' })
 
+test('reservation create and lookup validate identity, dates and local settings', async () => {
+  const store = new Map()
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: k => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) } })
+  try {
+    const { mockReservationService: service, reservationSettings } = await import(moduleUrl('src/api/reservations/service.ts'))
+    const input = { date: '2099-11-13', time: '18:30', guests: 4, area: 'main', occasion: 'none', name: 'Khách thử nghiệm', phone: '0901234567', items: [] }
+    const first = await service.create(input)
+    const second = await service.create(input)
+    assert.equal(first.areaId, 'floor-1'); assert.notEqual(first.code, second.code)
+    assert.equal(first.startsAt, '2099-11-13T11:30:00.000Z')
+    assert.equal((await service.lookup(first.code, '+84 901 234 567')).code, first.code)
+    assert.equal(await service.lookup(first.code, '0900000000'), null)
+    await assert.rejects(service.create({ ...input, date: '2099-02-30' }))
+    await assert.rejects(service.create({ ...input, durationMinutes: -1 }))
+    await assert.rejects(service.create({ ...input, items: [{ dishId: 'x', quantity: NaN }] }))
+    reservationSettings.onlineReservations = false
+    await assert.rejects(service.create(input))
+    reservationSettings.onlineReservations = true
+  } finally {
+    if (previous) Object.defineProperty(globalThis, 'localStorage', previous)
+    else delete globalThis.localStorage
+  }
+})
+
 test('dashboard counts derive from the same records as detail pages', () => {
   const d = seed(); const s = dashboard(d, now.getTime())
   assert.equal(s.pending.length, d.approvals.filter(a => a.status === 'PENDING').length)
   assert.equal(s.occupied, d.sessions.length)
-  assert.equal(s.activeOrders, d.orders.filter(o => o.items.some(i => ['NEW', 'PREPARING', 'READY'].includes(i.status))).length)
+  assert.equal(s.activeOrders, d.orders.filter(o => o.items.some(i => ['SUBMITTED', 'PREPARING', 'READY'].includes(i.status))).length)
   assert.equal(s.revenue, d.payments.filter(p => p.status === 'COMPLETED' && businessDay(p.at) === businessDay(now)).reduce((n, p) => n + p.amount, 0))
 })
 test('business dates use Vietnam timezone at UTC day boundaries', () => { assert.equal(businessDay('2026-11-11T18:30:00Z'), '2026-11-12') })
@@ -45,24 +70,53 @@ test('approve once, audit the decision, and reject duplicate or stale decisions'
 })
 test('reject a request with a recorded reason', () => { const d = seed(); const next = execute(d, { ...decision(), approve: false }); assert.equal(next.approvals[0].status, 'REJECTED'); assert.equal(next.approvals[0].decidedBy, manager.id) })
 test('refuse self-approval and over-limit approval', () => {
-  const d = seed(); d.approvals[0].senderId = manager.id; assert.throws(() => execute(d, decision()), /chính mình/)
+  const d = seed(); d.approvals[0].requestedBy = manager.id; assert.throws(() => execute(d, decision()), /chính mình/)
   assert.throws(() => execute(seed(), decision('PD-024')), /vượt hạn mức/)
 })
-test('decision and incident resolution never alter order or bill statuses', () => {
+test('approving a request applies it automatically and tells the sender', () => {
+  const d = seed(); const menu = execute(d, { ...decision('PD-026'), reason: 'Cua đã nhập về' })
+  assert.equal(menu.menu.find(m => m.id === 'M002').status, 'AVAILABLE'); assert.equal(menu.outbox[0].kind, 'REQUEST_DECIDED'); assert.equal(menu.outbox[0].audience, 'KITCHEN')
+  const cancel = execute(d, { ...decision('PD-022'), reason: 'Khách đổi món' })
+  assert.equal(cancel.orders.flatMap(o => o.items).find(i => i.id === 'OI-2-0').status, 'CANCELLED'); assert.equal(cancel.outbox[0].audience, 'WAITER')
+  const voided = execute(d, { ...decision('PD-025'), reason: 'Đã đối chiếu' }); assert.equal(voided.outbox[0].audience, 'CASHIER')
+})
+test('decision and incident resolution never alter order or bill statuses for billing requests', () => {
   const d = seed(); const next = execute(execute(d, decision()), { type: 'incident.update', id: 'SC-008', assigneeId: 'NV010', status: 'RESOLVED', note: 'Đã xử lý xong nguyên liệu' })
   assert.deepEqual(next.orders, d.orders); assert.deepEqual(next.bills, d.bills); assert.deepEqual(next.payments, d.payments)
 })
 test('reservation move checks capacity and leaves input unchanged after failure', () => {
   const d = seed(); const copy = structuredClone(d)
-  assert.throws(() => execute(d, { type: 'reservation.move', id: 'DB-042', tableId: 'A11', reason: 'Điều chỉnh theo yêu cầu' }), /không đủ/)
+  assert.throws(() => execute(d, { type: 'reservation.move', id: 'RS0042', tableId: 'A11', reason: 'Điều chỉnh theo yêu cầu' }), /không đủ/)
   assert.deepEqual(d, copy)
 })
 test('reservation move refuses occupied tables and time conflicts', () => {
   const d = seed()
-  assert.throws(() => execute(d, { type: 'reservation.move', id: 'DB-041', tableId: 'A01', reason: 'Khách cần đổi khu vực' }), /sẵn sàng/)
-  assert.throws(() => execute(d, { type: 'reservation.move', id: 'DB-041', tableId: 'A11', reason: 'Khách cần đổi khu vực' }), /lịch giữ/)
+  assert.throws(() => execute(d, { type: 'reservation.move', id: 'RS0041', tableId: 'A01', reason: 'Khách cần đổi khu vực' }), /sẵn sàng/)
+  d.tables.find(t => t.id === 'A11').status = 'AVAILABLE'; d.reservations.find(r => r.id === 'RS0043').status = 'CONFIRMED'
+  assert.throws(() => execute(d, { type: 'reservation.move', id: 'RS0041', tableId: 'A11', reason: 'Khách cần đổi khu vực' }), /lịch giữ/)
 })
-test('valid reservation move records the old and new table', () => { const d = seed(); const next = execute(d, { type: 'reservation.move', id: 'DB-041', tableId: 'B10', reason: 'Khách muốn khu vực yên tĩnh' }); assert.equal(next.reservations[0].tableId, 'B10'); assert.match(next.history[0].text, /A10 → B10/) })
+test('cancellation decision notifies kitchen and rejects stale served targets atomically', () => {
+  const d = seed()
+  const next = execute(d, decision('PD-022'))
+  assert.ok(next.outbox.some(m => m.kind === 'CANCELLED' && m.audience === 'KITCHEN'))
+  d.orders.flatMap(o => o.items).find(i => i.id === 'OI-2-0').status = 'SERVED'
+  const before = structuredClone(d)
+  assert.throws(() => execute(d, decision('PD-022')), /đã thay đổi/)
+  assert.deepEqual(d, before)
+})
+
+test('incident resolution and reply emit INCIDENT_REPLY outbox', () => {
+  const d = seed()
+  assert.throws(() => execute(d, { type: 'incident.update', id: 'SC-008', status: 'RESOLVED', reply: 'ít' }), /5 ký tự/)
+  const next = execute(d, { type: 'incident.update', id: 'SC-008', assigneeId: 'NV010', status: 'RESOLVED', reply: 'Quản lý đã duyệt bổ sung nguyên liệu' })
+  const inc = next.incidents.find(i => i.id === 'SC-008')
+  assert.equal(inc.status, 'RESOLVED')
+  assert.equal(inc.response.text, 'Quản lý đã duyệt bổ sung nguyên liệu')
+  assert.equal(inc.response.by, manager.id)
+  assert.ok(next.outbox.some(m => m.kind === 'INCIDENT_REPLY' && m.audience === 'KITCHEN'))
+})
+
+test('valid reservation move records the old and new table', () => { const d = seed(); d.reservations.find(r => r.id === 'RS0041').areaId = undefined; const next = execute(d, { type: 'reservation.move', id: 'RS0041', tableId: 'B10', reason: 'Khách muốn khu vực yên tĩnh' }); assert.equal(next.reservations[0].tableId, 'B10'); assert.match(next.history[0].text, /A10 → B10/) })
 test('table layout cannot modify active sessions or held reservations', () => {
   const d = seed(); const command = { type: 'table.update', id: 'A01', seats: 8, areaId: 'A', inactive: false }
   assert.throws(() => execute(d, command), /phiên phục vụ/); assert.throws(() => execute(d, { ...command, id: 'A10' }), /lịch giữ/)
@@ -112,3 +166,27 @@ test('category CRUD protects references and preserves visibility/order', () => {
 })
 test('notifications track read status per user without duplicating it', () => { let d = seed(); d = execute(d, { type: 'notification.read', id: 'TB-01' }); d = execute(d, { type: 'notification.read', id: 'TB-01' }); assert.deepEqual(d.notifications[0].readBy, ['NV001']); d = execute(d, { type: 'notification.read' }); assert.ok(d.notifications.every(n => n.readBy.includes('NV001'))) })
 test('incident resolution requires a note and an active assignee', () => { const d = seed(); const c = { type: 'incident.update', id: 'SC-008', assigneeId: 'NV021', status: 'RESOLVED', note: 'Đã xử lý hoàn tất' }; assert.throws(() => execute(d, c), /đang làm việc/); assert.throws(() => execute(d, { ...c, assigneeId: 'NV010', note: '' }), /ghi chú/) })
+
+test('reservation move rejects wrong status or area, honours the buffer and notifies reception and waiter with TABLE_REASSIGNED', () => {
+  const d = seed()
+  d.reservations.find(r => r.id === 'RS0043').status = 'PENDING'
+  const target = 'A09'
+  Object.assign(d.tables.find(t => t.id === target), { status: 'AVAILABLE', seats: 8, sessionId: undefined })
+  d.reservations = d.reservations.filter(r => r.tableId !== target)
+  assert.throws(() => execute(d, { type: 'reservation.move', id: 'RS0043', tableId: target, reason: 'Khách đổi chỗ ngồi' }), /đã xác nhận/)
+  assert.throws(() => execute(d, { type: 'reservation.move', id: 'RS0041', tableId: target, reason: 'ng' }), /5 ký tự/)
+  const wrongArea = seed(); wrongArea.tables.find(t => t.id === 'B10').areaId = 'B'
+  assert.throws(() => execute(wrongArea, { type: 'reservation.move', id: 'RS0041', tableId: 'B10', reason: 'Khách đổi khu vực' }), /khu vực/)
+  const buf = seed(); const a = buf.reservations.find(r => r.id === 'RS0041'); const other = buf.reservations.find(r => r.id === 'RS0044')
+  const gap = new Date(a.until).getTime() + 5 * 60_000
+  Object.assign(other, { tableId: 'A09', areaId: 'A', status: 'CONFIRMED', at: new Date(gap).toISOString(), until: new Date(gap + 3_600_000).toISOString() })
+  buf.tables.find(t => t.id === 'A09').status = 'AVAILABLE'
+  assert.throws(() => execute(buf, { type: 'reservation.move', id: 'RS0041', tableId: 'A09', reason: 'Khách muốn gần cửa sổ' }), /đệm/)
+  const ok = seed(); ok.reservations.find(r => r.id === 'RS0041').areaId = undefined
+  const next = execute(ok, { type: 'reservation.move', id: 'RS0041', tableId: 'B10', reason: 'Khách muốn khu vực yên tĩnh' })
+  assert.ok(next.outbox.some(m => m.kind === 'TABLE_REASSIGNED' && m.audience === 'RECEPTIONIST'))
+})
+test('manager seed covers every notification kind in the contract', () => {
+  const kinds = new Set(seed().notifications.map(n => n.kind))
+  for (const k of ['APPROVAL', 'INCIDENT', 'ORDER', 'MENU_REQUEST', 'CASHIER_SHIFT_CLOSED', 'REQUEST_WITHDRAWN']) assert.ok(kinds.has(k), k)
+})

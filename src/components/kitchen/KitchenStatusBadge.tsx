@@ -10,7 +10,9 @@ const STATUS_TONE: Record<OrderItemStatus, BadgeTone> = {
   PREPARING: 'warning',
   READY: 'success',
   SERVED: 'neutral',
+  REJECTED: 'danger',
   CANCELLED: 'danger',
+  VOIDED: 'neutral',
 }
 
 export function Badge({ tone, children }: { tone: BadgeTone; children: ReactNode }) {

@@ -19,7 +19,7 @@ type BookingFormProps = {
   onCartClear: () => void
 }
 
-const TIME_ZONE = 'Europe/Amsterdam'
+const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 const MAX_GUESTS = 60
 const PRIVATE_MIN_GUESTS = 8
 
@@ -87,6 +87,7 @@ export function BookingForm({
   const lunchSlots = slots.filter((s) => Number(s.slice(0, 2)) < 15)
   const dinnerSlots = slots.filter((s) => Number(s.slice(0, 2)) >= 15)
 
+  const onlineAllowed = reservationService.isOnlineReservationsEnabled()
   const chosen = dishes.filter((d) => cart[d.id])
   const total = cartTotal(cart, dishes)
   const [minCovered, maxCovered] = cartGuestCoverage(cart, dishes)
@@ -113,8 +114,9 @@ export function BookingForm({
     setSending(true)
     setFailed(false)
     try {
+      const startsAt = new Date(`${date}T${time}:00+07:00`).toISOString()
       const reservation = await reservationService.create({
-        date, time, guests, area, occasion: 'none',
+        date, time, guests, area, occasion: 'none', startsAt, durationMinutes: 120,
         name: text('name'), phone: text('phone'), email: text('email') || undefined, note: text('note') || undefined,
         items: chosen.map((d) => ({ dishId: d.id, quantity: cart[d.id] })),
       })
@@ -218,6 +220,7 @@ export function BookingForm({
 
         <div className="bk-ticket-footer">
           <p className="bk-demo-note">{t.demoNote}</p>
+          <a href={`/${language}/reservation-status`}>{t.lookup}</a>
           <button type="button" className="sb-catering-submit" onClick={() => setDone(null)}>{t.doneAgain}</button>
         </div>
       </div>
@@ -226,6 +229,13 @@ export function BookingForm({
 
   return (
     <form className="bk-form" onSubmit={submit} onChange={() => setFailed(false)}>
+      <a href={`/${language}/reservation-status`}>{t.lookup}</a>
+      {!onlineAllowed && (
+        <div style={{ gridColumn: '1 / -1', padding: '12px 16px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: '8px', color: '#b91c1c', fontWeight: 600 }}>
+          Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.
+        </div>
+      )}
+      <fieldset disabled={!onlineAllowed} style={{ display: 'contents' }}>
       <div className="bk-form-col">
         <fieldset className="bk-step">
           <legend><span className="bk-step-no">1</span>{t.step1}</legend>
@@ -437,6 +447,7 @@ export function BookingForm({
           <p>{t.requiredHint}</p>
         </div>
       </div>
+      </fieldset>
     </form>
   )
 }

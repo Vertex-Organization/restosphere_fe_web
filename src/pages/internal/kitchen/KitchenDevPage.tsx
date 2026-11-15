@@ -49,7 +49,7 @@ export default function KitchenDevPage() {
     return item && order ? `Bàn ${order.tableCode} · #${order.code} · ${item.quantity} × ${item.name}` : itemId
   }
   const ready = data.items.filter((i) => i.status === 'READY')
-  const cancellable = data.items.filter((i) => i.status === 'SUBMITTED' || i.status === 'PREPARING')
+  const cancellable = data.items.filter((i) => i.status === 'PREPARING' || i.status === 'READY')
   const activeOrders = data.orders.filter((o) => data.items.some((i) => i.orderId === o.id && (i.status === 'SUBMITTED' || i.status === 'PREPARING')))
   const openIncidents = data.incidents.filter((i) => i.status !== 'RESOLVED')
   const requests = data.menuRequests.filter((r) => r.status === 'PENDING')
@@ -137,10 +137,10 @@ export default function KitchenDevPage() {
         </section>
 
         <section className="k-panel">
-          <h2 className="k-panel-title">Hủy món theo quy trình</h2>
+          <h2 className="k-panel-title">Quản lý đã duyệt yêu cầu hủy món</h2>
           <div className="k-form">
             <select className="k-select" aria-label="Món cần hủy" value={cancelItem} onChange={(e) => setCancelItem(e.target.value)}>
-              <option value="">Chọn món chưa xong</option>
+              <option value="">Chọn món đang chế biến hoặc sẵn sàng</option>
               {cancellable.map((i) => <option key={i.id} value={i.id}>{label(i.id)}</option>)}
             </select>
             <div className="k-form-row">
@@ -207,7 +207,7 @@ export default function KitchenDevPage() {
           <ul className="k-dev-list k-dev-outbox">
             {data.outbox.slice(0, 8).map((m) => (
               <li key={m.id}>
-                <span><b>{ROLE_LABEL[m.audience]}</b>{m.staffId && ` (${data.staff.find((s) => s.id === m.staffId)?.name ?? m.staffId})`} · {m.title}</span>
+                <span><b>{ROLE_LABEL[m.audience]}</b>{m.staffId && ` (${data.staff.find((s) => s.id === m.staffId)?.name ?? m.staffId})`} · {m.kind} · {m.title}</span>
                 <span className="k-muted">{formatTime(m.at)}</span>
               </li>
             ))}

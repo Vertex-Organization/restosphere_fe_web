@@ -13,7 +13,9 @@ const permissions: Record<ManagerCommand['type'], Permission | null> = {
   'shift.save': 'shifts.manage', 'menu.save': 'menu.manage', 'menu.delete': 'menu.manage', 'category.save': 'menu.manage', 'category.delete': 'menu.manage',
   'approval.decide': 'approvals.decide', 'incident.update': 'incidents.manage', 'notification.read': null,
 }
-export const activeReservation = (status: string) => ['PENDING', 'CONFIRMED', 'LATE'].includes(status)
+// Same default as the staff app's reservation settings (Admin `bufferMinutes`); copied, not imported across apps.
+const BUFFER_MINUTES = 15
+export const activeReservation = (status: string) => ['PENDING', 'CONFIRMED', 'ARRIVED'].includes(status)
 export const overlap = (a: string, b: string, c: string, d: string) => new Date(a).getTime() < new Date(d).getTime() && new Date(c).getTime() < new Date(b).getTime()
 
 /** Pure transaction: failure leaves the caller's state unchanged. An HTTP adapter must enforce these on the server. */
@@ -30,14 +32,23 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
   switch (command.type) {
     case 'reservation.move': {
       const r = data.reservations.find(r => r.id === command.id)
-      requireValue(r && activeReservation(r.status), 'Chỉ điều chỉnh đặt bàn chưa nhận khách.')
+      requireValue(r && ['CONFIRMED', 'ARRIVED'].includes(r.status), 'Chỉ đổi bàn cho đặt bàn đã xác nhận hoặc khách đã đến, trước bàn giao.')
       const t = data.tables.find(t => t.id === command.tableId)
       requireValue(t && t.status === 'AVAILABLE', 'Bàn phải sẵn sàng trước khi điều chỉnh.', 'tableId')
       requireValue(r.tableId !== t.id, 'Hãy chọn bàn khác với bàn hiện tại.', 'tableId')
       requireValue(t.seats >= r.guests, `Bàn ${t.id} chỉ có ${t.seats} ghế, không đủ cho ${r.guests} khách.`, 'tableId')
-      requireValue(!data.reservations.some(other => other.id !== r.id && other.tableId === t.id && activeReservation(other.status) && overlap(r.at, r.until, other.at, other.until)), 'Bàn đã có lịch giữ trong khung giờ này.', 'tableId')
+      requireValue(!r.areaId || r.areaId === t.areaId, `Bàn ${t.id} không thuộc khu vực khách yêu cầu.`, 'tableId')
+      const pad = BUFFER_MINUTES * 60_000
+      const from = new Date(new Date(r.at).getTime() - pad).toISOString()
+      const to = new Date(new Date(r.until).getTime() + pad).toISOString()
+      requireValue(!data.reservations.some(other => other.id !== r.id && other.tableId === t.id && ['CONFIRMED', 'ARRIVED', 'SEATED'].includes(other.status) && overlap(from, to, other.at, other.until)), `Bàn đã có lịch giữ trong khung giờ này (gồm ${BUFFER_MINUTES} phút đệm).`, 'tableId')
       requireValue(command.reason.trim().length >= 5, 'Nhập lý do điều chỉnh ít nhất 5 ký tự.', 'reason')
-      text = `Điều chỉnh ${r.id}: ${r.tableId} → ${t.id}. ${command.reason.trim()}`; entityId = r.id; r.tableId = t.id
+      const reason = command.reason.trim()
+      text = `Điều chỉnh ${r.id}: ${r.tableId} → ${t.id}. ${reason}`; entityId = r.id
+      for (const [audience, staffId] of [['RECEPTIONIST', r.employeeId], ['WAITER', data.sessions.find(s => s.tableId === r.tableId)?.waiterId]] as const) {
+        if (staffId) data.outbox.unshift({ id: `OUT-${crypto.randomUUID()}`, kind: 'TABLE_REASSIGNED', audience, staffId, title: `Đổi bàn ${r.id}: ${r.tableId} → ${t.id}`, body: reason, at })
+      }
+      r.tableId = t.id
       break
     }
     case 'table.update': {
@@ -47,7 +58,7 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
       requireValue(!data.reservations.some(r => r.tableId === t.id && activeReservation(r.status)), 'Bàn còn lịch giữ, hãy xử lý đặt bàn trước khi đổi bố trí.')
       requireValue(Number.isInteger(command.seats) && command.seats >= 1 && command.seats <= 20, 'Số ghế phải từ 1 đến 20.', 'seats')
       requireValue(areaExists(command.areaId), 'Chọn khu vực hợp lệ.', 'areaId')
-      Object.assign(t, { seats: command.seats, areaId: command.areaId, status: command.inactive ? 'INACTIVE' : 'AVAILABLE' })
+      Object.assign(t, { seats: command.seats, areaId: command.areaId, status: command.inactive ? 'OUT_OF_SERVICE' : 'AVAILABLE' })
       entityId = t.id; text = `Cập nhật bố trí bàn ${t.id} · ${command.seats} ghế`
       break
     }
@@ -88,7 +99,7 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
       requireValue(item.name.length > 0 && item.name.length <= 100, 'Tên món bắt buộc, tối đa 100 ký tự.', 'name')
       requireValue(Number.isSafeInteger(item.price) && item.price >= 0, 'Giá món phải là số đồng nguyên không âm.', 'price')
       requireValue(data.categories.some(c => c.id === item.categoryId && c.visible), 'Chọn một danh mục đang hiển thị.', 'categoryId')
-      requireValue(['AVAILABLE', 'SOLD_OUT', 'HIDDEN'].includes(item.status), 'Trạng thái món không hợp lệ.', 'status')
+      requireValue(['AVAILABLE', 'SOLD_OUT', 'DISCONTINUED'].includes(item.status), 'Trạng thái món không hợp lệ.', 'status')
       requireValue(!item.image || /^\/(?!\/)[\w/.-]+$/.test(item.image) || /^https:\/\//.test(item.image), 'Ảnh phải là đường dẫn nội bộ hoặc URL HTTPS.', 'image')
       const existing = data.menu.findIndex(m => m.id === item.id)
       requireValue(command.creating ? existing < 0 : existing >= 0, command.creating ? 'Mã món đã tồn tại.' : 'Món không còn tồn tại.', 'id')
@@ -128,23 +139,58 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
     case 'approval.decide': {
       const a = data.approvals.find(a => a.id === command.id)
       requireValue(a?.status === 'PENDING', 'Yêu cầu đã được xử lý, không thể phê duyệt lần nữa.')
-      requireValue(a.senderId !== actor.id, 'Không được tự xử lý yêu cầu do chính mình gửi.')
-      requireValue(!command.approve || a.amount <= actor.approvalLimit, 'Giá trị yêu cầu vượt hạn mức phê duyệt được cấp.')
+      requireValue(a.requestedBy !== actor.id, 'Không được tự xử lý yêu cầu do chính mình gửi.')
+      requireValue(!command.approve || a.amount <= actor.approvalLimit, 'Giá trị yêu cầu vượt hạn mức phê duyệt được cấp (VNĐ).')
       requireValue(command.reason.trim().length >= 5, 'Nhập lý do xử lý ít nhất 5 ký tự.', 'reason')
       a.status = command.approve ? 'APPROVED' : 'REJECTED'; a.decisionNote = command.reason.trim(); a.decidedBy = actor.id; a.decidedAt = at
-      // A decision authorizes a downstream workflow; it never silently changes an order or a bill.
-      entityId = a.id; text = `${command.approve ? 'Phê duyệt' : 'Từ chối'} ${a.id}. ${a.decisionNote}`
+      // Approval applies automatically: only the manager-owned records change here; the sender gets the result as REQUEST_DECIDED.
+      if (command.approve && a.type === 'MENU_STATUS' && a.menuStatus) {
+        const m = data.menu.find(m => m.id === a.targetId)
+        if (m) Object.assign(m, { status: a.menuStatus, updatedAt: at })
+      }
+      if (command.approve && a.type === 'CANCEL_ITEM') {
+        const order = data.orders.find(o => o.items.some(i => i.id === a.targetId))
+        const item = order?.items.find(i => i.id === a.targetId)
+        requireValue(order && item && !order.paid && ['PREPARING', 'READY'].includes(item.status), 'Món đã thay đổi, không thể hủy.')
+        item.status = 'CANCELLED'
+        data.outbox.unshift({ id: `OUT-${crypto.randomUUID()}`, kind: 'CANCELLED', audience: 'KITCHEN', staffId: item.chefId, title: `Đã hủy ${item.name}`, body: `${order.id} · ${a.reason}`, at })
+      }
+      data.outbox.unshift({ id: `OUT-${crypto.randomUUID()}`, kind: 'REQUEST_DECIDED', audience: a.type === 'RESERVATION' ? 'RECEPTIONIST' : a.type === 'DISCOUNT' || a.type === 'BILL_ADJUSTMENT' || a.type === 'PAYMENT_VOID' ? 'CASHIER' : a.type === 'MENU_STATUS' ? 'KITCHEN' : 'WAITER', staffId: a.requestedBy, title: `${a.code} ${command.approve ? 'đã được duyệt' : 'bị từ chối'}`, body: a.decisionNote, at })
+      entityId = a.id; text = `${command.approve ? 'Phê duyệt' : 'Từ chối'} ${a.code}. ${a.decisionNote}`
       break
     }
     case 'incident.update': {
       const incident = data.incidents.find(i => i.id === command.id)
       requireValue(incident, 'Không tìm thấy sự cố.')
       requireValue(incident.status !== 'RESOLVED', 'Sự cố đã đóng, không thể chỉnh sửa.')
-      requireValue(data.employees.some(e => e.id === command.assigneeId && e.status === 'ACTIVE'), 'Chọn người xử lý đang làm việc.', 'assigneeId')
-      requireValue(['OPEN', 'IN_PROGRESS', 'RESOLVED'].includes(command.status), 'Chọn trạng thái hợp lệ.', 'status')
-      requireValue(command.note.trim().length >= 5, 'Nhập ghi chú xử lý ít nhất 5 ký tự.', 'note')
-      Object.assign(incident, { assigneeId: command.assigneeId, status: command.status, note: command.note.trim() })
-      entityId = incident.id; text = `Cập nhật ${incident.id}. ${incident.note}`
+      if (command.assigneeId) {
+        requireValue(data.employees.some(e => e.id === command.assigneeId && e.status === 'ACTIVE'), 'Chọn người xử lý đang làm việc.', 'assigneeId')
+        incident.assigneeId = command.assigneeId
+      }
+      requireValue(['OPEN', 'ACKNOWLEDGED', 'RESOLVED'].includes(command.status), 'Chọn trạng thái hợp lệ.', 'status')
+      if (command.status === 'RESOLVED') {
+        requireValue(data.employees.some(e => e.id === incident.assigneeId && e.status === 'ACTIVE'), 'Chọn người xử lý đang làm việc.', 'assigneeId')
+        requireValue((command.reply ?? command.note ?? '').trim().length >= 5, 'Nhập ghi chú xử lý ít nhất 5 ký tự.', 'reply')
+      }
+      if (command.note !== undefined) {
+        requireValue(command.note.trim().length >= 5, 'Nhập ghi chú xử lý ít nhất 5 ký tự.', 'note')
+        incident.description = incident.description ? `${incident.description}\n[Ghi chú]: ${command.note.trim()}` : command.note.trim()
+      }
+      incident.status = command.status
+      if (command.reply?.trim()) {
+        requireValue(command.reply.trim().length >= 5, 'Nội dung phản hồi cần ít nhất 5 ký tự.', 'reply')
+        incident.response = { by: actor.id, at, text: command.reply.trim() }
+        data.outbox.unshift({
+          id: `OUT-${crypto.randomUUID()}`,
+          kind: 'INCIDENT_REPLY',
+          audience: 'KITCHEN',
+          staffId: incident.reporterId,
+          title: `Quản lý phản hồi sự cố ${incident.code}`,
+          body: command.reply.trim(),
+          at,
+        })
+      }
+      entityId = incident.id; text = `Cập nhật ${incident.code}. ${incident.response?.text ?? incident.status}`
       break
     }
     case 'notification.read': {

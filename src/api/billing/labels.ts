@@ -11,7 +11,9 @@ export const ITEM_STATUS_LABEL: Record<SentItemStatus, string> = {
   PREPARING: 'Đang chế biến',
   READY: 'Chờ mang ra',
   SERVED: 'Đã phục vụ',
+  REJECTED: 'Bếp từ chối',
   CANCELLED: 'Đã hủy',
+  VOIDED: 'Đã bỏ khỏi hóa đơn',
 }
 
 export const ITEM_STATUS_TONE: Record<SentItemStatus, Tone> = {
@@ -19,7 +21,9 @@ export const ITEM_STATUS_TONE: Record<SentItemStatus, Tone> = {
   PREPARING: 'warning',
   READY: 'warning',
   SERVED: 'neutral',
+  REJECTED: 'danger',
   CANCELLED: 'danger',
+  VOIDED: 'neutral',
 }
 
 export const BILL_STATUS_LABEL: Record<BillStatus, string> = {
@@ -73,14 +77,14 @@ export const REQUEST_STATUS_LABEL: Record<RequestStatus, string> = {
   PENDING: 'Chờ duyệt',
   APPROVED: 'Đã duyệt',
   REJECTED: 'Từ chối',
-  CANCELLED: 'Đã rút',
+  WITHDRAWN: 'Đã rút',
 }
 
 export const REQUEST_STATUS_TONE: Record<RequestStatus, Tone> = {
   PENDING: 'warning',
   APPROVED: 'success',
   REJECTED: 'danger',
-  CANCELLED: 'neutral',
+  WITHDRAWN: 'neutral',
 }
 
 export const DISCOUNT_MODE_LABEL: Record<DiscountMode, string> = {
@@ -90,6 +94,7 @@ export const DISCOUNT_MODE_LABEL: Record<DiscountMode, string> = {
 
 export const NOTIFICATION_KIND_LABEL: Record<CashierNotificationKind, string> = {
   PAYMENT_REQUEST: 'Yêu cầu thanh toán',
+  PAYMENT_REQUEST_WITHDRAWN: 'Phục vụ rút yêu cầu',
   TRANSFER_RECEIVED: 'Đã nhận chuyển khoản',
   TRANSFER_FAILED: 'Chuyển khoản lỗi',
   REQUEST_DECIDED: 'Kết quả yêu cầu',

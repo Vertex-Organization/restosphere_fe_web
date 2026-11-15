@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { RejectItemDialog } from '../../../components/kitchen/KitchenOrderItem'
 import { INCIDENT_STATUS_LABEL, INCIDENT_TYPE_LABEL } from '../../../api/kitchen/labels'
 import { canComplete, canStart, hasPermission, shortName, staffName } from '../../../api/kitchen/rules'
 import { minutesBetween } from '../../../api/kitchen/selectors'
@@ -16,6 +18,7 @@ const refs = (items: KitchenOrderItem[]) => items.map((i) => ({ id: i.id, versio
 export default function KitchenTicketPage({ id }: { id: string }) {
   const { data, run, isPending, user } = useKitchenSnapshot()
   const now = useNow()
+  const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
   const order = data.orders.find((o) => o.id === id)
 
   if (!order) {
@@ -46,6 +49,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
 
   return (
     <div className="k-page">
+      {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
       <div className="k-page-head">
         <KitchenLink to={kitchenPaths.board} className="k-back"><Icon name="chevronLeft" size={15} />Bảng bếp</KitchenLink>
         <div className="k-page-heading">
@@ -94,7 +98,8 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           <div className="k-cell-stack">
                             <span className="k-strong">{item.name}</span>
                             {item.note && <span className="k-note"><Icon name="note" size={13} />{item.note}</span>}
-                            {item.cancellationReason && <span className="k-cell-danger">Lý do hủy: {item.cancellationReason}</span>}
+                            {item.rejectionReason && <span className="k-cell-danger">Lý do từ chối: {item.rejectionReason}</span>}
+                             {item.cancellationReason && <span className="k-cell-danger">Lý do hủy: {item.cancellationReason}</span>}
                           </div>
                         </div>
                       </td>
@@ -106,6 +111,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                         {allowed && canStart(item) && (
                           <button type="button" className="k-btn k-btn--outline" disabled={isPending(item.id)} onClick={() => start([item])}>Bắt đầu</button>
                         )}
+                        {allowed && canStart(item) && <button type="button" className="k-btn k-btn--danger" disabled={isPending(item.id)} onClick={() => setRejectItem(item)}>Từ chối</button>}
                         {allowed && canComplete(item) && (
                           <button type="button" className="k-btn k-btn--primary" disabled={isPending(item.id)} onClick={() => complete([item])}>Hoàn thành</button>
                         )}
@@ -176,7 +182,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                 {incidents.map((incident) => (
                   <li key={incident.id}>
                     <KitchenLink to={kitchenPaths.incidents}>{incident.code} · {INCIDENT_TYPE_LABEL[incident.type]}</KitchenLink>
-                    <span className="k-muted">{INCIDENT_STATUS_LABEL[incident.status]} · {formatTime(incident.reportedAt)}</span>
+                    <span className="k-muted">{INCIDENT_STATUS_LABEL[incident.status]} · {formatTime(incident.at)}</span>
                   </li>
                 ))}
               </ul>

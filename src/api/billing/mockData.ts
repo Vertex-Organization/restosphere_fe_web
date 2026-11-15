@@ -11,8 +11,6 @@ import type {
 // synchronised until a real backend exists. Every bill below is computed from
 // its own session's orders, so totals, payments and statuses always agree.
 
-export const DEMO_PASSWORD = '123456'
-
 export function dayKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
@@ -366,23 +364,26 @@ export function createSeedData(now: Date): CashierData {
     const code = `YC-${pad(spec.n, 3)}`
     const request: CashierRequest = {
       id: `req_${pad(spec.n, 3)}`, code, type: spec.type, status: spec.decided ? (spec.decided.approve ? 'APPROVED' : 'REJECTED') : 'PENDING',
-      billId: bill.id, reason: spec.reason, requestedBy: CASHIER, requestedAt: ago(spec.at),
+      billId: bill.id, targetType: 'BILL', targetId: bill.id, amount: 0, reason: spec.reason, requestedBy: CASHIER, requestedAt: ago(spec.at),
     }
     let detail = ''
     if (spec.discount) {
       const amount = discountAmount(spec.discount, bill.totals.subtotal)
       request.discount = { ...spec.discount, amount }
+      request.amount = amount
       detail = `giảm ${spec.discount.value}% (${formatVnd(amount)})`
     }
     if (spec.line) {
       const order = orders.filter((o) => o.sessionId === bill.sessionId)[spec.line[0]]
       const item = items.filter((i) => i.orderId === order.id)[spec.line[1]]
       request.itemId = item.id
+      request.targetType = 'ORDER_ITEM'; request.targetId = item.id; request.amount = item.unitPrice * item.quantity
       detail = `bỏ ${item.quantity} × ${item.name}`
     }
     if (spec.payment !== undefined) {
       const payment = paymentsBySession.get(spec.bill)![spec.payment]
       request.paymentId = payment.id
+      request.targetType = 'PAYMENT'; request.targetId = payment.id; request.amount = payment.amount
       detail = `hủy ${payment.code}`
     }
     log(bill.id, spec.at, CASHIER, `Gửi ${code}: ${detail}`)
@@ -474,6 +475,10 @@ export function createSeedData(now: Date): CashierData {
     payments,
     requests,
     shifts,
+    scheduledShifts: [
+      { id: 'SH-AM', name: 'Ca sáng', start: '06:00', end: '14:00', cashierId: CASHIER },
+      { id: 'SH-PM', name: 'Ca chiều', start: '14:00', end: '22:00', cashierId: CASHIER },
+    ],
     notifications,
     outbox: [],
     processedKeys: {},
@@ -484,11 +489,13 @@ export function isValidCashierData(value: unknown): value is CashierData {
   if (!value || typeof value !== 'object') return false
   const data = value as Partial<CashierData>
   const lists = [data.staff, data.menu, data.tables, data.sessions, data.orders, data.items, data.bills, data.payments,
-    data.requests, data.shifts, data.notifications, data.outbox]
+    data.requests, data.shifts, data.scheduledShifts, data.notifications, data.outbox]
   return data.schema === 1 && typeof data.seedDay === 'string' && Number.isInteger(data.revision) && Number.isInteger(data.nextId)
     && !!data.config && typeof data.config === 'object' && !!data.counters && typeof data.counters === 'object'
     && !!data.processedKeys && typeof data.processedKeys === 'object'
     && lists.every(Array.isArray)
     && data.bills!.every((b) => b && typeof b.id === 'string' && !!b.totals && Number.isSafeInteger(b.totals.total))
+    && data.items!.every((i) => i && typeof i.id === 'string' && ['SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'REJECTED', 'CANCELLED', 'VOIDED'].includes(i.status))
     && data.payments!.every((p) => p && typeof p.id === 'string' && Number.isSafeInteger(p.amount))
+    && data.outbox!.every((m) => m && typeof m.id === 'string' && ['BILL_UPDATED', 'PAYMENT', 'PAYMENT_RETURNED', 'PAYMENT_VOIDED', 'APPROVAL', 'REQUEST_WITHDRAWN', 'CASHIER_SHIFT_CLOSED'].includes(m.kind))
 }

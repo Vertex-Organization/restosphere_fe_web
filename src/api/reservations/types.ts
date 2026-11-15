@@ -1,5 +1,10 @@
 /** Where in the restaurant the guests would like to sit. */
 export type SeatingArea = 'main' | 'outdoor' | 'private'
+export const AREA_ID_BY_SEATING: Record<SeatingArea, string> = {
+  main: 'floor-1',
+  outdoor: 'outside',
+  private: 'vip',
+}
 
 export type Occasion = 'none' | 'birthday' | 'family' | 'company' | 'other'
 
@@ -9,6 +14,16 @@ export interface PreorderLine {
   quantity: number
 }
 
+export type ReservationStatus =
+  | 'PENDING'
+  | 'CONFIRMED'
+  | 'ARRIVED'
+  | 'SEATED'
+  | 'COMPLETED'
+  | 'REJECTED'
+  | 'CANCELLED'
+  | 'NO_SHOW'
+
 export interface ReservationRequest {
   /** yyyy-mm-dd */
   date: string
@@ -16,6 +31,9 @@ export interface ReservationRequest {
   time: string
   guests: number
   area: SeatingArea
+  areaId?: string
+  startsAt?: string
+  durationMinutes?: number
   occasion: Occasion
   name: string
   phone: string
@@ -25,11 +43,12 @@ export interface ReservationRequest {
 }
 
 export interface Reservation extends ReservationRequest {
-  /** Short code the guest can quote on the phone, e.g. "SC-4821". */
   code: string
-  /** The restaurant still has to confirm by phone. */
-  status: 'PENDING'
+  status: ReservationStatus
   createdAt: string
+  startsAt: string
+  durationMinutes: number
+  areaId: string
 }
 
 export class ReservationError extends Error {

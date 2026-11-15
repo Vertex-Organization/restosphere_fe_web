@@ -8,7 +8,9 @@ export const ITEM_STATUS_LABEL: Record<OrderItemStatus, string> = {
   PREPARING: 'Đang chế biến',
   READY: 'Đã xong',
   SERVED: 'Đã phục vụ',
+  REJECTED: 'Bếp từ chối',
   CANCELLED: 'Đã hủy',
+  VOIDED: 'Đã bỏ khỏi hóa đơn',
 }
 
 export const ROLE_LABEL: Record<StaffRole, string> = {

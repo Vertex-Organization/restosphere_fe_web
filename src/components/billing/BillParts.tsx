@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { ITEM_STATUS_LABEL } from '../../api/billing/labels'
-import { formatAmount, formatVnd, lineTotal } from '../../api/billing/money'
+import { formatAmount, formatVnd, isBillable, lineTotal } from '../../api/billing/money'
 import type { BillView } from '../../api/billing/selectors'
 import type { Bill, BillingConfig, MenuEntry } from '../../api/billing/types'
 import { formatTime } from '../kitchen/format'
@@ -27,7 +27,7 @@ export function BillLines({ view, menu, compact, action }: {
           {labelRounds && <h4 className="c-lines-round">Lượt {order.sequence} · {formatTime(order.submittedAt)}</h4>}
           <ul>
             {items.map((item) => {
-              const cancelled = item.status === 'CANCELLED'
+              const cancelled = !isBillable(item)
               const pending = !cancelled && item.status !== 'SERVED'
               return (
                 <li key={item.id} className={cancelled ? 'c-line c-line--off' : 'c-line'}>
@@ -41,11 +41,11 @@ export function BillLines({ view, menu, compact, action }: {
                       <span className="c-line-sub">
                         {formatAmount(item.unitPrice)}
                         {item.note && <span className="c-line-note"> · {item.note}</span>}
-                        {cancelled && <span className="c-line-cancel"> · {item.cancellationReason ?? 'Đã hủy'}</span>}
+                        {cancelled && <span className="c-line-cancel"> · {item.cancellationReason ?? ITEM_STATUS_LABEL[item.status]}</span>}
                       </span>
                     )}
                   </div>
-                  <span className="c-line-total">{cancelled ? 'Đã hủy' : formatAmount(lineTotal(item))}</span>
+                  <span className="c-line-total">{cancelled ? ITEM_STATUS_LABEL[item.status] : formatAmount(lineTotal(item))}</span>
                   {action && <span className="c-line-action">{cancelled ? null : action(item.id)}</span>}
                 </li>
               )

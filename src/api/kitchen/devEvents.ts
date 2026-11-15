@@ -41,7 +41,7 @@ function bump(item: KitchenOrderItem) {
 export function activeSessions(data: KitchenData) {
   const sessions = new Map<string, { sessionId: string; tableCode: string; waiterId: string; lastSequence: number }>()
   for (const order of data.orders) {
-    const open = data.items.some((i) => i.orderId === order.id && i.status !== 'SERVED' && i.status !== 'CANCELLED')
+    const open = data.items.some((i) => i.orderId === order.id && ['SUBMITTED', 'PREPARING', 'READY'].includes(i.status))
     const existing = sessions.get(order.sessionId)
     if (existing) existing.lastSequence = Math.max(existing.lastSequence, order.sequence)
     else if (open) sessions.set(order.sessionId, { sessionId: order.sessionId, tableCode: order.tableCode, waiterId: order.waiterId, lastSequence: order.sequence })
@@ -110,7 +110,7 @@ export function applyDevEvent(current: KitchenData, event: DevEvent, now: Date):
     case 'cancel-item': {
       const { item, order } = findItem(data, event.itemId)
       const reason = event.reason.trim()
-      if (item.status !== 'SUBMITTED' && item.status !== 'PREPARING') throw new KitchenError('CONFLICT', 'Chỉ hủy món chưa hoàn thành.')
+      if (item.status !== 'PREPARING' && item.status !== 'READY') throw new KitchenError('CONFLICT', 'Chỉ hủy món đang chế biến hoặc sẵn sàng theo phê duyệt.')
       if (!reason) throw new KitchenError('INVALID', 'Nhập lý do hủy.')
       const by = managerId(data)
       item.status = 'CANCELLED'

@@ -222,6 +222,7 @@ export const BOOKING_COPY = {
     copiedCode: 'Đã sao chép!',
     doneContact: 'Người đặt',
     doneAgain: 'Tạo yêu cầu đặt bàn mới',
+    lookup: 'Tra cứu trạng thái đặt bàn',
     demoNote: 'Chế độ thử nghiệm: Yêu cầu đặt tiệc được lưu trên trình duyệt này để phục vụ trình diễn.',
   },
   en: {
@@ -317,6 +318,7 @@ export const BOOKING_COPY = {
     copiedCode: 'Copied!',
     doneContact: 'Reserved by',
     doneAgain: 'Make another reservation',
+    lookup: 'Check reservation status',
     demoNote: 'Demo mode: This reservation is saved locally in your browser for demonstration.',
   },
 } satisfies Record<Language, unknown>

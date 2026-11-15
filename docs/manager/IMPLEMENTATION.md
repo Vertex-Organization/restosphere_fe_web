@@ -7,7 +7,7 @@ Voice: Vietnamese operational terminology; short descriptive headings, explicit 
 ## Source audit and integration
 
 - Existing stack: React 19 + Vite + TypeScript; no routing library or test runner dependency added.
-- `App.tsx` keeps Customer, Kitchen and Cashier dispatch intact and lazy-loads Manager only under `/manager`.
+- `App.tsx` keeps Customer, Kitchen and Cashier dispatch intact and lazy-loads Manager only under `/staff/manager`. Sign-in is shared by all staff workspaces at `/staff/login`; old `/manager/...` URLs are rewritten to `/staff/manager/...`.
 - Routing reuses the existing `pushState`/`popstate` history store and `KitchenLink`.
 - UI reuses the staff tokens in `kitchen.css`, existing line icons, `BrandLogo`, `Badge`, native `Dialog` and `DishThumb`. Manager layout/styles are scoped under `.m-*` / `.m-app`.
 - Customer files, Kitchen/Cashier business logic, existing auth endpoints, package dependencies and global styles were not rewritten.
@@ -17,22 +17,22 @@ Voice: Vietnamese operational terminology; short descriptive headings, explicit 
 
 | Route | Behavior |
 | --- | --- |
-| `/manager` | Four compact KPIs, table/area status, priority alerts, pending approvals, upcoming reservations, recent audited activity |
-| `/manager/operations` | Read-only monitoring of tables, reservations, orders/kitchen and payments, with detail navigation |
-| `/manager/reservations` | Search, date/status filters, details/history, table reassignment with capacity/availability/time-overlap checks and mandatory reason |
-| `/manager/tables` | Area/status filters, table details, active session and bookings, guarded layout updates |
-| `/manager/orders` | Search/status/late filters, original order item prices, additional ordering rounds, read-only progress |
-| `/manager/kitchen` | Per-item progress, quantity, notes, chef and wait time; no PREPARING/READY/SERVED mutation controls |
-| `/manager/employees` | Operational employee profiles, department/search filter, area assignment, today's shifts |
-| `/manager/shifts` | Seven-day compact schedule, previous/next week, create/edit, employee assignment, overlap/inactive/daily-hours validation, understaffing warning |
-| `/manager/menu` | Table with small existing dish images; search/category/status filter; create/edit price, image URL, description, availability and visibility; delete only unreferenced dishes |
-| `/manager/menu/categories` | Create/edit/show/hide/order; delete only when no menu items reference the category |
-| `/manager/approvals` | Search/type/status filters, details, approve/reject with reason, limit/self-review/duplicate checks and processing history |
-| `/manager/reports` | Date/shift/payment filters, settled revenue, one small chart, daily table, best sellers, activity definitions, CSV export |
-| `/manager/incidents` | Search/status/severity filters, assignment/progress/notes, resolve and audit; no automatic Order/Bill changes |
-| `/manager/notifications` | Read/unread filters, mark individual/all read, navigation to the related record |
-| `/manager/profile` | Manager identity, shifts, approval limit and logout; no system administration |
-| `/manager/login` | Explicit mock sign-in, protected return URL and role denial |
+| `/staff/manager` | Four compact KPIs, table/area status, priority alerts, pending approvals, upcoming reservations, recent audited activity |
+| `/staff/manager/operations` | Read-only monitoring of tables, reservations, orders/kitchen and payments, with detail navigation |
+| `/staff/manager/reservations` | Search, date/status filters, details/history, table reassignment with capacity/availability/time-overlap checks and mandatory reason |
+| `/staff/manager/tables` | Area/status filters, table details, active session and bookings, guarded layout updates |
+| `/staff/manager/orders` | Search/status/late filters, original order item prices, additional ordering rounds, read-only progress |
+| `/staff/manager/kitchen` | Per-item progress, quantity, notes, chef and wait time; no PREPARING/READY/SERVED mutation controls |
+| `/staff/manager/employees` | Operational employee profiles, department/search filter, area assignment, today's shifts |
+| `/staff/manager/shifts` | Seven-day compact schedule, previous/next week, create/edit, employee assignment, overlap/inactive/daily-hours validation, understaffing warning |
+| `/staff/manager/menu` | Table with small existing dish images; search/category/status filter; create/edit price, image URL, description, availability and visibility; delete only unreferenced dishes |
+| `/staff/manager/menu/categories` | Create/edit/show/hide/order; delete only when no menu items reference the category |
+| `/staff/manager/approvals` | Search/type/status filters, details, approve/reject with reason, limit/self-review/duplicate checks and processing history |
+| `/staff/manager/reports` | Date/shift/payment filters, settled revenue, one small chart, daily table, best sellers, activity definitions, CSV export |
+| `/staff/manager/incidents` | Search/status/severity filters, assignment/progress/notes, resolve and audit; no automatic Order/Bill changes |
+| `/staff/manager/notifications` | Read/unread filters, mark individual/all read, navigation to the related record |
+| `/staff/manager/profile` | Manager identity, shifts, approval limit and logout; no system administration |
+| `/staff/login` | Shared staff sign-in for every role (no Manager-specific login); protected return URL; other roles see the shared no-access screen |
 
 ## Data and business rules
 
@@ -52,7 +52,7 @@ This mock store does **not** synchronize with the Kitchen mock, Cashier mock, Ex
 
 ## Local access
 
-Run `npm run dev`, then open `/manager`.
+Run `npm run dev`, then open `/staff` (sign in as `manager` / `Manager@123`).
 
 - Manager fixture: `manager` / `Manager@123`.
 - Role denial fixture: `cashier` / `Manager@123`.
