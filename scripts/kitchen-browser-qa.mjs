@@ -183,6 +183,31 @@ try {
       const rect = image.getBoundingClientRect()
       return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight
     }).every((image) => image.complete && image.naturalWidth)`, `finished-tab dish images at ${width}`)
+    const readyProbe = await evaluate(`(() => {
+      const rows = [...document.querySelectorAll('#kitchen-ready .k-ready-row')]
+      const waits = rows.map((row) => Number(row.querySelector('.k-ready-wait')?.textContent.match(/\\d+/)?.[0]))
+      const heights = rows.map((row) => row.getBoundingClientRect().height)
+      const head = document.querySelector('#kitchen-ready .k-ready-list-head')
+      return {
+        rowCount: rows.length,
+        waits,
+        sorted: waits.every((value, index) => index === 0 || waits[index - 1] >= value),
+        legacyCards: document.querySelectorAll('#kitchen-ready .k-ticket').length,
+        listWidth: document.querySelector('#kitchen-ready .k-ready-list')?.getBoundingClientRect().width,
+        equalHeights: Math.max(...heights) - Math.min(...heights) < 2,
+        headVisible: getComputedStyle(head).display !== 'none',
+      }
+    })()`)
+    assert.equal(readyProbe.rowCount, 7, `Every ready dish needs its own row at ${width}`)
+    assert.equal(readyProbe.sorted, true, `Ready dishes are not oldest-first at ${width}`)
+    assert.equal(readyProbe.legacyCards, 0, `Table-grouped ready cards remain at ${width}`)
+    assert.ok(readyProbe.listWidth >= Math.min(1000, width - (width >= 760 ? 106 : 34)), `Ready list is too narrow at ${width}`)
+    if (width >= 760) {
+      assert.equal(readyProbe.equalHeights, true, `Ready rows are uneven at ${width}`)
+      assert.equal(readyProbe.headVisible, true, `Ready list header is missing at ${width}`)
+    } else {
+      assert.equal(readyProbe.headVisible, false, `Ready list header should collapse at ${width}`)
+    }
     await shot(`ready-${width}`)
     await evaluate('document.querySelector("#kitchen-tab-active").click()')
     report.screens.push({ width, height, ...probe })

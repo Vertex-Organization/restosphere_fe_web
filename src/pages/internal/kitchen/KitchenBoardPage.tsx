@@ -1,11 +1,11 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
-import { buildActiveDishQueue, buildBoard, filterActiveDishes, type KitchenFilter } from '../../../api/kitchen/selectors'
+import { buildActiveDishQueue, buildBoard, buildReadyDishQueue, filterActiveDishes, type KitchenFilter } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { KitchenActionConfirmDialog, RejectItemDialog, type KitchenItemAction } from '../../../components/kitchen/KitchenOrderItem'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenBoardColumn } from '../../../components/kitchen/KitchenBoardColumn'
 import { KitchenFilters, type FilterOption } from '../../../components/kitchen/KitchenFilters'
-import { KitchenDishDetail, KitchenDishListItem, ReadyTicketCard } from '../../../components/kitchen/KitchenTicketCard'
+import { KitchenDishDetail, KitchenDishListItem, KitchenReadyDishRow } from '../../../components/kitchen/KitchenTicketCard'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 
@@ -22,6 +22,7 @@ export default function KitchenBoardPage() {
   const tabRefs = useRef<Record<'active' | 'ready', HTMLButtonElement | null>>({ active: null, ready: null })
   const board = buildBoard(data, now)
   const queue = buildActiveDishQueue(data, now)
+  const readyQueue = buildReadyDishQueue(data, now)
   const visible = filterActiveDishes(queue, filter)
   const selectedDish = visible.find((dish) => dish.item.id === selectedItemId) ?? visible[0]
   const { counts } = board
@@ -80,7 +81,7 @@ export default function KitchenBoardPage() {
           {tab === 'active' ? (
             <KitchenFilters label="Lọc món chưa xong" options={filters} value={filter} onChange={setFilter} />
           ) : (
-            <span className="k-board-ready-note"><Icon name="info" size={14} />Chờ phục vụ mang ra</span>
+            <span className="k-board-ready-note"><Icon name="clock" size={14} />Chờ lâu nhất ở trên</span>
           )}
         </div>
       </div>
@@ -102,10 +103,15 @@ export default function KitchenBoardPage() {
       </KitchenBoardColumn>
 
       <KitchenBoardColumn id="kitchen-ready" labelledBy="kitchen-tab-ready" hidden={tab !== 'ready'} tone="ready" title="Món đã xong"
-        hideHeader
-        isEmpty={!board.ready.length}
+        layout="full" hideHeader
+        isEmpty={!readyQueue.length}
         empty="Không có món nào đang chờ mang ra.">
-        {board.ready.map((ticket) => <ReadyTicketCard key={ticket.order.id} ticket={ticket} data={data} now={now} />)}
+        <div className="k-ready-list" role="list" aria-label="Món đã xong theo thời gian chờ phục vụ">
+          <div className="k-ready-list-head" aria-hidden="true">
+            <span>Món</span><span>Bàn</span><span>Hoàn thành</span><span>Chờ phục vụ</span><span>Phục vụ bàn</span>
+          </div>
+          {readyQueue.map((dish) => <KitchenReadyDishRow key={dish.item.id} dish={dish} data={data} />)}
+        </div>
       </KitchenBoardColumn>
     </div>
   )

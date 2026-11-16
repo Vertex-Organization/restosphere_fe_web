@@ -17,7 +17,7 @@ function moduleUrl(file) {
 
 const { createSeedData } = await import(moduleUrl('src/api/kitchen/mockData.ts'))
 const { applyKitchenCommand } = await import(moduleUrl('src/api/kitchen/rules.ts'))
-const { buildActiveDishQueue } = await import(moduleUrl('src/api/kitchen/selectors.ts'))
+const { buildActiveDishQueue, buildReadyDishQueue } = await import(moduleUrl('src/api/kitchen/selectors.ts'))
 
 const now = new Date('2026-11-12T12:00:00+07:00')
 const seed = () => createSeedData(now)
@@ -33,6 +33,14 @@ test('kitchen queue is FIFO by dish submission time, not grouped or promoted by 
   const priorityDish = queue.find((dish) => dish.order.priority)
   assert.ok(priorityDish)
   assert.ok(queue.indexOf(priorityDish) > 0, 'a later priority table must not jump over an earlier dish')
+})
+
+test('ready queue is dish-first with the longest-waiting completion first', () => {
+  const queue = buildReadyDishQueue(seed(), now.getTime())
+  assert.ok(queue.length > 1)
+  assert.ok(queue.every((dish) => dish.item.status === 'READY'))
+  assert.ok(queue.every((dish, index) => index === 0 || (queue[index - 1].item.readyAt ?? '') <= (dish.item.readyAt ?? '')))
+  assert.ok(new Set(queue.map((dish) => dish.order.tableCode)).size > 1)
 })
 
 test('kitchen reject changes item status to REJECTED and emits ITEM_REJECTED outbox', () => {

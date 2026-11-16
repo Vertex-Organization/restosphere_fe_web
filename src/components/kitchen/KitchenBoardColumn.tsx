@@ -9,7 +9,7 @@ interface Props {
   summary?: ReactNode
   toolbar?: ReactNode
   hideHeader?: boolean
-  layout?: 'cards' | 'workbench'
+  layout?: 'cards' | 'workbench' | 'full'
   empty: string
   isEmpty: boolean
   children: ReactNode
@@ -30,7 +30,9 @@ export function KitchenBoardColumn({ id, labelledBy, hidden, title, tone, summar
       )}
       {/* Focusable so keyboard users can scroll a long column. */}
       <div className={`k-col-body${layout === 'workbench' ? ' k-col-body--workbench' : ''}`} tabIndex={0} aria-label={title}>
-        {isEmpty ? <p className="k-empty">{empty}</p> : <div className={layout === 'workbench' ? 'k-workbench' : 'k-ticket-grid'}>{children}</div>}
+        {isEmpty ? <p className="k-empty">{empty}</p> : (
+          <div className={layout === 'workbench' ? 'k-workbench' : layout === 'full' ? 'k-board-list' : 'k-ticket-grid'}>{children}</div>
+        )}
       </div>
     </section>
   )

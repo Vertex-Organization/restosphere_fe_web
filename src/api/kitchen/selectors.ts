@@ -40,6 +40,16 @@ export interface ActiveDishView {
   tone: TimeTone
 }
 
+export interface ReadyDishView {
+  item: KitchenOrderItem
+  order: KitchenOrder
+  waiter?: StaffMember
+  /** Unfinished items from the same ordering round, shown only as context. */
+  otherActive: number
+  minutes: number
+  tone: TimeTone
+}
+
 export type KitchenFilter = 'all' | 'new' | 'preparing' | 'late'
 
 export interface BoardView {
@@ -139,6 +149,36 @@ export function filterActiveDishes(dishes: ActiveDishView[], filter: KitchenFilt
     case 'late': return dishes.filter((dish) => dish.tone === 'late')
     default: return dishes
   }
+}
+
+/** Finished dishes are also item-first. The oldest completion stays at the
+ * top so the waiter can collect food before it waits too long. */
+export function buildReadyDishQueue(data: KitchenData, now: number): ReadyDishView[] {
+  const orders = new Map(data.orders.map((order) => [order.id, order]))
+  const activeByOrder = new Map<string, number>()
+  for (const item of data.items) {
+    if (item.status === 'SUBMITTED' || item.status === 'PREPARING') {
+      activeByOrder.set(item.orderId, (activeByOrder.get(item.orderId) ?? 0) + 1)
+    }
+  }
+
+  return data.items
+    .filter((item) => item.status === 'READY')
+    .flatMap((item) => {
+      const order = orders.get(item.orderId)
+      if (!order) return []
+      const minutes = minutesBetween(item.readyAt, now)
+      return [{
+        item,
+        order,
+        waiter: data.staff.find((staff) => staff.id === order.waiterId),
+        otherActive: activeByOrder.get(order.id) ?? 0,
+        minutes,
+        tone: waitTone(minutes, READY_WARN_MINUTES, READY_LATE_MINUTES),
+      } satisfies ReadyDishView]
+    })
+    .sort((a, b) => (a.item.readyAt ?? '').localeCompare(b.item.readyAt ?? '')
+      || a.order.code.localeCompare(b.order.code) || a.item.id.localeCompare(b.item.id))
 }
 
 export function unreadCount(data: KitchenData, userId: string) {
