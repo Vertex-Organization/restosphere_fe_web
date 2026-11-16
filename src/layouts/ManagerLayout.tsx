@@ -51,7 +51,7 @@ export function ManagerLayout({ page, children }: { page: ManagerPage | 'not-fou
   }, [mobileOpen])
   const signOut = managerSignOut
   const closeNavigation = () => setMobileOpen(false)
-  return <div className={`kds m-app ${collapsed ? 'm-app--collapsed' : ''}`}>
+  return <div data-page={page} className={`kds m-app ${page !== 'dashboard' ? 'm-workspace' : ''} ${collapsed ? 'm-app--collapsed' : ''}`}>
     <a className="m-skip" href="#manager-main">Đến nội dung chính</a>
     {mobileOpen && <button type="button" className="m-nav-backdrop" aria-label="Đóng điều hướng" onClick={closeNavigation} />}
     <aside ref={sidebar} className={`m-sidebar ${mobileOpen ? 'is-open' : ''}`} aria-label="Điều hướng quản lý">

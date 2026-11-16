@@ -128,7 +128,7 @@ export default function OperationsPage() {
             <div className="m-ops-service-table"><strong>{row.session.tableId}</strong><span>{row.area?.name ?? 'Chưa gán khu vực'}</span></div>
             <div className="m-ops-service-time"><strong>{minutes(row.session.startedAt, now)} phút</strong><span>{row.session.guests} khách</span></div>
             <div className="m-ops-service-state"><i /><span><strong>{row.hasLateOrder ? 'Đơn đang chậm' : row.state}</strong><small>{row.session.paymentRequested ? 'Thu ngân cần tiếp nhận' : row.ready ? `${row.ready} món cần mang ra` : row.kitchen ? `${row.kitchen} món đang trong bếp` : 'Không có món chờ'}</small></span></div>
-            <div className="m-ops-service-load"><span style={{ width: `${Math.min(100, (row.kitchen + row.ready) / 8 * 100)}%` }} /><small>{row.kitchen + row.ready} món mở</small></div>
+            <div className={`m-ops-service-load ${row.kitchen + row.ready === 0 ? 'is-empty' : ''}`}><span className="m-ops-load-icon"><Icon name="cookingPot" size={16} /></span><div><strong>{row.kitchen + row.ready}</strong><small>món mở</small></div></div>
             <Icon name="chevronRight" size={14} />
           </Link>)}</div>
         </Panel>

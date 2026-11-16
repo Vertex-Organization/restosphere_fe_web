@@ -23,6 +23,7 @@ import ProfilePage from './ProfilePage'
 import '../../components/kitchen/kitchen.css'
 import '../../components/billing/billing.css'
 import '../../components/manager/manager.css'
+import '../../components/manager/workspace.css'
 
 function renderPage(page: ManagerPage | 'not-found', id: string): ReactNode {
   switch (page) {

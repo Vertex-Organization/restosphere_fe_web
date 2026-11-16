@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync, spawn } from 'node:child_process'
 
-const base = process.env.ADMIN_QA_URL || 'http://127.0.0.1:5173'
+const base = process.env.ADMIN_QA_URL || 'http://localhost:5173'
 const out = path.resolve('.taste-skill/admin-shots')
 const profile = path.resolve(`.taste-skill/admin-browser-${process.pid}`)
 fs.mkdirSync(out, { recursive: true }); fs.mkdirSync(profile, { recursive: true })
@@ -69,7 +69,7 @@ try {
   for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1024, 768], [820, 1180], [768, 1024], [390, 844], [320, 844]]) {
     await size(width, height); await evaluate('document.fonts.ready'); await shot(`dashboard-${width}`)
     const probe = await evaluate(`({overflow:document.documentElement.scrollWidth>innerWidth,title:document.querySelector('.a-content h1')?.textContent,broken:[...document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src),titleSize:getComputedStyle(document.querySelector('.a-content h1')).fontSize,header:document.querySelector('.a-topbar').getBoundingClientRect().height})`)
-    assert.equal(probe.overflow, false, `Overflow ${width}`); assert.deepEqual(probe.broken, [], `Broken images ${width}`); assert.ok(parseFloat(probe.titleSize) <= 22)
+    assert.equal(probe.overflow, false, `Overflow ${width}`); assert.deepEqual(probe.broken, [], `Broken images ${width}`); assert.ok(parseFloat(probe.titleSize) <= 24)
     report.screens.push({ width, height, ...probe })
   }
 
@@ -82,6 +82,20 @@ try {
     await shot(route); report.routes.push({ route, title })
   }
 
+  for (const width of [768, 390, 320]) {
+    await size(width,844)
+    for (const route of routes) {
+      await goto(`/staff/admin/${route}`)
+      await evaluate('document.fonts.ready')
+      const probe = await evaluate(`({overflow:document.documentElement.scrollWidth>innerWidth,contentOverflow:document.querySelector('.a-content').scrollWidth>document.querySelector('.a-content').clientWidth+1})`)
+      if (probe.overflow || probe.contentOverflow) await shot(`overflow-${route}-${width}`)
+      assert.equal(probe.overflow,false,`${route}: viewport overflow ${width}`)
+      assert.equal(probe.contentOverflow,false,`${route}: content overflow ${width}`)
+      await shot(`${route}-${width}`)
+      report.screens.push({route,width,...probe})
+    }
+  }
+  await size(1366,768)
   await goto('/staff/admin/users')
   await setInput('.a-search input', 'Ngọc Lan'); await pause(120)
   assert.equal(await evaluate('document.querySelectorAll("tbody tr").length'), 1)

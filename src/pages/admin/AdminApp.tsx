@@ -12,6 +12,7 @@ import AdminRestaurantPage from './AdminRestaurantPage'
 import AdminSettingsPage from './AdminSettingsPage'
 import AdminAuditLogsPage from './AdminAuditLogsPage'
 import '../../components/admin/admin.css'
+import '../../components/admin/refresh.css'
 
 function renderPage(page: AdminPage | 'not-found'): ReactNode {
   switch (page) {

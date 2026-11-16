@@ -65,8 +65,8 @@ export function Modal({ title, description, children, footer, onClose, wide = fa
   return <div className="a-modal-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><div ref={dialog} className={`a-modal ${wide ? 'a-modal--wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="a-modal-title" tabIndex={-1}><header><div><h2 id="a-modal-title">{title}</h2>{description && <p>{description}</p>}</div><button type="button" className="a-icon-button" aria-label="Đóng hộp thoại" onClick={onClose}><Icon name="close" size={18} /></button></header><div className="a-modal-body">{children}</div>{footer && <footer>{footer}</footer>}</div></div>
 }
 
-export function SectionCard({ title, description, action, children, className = '' }: { title: string; description?: string; action?: ReactNode; children: ReactNode; className?: string }) {
-  return <section className={`a-section-card ${className}`.trim()}><header><div><h2>{title}</h2>{description && <p>{description}</p>}</div>{action}</header><div className="a-section-body">{children}</div></section>
+export function SectionCard({ title, description, icon, action, children, className = '' }: { title: string; description?: string; icon?: IconName; action?: ReactNode; children: ReactNode; className?: string }) {
+  return <section className={`a-section-card ${className}`.trim()}><header><div className="a-section-heading">{icon && <span className="a-section-icon"><Icon name={icon} size={18} /></span>}<div><h2>{title}</h2>{description && <p>{description}</p>}</div></div>{action}</header><div className="a-section-body">{children}</div></section>
 }
 
 export function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: ReactNode }) {

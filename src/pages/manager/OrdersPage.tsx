@@ -67,12 +67,11 @@ export default function OrdersPage({ selectedId }: { selectedId: string }) {
           const table = tableForOrder(d, order)
           const total = order.items.reduce((sum, item) => sum + item.quantity, 0)
           const stages = [
-            { status: 'SUBMITTED', label: 'Món mới', tone: 'info' },
-            { status: 'PREPARING', label: 'Đang làm', tone: 'warning' },
-            { status: 'READY', label: 'Chờ phục vụ', tone: 'success' },
-            { status: 'SERVED', label: 'Đã phục vụ', tone: 'neutral' },
+            { status: 'SUBMITTED', label: 'Mới nhận', tone: 'info', icon: 'receipt' as const },
+            { status: 'PREPARING', label: 'Đang nấu', tone: 'warning', icon: 'cookingPot' as const },
+            { status: 'READY', label: 'Chờ phục vụ', tone: 'success', icon: 'checkCircle' as const },
+            { status: 'SERVED', label: 'Đã phục vụ', tone: 'neutral', icon: 'check' as const },
           ].map(stage => ({ ...stage, count: order.items.filter(item => item.status === stage.status).reduce((sum, item) => sum + item.quantity, 0) }))
-          const progressLabel = stages.filter(stage => stage.count).map(stage => `${stage.count} ${stage.label.toLowerCase()}`).join(', ')
           return <button type="button" className={`m-order-pulse ${late ? 'is-late' : `is-${state.toLowerCase()}`}`} key={order.id} onClick={() => setSelected(order.id)}>
             <span className="m-order-identity">
               <b>{table}</b>
@@ -80,8 +79,10 @@ export default function OrdersPage({ selectedId }: { selectedId: string }) {
             </span>
             <span className="m-order-progress-cell">
               <span className="m-order-progress-top"><Status value={state} /><small>{total} món</small></span>
-              <span className="m-order-progress" role="img" aria-label={`Tiến độ ${order.id}: ${progressLabel || 'không có món đang xử lý'}`}>{stages.map(stage => stage.count > 0 && <i key={stage.status} className={`is-${stage.tone}`} style={{ width: `${stage.count / Math.max(1, total) * 100}%` }} />)}</span>
-              <span className="m-order-stage-labels">{stages.filter(stage => stage.count).map(stage => <small key={stage.status}><i className={`is-${stage.tone}`} />{stage.count} {stage.label.toLowerCase()}</small>)}</span>
+              <span className="m-order-states" role="group" aria-label={`Tiến độ món ${order.id}`}>{stages.filter(stage => stage.count > 0).map(stage => <span key={stage.status} className={`m-order-state is-${stage.tone}`}>
+                <span className="m-order-state-icon"><Icon name={stage.icon} size={14} /></span>
+                <span className="m-order-state-detail"><b>{stage.count}</b><span>{stage.label}</span></span>
+              </span>)}</span>
             </span>
             <span className="m-order-owner"><Icon name="user" size={15} /><span><strong>{employeeName(d, order.employeeId)}</strong><small>Nhân viên gọi món</small></span></span>
             <span className={`m-order-wait ${late ? 'is-late' : ''}`}><strong>{state === 'SERVED' ? 'Xong' : `${minutes(order.at, now)} phút`}</strong><small>{late ? 'Cần kiểm tra' : state === 'SERVED' ? 'Đã phục vụ' : 'Thời gian chờ'}</small></span>
