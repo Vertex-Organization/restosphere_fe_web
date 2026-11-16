@@ -220,7 +220,7 @@ export function BookingForm({
 
         <div className="bk-ticket-footer">
           <p className="bk-demo-note">{t.demoNote}</p>
-          <a href={`/${language}/reservation-status`}>{t.lookup}</a>
+          <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
           <button type="button" className="sb-catering-submit" onClick={() => setDone(null)}>{t.doneAgain}</button>
         </div>
       </div>
@@ -229,13 +229,11 @@ export function BookingForm({
 
   return (
     <form className="bk-form" onSubmit={submit} onChange={() => setFailed(false)}>
-      <a href={`/${language}/reservation-status`}>{t.lookup}</a>
-      {!onlineAllowed && (
-        <div style={{ gridColumn: '1 / -1', padding: '12px 16px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: '8px', color: '#b91c1c', fontWeight: 600 }}>
-          Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.
-        </div>
-      )}
-      <fieldset disabled={!onlineAllowed} style={{ display: 'contents' }}>
+      <div className="bk-form-top">
+        <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
+        {!onlineAllowed && <p className="bk-offline-banner" role="alert">{t.onlineClosed}</p>}
+      </div>
+      <fieldset className="bk-form-fields" disabled={!onlineAllowed}>
       <div className="bk-form-col">
         <fieldset className="bk-step">
           <legend><span className="bk-step-no">1</span>{t.step1}</legend>

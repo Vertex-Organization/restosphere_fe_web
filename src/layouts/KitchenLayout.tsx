@@ -164,7 +164,7 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
           <h1 className="k-page-title">{title}</h1>
           {counts && (
             <div className="k-hcounts" aria-label="Tình hình bếp">
-              <span className="k-hcount k-hcount--new"><b>{counts.newTickets}</b> phiếu mới</span>
+              <span className="k-hcount k-hcount--new"><b>{counts.newItems}</b> món mới</span>
               <span className="k-hcount k-hcount--preparing"><b>{counts.preparingItems}</b> món đang làm</span>
               <span className="k-hcount k-hcount--ready"><b>{counts.readyItems}</b> món đã xong</span>
             </div>

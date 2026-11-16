@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { RejectItemDialog } from '../../../components/kitchen/KitchenOrderItem'
+import { KitchenActionConfirmDialog, RejectItemDialog, type KitchenItemAction } from '../../../components/kitchen/KitchenOrderItem'
 import { INCIDENT_STATUS_LABEL, INCIDENT_TYPE_LABEL } from '../../../api/kitchen/labels'
 import { canComplete, canStart, hasPermission, shortName, staffName } from '../../../api/kitchen/rules'
-import { minutesBetween } from '../../../api/kitchen/selectors'
+import { minutesBetween, waitTone } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
 import { formatDate, formatDuration, formatTime } from '../../../components/kitchen/format'
@@ -14,11 +14,14 @@ import { useNow } from '../../../hooks/kitchen/useNow'
 import { kitchenPaths } from '../../../routes/kitchenRouter'
 
 const refs = (items: KitchenOrderItem[]) => items.map((i) => ({ id: i.id, version: i.version }))
+const isFinished = (item: KitchenOrderItem) => item.status === 'READY' || item.status === 'SERVED'
+const isInactive = (item: KitchenOrderItem) => item.status === 'REJECTED' || item.status === 'CANCELLED' || item.status === 'VOIDED'
 
 export default function KitchenTicketPage({ id }: { id: string }) {
   const { data, run, isPending, user } = useKitchenSnapshot()
   const now = useNow()
   const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
+  const [confirmAction, setConfirmAction] = useState<{ action: KitchenItemAction; items: KitchenOrderItem[] } | null>(null)
   const order = data.orders.find((o) => o.id === id)
 
   if (!order) {
@@ -34,8 +37,11 @@ export default function KitchenTicketPage({ id }: { id: string }) {
   const me = data.staff.find((s) => s.id === user.id) ?? user
   const allowed = hasPermission(me, 'kitchen.items.update')
   const items = data.items.filter((i) => i.orderId === order.id)
+  const displayItems = [...items].sort((a, b) => Number(isFinished(a) || isInactive(a)) - Number(isFinished(b) || isInactive(b)))
   const submitted = items.filter(canStart)
   const preparing = items.filter(canComplete)
+  const finished = items.filter(isFinished)
+  const inactive = items.filter(isInactive)
   const rounds = data.orders.filter((o) => o.sessionId === order.sessionId).sort((a, b) => a.sequence - b.sequence)
   const incidents = data.incidents.filter((i) => i.orderId === order.id)
   const events = items
@@ -46,86 +52,116 @@ export default function KitchenTicketPage({ id }: { id: string }) {
   const start = (list: KitchenOrderItem[]) => { void run({ type: 'start', items: refs(list) }, list.map((i) => i.id)) }
   const complete = (list: KitchenOrderItem[]) => { void run({ type: 'complete', items: refs(list) }, list.map((i) => i.id)) }
   const who = (staffId?: string) => (staffId ? shortName(staffName(data, staffId)) : '')
+  const statusDetail = (item: KitchenOrderItem) => {
+    if (item.status === 'SUBMITTED') {
+      const minutes = minutesBetween(item.submittedAt, now)
+      return { text: `Gọi ${formatTime(item.submittedAt)} · chờ ${formatDuration(minutes)}`, tone: waitTone(minutes) }
+    }
+    if (item.status === 'PREPARING') {
+      return { text: `Bắt đầu ${formatTime(item.startedAt)} · ${who(item.startedBy)} · đang làm ${formatDuration(minutesBetween(item.startedAt, now))}`, tone: 'normal' }
+    }
+    if (item.status === 'READY') {
+      return { text: `Xong ${formatTime(item.readyAt)} · ${who(item.readyBy)} · chờ phục vụ ${formatDuration(minutesBetween(item.readyAt, now))}`, tone: 'normal' }
+    }
+    if (item.status === 'SERVED') return { text: `Phục vụ lúc ${formatTime(item.servedAt)}`, tone: 'normal' }
+    if (item.status === 'REJECTED') return { text: `Từ chối lúc ${formatTime(item.rejectedAt)} · ${who(item.rejectedBy)}`, tone: 'normal' }
+    if (item.status === 'CANCELLED') return { text: `Hủy lúc ${formatTime(item.cancelledAt)} · ${who(item.cancelledBy)}`, tone: 'normal' }
+    return { text: 'Đã bỏ khỏi hóa đơn', tone: 'normal' }
+  }
 
   return (
-    <div className="k-page">
+    <div className="k-page k-ticket-page">
       {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
-      <div className="k-page-head">
-        <KitchenLink to={kitchenPaths.board} className="k-back"><Icon name="chevronLeft" size={15} />Bảng bếp</KitchenLink>
-        <div className="k-page-heading">
-          <h2 className="k-h2">Bàn {order.tableCode} · Phiếu #{order.code}</h2>
-          {order.sequence > 1 && <span className="k-tag">Gọi thêm · lượt {order.sequence}</span>}
-          {order.priority && <Badge tone="danger"><Icon name="flag" size={12} />Ưu tiên</Badge>}
-          <span className="k-muted">
-            Gửi {formatTime(order.submittedAt)}{open && ` · đã chờ ${formatDuration(minutesBetween(order.submittedAt, now))}`}
-          </span>
+      {confirmAction && <KitchenActionConfirmDialog action={confirmAction.action} items={confirmAction.items} tableCode={order.tableCode}
+        onClose={() => setConfirmAction(null)} onConfirm={() => {
+          const current = confirmAction
+          setConfirmAction(null)
+          if (current.action === 'start') start(current.items)
+          else complete(current.items)
+        }} />}
+      <header className="k-ticket-head">
+        <div className="k-ticket-head-main">
+          <KitchenLink to={kitchenPaths.board} className="k-back"><Icon name="chevronLeft" size={15} />Bảng bếp</KitchenLink>
+          <div className="k-ticket-heading">
+            <div className="k-ticket-title-row">
+              <h2>Bàn {order.tableCode}</h2>
+              <span>Phiếu #{order.code} · Lượt {order.sequence}</span>
+              {order.priority && <Badge tone="danger"><Icon name="flag" size={12} />Ưu tiên</Badge>}
+            </div>
+            <div className="k-ticket-meta">
+              <span><Icon name="clock" size={14} />Gọi {formatTime(order.submittedAt)}</span>
+              {open && <strong>Đã chờ {formatDuration(minutesBetween(order.submittedAt, now))}</strong>}
+              <span>{items.length} món</span>
+            </div>
+          </div>
         </div>
-        <div className="k-page-actions">
+        <div className="k-ticket-bulk-actions">
           {/* Single items are handled on their own row; these act on the whole ticket. */}
           {allowed && submitted.length > 1 && (
-            <button type="button" className="k-btn k-btn--outline" disabled={busy(submitted)} onClick={() => start(submitted)}>
+            <button type="button" className="k-btn k-btn--outline k-btn--lg" disabled={busy(submitted)} onClick={() => setConfirmAction({ action: 'start', items: submitted })}>
               Bắt đầu cả phiếu ({submitted.length})
             </button>
           )}
           {allowed && preparing.length > 1 && (
-            <button type="button" className="k-btn k-btn--primary" disabled={busy(preparing)} onClick={() => complete(preparing)}>
+            <button type="button" className="k-btn k-btn--primary k-btn--lg" disabled={busy(preparing)} onClick={() => setConfirmAction({ action: 'complete', items: preparing })}>
               Hoàn thành cả phiếu ({preparing.length})
             </button>
           )}
-          <KitchenLink className="k-btn" to={kitchenPaths.reportIncident(order.id)}><Icon name="alert" size={15} />Báo sự cố</KitchenLink>
         </div>
-      </div>
+      </header>
 
-      <div className="k-detail">
+      <div className="k-detail k-ticket-layout">
         <div className="k-detail-main">
-          <section className="k-panel">
-            <h3 className="k-panel-title">Món trong phiếu <span className="k-muted">({items.length})</span></h3>
-            <div className="k-table-wrap k-table-wrap--flat">
-              <table className="k-table">
-                <thead>
-                  <tr>
-                    <th className="k-num">SL</th><th>Món</th><th>Trạng thái</th><th>Bắt đầu</th><th>Hoàn thành</th><th>Phục vụ</th>
-                    <th><span className="k-visually-hidden">Thao tác</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item) => (
-                    <tr key={item.id}>
-                      <td className="k-num k-strong">{item.quantity}</td>
-                      <td>
-                        <div className="k-cell-dish">
-                          <DishPhoto menu={data.menuItems.find((m) => m.id === item.menuItemId)} />
-                          <div className="k-cell-stack">
-                            <span className="k-strong">{item.name}</span>
-                            {item.note && <span className="k-note"><Icon name="note" size={13} />{item.note}</span>}
-                            {item.rejectionReason && <span className="k-cell-danger">Lý do từ chối: {item.rejectionReason}</span>}
-                             {item.cancellationReason && <span className="k-cell-danger">Lý do hủy: {item.cancellationReason}</span>}
-                          </div>
-                        </div>
-                      </td>
-                      <td><KitchenStatusBadge status={item.status} /></td>
-                      <td className="k-mono">{item.startedAt ? `${formatTime(item.startedAt)} · ${who(item.startedBy)}` : '—'}</td>
-                      <td className="k-mono">{item.readyAt ? `${formatTime(item.readyAt)} · ${who(item.readyBy)}` : '—'}</td>
-                      <td className="k-mono">{item.servedAt ? formatTime(item.servedAt) : '—'}</td>
-                      <td className="k-cell-actions">
-                        {allowed && canStart(item) && (
-                          <button type="button" className="k-btn k-btn--outline" disabled={isPending(item.id)} onClick={() => start([item])}>Bắt đầu</button>
-                        )}
-                        {allowed && canStart(item) && <button type="button" className="k-btn k-btn--danger" disabled={isPending(item.id)} onClick={() => setRejectItem(item)}>Từ chối</button>}
-                        {allowed && canComplete(item) && (
-                          <button type="button" className="k-btn k-btn--primary" disabled={isPending(item.id)} onClick={() => complete([item])}>Hoàn thành</button>
-                        )}
-                        {item.status === 'READY' && <span className="k-muted">Chờ phục vụ</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <section className="k-panel k-ticket-items-panel">
+            <div className="k-ticket-section-head">
+              <div>
+                <h3>Món trong phiếu</h3>
+                <p>Món chưa xong được đặt trước để bếp thao tác nhanh.</p>
+              </div>
+              <div className="k-ticket-counts" aria-label="Tổng hợp trạng thái món">
+                {submitted.length > 0 && <span><i className="k-ticket-dot k-ticket-dot--new" />{submitted.length} mới</span>}
+                {preparing.length > 0 && <span><i className="k-ticket-dot k-ticket-dot--preparing" />{preparing.length} đang làm</span>}
+                {finished.length > 0 && <span><i className="k-ticket-dot k-ticket-dot--done" />{finished.length} đã xong</span>}
+                {inactive.length > 0 && <span>{inactive.length} ngưng xử lý</span>}
+              </div>
             </div>
+            <ol className="k-ticket-item-list">
+              {displayItems.map((item) => {
+                const detail = statusDetail(item)
+                return (
+                  <li key={item.id} className={`k-ticket-item k-ticket-item--${item.status.toLowerCase()}`}>
+                    <DishPhoto menu={data.menuItems.find((m) => m.id === item.menuItemId)} />
+                    <div className="k-ticket-item-main">
+                      <div className="k-ticket-item-title"><strong>{item.quantity} ×</strong><span>{item.name}</span></div>
+                      {item.note && <span className="k-note"><Icon name="note" size={13} />{item.note}</span>}
+                      {item.rejectionReason && <span className="k-cell-danger">Lý do từ chối: {item.rejectionReason}</span>}
+                      {item.cancellationReason && <span className="k-cell-danger">Lý do hủy: {item.cancellationReason}</span>}
+                    </div>
+                    <div className="k-ticket-item-state">
+                      <KitchenStatusBadge status={item.status} />
+                      <span className={`k-ticket-item-state-detail k-ticket-item-state-detail--${detail.tone}`}>{detail.text}</span>
+                    </div>
+                    <div className="k-ticket-item-actions">
+                      {allowed && canStart(item) && (
+                        <button type="button" className="k-btn k-btn--primary k-btn--lg" disabled={isPending(item.id)} onClick={() => setConfirmAction({ action: 'start', items: [item] })}>Bắt đầu món</button>
+                      )}
+                      {allowed && canComplete(item) && (
+                        <button type="button" className="k-btn k-btn--primary k-btn--lg" disabled={isPending(item.id)} onClick={() => setConfirmAction({ action: 'complete', items: [item] })}>Hoàn thành món</button>
+                      )}
+                      {allowed && canStart(item) && <button type="button" className="k-btn k-btn--danger k-btn--lg" disabled={isPending(item.id)} onClick={() => setRejectItem(item)}>Từ chối</button>}
+                      <KitchenLink className="k-btn k-btn--lg" to={kitchenPaths.reportIncident(order.id, item.id)}><Icon name="alert" size={14} />Sự cố</KitchenLink>
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
           </section>
 
-          <section className="k-panel">
-            <h3 className="k-panel-title">Lịch sử trạng thái</h3>
+          <details className="k-panel k-ticket-history">
+            <summary>
+              <span><Icon name="history" size={16} />Lịch sử trạng thái</span>
+              <span className="k-muted">{events.length} cập nhật <Icon name="chevronDown" size={15} /></span>
+            </summary>
             <ol className="k-timeline">
               {events.map((event) => (
                 <li key={`${event.item.id}-${event.status}-${event.at}`}>
@@ -138,18 +174,17 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                 </li>
               ))}
             </ol>
-          </section>
+          </details>
         </div>
 
         <aside className="k-detail-side">
           <section className="k-panel">
-            <h3 className="k-panel-title">Thông tin phiếu</h3>
+            <h3 className="k-panel-title">Thông tin phục vụ</h3>
             <dl className="k-dl">
-              <dt>Bàn</dt><dd>{order.tableCode} · {order.area}</dd>
+              <dt>Khu vực</dt><dd>{order.area}</dd>
               <dt>Số khách</dt><dd>{order.guests}</dd>
-              <dt>Lượt gọi</dt><dd>Lượt {order.sequence}</dd>
-              <dt>Gửi lúc</dt><dd>{formatTime(order.submittedAt)} · {formatDate(order.submittedAt)}</dd>
               <dt>Nhân viên order</dt><dd>{staffName(data, order.waiterId)}</dd>
+              <dt>Ngày gọi</dt><dd>{formatDate(order.submittedAt)}</dd>
               {order.priority && <><dt>Ưu tiên</dt><dd className="k-cell-danger">{order.priority.reason}</dd></>}
             </dl>
           </section>

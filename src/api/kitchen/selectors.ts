@@ -30,6 +30,16 @@ export interface TicketView {
   tone: TimeTone
 }
 
+export interface ActiveDishView {
+  item: KitchenOrderItem
+  order: KitchenOrder
+  waiter?: StaffMember
+  /** Ready items from the same ordering round, shown only as context. */
+  otherReady: number
+  minutes: number
+  tone: TimeTone
+}
+
 export type KitchenFilter = 'all' | 'new' | 'preparing' | 'late'
 
 export interface BoardView {
@@ -90,6 +100,44 @@ export function filterActive(tickets: TicketView[], filter: KitchenFilter) {
     case 'preparing': return tickets.filter((t) => t.items.some((i) => i.status === 'PREPARING'))
     case 'late': return tickets.filter((t) => t.tone === 'late')
     default: return tickets
+  }
+}
+
+/** The action queue is dish-first, not table-first. A dish ordered earlier is
+ * always placed before a later dish, even when the later table is marked
+ * priority. The priority note remains visible so the kitchen can coordinate. */
+export function buildActiveDishQueue(data: KitchenData, now: number): ActiveDishView[] {
+  const orders = new Map(data.orders.map((order) => [order.id, order]))
+  const readyByOrder = new Map<string, number>()
+  for (const item of data.items) {
+    if (item.status === 'READY') readyByOrder.set(item.orderId, (readyByOrder.get(item.orderId) ?? 0) + 1)
+  }
+
+  return data.items
+    .filter((item) => item.status === 'SUBMITTED' || item.status === 'PREPARING')
+    .flatMap((item) => {
+      const order = orders.get(item.orderId)
+      if (!order) return []
+      const minutes = minutesBetween(item.submittedAt, now)
+      return [{
+        item,
+        order,
+        waiter: data.staff.find((staff) => staff.id === order.waiterId),
+        otherReady: readyByOrder.get(order.id) ?? 0,
+        minutes,
+        tone: waitTone(minutes),
+      } satisfies ActiveDishView]
+    })
+    .sort((a, b) => a.item.submittedAt.localeCompare(b.item.submittedAt)
+      || a.order.code.localeCompare(b.order.code) || a.item.id.localeCompare(b.item.id))
+}
+
+export function filterActiveDishes(dishes: ActiveDishView[], filter: KitchenFilter) {
+  switch (filter) {
+    case 'new': return dishes.filter((dish) => dish.item.status === 'SUBMITTED')
+    case 'preparing': return dishes.filter((dish) => dish.item.status === 'PREPARING')
+    case 'late': return dishes.filter((dish) => dish.tone === 'late')
+    default: return dishes
   }
 }
 

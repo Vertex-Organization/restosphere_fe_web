@@ -223,6 +223,7 @@ export const BOOKING_COPY = {
     doneContact: 'Người đặt',
     doneAgain: 'Tạo yêu cầu đặt bàn mới',
     lookup: 'Tra cứu trạng thái đặt bàn',
+    onlineClosed: 'Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.',
     demoNote: 'Chế độ thử nghiệm: Yêu cầu đặt tiệc được lưu trên trình duyệt này để phục vụ trình diễn.',
   },
   en: {
@@ -319,6 +320,7 @@ export const BOOKING_COPY = {
     doneContact: 'Reserved by',
     doneAgain: 'Make another reservation',
     lookup: 'Check reservation status',
+    onlineClosed: 'Online reservations are temporarily paused. Please contact us directly via our hotline.',
     demoNote: 'Demo mode: This reservation is saved locally in your browser for demonstration.',
   },
 } satisfies Record<Language, unknown>

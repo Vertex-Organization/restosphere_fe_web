@@ -7,6 +7,55 @@ import { formatDuration, formatTime } from './format'
 import { Icon } from './Icon'
 import { KitchenStatusBadge } from './KitchenStatusBadge'
 
+export type KitchenItemAction = 'start' | 'complete'
+
+export function KitchenActionConfirmDialog({ action, items, tableCode, onClose, onConfirm }: {
+  action: KitchenItemAction
+  items: Item[]
+  tableCode: string
+  onClose: () => void
+  onConfirm: () => void
+}) {
+  const ref = useRef<HTMLDialogElement>(null)
+  const titleId = useId()
+  const descriptionId = useId()
+  const starting = action === 'start'
+  useEffect(() => { const dialog = ref.current; dialog?.showModal(); return () => dialog?.close() }, [])
+
+  return (
+    <dialog ref={ref} className="k-confirm-dialog" aria-labelledby={titleId} aria-describedby={descriptionId}
+      onCancel={(event) => { event.preventDefault(); onClose() }}>
+      <form className="k-confirm-form" onSubmit={(event) => { event.preventDefault(); onConfirm() }}>
+        <header className="k-confirm-head">
+          <span className={`k-confirm-icon k-confirm-icon--${action}`} aria-hidden="true">
+            <Icon name={starting ? 'utensils' : 'checkCircle'} size={20} />
+          </span>
+          <div>
+            <h2 id={titleId}>{starting ? 'Xác nhận bắt đầu món?' : 'Xác nhận hoàn thành món?'}</h2>
+            <p id={descriptionId}>
+              {starting
+                ? 'Món sẽ chuyển sang Đang chế biến và ghi nhận người bắt đầu.'
+                : 'Món sẽ chuyển sang Đã xong và chờ phục vụ mang ra.'}
+            </p>
+          </div>
+        </header>
+        <div className="k-confirm-items">
+          <p className="k-confirm-table">Bàn {tableCode}</p>
+          <ul>
+            {items.map((item) => <li key={item.id}><b>{item.quantity} ×</b> {item.name}</li>)}
+          </ul>
+        </div>
+        <footer className="k-confirm-actions">
+          <button type="button" className="k-btn k-btn--lg" autoFocus onClick={onClose}>Quay lại</button>
+          <button type="submit" className="k-btn k-btn--primary k-btn--lg">
+            {starting ? 'Xác nhận bắt đầu' : 'Xác nhận đã xong'}
+          </button>
+        </footer>
+      </form>
+    </dialog>
+  )
+}
+
 export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () => void }) {
   const { run, isPending } = useKitchenSnapshot()
   const ref = useRef<HTMLDialogElement>(null)
