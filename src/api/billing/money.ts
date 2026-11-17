@@ -19,7 +19,7 @@ export function applyRate(amount: number, basisPoints: number) {
 export const lineTotal = (item: Pick<OrderItem, 'unitPrice' | 'quantity'>) => item.unitPrice * item.quantity
 
 /** Cancelled lines are never billed. */
-export const isBillable = (item: Pick<OrderItem, 'status'>) => item.status !== 'CANCELLED'
+export const isBillable = (item: Pick<OrderItem, 'status'>) => !['REJECTED', 'CANCELLED', 'VOIDED'].includes(item.status)
 
 export function subtotalOf(items: Pick<OrderItem, 'unitPrice' | 'quantity' | 'status'>[]) {
   return items.reduce((sum, item) => (isBillable(item) ? sum + lineTotal(item) : sum), 0)

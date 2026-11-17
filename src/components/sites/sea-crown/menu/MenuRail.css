@@ -1,0 +1,219 @@
+/* Horizontal dish rail & section header used on the menu page.
+   Expects --menu-gutter from the page (side padding the track bleeds into). */
+
+.menu-rail {
+  padding-top: 48px;
+  scroll-margin-top: 88px;
+}
+
+.menu-rail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--color-gold, #ffc400);
+}
+
+.menu-rail-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.menu-rail-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-plum, #b40000);
+}
+
+.menu-rail-count {
+  font-size: 14px;
+  color: var(--color-muted, #6b4545);
+}
+
+.menu-rail-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Phones swipe; the arrows only appear where a mouse is likely. */
+.menu-rail-arrows {
+  display: none;
+  gap: 8px;
+}
+
+.menu-rail-arrows button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0 0 3px;
+  border: 1px solid var(--menu-line);
+  border-radius: 50%;
+  background: var(--color-cream, #fff);
+  color: var(--color-dark, #870000);
+  font-size: 24px;
+  line-height: 1;
+  transition: background .2s, color .2s, border-color .2s, opacity .2s;
+}
+
+.menu-rail-arrows button:not(:disabled):hover {
+  border-color: var(--color-plum, #b40000);
+  background: var(--color-plum, #b40000);
+  color: var(--color-cream, #fff);
+}
+
+.menu-rail-arrows button:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+/* The rail bleeds to both screen edges. */
+.menu-track-wrap {
+  position: relative;
+  margin: 20px calc(var(--menu-gutter) * -1) 0;
+}
+
+/* Soft fade on the side that still has cards. Overlays (not a mask on the
+   scroller) so scrolling never repaints the whole rail. */
+.menu-track-wrap::before,
+.menu-track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 20px;
+  z-index: 1;
+  width: min(64px, var(--menu-gutter));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.menu-track-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--color-cream, #fff), rgb(255 255 255 / 0%));
+}
+
+.menu-track-wrap::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--color-cream, #fff), rgb(255 255 255 / 0%));
+}
+
+.menu-track-wrap.has-before::before,
+.menu-track-wrap.has-after::after {
+  opacity: 1;
+}
+
+.menu-track {
+  display: flex;
+  gap: 18px;
+  margin: 0;
+  padding: 4px var(--menu-gutter) 20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: var(--menu-gutter);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(180 0 0 / 25%) transparent;
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch screens: native swipe with snapping, which feels right under a finger.
+   Mouse/trackpad: no CSS snap (it tugs the rail after every trackpad flick);
+   drags and arrow clicks settle on a card through their own eased glide. */
+@media (pointer: coarse) {
+  .menu-track {
+    scroll-snap-type: x mandatory;
+  }
+}
+
+@media (pointer: fine) {
+  .menu-track {
+    cursor: grab;
+  }
+}
+
+.menu-track.is-gliding {
+  scroll-snap-type: none;
+}
+
+.menu-track.is-dragging {
+  scroll-snap-type: none;
+  cursor: grabbing;
+  user-select: none;
+}
+
+.menu-track.is-dragging .menu-card-button {
+  pointer-events: none;
+}
+
+.menu-empty {
+  padding: 32px 0 12px;
+  color: var(--color-muted, #6b4545);
+}
+
+/* Cards */
+
+.menu-card {
+  min-width: 0;
+  animation: menu-rise .5s cubic-bezier(.23, 1, .32, 1) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+
+.menu-track .menu-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.menu-track .menu-card--food {
+  width: min(78vw, 300px);
+}
+
+.menu-track .menu-card--drink {
+  width: min(44vw, 190px);
+}
+
+@keyframes menu-rise {
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-card {
+    animation: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-rail-arrows {
+    display: flex;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-rail-header h2 {
+    font-size: 30px;
+  }
+
+  .menu-track .menu-card--food {
+    width: 300px;
+  }
+
+  .menu-track .menu-card--drink {
+    width: 200px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .menu-track .menu-card--food {
+    width: 320px;
+  }
+
+  .menu-track .menu-card--drink {
+    width: 210px;
+  }
+}

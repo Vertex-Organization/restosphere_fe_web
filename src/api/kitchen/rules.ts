@@ -61,7 +61,7 @@ function lockItems(data: KitchenData, refs: ItemRef[], expected: SentItemStatus)
     if (!item || !data.orders.some((o) => o.id === item.orderId)) {
       throw new KitchenError('NOT_FOUND', 'Không tìm thấy món. Bảng bếp đã được làm mới.')
     }
-    if (item.status === 'CANCELLED') throw new KitchenError('CONFLICT', `${item.name} đã bị hủy. Bảng bếp đã được làm mới.`)
+    if (item.status === 'CANCELLED' || item.status === 'REJECTED' || item.status === 'VOIDED') throw new KitchenError('CONFLICT', `${item.name} đã bị hủy. Bảng bếp đã được làm mới.`)
     if (item.status !== expected || item.version !== ref.version) {
       throw new KitchenError('CONFLICT', `${item.name} vừa được cập nhật (${ITEM_STATUS_LABEL[item.status]}). Bảng bếp đã được làm mới.`)
     }
@@ -98,6 +98,26 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
       return finish(data, `Bắt đầu chế biến ${describeItems(items)} · ${tablesOf(data, items)}`)
     }
 
+    case 'reject': {
+      requirePermission(actor, 'kitchen.items.update')
+      const reason = command.reason.trim()
+      if (reason.length < 5) throw new KitchenError('INVALID', 'Nhập lý do từ chối ít nhất 5 ký tự.')
+      if (reason.length > 200) throw new KitchenError('INVALID', 'Lý do tối đa 200 ký tự.')
+      const [item] = lockItems(data, [{ id: command.itemId, version: command.version }], 'SUBMITTED')
+      const order = data.orders.find((o) => o.id === item.orderId)!
+      item.status = 'REJECTED'
+      item.rejectedAt = at
+      item.rejectedBy = actor.id
+      item.rejectionReason = reason
+      item.version += 1
+      item.history.push({ at, status: 'REJECTED', by: actor.id, note: reason })
+      data.outbox.unshift({
+        id: makeId(data, 'out'), kind: 'ITEM_REJECTED', audience: 'WAITER', staffId: order.waiterId, at,
+        title: `Bếp từ chối ${item.quantity} × ${item.name} · Bàn ${order.tableCode}`, body: `#${order.code} · ${reason}`,
+      })
+      return finish(data, `Đã từ chối ${item.quantity} × ${item.name} · Bàn ${order.tableCode} · đã báo phục vụ`)
+    }
+
     case 'complete': {
       requirePermission(actor, 'kitchen.items.update')
       const items = lockItems(data, command.items, 'PREPARING')
@@ -131,14 +151,14 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
       const number = data.incidents.reduce((max, i) => Math.max(max, Number(i.code.replace(/\D/g, '')) || 0), 0) + 1
       const code = `SC-${String(number).padStart(3, '0')}`
       data.incidents.unshift({
-        id: makeId(data, 'inc'), code, type: input.type, severity: input.severity, description,
-        orderId: order?.id, itemId: item?.id, reportedBy: actor.id, reportedAt: at, status: 'OPEN',
+        id: makeId(data, 'inc'), code, type: input.type, severity: input.severity, title: INCIDENT_TYPE_LABEL[input.type], description,
+        orderId: order?.id, itemId: item?.id, reporterId: actor.id, at: at, status: 'OPEN',
         notifiedStaffIds: recipients.map((r) => r.id),
       })
       const context = order ? `Bàn ${order.tableCode} · #${order.code}${item ? ` · ${item.name}` : ''} — ` : ''
       for (const recipient of recipients) {
         data.outbox.unshift({
-          id: makeId(data, 'out'), audience: recipient.role, staffId: recipient.id, at,
+          id: makeId(data, 'out'), kind: 'INCIDENT', audience: recipient.role, staffId: recipient.id, at,
           title: `Sự cố ${code}: ${INCIDENT_TYPE_LABEL[input.type]} (${SEVERITY_LABEL[input.severity]})`,
           body: `${context}${description}`,
         })
@@ -153,7 +173,7 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
       }
       const menu = data.menuItems.find((m) => m.id === command.menuItemId)
       if (!menu) throw new KitchenError('NOT_FOUND', 'Không tìm thấy món trong thực đơn.')
-      if (menu.status === 'DISCONTINUED') throw new KitchenError('INVALID', 'Món đã ngừng bán. Thực đơn do Admin quản lý.')
+      if (menu.status === 'DISCONTINUED') throw new KitchenError('INVALID', 'Món đã ngừng bán. Thực đơn do Quản lý (Manager) quản lý.')
       if (menu.status === command.status) {
         throw new KitchenError('CONFLICT', `${menu.name} đã ở trạng thái ${MENU_STATUS_LABEL[menu.status]}.`)
       }
@@ -165,9 +185,14 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
         request.status = request.requested === command.status ? 'APPROVED' : 'REJECTED'
         request.decidedAt = at
         request.decidedBy = actor.id
+        data.notifications.unshift({
+          id: makeId(data, 'n-'), kind: 'MENU_REQUEST', at, readBy: [],
+          title: `Yêu cầu ${request.requested === 'SOLD_OUT' ? 'báo tạm hết' : 'mở bán lại'} ${menu.name} ${request.status === 'APPROVED' ? 'đã được duyệt' : 'bị từ chối'}`,
+          body: `Xử lý bởi ${actor.name}`,
+        })
       }
       data.outbox.unshift({
-        id: makeId(data, 'out'), audience: 'WAITER', at,
+        id: makeId(data, 'out'), kind: 'MENU_AVAILABILITY', audience: 'WAITER', at,
         title: command.status === 'SOLD_OUT' ? `${menu.name} tạm hết` : `${menu.name} đã mở bán lại`,
         body: `Cập nhật bởi ${actor.name}`,
       })
@@ -180,7 +205,7 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
       }
       const menu = data.menuItems.find((m) => m.id === command.menuItemId)
       if (!menu) throw new KitchenError('NOT_FOUND', 'Không tìm thấy món trong thực đơn.')
-      if (menu.status === 'DISCONTINUED') throw new KitchenError('INVALID', 'Món đã ngừng bán. Thực đơn do Admin quản lý.')
+      if (menu.status === 'DISCONTINUED') throw new KitchenError('INVALID', 'Món đã ngừng bán. Thực đơn do Quản lý (Manager) quản lý.')
       if (menu.status === command.status) {
         throw new KitchenError('CONFLICT', `${menu.name} đã ở trạng thái ${MENU_STATUS_LABEL[menu.status]}.`)
       }
@@ -195,7 +220,7 @@ export function applyKitchenCommand(current: KitchenData, actorId: string, comma
       const approvers = data.staff.filter((s) => s.role === 'MANAGER' || hasPermission(s, 'kitchen.menu.availability'))
       for (const approver of approvers) {
         data.outbox.unshift({
-          id: makeId(data, 'out'), audience: approver.role, staffId: approver.id, at,
+          id: makeId(data, 'out'), kind: 'MENU_REQUEST', audience: approver.role, staffId: approver.id, at,
           title: `Yêu cầu ${verb}: ${menu.name}`, body: `Gửi bởi ${actor.name}`,
         })
       }

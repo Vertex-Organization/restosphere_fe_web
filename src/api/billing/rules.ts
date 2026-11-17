@@ -1,6 +1,6 @@
 import { METHOD_LABEL, PAYMENT_STATUS_LABEL, REQUEST_TYPE_LABEL } from './labels'
 import {
-  computeTotals, discountAmount, formatVnd, isMoney, MAX_AMOUNT, validateDiscount, withinPercent,
+  computeTotals, discountAmount, formatVnd, isBillable, isMoney, MAX_AMOUNT, validateDiscount, withinPercent,
 } from './money'
 import {
   adjustmentBlock, billView, discountBlock, hasPermission, openShiftOf, paymentBlock, sessionItems, shiftSummary,
@@ -9,7 +9,7 @@ import {
 import {
   CashierError,
   type Bill, type CashierCommand, type CashierData, type CashierPermission, type CashierRequest, type CashierStaff,
-  type CommandResult, type DiscountInput, type Payment, type RequestType,
+  type CommandResult, type DiscountInput, type OutboxKind, type Payment, type RequestType,
 } from './types'
 
 // Pure business rules. The mock service runs them locally as if it were the
@@ -45,8 +45,19 @@ export function tableCodeOf(data: CashierData, bill: Bill) {
   return data.tables.find((t) => t.id === session?.tableId)?.code ?? '—'
 }
 
-export function recompute(data: CashierData, bill: Bill) {
+export function recompute(data: CashierData, bill: Bill, at: string) {
+  const previousTotal = bill.totals.total
   bill.totals = computeTotals(sessionItems(data, bill.sessionId), bill.discount, data.config)
+  if (bill.status === 'PAYMENT_REQUESTED' && bill.totals.total !== previousTotal) {
+    const session = data.sessions.find((s) => s.id === bill.sessionId)
+    outbox(data, at, {
+      kind: 'BILL_UPDATED',
+      audience: 'WAITER',
+      staffId: session?.waiterId,
+      title: `Hóa đơn Bàn ${tableCodeOf(data, bill)} đã cập nhật`,
+      body: `${bill.code} · Tổng mới: ${formatVnd(bill.totals.total)}`,
+    })
+  }
 }
 
 export function touch(bill: Bill, at: string, by: string, text: string) {
@@ -54,7 +65,7 @@ export function touch(bill: Bill, at: string, by: string, text: string) {
   bill.history.push({ at, by, text })
 }
 
-export function outbox(data: CashierData, at: string, message: { audience: CashierStaff['role']; staffId?: string; title: string; body: string }) {
+export function outbox(data: CashierData, at: string, message: { kind: OutboxKind; audience: CashierStaff['role']; staffId?: string; title: string; body: string }) {
   data.outbox.unshift({ id: makeId(data, 'out'), at, ...message })
 }
 
@@ -68,7 +79,7 @@ export function settleIfPaid(data: CashierData, bill: Bill, at: string, by: stri
   bill.history.push({ at, by, text: `Đã thanh toán đủ ${formatVnd(bill.totals.total)}` })
   const session = data.sessions.find((s) => s.id === bill.sessionId)
   outbox(data, at, {
-    audience: 'WAITER', staffId: session?.waiterId,
+    kind: 'PAYMENT', audience: 'WAITER', staffId: session?.waiterId,
     title: `Bàn ${tableCodeOf(data, bill)} đã thanh toán`,
     body: `${bill.code} · ${formatVnd(bill.totals.total)} · Xác nhận khách rời khi khách ra về.`,
   })
@@ -118,7 +129,7 @@ export function describeDiscount(mode: DiscountInput['mode'], value: number, amo
 
 function createRequest(
   data: CashierData, actor: CashierStaff, at: string, bill: Bill, type: RequestType, reason: string,
-  extra: Pick<CashierRequest, 'paymentId' | 'itemId' | 'discount'>, detail: string,
+  extra: Pick<CashierRequest, 'targetType' | 'targetId' | 'amount' | 'paymentId' | 'itemId' | 'discount'>, detail: string,
 ) {
   const request: CashierRequest = {
     id: makeId(data, 'req'), code: nextCode(data, 'request'), type, status: 'PENDING', billId: bill.id, reason,
@@ -127,7 +138,7 @@ function createRequest(
   data.requests.unshift(request)
   for (const manager of managers(data)) {
     outbox(data, at, {
-      audience: manager.role, staffId: manager.id,
+      kind: 'APPROVAL', audience: manager.role, staffId: manager.id,
       title: `${request.code}: yêu cầu ${REQUEST_TYPE_LABEL[type].toLowerCase()} · Bàn ${tableCodeOf(data, bill)}`,
       body: `${bill.code} · ${detail} · ${reason} — ${actor.name}`,
     })
@@ -196,7 +207,7 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       }
       const bill = view.bill
       bill.discount = { mode: command.discount.mode, value: command.discount.value, reason, appliedBy: actor.id, appliedAt: at }
-      recompute(data, bill)
+      recompute(data, bill, at)
       touch(bill, at, actor.id, `Giảm giá ${describeDiscount(command.discount.mode, command.discount.value, amount)} · ${reason}`)
       return finish(data, `Đã giảm ${formatVnd(amount)} cho ${bill.code} · Còn ${formatVnd(bill.totals.total)}`)
     }
@@ -210,7 +221,7 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       if (block) throw new CashierError('INVALID', block)
       const bill = view.bill
       delete bill.discount
-      recompute(data, bill)
+      recompute(data, bill, at)
       touch(bill, at, actor.id, 'Gỡ giảm giá')
       return finish(data, `Đã gỡ giảm giá ${bill.code} · Tổng ${formatVnd(bill.totals.total)}`)
     }
@@ -225,7 +236,7 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       const { amount } = checkDiscount(view, command.discount)
       const reason = cleanText(command.discount.reason, 'Lý do giảm giá')
       const { mode, value } = command.discount
-      const request = createRequest(data, actor, at, view.bill, 'DISCOUNT', reason, { discount: { mode, value, amount } },
+      const request = createRequest(data, actor, at, view.bill, 'DISCOUNT', reason, { targetType: 'BILL', targetId: view.bill.id, amount, discount: { mode, value, amount } },
         `Giảm ${describeDiscount(mode, value, amount)}`)
       return finish(data, `Đã gửi ${request.code} (giảm ${formatVnd(amount)}) · Chờ Quản lý duyệt`, request.id)
     }
@@ -237,9 +248,9 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       if (block) throw new CashierError('INVALID', block)
       const item = view.items.find((i) => i.id === command.itemId)
       if (!item) throw new CashierError('INVALID', 'Món không thuộc hóa đơn này.')
-      if (item.status === 'CANCELLED') throw new CashierError('CONFLICT', `${item.name} đã được hủy khỏi hóa đơn.`)
+      if (!isBillable(item)) throw new CashierError('CONFLICT', `${item.name} đã được hủy khỏi hóa đơn.`)
       const reason = cleanText(command.reason, 'Lý do điều chỉnh')
-      const request = createRequest(data, actor, at, view.bill, 'BILL_ADJUSTMENT', reason, { itemId: item.id },
+      const request = createRequest(data, actor, at, view.bill, 'BILL_ADJUSTMENT', reason, { targetType: 'ORDER_ITEM', targetId: item.id, amount: item.unitPrice * item.quantity, itemId: item.id },
         `Bỏ ${item.quantity} × ${item.name}`)
       return finish(data, `Đã gửi ${request.code} · Chờ Quản lý duyệt điều chỉnh`, request.id)
     }
@@ -256,9 +267,29 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
         throw new CashierError('INVALID', 'Lượt phục vụ đã đóng. Việc hoàn tiền cần Quản lý xử lý theo quy trình riêng.')
       }
       const reason = cleanText(command.reason, 'Lý do hủy thanh toán')
-      const request = createRequest(data, actor, at, view.bill, 'PAYMENT_VOID', reason, { paymentId: payment.id },
+      const request = createRequest(data, actor, at, view.bill, 'PAYMENT_VOID', reason, { targetType: 'PAYMENT', targetId: payment.id, amount: payment.amount, paymentId: payment.id },
         `Hủy ${payment.code} · ${METHOD_LABEL[payment.method]} ${formatVnd(payment.amount)}`)
       return finish(data, `Đã gửi ${request.code} · Chờ Quản lý duyệt hủy ${payment.code}`, request.id)
+    }
+
+    case 'return-payment-request': {
+      requirePermission(actor, 'bills.prepare')
+      const view = findView(data, command.billId)
+      checkVersion(view.bill, command.billVersion)
+      if (view.bill.status !== 'PAYMENT_REQUESTED') throw new CashierError('CONFLICT', 'Chỉ trả lại yêu cầu khi hóa đơn đang chờ thanh toán.')
+      if (view.payments.some(p => p.status === 'PENDING' || p.status === 'SUCCEEDED')) throw new CashierError('CONFLICT', 'Hóa đơn có giao dịch đang xử lý hoặc đã thu tiền.')
+      const reason = cleanText(command.reason, 'Lý do trả lại yêu cầu', 5)
+      view.bill.status = 'UNPAID'
+      touch(view.bill, at, actor.id, `Thu ngân trả lại yêu cầu thanh toán: ${reason}`)
+      const session = data.sessions.find((s) => s.id === view.bill.sessionId)
+      outbox(data, at, {
+        kind: 'PAYMENT_RETURNED',
+        audience: 'WAITER',
+        staffId: session?.waiterId,
+        title: `Thu ngân trả lại yêu cầu thanh toán · Bàn ${view.table.code}`,
+        body: `${view.bill.code} · ${reason}`,
+      })
+      return finish(data, `Đã trả lại yêu cầu thanh toán cho phục vụ · Bàn ${view.table.code}`, view.bill.id)
     }
 
     case 'withdraw-request': {
@@ -266,13 +297,13 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       if (!request) throw new CashierError('NOT_FOUND', 'Không tìm thấy yêu cầu.')
       if (request.requestedBy !== actor.id) throw new CashierError('FORBIDDEN', 'Chỉ người gửi mới rút được yêu cầu.')
       if (request.status !== 'PENDING') throw new CashierError('CONFLICT', `${request.code} đã được xử lý.`)
-      request.status = 'CANCELLED'
+      request.status = 'WITHDRAWN'
       request.decidedAt = at
       request.decidedBy = actor.id
       const bill = data.bills.find((b) => b.id === request.billId)
       if (bill) touch(bill, at, actor.id, `Rút ${request.code}`)
       for (const manager of managers(data)) {
-        outbox(data, at, { audience: manager.role, staffId: manager.id, title: `${request.code} đã được rút`, body: `${actor.name} đã rút yêu cầu.` })
+        outbox(data, at, { kind: 'REQUEST_WITHDRAWN', audience: manager.role, staffId: manager.id, title: `${request.code} đã được rút`, body: `${actor.name} đã rút yêu cầu.` })
       }
       return finish(data, `Đã rút ${request.code}`, request.id)
     }
@@ -358,9 +389,11 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       const existing = openShiftOf(data, actor.id)
       if (existing) throw new CashierError('CONFLICT', `Bạn đang có ca ${existing.code} mở.`)
       if (!isMoney(command.openingFloat) || command.openingFloat > MAX_AMOUNT) throw new CashierError('INVALID', 'Tiền đầu ca không hợp lệ.')
+      const scheduled = command.scheduledShiftId ? data.scheduledShifts.find((s) => s.id === command.scheduledShiftId) : undefined
+      if (command.scheduledShiftId && (!scheduled || scheduled.cashierId !== actor.id)) throw new CashierError('INVALID', 'Ca được chọn không thuộc lịch của bạn.')
       const shift = {
         id: makeId(data, 'sh'), code: nextCode(data, 'shift'), cashierId: actor.id, status: 'OPEN' as const,
-        openedAt: at, openingFloat: command.openingFloat,
+        openedAt: at, openingFloat: command.openingFloat, scheduledShiftId: scheduled?.id,
       }
       data.shifts.unshift(shift)
       return finish(data, `Đã mở ca ${shift.code} · Tiền đầu ca ${formatVnd(shift.openingFloat)}`, shift.id)
@@ -387,7 +420,7 @@ export function applyCashierCommand(current: CashierData, actorId: string, comma
       if (note) shift.closingNote = note.slice(0, 300)
       for (const manager of managers(data)) {
         outbox(data, at, {
-          audience: manager.role, staffId: manager.id, title: `${actor.name} đã đóng ca ${shift.code}`,
+          kind: 'CASHIER_SHIFT_CLOSED', audience: manager.role, staffId: manager.id, title: `${actor.name} đã đóng ca ${shift.code}`,
           body: `Doanh thu ${formatVnd(summary.revenue)} · Tiền mặt dự kiến ${formatVnd(summary.expectedCash)} · Kiểm đếm ${formatVnd(command.countedCash)}`,
         })
       }

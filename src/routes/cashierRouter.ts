@@ -1,9 +1,11 @@
 // Routes of the /cashier module. Navigation reuses the kitchen module's
 // history store (pushState + popstate, no routing library), so both staff
 // modules move between pages the same way.
+import { WORKSPACES } from './staffRouter'
+
 export { navigate, useKitchenUrl as useCashierUrl } from './kitchenRouter'
 
-export const CASHIER_BASE = '/cashier'
+export const CASHIER_BASE = WORKSPACES.CASHIER.base
 
 export type CashierRoute =
   | { name: 'pos' }
@@ -16,7 +18,6 @@ export type CashierRoute =
   | { name: 'shift' }
   | { name: 'notifications' }
   | { name: 'profile' }
-  | { name: 'login' }
   | { name: 'dev' }
   | { name: 'not-found' }
 
@@ -44,7 +45,6 @@ export function matchCashierRoute(pathname: string): CashierRoute {
     case 'shift': return { name: 'shift' }
     case 'notifications': return { name: 'notifications' }
     case 'profile': return { name: 'profile' }
-    case 'login': return { name: 'login' }
     case 'dev': return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
     default: return { name: 'not-found' }
   }
@@ -66,6 +66,5 @@ export const cashierPaths = {
   shift: `${CASHIER_BASE}/shift`,
   notifications: `${CASHIER_BASE}/notifications`,
   profile: `${CASHIER_BASE}/profile`,
-  login: `${CASHIER_BASE}/login`,
   dev: `${CASHIER_BASE}/dev`,
 }

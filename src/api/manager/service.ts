@@ -9,17 +9,23 @@ export interface ManagerService {
   execute(command: ManagerCommand, expectedRevision: number): Promise<ManagerData>
   subscribe(listener: () => void): () => void
 }
-const KEY = 'restosphere.manager.data.v1'
+const KEY = 'restosphere.manager.data.v5'
 const listeners = new Set<() => void>()
 function read(): ManagerData {
   const raw = localStorage.getItem(KEY)
   if (!raw) { const seed = createManagerData(); localStorage.setItem(KEY, JSON.stringify(seed)); return seed }
   try {
     const value = JSON.parse(raw) as ManagerData
-    const lists = ['areas', 'tables', 'sessions', 'orders', 'reservations', 'employees', 'shifts', 'menu', 'categories', 'approvals', 'incidents', 'notifications', 'bills', 'payments', 'history'] as const
+    const lists = ['areas', 'tables', 'sessions', 'orders', 'reservations', 'employees', 'shifts', 'menu', 'categories', 'approvals', 'incidents', 'notifications', 'bills', 'payments', 'history', 'outbox'] as const
     if (value.schema !== 1 || !Number.isInteger(value.revision) || !lists.every(k => Array.isArray(value[k]))) throw new Error()
+    if (!value.orders.every(o => Array.isArray(o.items) && o.items.every(i => ['SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'REJECTED', 'CANCELLED', 'VOIDED'].includes(i.status)))) throw new Error()
+    if (!value.reservations.every(r => ['PENDING', 'CONFIRMED', 'ARRIVED', 'SEATED', 'COMPLETED', 'REJECTED', 'CANCELLED', 'NO_SHOW'].includes(r.status))) throw new Error()
+    if (!value.tables.every(t => ['AVAILABLE', 'OCCUPIED', 'CLEANING', 'OUT_OF_SERVICE'].includes(t.status))) throw new Error()
+    if (!value.notifications.every(n => ['APPROVAL', 'INCIDENT', 'ORDER', 'MENU_REQUEST', 'CASHIER_SHIFT_CLOSED', 'REQUEST_WITHDRAWN'].includes(n.kind))) throw new Error()
+    if (!value.menu.every(m => ['AVAILABLE', 'SOLD_OUT', 'DISCONTINUED'].includes(m.status))) throw new Error()
+    if (!value.incidents.every(i => typeof i.code === 'string' && typeof i.description === 'string' && ['OUT_OF_STOCK', 'EQUIPMENT', 'CANNOT_PREPARE', 'NOTE_CLARIFICATION', 'OTHER'].includes(i.type) && ['OPEN', 'ACKNOWLEDGED', 'RESOLVED'].includes(i.status))) throw new Error()
     return value
-  } catch { throw new ManagerError('Dữ liệu mô phỏng đã hỏng. Hãy xóa riêng khóa restosphere.manager.data.v1 trong bộ nhớ trình duyệt để khởi tạo lại.') }
+  } catch { throw new ManagerError('Dữ liệu mô phỏng đã hỏng. Hãy xóa riêng khóa restosphere.manager.data.v5 trong bộ nhớ trình duyệt để khởi tạo lại.') }
 }
 let queue = Promise.resolve()
 export const managerService: ManagerService = {

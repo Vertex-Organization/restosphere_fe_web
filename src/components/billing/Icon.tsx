@@ -4,6 +4,7 @@ import { Icon as KitchenIcon, type IconName as KitchenIconName } from '../kitche
 // falling back to it for shared glyphs, so the staff modules look alike.
 
 const extra = {
+  cookingPot: <><path d="M5 10h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-7Z" /><path d="M3 10h18M2 13h3M19 13h3M8 3v3M12 2v4M16 3v3" /></>,
   drawer: <><rect x="3" y="12" width="18" height="8" rx="1.5" /><path d="M6 12V6a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" /><path d="M9 8.5h6" /><path d="M10 16h4" /></>,
   list: <><path d="M8 6h12M8 12h12M8 18h12" /><path d="M4 6h.01M4 12h.01M4 18h.01" /></>,
   clipboard: <><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V3h6v1" /><path d="M9 10h6M9 14h6M9 18h3" /></>,

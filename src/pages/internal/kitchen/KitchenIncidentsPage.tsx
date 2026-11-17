@@ -168,7 +168,7 @@ function IncidentRow({ incident, data }: { incident: Incident; data: KitchenData
             {linkedItem && ` · ${linkedItem.name}`} ·{' '}
           </>
         )}
-        {formatTime(incident.reportedAt)} · {staffName(data, incident.reportedBy)}
+        {formatTime(incident.at)} · {staffName(data, incident.reporterId)}
         {incident.notifiedStaffIds.length > 0 && ` · đã báo ${incident.notifiedStaffIds.map((id) => staffName(data, id)).join(', ')}`}
       </p>
       {incident.response && (

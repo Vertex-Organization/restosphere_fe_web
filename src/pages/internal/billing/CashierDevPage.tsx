@@ -125,6 +125,7 @@ export default function CashierDevPage() {
                 <span className="c-inline-gap">
                   {bill.status !== 'PAID' && <button type="button" className="k-btn k-btn--ghost" onClick={() => { void simulate({ type: 'serve-remaining', sessionId: s.id }) }}>Ra hết món</button>}
                   {bill.status === 'UNPAID' && <button type="button" className="k-btn k-btn--outline" onClick={() => { void simulate({ type: 'waiter-request-payment', sessionId: s.id }) }}>Yêu cầu TT</button>}
+                  {bill.status === 'PAYMENT_REQUESTED' && <button type="button" className="k-btn k-btn--ghost" onClick={() => { void simulate({ type: 'waiter-withdraw-payment', sessionId: s.id }) }}>Rút yêu cầu TT</button>}
                   {bill.status === 'PAID' && !s.guestLeftAt && <button type="button" className="k-btn" onClick={() => { void simulate({ type: 'guest-left', sessionId: s.id }) }}>Khách rời</button>}
                   {s.guestLeftAt && <button type="button" className="k-btn" onClick={() => { void simulate({ type: 'table-cleaned', sessionId: s.id }) }}>Dọn xong</button>}
                 </span>
@@ -202,7 +203,7 @@ export default function CashierDevPage() {
             <ul className="k-dev-list k-dev-outbox">
               {data.outbox.slice(0, 12).map((m) => (
                 <li key={m.id}>
-                  <span><b>{ROLE_LABEL[m.audience]}</b> · {m.title}<br /><span className="k-muted">{m.body}</span></span>
+                  <span><b>{ROLE_LABEL[m.audience]}</b> · {m.kind} · {m.title}<br /><span className="k-muted">{m.body}</span></span>
                   <span className="k-muted k-mono">{formatTime(m.at)}</span>
                 </li>
               ))}

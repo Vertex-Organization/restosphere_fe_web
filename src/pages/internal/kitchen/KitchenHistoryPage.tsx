@@ -12,7 +12,7 @@ import { useNow } from '../../../hooks/kitchen/useNow'
 import { kitchenPaths } from '../../../routes/kitchenRouter'
 
 type StatusFilter = 'ALL' | SentItemStatus
-const STATUS_OPTIONS: StatusFilter[] = ['ALL', 'SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'CANCELLED']
+const STATUS_OPTIONS: StatusFilter[] = ['ALL', 'SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'REJECTED', 'CANCELLED', 'VOIDED']
 
 interface Row {
   item: KitchenOrderItem

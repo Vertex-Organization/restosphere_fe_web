@@ -1,14 +1,15 @@
 import { applyDevEvent, type DevEvent } from './devEvents'
-import { createSeedData, dayKey, DEMO_PASSWORD, isValidKitchenData } from './mockData'
+import { createSeedData, dayKey, isValidKitchenData } from './mockData'
 import { applyKitchenCommand } from './rules'
 import type { KitchenService } from './service'
 import { KitchenError, type CommandResult, type KitchenData, type StaffMember } from './types'
+import { KITCHEN_DATA_KEY } from './storageKey'
 
 // Local mock of the kitchen backend. Data lives in localStorage so several
 // tabs (e.g. two cooks) share one store; it is NOT synchronised with the
 // waiter app, which keeps its own mock data on the device.
 
-const DATA_KEY = 'restosphere.kitchen.demo.v3'
+const DATA_KEY = KITCHEN_DATA_KEY
 const OFFLINE_KEY = 'restosphere.kitchen.dev.offline'
 const LOCAL_EVENT = 'restosphere:kitchen-data'
 
@@ -85,13 +86,6 @@ export const mockKitchenService: KitchenService = {
 
 /** Demo sign-in against the mock staff list. Replace with the backend auth
  * once it has a KITCHEN role (the current API only knows ADMIN/MANAGER/STAFF). */
-export async function mockSignIn(username: string, password: string): Promise<StaffMember> {
-  await new Promise((resolve) => setTimeout(resolve, 250))
-  const staff = read().staff.find((s) => s.username === username.trim().toLowerCase())
-  if (!staff || password !== DEMO_PASSWORD) throw new KitchenError('INVALID', 'Tên đăng nhập hoặc mật khẩu không đúng.')
-  return { ...staff }
-}
-
 export function mockFindStaff(id: string): StaffMember | null {
   const staff = read().staff.find((s) => s.id === id)
   return staff ? { ...staff } : null

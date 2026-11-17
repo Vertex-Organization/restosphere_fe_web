@@ -6,7 +6,7 @@ import { Icon, Link } from '../components/manager/ui'
 import type { IconName } from '../components/billing/Icon'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { useNow } from '../hooks/kitchen/useNow'
-import { managerPath, navigate, type ManagerPage } from '../routes/managerRouter'
+import { managerPath, type ManagerPage } from '../routes/managerRouter'
 
 const NAV: { page: ManagerPage; label: string; icon: IconName; children?: ManagerPage[]; group?: string }[] = [
   { page: 'dashboard', label: 'Tổng quan', icon: 'board', group: 'Vận hành' },
@@ -49,13 +49,13 @@ export function ManagerLayout({ page, children }: { page: ManagerPage | 'not-fou
     document.addEventListener('keydown', keydown)
     return () => { document.removeEventListener('keydown', keydown); previous?.focus() }
   }, [mobileOpen])
-  const signOut = () => { managerSignOut(); navigate('/manager/login', { replace: true }) }
+  const signOut = managerSignOut
   const closeNavigation = () => setMobileOpen(false)
-  return <div className={`kds m-app ${collapsed ? 'm-app--collapsed' : ''}`}>
+  return <div data-page={page} className={`kds m-app ${page !== 'dashboard' ? 'm-workspace' : ''} ${collapsed ? 'm-app--collapsed' : ''}`}>
     <a className="m-skip" href="#manager-main">Đến nội dung chính</a>
     {mobileOpen && <button type="button" className="m-nav-backdrop" aria-label="Đóng điều hướng" onClick={closeNavigation} />}
     <aside ref={sidebar} className={`m-sidebar ${mobileOpen ? 'is-open' : ''}`} aria-label="Điều hướng quản lý">
-      <Link className="m-brand" to="/manager" onClick={closeNavigation}><BrandLogo width={158} /><span>Quản lý nhà hàng</span></Link>
+      <Link className="m-brand" to={managerPath('dashboard')} onClick={closeNavigation}><BrandLogo width={158} /><span>Quản lý nhà hàng</span></Link>
       <nav className="m-nav">{NAV.map(item => <div key={item.page}>{item.group && <p className="m-nav-group">{item.group}</p>}<Link className="m-nav-link" to={managerPath(item.page)} title={item.label} onClick={closeNavigation} aria-current={item.page === page || item.children?.includes(page as ManagerPage) ? 'page' : undefined}><Icon name={item.icon} size={18} /><span>{item.label}</span>{item.page === 'approvals' && pending > 0 && <b>{pending}</b>}{item.page === 'notifications' && unread > 0 && <b>{unread}</b>}</Link></div>)}</nav>
       <div className="m-sidebar-foot"><div className="m-branch"><span className="m-branch-symbol"><Icon name="utensils" size={18} /></span><div><strong>The Sea's Crown</strong><small>Không gian vận hành</small></div></div><button className="m-nav-link" type="button" onClick={() => setCollapsed(v => !v)} aria-label={collapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'} aria-expanded={!collapsed}><Icon name={collapsed ? 'chevronRight' : 'chevronLeft'} /><span>Thu gọn thanh bên</span></button><button className="m-nav-link" type="button" onClick={signOut} title="Đăng xuất"><Icon name="logout" /><span>Đăng xuất</span></button></div>
     </aside>
