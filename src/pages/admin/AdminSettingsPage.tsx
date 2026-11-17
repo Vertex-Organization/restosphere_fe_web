@@ -3,16 +3,17 @@ import { useAdminData } from '../../hooks/admin/AdminDataProvider'
 import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
 
 export default function AdminSettingsPage() {
-  const { data } = useAdminData()
+  const { data, execute } = useAdminData()
   const source = data?.settings
   const [settings, setSettings] = useState(() => source)
   const [message, setMessage] = useState('')
   if (!settings || !source) return null
   const update = <K extends keyof typeof settings>(key: K, value: typeof settings[K]) => { setSettings((current) => current ? { ...current, [key]: value } : current); setMessage('') }
-  const save = () => {
+  const save = async () => {
     if (settings.noShowMinutes < 5 || settings.noShowMinutes > 120 || settings.bufferMinutes < 0 || settings.bufferMinutes > 60) return setMessage('Số phút no-show từ 5 đến 120, số phút đệm từ 0 đến 60.')
     if (settings.billing.serviceChargePercent < 0 || settings.billing.serviceChargePercent > 30 || settings.billing.vatPercent < 0 || settings.billing.vatPercent > 20) return setMessage('Phí dịch vụ từ 0 đến 30%, VAT từ 0 đến 20%.')
-    setMessage('Thiết lập đã được kiểm tra ở Frontend nhưng chưa lưu: Backend chưa có API cấu hình Admin.')
+    try { await execute({ type: 'settings.update', settings }); setMessage('Đã lưu cài đặt.') }
+    catch (reason) { setMessage(reason instanceof Error ? reason.message : 'Không lưu được cài đặt.') }
   }
   return <>
     <PageHeader title="Cài đặt" description="Các thiết lập nhỏ gọn phù hợp với tính năng đang tồn tại." actions={<><Button onClick={() => { setSettings(source); setMessage('') }}>Hủy thay đổi</Button><Button tone="primary" onClick={save}>Lưu cài đặt</Button></>} />

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cashierService } from '../../api/billing/service'
+import { ApiError } from '../../api/client'
 import { CashierError, type CashierCommand, type CashierData, type CashierStaff } from '../../api/billing/types'
 import { CashierDataContext, type CashierDataValue, type Feedback, type RunResult } from './cashierDataContext'
 
@@ -9,7 +10,7 @@ const POLL_MS = 5000
 const SUCCESS_VISIBLE_MS = 6000
 
 function messageOf(error: unknown) {
-  if (error instanceof CashierError) return error.message
+  if (error instanceof Error) return error.message
   return 'Không thể hoàn tất thao tác. Vui lòng thử lại.'
 }
 
@@ -70,10 +71,10 @@ export function CashierDataProvider({ user, children }: { user: CashierStaff; ch
       if (result.summary && !options.quiet) setFeedback({ id: ++feedbackId.current, tone: 'success', text: result.summary })
       return { ok: true, result }
     } catch (error) {
-      const network = error instanceof CashierError && error.code === 'NETWORK'
+      const network = error instanceof ApiError ? error.status === 0 || error.status >= 500 : error instanceof CashierError && error.code === 'NETWORK'
       const text = messageOf(error)
       setFeedback({ id: ++feedbackId.current, tone: 'error', text, network })
-      if (error instanceof CashierError && (error.code === 'CONFLICT' || error.code === 'NOT_FOUND')) void refresh()
+      if (error instanceof ApiError && [404, 409].includes(error.status) || error instanceof CashierError && (error.code === 'CONFLICT' || error.code === 'NOT_FOUND')) void refresh()
       return { ok: false, error: text }
     } finally {
       keys.forEach((key) => pendingRef.current.delete(key))
@@ -82,7 +83,7 @@ export function CashierDataProvider({ user, children }: { user: CashierStaff; ch
   }, [accept, refresh, user])
 
   const value = useMemo<CashierDataValue>(() => ({
-    user,
+    user: data?.staff.find(member => member.id === user.id) ?? user,
     data,
     loadError,
     refresh,

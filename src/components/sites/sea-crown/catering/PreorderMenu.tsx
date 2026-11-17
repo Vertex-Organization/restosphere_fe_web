@@ -70,7 +70,7 @@ export function PreorderMenu({
           <p>{t.menuIntro}</p>
         </header>
 
-        {data && (
+        {data && PARTY_SETS.length > 0 && (
           <div className="bk-sets" aria-labelledby="bk-sets-title">
             <div className="bk-sets-head">
               <span className="bk-eyebrow">{t.setsEyebrow}</span>

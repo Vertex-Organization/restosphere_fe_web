@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
-import { useStaffSession } from '../../api/staff/auth'
+import { useStaffLoading, useStaffSession } from '../../api/staff/auth'
 import { StaffAccessDenied, StaffRedirecting } from '../../components/staff/StaffAccessDenied'
 import { loginPath, type WorkspaceRole } from '../../routes/staffRouter'
 
@@ -8,7 +8,8 @@ import { loginPath, type WorkspaceRole } from '../../routes/staffRouter'
  * other roles and missing employee records see the no-access screen. */
 export function useStaffGate(role: WorkspaceRole, hasProfile: boolean): ReactNode | null {
   const session = useStaffSession()
-  const signedOut = !session
+  const loading = useStaffLoading()
+  const signedOut = !session && !loading
 
   useEffect(() => {
     // The sign-in page is a separate app, so this is a full page load.

@@ -17,10 +17,10 @@ function moduleUrl(file) {
 }
 
 const router = await import(moduleUrl('src/routes/staffRouter.ts'))
-const accounts = await import(moduleUrl('src/api/staff/mockAccounts.ts'))
-const kitchen = await import(moduleUrl('src/api/kitchen/mockData.ts'))
-const billing = await import(moduleUrl('src/api/billing/mockData.ts'))
-const manager = await import(moduleUrl('src/api/manager/mockData.ts'))
+const accounts = await import(moduleUrl('scripts/fixtures/accounts.ts'))
+const kitchen = await import(moduleUrl('scripts/fixtures/kitchen.ts'))
+const billing = await import(moduleUrl('scripts/fixtures/billing.ts'))
+const manager = await import(moduleUrl('scripts/fixtures/manager.ts'))
 
 test('every web role has its workspace under /staff; waiters have none', () => {
   assert.equal(router.homePathFor('ADMIN'), '/staff/admin')

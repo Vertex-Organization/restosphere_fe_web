@@ -11,6 +11,7 @@ export class ApiError extends Error {
 }
 
 function errorMessage(status: number) {
+  if (status >= 500) return 'Máy chủ đang gặp sự cố hoặc không thể kết nối backend. Vui lòng thử lại sau.'
   if (status === 401) return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
   if (status === 403) return 'Bạn không có quyền thực hiện thao tác này.'
   if (status === 400) return 'Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.'
@@ -41,6 +42,6 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   try {
     return await response.json() as T
   } catch {
-    throw new ApiError(502, 'Không thể hoàn tất yêu cầu. Vui lòng thử lại sau.')
+    throw new ApiError(502, 'Máy chủ trả về dữ liệu không hợp lệ. Vui lòng kiểm tra kết nối backend.')
   }
 }

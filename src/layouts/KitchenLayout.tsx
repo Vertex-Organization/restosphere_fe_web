@@ -148,11 +148,6 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
         </KitchenLink>
         <nav className="k-nav">{navLinks('side')}</nav>
         <div className="k-sidebar-foot">
-          {import.meta.env.DEV && (
-            <KitchenLink to={kitchenPaths.dev} className="k-nav-link k-dev-link" aria-current={route.name === 'dev' ? 'page' : undefined} title="Công cụ mô phỏng (chỉ khi phát triển)">
-              <Icon name="terminal" size={18} /><span className="k-nav-label">Mô phỏng (dev)</span>
-            </KitchenLink>
-          )}
           <button type="button" className="k-nav-link k-signout" onClick={signOut} title="Đăng xuất">
             <Icon name="logout" size={18} /><span className="k-nav-label">Đăng xuất</span>
           </button>

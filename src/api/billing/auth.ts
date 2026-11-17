@@ -1,5 +1,4 @@
 import { getStaffSession, leaveStaffArea, subscribeStaffAuth } from '../staff/auth'
-import { mockFindStaff } from './mockService'
 import type { CashierStaff } from './types'
 
 // The cashier has no sign-in of its own: it reads the shared staff session
@@ -11,7 +10,7 @@ let cached: { id: string; user: CashierStaff | null } | null = null
 export function getCashierUser(): CashierStaff | null {
   const session = getStaffSession()
   if (!session || session.role !== 'CASHIER') return null
-  if (cached?.id !== session.id) cached = { id: session.id, user: mockFindStaff(session.id) }
+  if (cached?.id !== session.id) cached = { id: session.id, user: { ...session, role: 'CASHIER', permissions: [], discountLimitPercent: 0 } }
   return cached.user
 }
 

@@ -1,7 +1,7 @@
 import type {
   Incident, KitchenData, KitchenNotification, KitchenOrder, KitchenOrderItem, MenuCategory, MenuItem, OutboxMessage,
   SentItemStatus, StaffMember, StatusChange,
-} from './types'
+} from '../../src/api/kitchen/types'
 
 // Demo data for the kitchen workspace. Identities, menu and table codes match
 // the RestoSphere staff app demo. Sign-in accounts live in api/staff/mockAccounts.ts.

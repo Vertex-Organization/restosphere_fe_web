@@ -18,68 +18,8 @@ export interface PartySet {
   items: Cart
 }
 
-export const PARTY_SETS: PartySet[] = [
-  {
-    id: 'family-feast',
-    imageUrl: '/sites/sea-crown/images/menu/seafood-platter.jpg',
-    badge: { vi: 'Bán chạy', en: 'Popular' },
-    name: { vi: 'Tiệc Sum Vầy Gia Đình', en: 'Family Gathering Feast' },
-    guestsLabel: { vi: '4 – 6 khách', en: '4 – 6 guests' },
-    guestRange: [4, 6],
-    description: {
-      vi: 'Gỏi hải sản khai vị, mâm hải sản tổng hợp, lẩu Thái chua cay và cơm chiên.',
-      en: 'Ceviche starter, signature seafood platter, Thai hotpot and seafood fried rice.',
-    },
-    items: {
-      'seafood-ceviche': 1,
-      'seafood-platter': 1,
-      'thai-pot': 1,
-      'seafood-rice': 2,
-      'peach-tea': 4,
-    },
-  },
-  {
-    id: 'royal-seafood',
-    imageUrl: '/sites/sea-crown/images/menu/king-crab.jpg',
-    badge: { vi: 'Thượng hạng', en: 'Signature' },
-    name: { vi: 'Tiệc Hải Sản Hoàng Gia', en: 'Royal Crown Banquet' },
-    guestsLabel: { vi: '8 – 10 khách', en: '8 – 10 guests' },
-    guestRange: [8, 10],
-    description: {
-      vi: 'Cua Hoàng Đế & Tôm Hùm Bông tươi sống cân tại bàn, cá chẽm nướng và mì xào.',
-      en: 'Live King Crab & Spiny Lobster weighed at your table, grilled sea bass and noodles.',
-    },
-    items: {
-      'king-crab': 2.5,
-      'lobster': 1.5,
-      'garlic-prawns': 2,
-      'grilled-fish': 1,
-      'noodles': 2,
-      'orange-juice': 8,
-    },
-  },
-  {
-    id: 'company-party',
-    imageUrl: '/sites/sea-crown/images/seafood-feast.jpg',
-    badge: { vi: 'Tiệc đoàn', en: 'Group Event' },
-    name: { vi: 'Tiệc Liên Hoan Công Ty', en: 'Company Celebration Set' },
-    guestsLabel: { vi: '12 – 16 khách', en: '12 – 16 guests' },
-    guestRange: [12, 16],
-    description: {
-      vi: 'Mâm hải sản lớn, cua Cà Mau hấp bia, mực nướng sa tế, bò lúc lắc, lẩu Thái và bia tươi.',
-      en: 'Seafood platters, beer-steamed mud crab, grilled squid, shaking beef, hotpots and beer.',
-    },
-    items: {
-      'seafood-platter': 2,
-      'steamed-crab': 3,
-      'grilled-squid': 3,
-      'beef': 2,
-      'thai-pot': 2,
-      'seafood-rice': 3,
-      'beer': 12,
-    },
-  },
-]
+// No party-set endpoint exists; individual dishes come from the server catalog.
+export const PARTY_SETS: PartySet[] = []
 
 /** Per-kg seafood is ordered in half kilograms, everything else per portion. */
 export const stepOf = (dish: Dish) => (dish.unit === 'kg' ? 0.5 : 1)
@@ -224,7 +164,6 @@ export const BOOKING_COPY = {
     doneAgain: 'Tạo yêu cầu đặt bàn mới',
     lookup: 'Tra cứu trạng thái đặt bàn',
     onlineClosed: 'Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.',
-    demoNote: 'Chế độ thử nghiệm: Yêu cầu đặt tiệc được lưu trên trình duyệt này để phục vụ trình diễn.',
   },
   en: {
     eyebrow: 'Pre-order Menu',
@@ -321,6 +260,5 @@ export const BOOKING_COPY = {
     doneAgain: 'Make another reservation',
     lookup: 'Check reservation status',
     onlineClosed: 'Online reservations are temporarily paused. Please contact us directly via our hotline.',
-    demoNote: 'Demo mode: This reservation is saved locally in your browser for demonstration.',
   },
 } satisfies Record<Language, unknown>

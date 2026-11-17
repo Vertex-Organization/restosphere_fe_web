@@ -1,9 +1,9 @@
-import { computeTotals, discountAmount, formatVnd, isBillable } from './money'
+import { computeTotals, discountAmount, formatVnd, isBillable } from '../../src/api/billing/money'
 import type {
   Bill, BillEvent, BillingConfig, CashierData, CashierNotification, CashierPermission, CashierRequest, CashierShift,
   CashierStaff, DiscountMode, MenuEntry, Order, OrderItem, Payment, PaymentMethod, PaymentStatus, RestaurantTable,
   SentItemStatus, TableSession,
-} from './types'
+} from '../../src/api/billing/types'
 
 // Demo data for the cashier workspace. Staff ids, table codes, menu and prices
 // match the RestoSphere staff app demo (restosphere-fe-mobile/src/mocks) and

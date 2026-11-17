@@ -1,5 +1,6 @@
 import { businessDay, dayAt } from './dates'
 import type { ManagerCommand, ManagerData, ManagerUser, Permission } from './types'
+import { tableCode } from './selectors'
 
 export class ManagerError extends Error {
   readonly field?: string
@@ -36,17 +37,17 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
       const t = data.tables.find(t => t.id === command.tableId)
       requireValue(t && t.status === 'AVAILABLE', 'Bàn phải sẵn sàng trước khi điều chỉnh.', 'tableId')
       requireValue(r.tableId !== t.id, 'Hãy chọn bàn khác với bàn hiện tại.', 'tableId')
-      requireValue(t.seats >= r.guests, `Bàn ${t.id} chỉ có ${t.seats} ghế, không đủ cho ${r.guests} khách.`, 'tableId')
-      requireValue(!r.areaId || r.areaId === t.areaId, `Bàn ${t.id} không thuộc khu vực khách yêu cầu.`, 'tableId')
+      requireValue(t.seats >= r.guests, `Bàn ${t.code} chỉ có ${t.seats} ghế, không đủ cho ${r.guests} khách.`, 'tableId')
+      requireValue(!r.areaId || r.areaId === t.areaId, `Bàn ${t.code} không thuộc khu vực khách yêu cầu.`, 'tableId')
       const pad = BUFFER_MINUTES * 60_000
       const from = new Date(new Date(r.at).getTime() - pad).toISOString()
       const to = new Date(new Date(r.until).getTime() + pad).toISOString()
       requireValue(!data.reservations.some(other => other.id !== r.id && other.tableId === t.id && ['CONFIRMED', 'ARRIVED', 'SEATED'].includes(other.status) && overlap(from, to, other.at, other.until)), `Bàn đã có lịch giữ trong khung giờ này (gồm ${BUFFER_MINUTES} phút đệm).`, 'tableId')
       requireValue(command.reason.trim().length >= 5, 'Nhập lý do điều chỉnh ít nhất 5 ký tự.', 'reason')
       const reason = command.reason.trim()
-      text = `Điều chỉnh ${r.id}: ${r.tableId} → ${t.id}. ${reason}`; entityId = r.id
+      text = `Điều chỉnh ${r.id}: ${tableCode(data, r.tableId)} → ${t.code}. ${reason}`; entityId = r.id
       for (const [audience, staffId] of [['RECEPTIONIST', r.employeeId], ['WAITER', data.sessions.find(s => s.tableId === r.tableId)?.waiterId]] as const) {
-        if (staffId) data.outbox.unshift({ id: `OUT-${crypto.randomUUID()}`, kind: 'TABLE_REASSIGNED', audience, staffId, title: `Đổi bàn ${r.id}: ${r.tableId} → ${t.id}`, body: reason, at })
+        if (staffId) data.outbox.unshift({ id: `OUT-${crypto.randomUUID()}`, kind: 'TABLE_REASSIGNED', audience, staffId, title: `Đổi bàn ${r.id}: ${tableCode(data, r.tableId)} → ${t.code}`, body: reason, at })
       }
       r.tableId = t.id
       break
@@ -59,7 +60,7 @@ export function applyManagerCommand(source: ManagerData, actor: ManagerUser | nu
       requireValue(Number.isInteger(command.seats) && command.seats >= 1 && command.seats <= 20, 'Số ghế phải từ 1 đến 20.', 'seats')
       requireValue(areaExists(command.areaId), 'Chọn khu vực hợp lệ.', 'areaId')
       Object.assign(t, { seats: command.seats, areaId: command.areaId, status: command.inactive ? 'OUT_OF_SERVICE' : 'AVAILABLE' })
-      entityId = t.id; text = `Cập nhật bố trí bàn ${t.id} · ${command.seats} ghế`
+      entityId = t.id; text = `Cập nhật bố trí bàn ${t.code} · ${command.seats} ghế`
       break
     }
     case 'employee.assign': {

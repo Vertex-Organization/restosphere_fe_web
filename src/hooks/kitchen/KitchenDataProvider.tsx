@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { kitchenService } from '../../api/kitchen/service'
+import { ApiError } from '../../api/client'
 import { KitchenError, type KitchenCommand, type KitchenData, type StaffMember } from '../../api/kitchen/types'
 import { KitchenDataContext, type Feedback, type KitchenDataValue } from './kitchenDataContext'
 
@@ -9,7 +10,7 @@ const POLL_MS = 5000
 const SUCCESS_VISIBLE_MS = 6000
 
 function messageOf(error: unknown) {
-  if (error instanceof KitchenError) return error.message
+  if (error instanceof Error) return error.message
   return 'Không thể hoàn tất thao tác. Vui lòng thử lại.'
 }
 
@@ -71,9 +72,9 @@ export function KitchenDataProvider({ user, children }: { user: StaffMember; chi
       if (result.summary) setFeedback({ id: ++feedbackId.current, tone: 'success', text: result.summary })
       return result.summary
     } catch (error) {
-      const network = error instanceof KitchenError && error.code === 'NETWORK'
+      const network = error instanceof ApiError ? error.status === 0 || error.status >= 500 : error instanceof KitchenError && error.code === 'NETWORK'
       setFeedback({ id: ++feedbackId.current, tone: 'error', text: messageOf(error), network })
-      if (error instanceof KitchenError && (error.code === 'CONFLICT' || error.code === 'NOT_FOUND')) void refresh()
+      if (error instanceof ApiError && [404, 409].includes(error.status) || error instanceof KitchenError && (error.code === 'CONFLICT' || error.code === 'NOT_FOUND')) void refresh()
       return null
     } finally {
       keys.forEach((key) => pendingRef.current.delete(key))
@@ -82,7 +83,7 @@ export function KitchenDataProvider({ user, children }: { user: StaffMember; chi
   }, [accept, refresh, user])
 
   const value = useMemo<KitchenDataValue>(() => ({
-    user,
+    user: data?.staff.find(member => member.id === user.id) ?? user,
     data,
     loadError,
     refresh,

@@ -1,5 +1,5 @@
 import { businessDay, dateLabel, minutes, money, time } from '../../api/manager/dates'
-import { dashboard, employeeName, tableForOrder } from '../../api/manager/selectors'
+import { dashboard, employeeName, tableCode, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
@@ -18,7 +18,7 @@ export default function ManagerDashboardPage() {
   const alerts = [
     ...s.lateOrders.map(o => ({ id: o.id, title: `Bàn ${tableForOrder(d, o)} chờ món ${minutes(o.at, now)} phút`, description: `${o.id} · Cần kiểm tra với bếp`, path: managerPath('orders', o.id), icon: 'clock' as const, tone: 'danger' })),
     ...s.incidents.map(i => ({ id: i.id, title: i.title, description: `${i.id} · ${employeeName(d, i.reporterId)}`, path: managerPath('incidents', i.id), icon: 'alert' as const, tone: i.severity === 'HIGH' ? 'danger' : 'warning' })),
-    ...d.reservations.filter(isLate).map(r => ({ id: r.id, title: `${r.customer} trễ giờ nhận bàn`, description: `${r.id} · Bàn ${r.tableId} · ${time(r.at)}`, path: managerPath('reservations', r.id), icon: 'users' as const, tone: 'warning' })),
+    ...d.reservations.filter(isLate).map(r => ({ id: r.id, title: `${r.customer} trễ giờ nhận bàn`, description: `${r.id} · Bàn ${tableCode(d, r.tableId)} · ${time(r.at)}`, path: managerPath('reservations', r.id), icon: 'users' as const, tone: 'warning' })),
   ]
   return <div className="m-dashboard-page">
     <PageHeading title="Tổng quan" description={`${dateLabel(now)} · Tình hình hoạt động nhà hàng hôm nay`} actions={<><span className="m-live-label"><i />Theo dõi vận hành</span><Button icon="refresh" onClick={() => { void refresh() }}>Làm mới dữ liệu</Button></>} />
@@ -62,8 +62,8 @@ export default function ManagerDashboardPage() {
             <div className="m-service-tables">{tables.map(t => {
               const hasGuests = t.status === 'OCCUPIED'
               const label = hasGuests ? 'Có khách' : 'Trống'
-              return <Link key={t.id} className={`m-service-table ${hasGuests ? 'is-occupied' : 'is-empty'}`} to={managerPath('tables', t.id)} aria-label={`Bàn ${t.id}, ${t.seats} ghế, ${label}`}>
-                <strong>{t.id}</strong>
+              return <Link key={t.id} className={`m-service-table ${hasGuests ? 'is-occupied' : 'is-empty'}`} to={managerPath('tables', t.id)} aria-label={`Bàn ${t.code}, ${t.seats} ghế, ${label}`}>
+                <strong>{t.code}</strong>
                 <span className="m-service-table-status"><i />{label}</span><small>{t.seats} ghế</small>
               </Link>
             })}</div>
@@ -73,7 +73,7 @@ export default function ManagerDashboardPage() {
       </Panel>
       <Panel className="m-dashboard-bookings" title="Đặt bàn sắp đến" aside={<Link className="m-text-link" to={managerPath('reservations')}>Xem đặt bàn<Icon name="arrowRight" size={14} /></Link>}>
         <div className="m-dashboard-context"><span>{waitingReservations.length} lịch đặt đang chờ khách hôm nay</span><span>Hiển thị {upcoming.length} lịch gần nhất</span></div>
-        <DataTable headers={['Khách hàng', 'Giờ đến', 'Số khách', 'Bàn', 'Trạng thái']} empty={!upcoming.length}>{upcoming.map(r => <tr key={r.id}><td><Link className="m-cell-link" to={managerPath('reservations', r.id)}>{r.customer}<small>{r.id}</small></Link></td><td className="m-num">{time(r.at)}</td><td>{r.guests} khách</td><td><span className="m-table-code">{r.tableId}</span></td><td><Status value={r.status} label={r.status === 'PENDING' ? 'Chờ xác nhận' : undefined} /></td></tr>)}</DataTable>
+        <DataTable headers={['Khách hàng', 'Giờ đến', 'Số khách', 'Bàn', 'Trạng thái']} empty={!upcoming.length}>{upcoming.map(r => <tr key={r.id}><td><Link className="m-cell-link" to={managerPath('reservations', r.id)}>{r.customer}<small>{r.id}</small></Link></td><td className="m-num">{time(r.at)}</td><td>{r.guests} khách</td><td><span className="m-table-code">{tableCode(d, r.tableId)}</span></td><td><Status value={r.status} label={r.status === 'PENDING' ? 'Chờ xác nhận' : undefined} /></td></tr>)}</DataTable>
       </Panel>
       <Panel className="m-dashboard-alerts" title="Cần chú ý" aside={<span className="m-count m-count--danger">{alerts.length}</span>}>
         <div className="m-alert-list">{alerts.length ? alerts.slice(0, 4).map(a => <Link key={a.id} className={`m-alert-row ${a.tone}`} to={a.path}><span className="m-alert-icon"><Icon name={a.icon} size={16} /></span><div><strong>{a.title}</strong><small>{a.description}</small></div><Icon name="chevronRight" size={14} /></Link>) : <p className="m-inline-empty">Không có cảnh báo đang mở.</p>}</div>

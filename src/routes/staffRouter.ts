@@ -2,7 +2,7 @@
 // works in its own workspace under /staff. Pure functions only (no React), so
 // the module routers, mock data and Node tests can all import it.
 
-export type StaffRole = 'ADMIN' | 'MANAGER' | 'CASHIER' | 'KITCHEN' | 'WAITER'
+export type StaffRole = 'ADMIN' | 'MANAGER' | 'CASHIER' | 'KITCHEN' | 'WAITER' | 'RECEPTIONIST'
 
 export const STAFF_BASE = '/staff'
 
@@ -28,6 +28,7 @@ export const STAFF_ROLE_LABEL: Record<StaffRole, string> = {
   CASHIER: 'Thu ngân',
   KITCHEN: 'Bếp',
   WAITER: 'Phục vụ',
+  RECEPTIONIST: 'Lễ tân',
 }
 
 const pathOf = (url: string) => url.split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/'

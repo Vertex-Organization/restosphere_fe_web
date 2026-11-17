@@ -80,6 +80,7 @@
 .st-demo { padding: 12px 24px 16px; background: var(--st-surface-alt); border-top: 1px solid var(--st-border); }
 .st-demo-title { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--st-text-2); }
 .st-demo-list { list-style: none; margin: 0; padding: 0; }
+.st-demo-list:has(> .st-btn) { display: grid; gap: 8px; }
 .st-demo-row {
   display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%;
   height: 34px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; color: var(--st-text);

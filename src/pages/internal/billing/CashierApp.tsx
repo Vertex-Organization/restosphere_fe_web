@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { CashierDataProvider } from '../../../hooks/billing/CashierDataProvider'
 import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { useCashierUser } from '../../../hooks/billing/useCashierAuth'
@@ -19,8 +19,6 @@ import '../../../components/kitchen/kitchen.css'
 import '../kitchen/kitchenPages.css'
 import '../../../components/billing/billing.css'
 
-// Development-only simulator of the other roles; removed from production builds.
-const CashierDevPage = import.meta.env.DEV ? lazy(() => import('./CashierDevPage')) : null
 
 const TITLES: Record<CashierRoute['name'], string> = {
   pos: 'Quầy thu ngân',
@@ -49,7 +47,6 @@ function page(route: CashierRoute, params: URLSearchParams): ReactNode {
     case 'shift': return <CashierShiftPage />
     case 'notifications': return <CashierNotificationsPage selectedId={params.get('id') ?? ''} />
     case 'profile': return <CashierProfilePage />
-    case 'dev': return CashierDevPage ? <Suspense fallback={null}><CashierDevPage /></Suspense> : null
     default: return (
       <div className="k-state">
         <p className="k-state-title">Không tìm thấy trang</p>

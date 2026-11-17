@@ -1,6 +1,6 @@
 import { businessDay, dayAt, minutes, time } from '../../api/manager/dates'
 import { DEPARTMENT } from '../../api/manager/labels'
-import { dashboard, tableForOrder } from '../../api/manager/selectors'
+import { dashboard, tableCode, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
@@ -55,7 +55,7 @@ export default function OperationsPage() {
     })),
     ...paymentRequests.map(session => ({
       id: session.id,
-      title: `Bàn ${session.tableId} yêu cầu thanh toán`,
+      title: `Bàn ${tableCode(d, session.tableId)} yêu cầu thanh toán`,
       meta: `${session.guests} khách · Phục vụ ${minutes(session.startedAt, now)} phút`,
       path: managerPath('tables', session.tableId),
       icon: 'cash' as const,
@@ -64,7 +64,7 @@ export default function OperationsPage() {
     ...upcoming.filter(reservation => reservation.status === 'PENDING').map(reservation => ({
       id: reservation.id,
       title: `Xác nhận lịch ${time(reservation.at)} · ${reservation.customer}`,
-      meta: `${reservation.guests} khách · Bàn ${reservation.tableId}`,
+      meta: `${reservation.guests} khách · Bàn ${tableCode(d, reservation.tableId)}`,
       path: managerPath('reservations', reservation.id),
       icon: 'clipboard' as const,
       tone: 'info' as const,
@@ -79,7 +79,7 @@ export default function OperationsPage() {
   const submittedCount = activeItems.filter(({ item }) => item.status === 'SUBMITTED').reduce((sum, { item }) => sum + item.quantity, 0)
   const preparingCount = activeItems.filter(({ item }) => item.status === 'PREPARING').reduce((sum, { item }) => sum + item.quantity, 0)
   const readyCount = activeItems.filter(({ item }) => item.status === 'READY').reduce((sum, { item }) => sum + item.quantity, 0)
-  const tablesWithReadyItems = new Set(activeItems.filter(({ item }) => item.status === 'READY').map(({ order }) => tableForOrder(d, order))).size
+  const tablesWithReadyItems = new Set(activeItems.filter(({ item }) => item.status === 'READY').map(({ order }) => d.sessions.find(session => session.id === order.sessionId)?.tableId).filter(Boolean)).size
   const workflow = [
     { label: 'Đón khách', value: upcoming.length, detail: `${upcoming.filter(reservation => reservation.status === 'PENDING').length} lịch chờ xác nhận`, icon: 'clipboard' as const, path: managerPath('reservations'), tone: 'info' },
     { label: 'Đang phục vụ', value: d.sessions.length, detail: `${d.sessions.reduce((sum, session) => sum + session.guests, 0)} khách tại bàn`, icon: 'users' as const, path: managerPath('tables'), tone: 'primary' },
@@ -125,7 +125,7 @@ export default function OperationsPage() {
         <Panel className="m-ops-service" title="Bàn đang phục vụ" aside={<Link className="m-text-link" to={managerPath('tables')}>Xem toàn bộ bàn<Icon name="arrowRight" size={14} /></Link>}>
           <div className="m-ops-service-head"><span>Bàn · khu vực</span><span>Thời gian</span><span>Tiến độ hiện tại</span><span>Tải bếp</span><span /></div>
           <div className="m-ops-service-list">{serviceRows.map(row => <Link to={managerPath('tables', row.session.tableId)} className={`m-ops-service-row is-${row.tone}`} key={row.session.id}>
-            <div className="m-ops-service-table"><strong>{row.session.tableId}</strong><span>{row.area?.name ?? 'Chưa gán khu vực'}</span></div>
+            <div className="m-ops-service-table"><strong>{row.table?.code ?? '—'}</strong><span>{row.area?.name ?? 'Chưa gán khu vực'}</span></div>
             <div className="m-ops-service-time"><strong>{minutes(row.session.startedAt, now)} phút</strong><span>{row.session.guests} khách</span></div>
             <div className="m-ops-service-state"><i /><span><strong>{row.hasLateOrder ? 'Đơn đang chậm' : row.state}</strong><small>{row.session.paymentRequested ? 'Thu ngân cần tiếp nhận' : row.ready ? `${row.ready} món cần mang ra` : row.kitchen ? `${row.kitchen} món đang trong bếp` : 'Không có món chờ'}</small></span></div>
             <div className={`m-ops-service-load ${row.kitchen + row.ready === 0 ? 'is-empty' : ''}`}><span className="m-ops-load-icon"><Icon name="cookingPot" size={16} /></span><div><strong>{row.kitchen + row.ready}</strong><small>món mở</small></div></div>

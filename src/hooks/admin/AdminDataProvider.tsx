@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { adminService } from '../../api/admin/service'
-import type { AdminData } from '../../api/admin/types'
+import type { AdminCommand, AdminData } from '../../api/admin/types'
 
 interface AdminDataState {
   data: AdminData | null
   loading: boolean
   error: string
   reload: () => void
+  execute: (command: AdminCommand) => Promise<void>
 }
 
 const AdminDataContext = createContext<AdminDataState | null>(null)
@@ -18,8 +19,10 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const controller = new AbortController()
-    adminService.load(controller.signal).then(setData).catch((reason: unknown) => {
-      if (reason instanceof DOMException && reason.name === 'AbortError') return
+    adminService.load(controller.signal).then(next => {
+      if (!controller.signal.aborted) { setData(next); setError('') }
+    }).catch((reason: unknown) => {
+      if (controller.signal.aborted) return
       setError(reason instanceof Error ? reason.message : 'Không tải được dữ liệu quản trị.')
     })
     return () => controller.abort()
@@ -29,6 +32,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     data,
     loading: !data && !error,
     error,
+    execute: async (command) => { setData(await adminService.execute(command)) },
     reload: () => { setError(''); setData(null); setReloadKey((value) => value + 1) },
   }), [data, error])
 

@@ -1,56 +1,43 @@
-import { KITCHEN_DATA_KEY } from '../kitchen/storageKey'
-import { seedMenu } from './mockData'
-import type { DishAvailability, MenuData } from './types'
+import { apiRequest } from '../client'
+import type { DishAvailability, MenuData, PriceUnit, MenuGroup } from './types'
 
-/**
- * The seam between the customer menu and its data source.
- *
- * The backend has no menu endpoint yet, so the site runs on `mockMenuService`.
- * When one exists, add an HTTP implementation (using `apiRequest` from
- * ../client) and export it here instead; the menu page does not change.
- */
 export interface MenuService {
   load(): Promise<MenuData>
-  /** Notifies when availability changed elsewhere. */
   subscribe(listener: () => void): () => void
 }
 
-const STATUSES: readonly DishAvailability[] = ['AVAILABLE', 'SOLD_OUT', 'DISCONTINUED']
-
-/** Availability set in the kitchen demo (/kitchen/menu-status) on this browser. */
-function kitchenStatuses(): Map<string, DishAvailability> {
-  const result = new Map<string, DishAvailability>()
-  try {
-    const stored: unknown = JSON.parse(localStorage.getItem(KITCHEN_DATA_KEY) ?? 'null')
-    const items = (stored as { menuItems?: unknown } | null)?.menuItems
-    if (!Array.isArray(items)) return result
-    for (const item of items as { id?: unknown; status?: unknown }[]) {
-      if (typeof item?.id === 'string' && STATUSES.includes(item.status as DishAvailability)) {
-        result.set(item.id, item.status as DishAvailability)
-      }
-    }
-  } catch {
-    // No kitchen data or storage blocked: use the seed availability.
-  }
-  return result
+interface CategoryResponse { id: string; name: string; sortOrder: number; visible: boolean; group: MenuGroup }
+interface ItemResponse {
+  id: string; name: string; categoryId: string; price: number
+  description: string | null; imageUrl: string | null; status: DishAvailability
+  unit: PriceUnit
 }
 
-export const mockMenuService: MenuService = {
+export const menuService: MenuService = {
   async load() {
-    await new Promise((resolve) => setTimeout(resolve, 250))
-    const statuses = kitchenStatuses()
+    const [categories, items] = await Promise.all([
+      apiRequest<CategoryResponse[]>('/menu/categories'),
+      apiRequest<ItemResponse[]>('/menu/items'),
+    ])
     return {
-      categories: seedMenu.categories,
-      dishes: seedMenu.dishes.map((dish) => ({ ...dish, status: statuses.get(dish.id) ?? dish.status })),
+      categories: categories.map(category => ({
+        id: category.id, name: { vi: category.name, en: category.name },
+        group: category.group,
+      })),
+      dishes: items.map(item => {
+        const description = item.description ?? ''
+        return {
+          id: item.id, categoryId: item.categoryId,
+          name: { vi: item.name, en: item.name },
+          description: { vi: description, en: description },
+          imageUrl: item.imageUrl ?? undefined, price: item.price,
+          unit: item.unit, tags: [], allergens: [], status: item.status,
+        }
+      }),
     }
   },
-
   subscribe(listener) {
-    // `storage` fires when another tab (e.g. the kitchen) changes the store.
-    const onStorage = (event: StorageEvent) => { if (event.key === KITCHEN_DATA_KEY) listener() }
-    window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    const timer = window.setInterval(listener, 30_000)
+    return () => window.clearInterval(timer)
   },
 }
-
-export const menuService: MenuService = mockMenuService

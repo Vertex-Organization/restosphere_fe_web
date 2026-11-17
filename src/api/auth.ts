@@ -4,7 +4,7 @@ export interface AuthUser {
   id: string
   email: string
   fullName: string
-  role: 'ADMIN' | 'MANAGER' | 'STAFF'
+  role: 'ADMIN' | 'MANAGER' | 'RECEPTIONIST' | 'WAITER' | 'KITCHEN' | 'CASHIER'
 }
 
 interface TokenResponse {
@@ -107,12 +107,19 @@ async function refreshSession(): Promise<Session> {
   return refreshing
 }
 
-async function currentUser(): Promise<AuthUser> {
+export async function authenticatedRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const version = sessionVersion
+  const request = (current: Session) => {
+    if (version !== sessionVersion) throw new ApiError(401, 'Vui lòng đăng nhập lại.')
+    const headers = new Headers(options.headers)
+    headers.set('Authorization', `Bearer ${current.accessToken}`)
+    return apiRequest<T>(path, { ...options, headers })
+  }
   if (!session) throw new ApiError(401, 'Vui lòng đăng nhập lại.')
   const needsRefresh = session.expiresAt <= Date.now() + 30000
   const current = needsRefresh ? await refreshSession() : session
   try {
-    return await apiRequest<AuthUser>('auth/me', { headers: { Authorization: `Bearer ${current.accessToken}` } })
+    return await request(current)
   } catch (error) {
     if (!(error instanceof ApiError) || error.status !== 401) throw error
     if (needsRefresh) {
@@ -123,7 +130,7 @@ async function currentUser(): Promise<AuthUser> {
     const renewed = session === current ? await refreshSession() : session
     if (!renewed) throw error
     try {
-      return await apiRequest<AuthUser>('auth/me', { headers: { Authorization: `Bearer ${renewed.accessToken}` } })
+      return await request(renewed)
     } catch (retryError) {
       if (retryError instanceof ApiError && retryError.status === 401 && session === renewed) clearSession()
       throw retryError
@@ -164,19 +171,27 @@ export async function login(email: string, password: string) {
   }
   if (version !== sessionVersion) throw new ApiError(401, 'Vui lòng đăng nhập lại.')
   saveSession(tokens)
-  const user = await currentUser()
+  let user: AuthUser
+  try {
+    user = await currentUser()
+  } catch (error) {
+    if (version === sessionVersion) clearSession()
+    throw error
+  }
   if (session && version === sessionVersion) publish({ user, loading: false })
   else throw new ApiError(401, 'Vui lòng đăng nhập lại.')
 }
 
 export async function logout() {
-  if (refreshing) await refreshing
+  if (refreshing) await refreshing.catch(() => {})
   const current = session
+  clearSession()
   if (current) {
     await apiRequest<void>('auth/logout', {
       method: 'POST',
       body: JSON.stringify({ refreshToken: current.refreshToken }),
     })
   }
-  if (session === current) clearSession()
 }
+
+const currentUser = () => authenticatedRequest<AuthUser>('auth/me')

@@ -1,11 +1,11 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import type { Dish } from '../../../../api/menu/types'
-import { reservationService } from '../../../../api/reservations/service'
+import { reservationService, type ReservationSettings } from '../../../../api/reservations/service'
 import type { Reservation, SeatingArea } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
 import type { Language } from '../siteData'
 import {
-  AREAS, BOOKING_COPY, cartGuestCoverage, cartTotal, formatMoney, formatQuantity,
+  BOOKING_COPY, cartGuestCoverage, cartTotal, formatMoney, formatQuantity,
   stepOf, type Cart,
 } from './bookingCopy'
 
@@ -21,22 +21,21 @@ type BookingFormProps = {
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 const MAX_GUESTS = 60
-const PRIVATE_MIN_GUESTS = 8
 
 /** 10:00 – 21:30 every half hour. */
 const SLOTS = Array.from({ length: 24 }, (_, i) => `${String(10 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`)
 
-function restaurantNow() {
+function restaurantNow(timeZone = TIME_ZONE) {
   const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
   }).formatToParts(new Date())
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''
   return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${get('hour')}:${get('minute')}` }
 }
 
 /** Today's slots need at least an hour's notice. */
-function availableSlots(date: string) {
-  const now = restaurantNow()
+function availableSlots(date: string, timeZone = TIME_ZONE) {
+  const now = restaurantNow(timeZone)
   if (date !== now.date) return SLOTS
   const [h, m] = now.time.split(':').map(Number)
   const earliest = h * 60 + m + 60
@@ -73,31 +72,39 @@ export function BookingForm({
   language, dishes, cart, guests, onGuestsChange, onCartChange, onCartClear,
 }: BookingFormProps) {
   const t = BOOKING_COPY[language]
-  const today = restaurantNow().date
+  const [settings, setSettings] = useState<ReservationSettings | null>(null)
+  const today = restaurantNow(settings?.timezone).date
   const initialSlots = availableSlots(today)
   const [date, setDate] = useState(today)
   const [time, setTime] = useState(() => (initialSlots.includes('18:30') ? '18:30' : initialSlots[0] ?? ''))
-  const [area, setArea] = useState<SeatingArea>('main')
+  const [area, setArea] = useState('')
+  const [settingsError, setSettingsError] = useState('')
+  useEffect(() => {
+    let active = true
+    reservationService.settings().then(value => {
+      if (active) { setSettings(value); setArea(value.areas[0]?.id ?? '') }
+    }).catch((error: unknown) => { if (active) setSettingsError(error instanceof Error ? error.message : 'Không tải được cấu hình đặt bàn.') })
+    return () => { active = false }
+  }, [])
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState(false)
   const [done, setDone] = useState<Reservation | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const slots = availableSlots(date)
+  const slots = availableSlots(date, settings?.timezone)
   const lunchSlots = slots.filter((s) => Number(s.slice(0, 2)) < 15)
   const dinnerSlots = slots.filter((s) => Number(s.slice(0, 2)) >= 15)
 
-  const onlineAllowed = reservationService.isOnlineReservationsEnabled()
+  const onlineAllowed = !!settings?.onlineReservations && !!area
   const chosen = dishes.filter((d) => cart[d.id])
   const total = cartTotal(cart, dishes)
   const [minCovered, maxCovered] = cartGuestCoverage(cart, dishes)
   const hasFoodInCart = chosen.some((d) => d.serves)
-  const privateTooSmall = area === 'private' && guests < PRIVATE_MIN_GUESTS
   const setGuestCount = (value: number) => onGuestsChange(Math.max(1, Math.min(MAX_GUESTS, Math.round(value) || 1)))
 
   function handleDateChange(nextDate: string) {
     setDate(nextDate)
-    const nextSlots = availableSlots(nextDate)
+    const nextSlots = availableSlots(nextDate, settings?.timezone)
     if (!nextSlots.includes(time)) {
       setTime(nextSlots.includes('18:30') ? '18:30' : nextSlots[0] ?? '')
     }
@@ -105,7 +112,7 @@ export function BookingForm({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (privateTooSmall || sending || !time) {
+    if (!onlineAllowed || sending || !time) {
       if (!time) setFailed(true)
       return
     }
@@ -114,9 +121,8 @@ export function BookingForm({
     setSending(true)
     setFailed(false)
     try {
-      const startsAt = new Date(`${date}T${time}:00+07:00`).toISOString()
       const reservation = await reservationService.create({
-        date, time, guests, area, occasion: 'none', startsAt, durationMinutes: 120,
+        date, time, guests, area: 'main', areaId: area, occasion: 'none', durationMinutes: 120,
         name: text('name'), phone: text('phone'), email: text('email') || undefined, note: text('note') || undefined,
         items: chosen.map((d) => ({ dishId: d.id, quantity: cart[d.id] })),
       })
@@ -186,7 +192,7 @@ export function BookingForm({
           </div>
           <div>
             <dt>{t.area}</dt>
-            <dd>{t.areaLabel[done.area]}</dd>
+            <dd>{settings?.areas.find(a => a.id === done.areaId)?.name ?? done.areaId}</dd>
           </div>
           <div>
             <dt>{t.doneContact}</dt>
@@ -219,7 +225,6 @@ export function BookingForm({
         )}
 
         <div className="bk-ticket-footer">
-          <p className="bk-demo-note">{t.demoNote}</p>
           <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
           <button type="button" className="sb-catering-submit" onClick={() => setDone(null)}>{t.doneAgain}</button>
         </div>
@@ -231,7 +236,9 @@ export function BookingForm({
     <form className="bk-form" onSubmit={submit} onChange={() => setFailed(false)}>
       <div className="bk-form-top">
         <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
-        {!onlineAllowed && <p className="bk-offline-banner" role="alert">{t.onlineClosed}</p>}
+        {settingsError && <p role="alert">{settingsError}</p>}
+        {!settings && !settingsError && <p role="status">{language === 'vi' ? 'Đang tải cấu hình đặt bàn…' : 'Loading booking settings…'}</p>}
+        {settings && !onlineAllowed && <p className="bk-offline-banner" role="alert">{t.onlineClosed}</p>}
       </div>
       <fieldset className="bk-form-fields" disabled={!onlineAllowed}>
       <div className="bk-form-col">
@@ -254,12 +261,6 @@ export function BookingForm({
             </div>
           </div>
 
-          {guests >= PRIVATE_MIN_GUESTS && area !== 'private' && (
-            <div className="bk-smart-banner" role="status">
-              <span>{t.recommendPrivate}</span>
-              <button type="button" onClick={() => setArea('private')}>{t.switchPrivate}</button>
-            </div>
-          )}
 
           <div className="bk-time-picker">
             <div className="bk-time-head">
@@ -315,36 +316,25 @@ export function BookingForm({
           <div>
             <span className="bk-label">{t.area} <span className="bk-required">*</span></span>
             <div className="bk-area-cards" role="radiogroup" aria-label={t.area}>
-              {AREAS.map((a) => {
-                const selected = area === a
+              {settings?.areas.map((a) => {
+                const selected = area === a.id
                 return (
                   <button
-                    key={a}
+                    key={a.id}
                     type="button"
                     role="radio"
                     aria-checked={selected}
                     className={`bk-area-card${selected ? ' is-selected' : ''}`}
-                    onClick={() => setArea(a)}
+                    onClick={() => setArea(a.id)}
                   >
                     <div className="bk-area-card-top">
-                      <span className="bk-area-icon">{AREA_ICONS[a]}</span>
-                      <span className="bk-area-cap">
-                        <MenuIcon name="people" size={13} />
-                        {t.areaCapacity[a]}
-                      </span>
+                      <span className="bk-area-icon">{AREA_ICONS.main}</span>
                     </div>
-                    <strong className="bk-area-name">{t.areaLabel[a]}</strong>
-                    <span className="bk-area-desc">{t.areaHint[a]}</span>
-                    <span className="bk-area-features">
-                      {t.areaFeatures[a].map((feat) => (
-                        <span key={feat} className="bk-area-tag">{feat}</span>
-                      ))}
-                    </span>
+                    <strong className="bk-area-name">{a.name}</strong>
                   </button>
                 )
               })}
             </div>
-            {privateTooSmall && <p className="bk-error" role="alert">{t.privateTooSmall}</p>}
           </div>
         </fieldset>
       </div>
@@ -439,7 +429,7 @@ export function BookingForm({
 
         {failed && <p className="bk-error" role="alert">{t.failed}</p>}
         <div className="bk-submit-row">
-          <button className="sb-catering-submit" type="submit" disabled={sending || privateTooSmall || !slots.length}>
+          <button className="sb-catering-submit" type="submit" disabled={sending || !onlineAllowed || !slots.length}>
             {sending ? t.submitting : t.submit}
           </button>
           <p>{t.requiredHint}</p>

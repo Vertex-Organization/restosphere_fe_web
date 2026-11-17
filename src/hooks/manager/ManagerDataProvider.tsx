@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { managerService } from '../../api/manager/service'
+import { getManagerUser, updateManagerProfile } from '../../api/manager/auth'
+import type { ManagerUser } from '../../api/manager/types'
 import type { ManagerCommand, ManagerData } from '../../api/manager/types'
 
 interface Store { data: ManagerData | null; error: string; busy: boolean; notice: string; refresh: () => Promise<void>; execute: (command: ManagerCommand) => Promise<void>; dismiss: () => void }
@@ -9,6 +11,10 @@ export function ManagerDataProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
+  useEffect(() => {
+    const profile = data?.employees.find(employee => employee.id === getManagerUser()?.id)
+    if (profile) updateManagerProfile(profile as typeof profile & ManagerUser)
+  }, [data])
   const refresh = useCallback(async () => { try { setData(await managerService.load()); setError('') } catch (e) { setError(e instanceof Error ? e.message : 'Không tải được dữ liệu.') } }, [])
   useEffect(() => {
     let active = true
@@ -19,7 +25,7 @@ export function ManagerDataProvider({ children }: { children: ReactNode }) {
   const execute = async (command: ManagerCommand) => {
     if (!data) throw new Error('Dữ liệu chưa sẵn sàng.')
     setBusy(true)
-    try { setData(await managerService.execute(command, data.revision)); setNotice('Đã lưu thay đổi vào dữ liệu mô phỏng.') }
+    try { setData(await managerService.execute(command)); setNotice('Đã lưu thay đổi.') }
     catch (e) { await refresh(); throw e }
     finally { setBusy(false) }
   }

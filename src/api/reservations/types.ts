@@ -1,10 +1,5 @@
 /** Where in the restaurant the guests would like to sit. */
 export type SeatingArea = 'main' | 'outdoor' | 'private'
-export const AREA_ID_BY_SEATING: Record<SeatingArea, string> = {
-  main: 'floor-1',
-  outdoor: 'outside',
-  private: 'vip',
-}
 
 export type Occasion = 'none' | 'birthday' | 'family' | 'company' | 'other'
 
@@ -31,7 +26,7 @@ export interface ReservationRequest {
   time: string
   guests: number
   area: SeatingArea
-  areaId?: string
+  areaId: string
   startsAt?: string
   durationMinutes?: number
   occasion: Occasion

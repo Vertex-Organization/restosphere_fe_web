@@ -51,7 +51,7 @@ export default function KitchenProfilePage() {
       </div>
       <p className="k-callout">
         <Icon name="info" size={14} />
-        Dữ liệu mô phỏng lưu trên trình duyệt này, chưa kết nối máy chủ thật và được tạo lại mỗi ngày.
+        Dữ liệu được tải từ máy chủ và cập nhật định kỳ.
       </p>
     </div>
   )

@@ -15,10 +15,10 @@ function moduleUrl(file) {
   urls.set(file, url)
   return url
 }
-const { createSeedData } = await import(moduleUrl('src/api/billing/mockData.ts'))
+const { createSeedData } = await import(moduleUrl('scripts/fixtures/billing.ts'))
 const { isBillable, subtotalOf } = await import(moduleUrl('src/api/billing/money.ts'))
 const { applyCashierCommand } = await import(moduleUrl('src/api/billing/rules.ts'))
-const { applyDevEvent } = await import(moduleUrl('src/api/billing/devEvents.ts'))
+const { applyDevEvent } = await import(moduleUrl('scripts/fixtures/billingEvents.ts'))
 
 const now = new Date('2026-11-12T12:00:00+07:00')
 const seed = () => createSeedData(now)

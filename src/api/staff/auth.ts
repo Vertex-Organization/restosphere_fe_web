@@ -1,76 +1,52 @@
-import { useSyncExternalStore } from 'react'
-import { hasWorkspace, staffPaths } from '../../routes/staffRouter'
-import { findDemoAccount, findDemoAccountById, type StaffAccount } from './mockAccounts'
+import { useEffect, useSyncExternalStore } from 'react'
+import { getAuthState, login, logout, restoreAuth, subscribeAuth, type AuthUser } from '../auth'
+import { ApiError } from '../client'
+import { hasWorkspace, STAFF_ROLE_LABEL, staffPaths } from '../../routes/staffRouter'
+import type { StaffAccount } from './types'
 
-export type { StaffAccount } from './mockAccounts'
+export type { StaffAccount } from './types'
+export { ApiError as StaffAuthError }
+export const subscribeStaffAuth = subscribeAuth
+let cachedUser: AuthUser | null = null
+let cachedAccount: StaffAccount | null = null
 
-// One staff session for every web workspace (Admin, Manager, Cashier, Kitchen).
-// Kept per browser tab, so two tabs can act as two employees.
-// Route guards only shape the UI; the backend must enforce roles.
-
-const SESSION_KEY = 'restosphere.staff.session.v1'
-const listeners = new Set<() => void>()
-
-export class StaffAuthError extends Error {}
-
-function restore(): StaffAccount | null {
-  try {
-    const id = sessionStorage.getItem(SESSION_KEY)
-    return id ? findDemoAccountById(id) : null
-  } catch {
-    return null
+export function getStaffSession(): StaffAccount | null {
+  const { user } = getAuthState()
+  if (user !== cachedUser) {
+    cachedUser = user
+    cachedAccount = user ? {
+      id: user.id, username: user.email, email: user.email, name: user.fullName,
+      role: user.role, position: STAFF_ROLE_LABEL[user.role],
+    } : null
   }
-}
-
-let session: StaffAccount | null = restore()
-
-function publish(next: StaffAccount | null) {
-  session = next
-  listeners.forEach((listener) => listener())
-}
-
-export function subscribeStaffAuth(listener: () => void) {
-  listeners.add(listener)
-  return () => { listeners.delete(listener) }
-}
-
-export function getStaffSession() {
-  return session
+  return cachedAccount
 }
 
 export function useStaffSession() {
+  useEffect(() => { void restoreAuth() }, [])
   return useSyncExternalStore(subscribeStaffAuth, getStaffSession)
 }
 
-export async function staffSignIn(login: string, password: string): Promise<StaffAccount> {
-  await new Promise((resolve) => setTimeout(resolve, 250))
-  const account = findDemoAccount(login, password)
-  if (!account) throw new StaffAuthError('Tên đăng nhập hoặc mật khẩu không đúng.')
-  if (!hasWorkspace(account.role)) {
-    throw new StaffAuthError('Tài khoản Phục vụ dùng ứng dụng RestoSphere Staff trên điện thoại, không có khu làm việc trên web.')
+export function useStaffLoading() {
+  return useSyncExternalStore(subscribeAuth, getAuthState).loading
+}
+
+export async function staffSignIn(email: string, password: string): Promise<StaffAccount> {
+  await login(email, password)
+  const account = getStaffSession()
+  if (!account || !hasWorkspace(account.role)) {
+    await logout().catch(() => {})
+    throw new ApiError(403, 'Tài khoản này dùng ứng dụng RestoSphere Staff trên điện thoại, không có khu làm việc trên web.')
   }
-  try {
-    sessionStorage.setItem(SESSION_KEY, account.id)
-  } catch {
-    throw new StaffAuthError('Trình duyệt không cho phép lưu phiên đăng nhập.')
-  }
-  publish(account)
   return account
 }
 
-function forget() {
-  try { sessionStorage.removeItem(SESSION_KEY) } catch { /* Memory is cleared by the caller. */ }
-}
+export const staffSignOut = logout
 
-export function staffSignOut() {
-  forget()
-  publish(null)
-}
-
-/** Signs out and opens the sign-in page. Workspaces are separate apps, so this is a
- * full page load; listeners are not told first, so no guard redirects in between. */
-export function leaveStaffArea(next?: string) {
-  forget()
-  session = null
-  window.location.replace(next ? `${staffPaths.login}?next=${encodeURIComponent(next)}` : staffPaths.login)
+export async function leaveStaffArea(next?: string) {
+  try { await staffSignOut() } catch {
+    // Local credentials are already cleared when server revocation fails.
+  } finally {
+    window.location.replace(next ? `${staffPaths.login}?next=${encodeURIComponent(next)}` : staffPaths.login)
+  }
 }

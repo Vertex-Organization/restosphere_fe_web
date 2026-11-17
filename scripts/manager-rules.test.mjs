@@ -10,14 +10,15 @@ function moduleUrl(file) {
   file = path.resolve(file)
   if (urls.has(file)) return urls.get(file)
   const js = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2023, module: ts.ModuleKind.ESNext } }).outputText
+    .replace('import.meta.env.VITE_API_BASE_URL', 'undefined')
     .replace(/from ['"](.+?)['"]/g, (_, spec) => `from '${moduleUrl(path.resolve(path.dirname(file), `${spec}.ts`))}'`)
   const url = `data:text/javascript;base64,${Buffer.from(js).toString('base64')}`
   urls.set(file, url)
   return url
 }
-const { createManagerData, MOCK_USERS } = await import(moduleUrl('src/api/manager/mockData.ts'))
+const { createManagerData, MOCK_USERS } = await import(moduleUrl('scripts/fixtures/manager.ts'))
 const { applyManagerCommand } = await import(moduleUrl('src/api/manager/rules.ts'))
-const { dashboard } = await import(moduleUrl('src/api/manager/selectors.ts'))
+const { dashboard, tableCode, tableForOrder } = await import(moduleUrl('src/api/manager/selectors.ts'))
 const { businessDay } = await import(moduleUrl('src/api/manager/dates.ts'))
 const now = new Date('2026-11-12T12:00:00+07:00')
 const manager = MOCK_USERS[0]
@@ -25,29 +26,49 @@ const seed = () => createManagerData(now)
 const execute = (d, c, actor = manager, revision = d.revision) => applyManagerCommand(d, actor, c, revision, now)
 const decision = (id = 'PD-021') => ({ type: 'approval.decide', id, approve: true, reason: 'Đã kiểm tra thông tin' })
 
-test('reservation create and lookup validate identity, dates and local settings', async () => {
-  const store = new Map()
-  const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: k => store.get(k) ?? null, setItem: (k, v) => store.set(k, v) } })
-  try {
-    const { mockReservationService: service, reservationSettings } = await import(moduleUrl('src/api/reservations/service.ts'))
-    const input = { date: '2099-11-13', time: '18:30', guests: 4, area: 'main', occasion: 'none', name: 'Khách thử nghiệm', phone: '0901234567', items: [] }
-    const first = await service.create(input)
-    const second = await service.create(input)
-    assert.equal(first.areaId, 'floor-1'); assert.notEqual(first.code, second.code)
-    assert.equal(first.startsAt, '2099-11-13T11:30:00.000Z')
-    assert.equal((await service.lookup(first.code, '+84 901 234 567')).code, first.code)
-    assert.equal(await service.lookup(first.code, '0900000000'), null)
-    await assert.rejects(service.create({ ...input, date: '2099-02-30' }))
-    await assert.rejects(service.create({ ...input, durationMinutes: -1 }))
-    await assert.rejects(service.create({ ...input, items: [{ dishId: 'x', quantity: NaN }] }))
-    reservationSettings.onlineReservations = false
-    await assert.rejects(service.create(input))
-    reservationSettings.onlineReservations = true
-  } finally {
-    if (previous) Object.defineProperty(globalThis, 'localStorage', previous)
-    else delete globalThis.localStorage
+test('reservation uses server area IDs and propagates server validation and lookup failures', async () => {
+  const previous = globalThis.fetch
+  const calls = []
+  let status = 200
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, ...options })
+    return status === 200 ? Response.json({ code: 'random-code', areaId: 'database-uuid' }) : new Response(null, { status })
   }
+  try {
+    const { reservationService: service } = await import(moduleUrl('src/api/reservations/service.ts'))
+    const input = { date: '2099-11-13', time: '18:30', guests: 4, areaId: 'database-uuid', occasion: 'none', name: 'Khách thử nghiệm', phone: '0901234567', items: [] }
+    const first = await service.create(input)
+    assert.equal(first.areaId, input.areaId)
+    assert.deepEqual(JSON.parse(calls.at(-1).body), input)
+    assert.equal((await service.lookup(first.code, '+84 901 234 567')).code, first.code)
+    assert.deepEqual(JSON.parse(calls.at(-1).body), { code: first.code, phone: '+84 901 234 567' })
+    status = 404
+    assert.equal(await service.lookup(first.code, '0900000000'), null)
+    status = 400
+    await assert.rejects(service.create(input))
+    status = 500
+    await assert.rejects(service.lookup(first.code, input.phone))
+  } finally {
+    globalThis.fetch = previous
+  }
+})
+
+test('manager table labels resolve server codes through UUID relationships without changing IDs', () => {
+  const d = seed()
+  const order = d.orders[0]
+  const session = d.sessions.find(s => s.id === order.sessionId)
+  const table = d.tables.find(t => t.id === session.tableId)
+  table.id = 'd2b59c81-46af-4e71-b649-74db208fe121'
+  table.code = 'VIP-07'
+  session.tableId = table.id
+  const before = structuredClone(d)
+  assert.equal(tableCode(d, session.tableId), 'VIP-07')
+  assert.equal(tableForOrder(d, order), 'VIP-07')
+  assert.equal(tableForOrder(d, { ...order, sessionId: 'missing' }), '—')
+  assert.equal(tableCode(d, 'missing'), '—')
+  assert.deepEqual(d, before)
+  d.tables = []
+  assert.equal(tableForOrder(d, order), '—')
 })
 
 test('dashboard counts derive from the same records as detail pages', () => {

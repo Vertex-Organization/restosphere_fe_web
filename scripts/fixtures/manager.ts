@@ -1,6 +1,6 @@
-import { WORKSPACES } from '../../routes/staffRouter'
-import { addDays, businessDay, dayAt } from './dates'
-import type { ManagerData, ManagerUser } from './types'
+import { WORKSPACES } from '../../src/routes/staffRouter'
+import { addDays, businessDay, dayAt } from '../../src/api/manager/dates'
+import type { ManagerData, ManagerUser } from '../../src/api/manager/types'
 
 /** Manager workspace base, for notification links. */
 const M = WORKSPACES.MANAGER.base
@@ -37,7 +37,7 @@ export function createManagerData(now = new Date()): ManagerData {
     const areaId = i < 12 ? 'A' : 'B'
     const id = `${areaId}${String(i % 12 + 1).padStart(2, '0')}`
     const status = i < 8 || (i >= 12 && i < 16) ? 'OCCUPIED' : i === 8 || i === 16 ? 'CLEANING' : i === 23 ? 'OUT_OF_SERVICE' : 'AVAILABLE'
-    return { id, areaId, seats: i % 3 === 0 ? 6 : 4, status, ...(status === 'OCCUPIED' ? { sessionId: `SS-${id}` } : {}) }
+    return { id, code: id, areaId, seats: i % 3 === 0 ? 6 : 4, status, ...(status === 'OCCUPIED' ? { sessionId: `SS-${id}` } : {}) }
   })
   const sessions = tables.filter(t => t.sessionId).map((t, i) => ({ id: t.sessionId!, tableId: t.id, guests: i % 3 + 2, startedAt: ago(70 - i * 3), waiterId: i % 2 ? 'NV003' : 'NV002', paymentRequested: i === 4 || i === 9 }))
   const orders: ManagerData['orders'] = sessions.map((s, i) => ({ id: `ORD-${String(85 + i).padStart(3, '0')}`, sessionId: s.id, employeeId: s.waiterId, at: ago(i === 2 ? 32 : 8 + i), round: 1, paid: false, items: [0, 1, 2].map((n) => { const m = menu[(i + n) % menu.length]; return { id: `OI-${i}-${n}`, menuId: m.id, name: m.name, quantity: n === 0 ? 2 : 1, unitPrice: m.price, status: i === 2 ? 'PREPARING' : i % 4 === 0 ? 'READY' : i % 4 === 1 ? 'SERVED' : n === 0 ? 'SUBMITTED' : 'PREPARING', note: i === 2 && n === 0 ? 'Khách không ăn cay' : '', chefId: n % 2 ? 'NV011' : 'NV010', ...(i % 4 === 0 ? { readyAt: ago(4) } : {}) } }) }))

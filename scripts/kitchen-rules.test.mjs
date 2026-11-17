@@ -15,7 +15,7 @@ function moduleUrl(file) {
   return url
 }
 
-const { createSeedData } = await import(moduleUrl('src/api/kitchen/mockData.ts'))
+const { createSeedData } = await import(moduleUrl('scripts/fixtures/kitchen.ts'))
 const { applyKitchenCommand } = await import(moduleUrl('src/api/kitchen/rules.ts'))
 const { buildActiveDishQueue, buildReadyDishQueue } = await import(moduleUrl('src/api/kitchen/selectors.ts'))
 

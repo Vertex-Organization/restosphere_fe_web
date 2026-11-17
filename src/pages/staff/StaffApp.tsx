@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useStaffSession } from '../../api/staff/auth'
+import { useStaffLoading, useStaffSession } from '../../api/staff/auth'
 import { BrandLogo } from '../../components/kitchen/BrandLogo'
 import { StaffRedirecting } from '../../components/staff/StaffAccessDenied'
 import { navigate, useKitchenUrl as useStaffUrl } from '../../routes/kitchenRouter'
@@ -17,6 +17,7 @@ function Open({ to }: { to: string }) {
 export default function StaffApp() {
   const { pathname, params } = useStaffUrl()
   const session = useStaffSession()
+  const loading = useStaffLoading()
   const home = session ? homePathFor(session.role) : null
 
   useEffect(() => {
@@ -31,8 +32,10 @@ export default function StaffApp() {
 
   useEffect(() => {
     // Signed-out visitors of /staff land on the sign-in page (same app, no reload).
-    if (pathname === STAFF_BASE && !home) navigate(staffPaths.login, { replace: true })
-  }, [pathname, home])
+    if (!loading && pathname === STAFF_BASE && !home) navigate(staffPaths.login, { replace: true })
+  }, [pathname, home, loading])
+
+  if (loading) return <StaffRedirecting />
 
   if (pathname === staffPaths.login) {
     const next = params.get('next')

@@ -32,7 +32,7 @@ export interface AdminSettings {
   tableHoldMinutes: number
   noShowMinutes: number
   bufferMinutes: number
-  billing: { serviceChargePercent: number; vatPercent: number; bankAccount: string }
+  billing: { serviceChargePercent: number; vatPercent: number; bankAccount: string; bankName?: string; bankAccountName?: string }
   timezone: string
   currency: string
   emailNotifications: boolean
@@ -56,4 +56,11 @@ export interface AdminData {
 
 export interface AdminService {
   load(signal?: AbortSignal): Promise<AdminData>
+  execute(command: AdminCommand): Promise<AdminData>
 }
+
+export type AdminCommand =
+  | { type: 'user.role'; id: string; role: AdminRole }
+  | { type: 'user.status'; id: string; status: AccountStatus }
+  | { type: 'restaurant.update'; restaurant: RestaurantProfile }
+  | { type: 'settings.update'; settings: AdminSettings }

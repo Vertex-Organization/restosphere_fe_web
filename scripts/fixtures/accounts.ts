@@ -1,4 +1,4 @@
-import { WORKSPACES, type StaffRole, type WorkspaceRole } from '../../routes/staffRouter'
+import { WORKSPACES, type StaffRole, type WorkspaceRole } from '../../src/routes/staffRouter'
 
 export interface StaffAccount {
   /** Employee id shared by every module (NV010 is the same cook in Kitchen, Cashier and Manager data). */

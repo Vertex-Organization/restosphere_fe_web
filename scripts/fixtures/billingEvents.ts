@@ -1,10 +1,10 @@
-import { REQUEST_TYPE_LABEL } from './labels'
-import { formatVnd, isBillable } from './money'
+import { REQUEST_TYPE_LABEL } from '../../src/api/billing/labels'
+import { formatVnd, isBillable } from '../../src/api/billing/money'
 import {
   cleanText, cloneData, makeId, nextCode, pad, recompute, settleIfPaid, tableCodeOf, touch,
-} from './rules'
-import { billView } from './selectors'
-import { CashierError, type CashierData, type CommandResult, type OrderItem } from './types'
+} from '../../src/api/billing/rules'
+import { billView } from '../../src/api/billing/selectors'
+import { CashierError, type CashierData, type CommandResult, type OrderItem } from '../../src/api/billing/types'
 
 // Events that other roles (Waiter, Kitchen, Manager) or the bank would send
 // through the backend. They exist only so the cashier screens can be tested

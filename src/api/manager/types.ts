@@ -2,7 +2,7 @@ export type Permission = 'tables.edit' | 'reservations.edit' | 'employees.assign
 export interface ManagerUser { id: string; name: string; role: 'MANAGER' | 'CASHIER'; position: string; permissions: Permission[]; approvalLimit: number }
 export interface Area { id: string; name: string }
 export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'CLEANING' | 'OUT_OF_SERVICE'
-export interface RestaurantTable { id: string; areaId: string; seats: number; status: TableStatus; sessionId?: string }
+export interface RestaurantTable { id: string; code: string; areaId: string; seats: number; status: TableStatus; sessionId?: string }
 export interface TableSession { id: string; tableId: string; guests: number; startedAt: string; waiterId: string; paymentRequested: boolean }
 export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'ARRIVED' | 'SEATED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'NO_SHOW'
 export interface Reservation {

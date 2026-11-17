@@ -32,7 +32,7 @@ export function StatusBadge({ status }: { status: AccountStatus }) {
   return <span className={`a-badge a-badge--${status === 'ACTIVE' ? 'success' : 'danger'}`}><i />{status === 'ACTIVE' ? 'Hoạt động' : 'Đã khóa'}</span>
 }
 
-export function DemoNotice({ children = 'Dữ liệu mô phỏng · Chưa kết nối API quản trị' }: { children?: ReactNode }) {
+export function DemoNotice({ children = 'Dữ liệu được tải từ máy chủ' }: { children?: ReactNode }) {
   return <div className="a-demo-notice" role="note"><Icon name="info" size={16} /><span>{children}</span></div>
 }
 

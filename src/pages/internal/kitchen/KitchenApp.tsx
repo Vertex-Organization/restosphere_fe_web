@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, type ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { KitchenDataProvider } from '../../../hooks/kitchen/KitchenDataProvider'
 import { useKitchenUser } from '../../../hooks/kitchen/useKitchenAuth'
@@ -14,8 +14,6 @@ import KitchenTicketPage from './KitchenTicketPage'
 import '../../../components/kitchen/kitchen.css'
 import './kitchenPages.css'
 
-// Development-only simulator; removed from production builds.
-const KitchenDevPage = import.meta.env.DEV ? lazy(() => import('./KitchenDevPage')) : null
 
 const TITLES: Record<KitchenRoute['name'], string> = {
   board: 'Bảng bếp',
@@ -39,7 +37,6 @@ function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactN
     case 'menu-status': return <KitchenMenuStatusPage />
     case 'notifications': return <KitchenNotificationsPage />
     case 'profile': return <KitchenProfilePage />
-    case 'dev': return KitchenDevPage ? <Suspense fallback={null}><KitchenDevPage /></Suspense> : null
     default: return (
       <div className="k-state">
         <p className="k-state-title">Không tìm thấy trang</p>
