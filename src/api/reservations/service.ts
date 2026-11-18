@@ -25,4 +25,7 @@ export const reservationService = {
       throw error
     }
   },
+  cancel: (code: string, phone: string, reason: string) => apiRequest<Reservation>('reservations/cancel', {
+    method: 'POST', body: JSON.stringify({ code: code.trim(), phone: phone.trim(), reason: reason.trim() }),
+  }),
 }

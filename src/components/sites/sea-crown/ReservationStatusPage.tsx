@@ -27,6 +27,20 @@ export default function ReservationStatusPage({ language }: { language: Language
     }
   }
 
+  const [reason, setReason] = useState('')
+  const handleCancel = async () => {
+    if (!result || !reason.trim()) return
+    setLoading(true)
+    setError('')
+    try {
+      setResult(await reservationService.cancel(result.code, phone, reason))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Không thể hủy đặt bàn.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const statusLabel: Record<string, string> = {
     PENDING: en ? 'Pending Confirmation' : 'Chờ xác nhận',
     CONFIRMED: en ? 'Confirmed' : 'Đã xác nhận',
@@ -121,6 +135,28 @@ export default function ReservationStatusPage({ language }: { language: Language
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+            {(result.status === 'PENDING' || result.status === 'CONFIRMED') && (
+              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label htmlFor="rs-reason" style={{ fontWeight: 600 }}>
+                  {en ? 'Cancellation reason' : 'Lý do hủy'} *
+                </label>
+                <textarea
+                  id="rs-reason"
+                  maxLength={1000}
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #ccc' }}
+                />
+                <button
+                  type="button"
+                  className="sb-catering-submit"
+                  disabled={loading || !reason.trim()}
+                  onClick={handleCancel}
+                >
+                  {en ? 'Cancel Reservation' : 'Hủy đặt bàn'}
+                </button>
               </div>
             )}
           </div>

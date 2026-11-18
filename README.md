@@ -9,6 +9,7 @@ với tiếng Việt mặc định và lựa chọn tiếng Anh.
 - Trang chủ giới thiệu nhà hàng, cua hoàng đế, tôm hùm, tôm, mực và các món dùng chung.
 - Thực đơn món ăn, đồ uống và đặt tiệc bằng SVG, có thể mở xem ở kích thước đầy đủ.
 - Biểu mẫu tư vấn đặt tiệc có kiểm tra thông tin và tạo email nháp để khách tự gửi.
+- Trang `/reservation-status`: tra cứu đặt bàn bằng mã + số điện thoại; khách tự hủy (kèm lý do) khi đơn đang chờ xác nhận hoặc đã xác nhận.
 - Chuyển ngôn ngữ VI / EN, thông tin chi nhánh, giờ hoạt động và câu hỏi thường gặp.
 - Cuộn mượt, chuyển trang, slider kéo thả, ảnh chạy ngang, video và bong bóng tương tác ở footer.
 
