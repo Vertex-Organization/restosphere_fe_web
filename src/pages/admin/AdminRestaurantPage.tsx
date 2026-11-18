@@ -2,6 +2,10 @@ import { useState, type FormEvent } from 'react'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
 import { Button, DemoNotice, Field, PageHeader, SectionCard } from '../../components/admin/ui'
 
+// Mirrors the server limits so most mistakes are caught before the PUT.
+const MAX_LENGTHS = [['name', 'Tên nhà hàng', 150], ['hotline', 'Hotline', 30], ['address', 'Địa chỉ', 255], ['description', 'Mô tả ngắn', 255], ['openingHours', 'Giờ mở cửa', 255], ['email', 'Email liên hệ', 255]] as const
+const IMAGE_FIELDS = [['logoUrl', 'Logo nhà hàng'], ['coverUrl', 'Ảnh bìa']] as const
+
 function UploadField({ label, value, onChange }: { label: string; value: string; onChange: (url: string) => void }) {
   return <Field label={label}><input className="a-input" type="url" value={value} onChange={event => onChange(event.target.value)} placeholder="https://" /></Field>
 }
@@ -19,6 +23,8 @@ export default function AdminRestaurantPage() {
     if (form.name.trim().length < 2) { setError('Tên nhà hàng cần ít nhất 2 ký tự.'); return }
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) { setError('Email liên hệ chưa đúng định dạng.'); return }
     for (const key of ['facebook', 'instagram', 'tiktok'] as const) { if (form[key] && !/^https:\/\//.test(form[key])) { setError(`${key} cần URL bắt đầu bằng https://.`); return } }
+    for (const [key, label, max] of MAX_LENGTHS) { if (form[key].length > max) { setError(`${label} tối đa ${max} ký tự.`); return } }
+    for (const [key, label] of IMAGE_FIELDS) { if (form[key] && !/^https:\/\//.test(form[key])) { setError(`${label} cần URL bắt đầu bằng https://.`); return } }
     try { await execute({ type: 'restaurant.update', restaurant: form }); setMessage('Đã lưu thông tin nhà hàng.') }
     catch (reason) { setError(reason instanceof Error ? reason.message : 'Không lưu được thông tin.') }
   }
