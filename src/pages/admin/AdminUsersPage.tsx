@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { AccountStats } from '../../components/admin/AccountStats'
 import { ADMIN_ROLES, type AccountStatus, type AdminRole } from '../../api/admin/types'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
+import { useAdminUser } from '../../api/admin/auth'
 import { adminPath } from '../../routes/adminRouter'
 import { AdminLink, Button, DataTable, Modal, PageHeader, RoleBadge, StatusBadge } from '../../components/admin/ui'
 import { ROLE_LABELS } from '../../components/admin/constants'
 
 export default function AdminUsersPage() {
   const { data, execute } = useAdminData()
+  const me = useAdminUser()
   const [query, setQuery] = useState('')
   const [role, setRole] = useState<AdminRole | ''>('')
   const [status, setStatus] = useState<AccountStatus | ''>('')
@@ -55,7 +57,7 @@ export default function AdminUsersPage() {
     {selected && <Modal title={selected.fullName} description={selected.email} onClose={close} footer={<Button onClick={close}>Đóng</Button>}>
       <p>{selected.id}</p><RoleBadge role={selected.role} /> <StatusBadge status={selected.status} />
       <p><AdminLink to={`${adminPath('roles')}?user=${encodeURIComponent(selected.id)}`}>Mở phân quyền</AdminLink></p>
-      {confirming ? <><p>Xác nhận {selected.status === 'ACTIVE' ? 'khóa' : 'mở khóa'} tài khoản?</p><Button disabled={busy} onClick={() => setConfirming(false)}>Hủy</Button><Button disabled={busy} onClick={changeStatus}>Xác nhận</Button></> : <Button onClick={() => setConfirming(true)}>{selected.status === 'ACTIVE' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}</Button>}
+      {selected.id === me?.id ? <p>Không thể tự khóa tài khoản của mình.</p> : confirming ? <><p>Xác nhận {selected.status === 'ACTIVE' ? 'khóa' : 'mở khóa'} tài khoản?</p><Button disabled={busy} onClick={() => setConfirming(false)}>Hủy</Button><Button disabled={busy} onClick={changeStatus}>Xác nhận</Button></> : <Button onClick={() => setConfirming(true)}>{selected.status === 'ACTIVE' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}</Button>}
       {error && <p role="alert">{error}</p>}
     </Modal>}
   </>
