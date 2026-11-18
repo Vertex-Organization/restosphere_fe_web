@@ -16,6 +16,12 @@ export const adminService: AdminService = {
       })
       return adminService.load()
     }
+    if (command.type === 'user.role') {
+      await authenticatedRequest<AdminUser>(`admin/users/${encodeURIComponent(command.id)}/role`, {
+        method: 'PATCH', body: JSON.stringify({ role: command.role }),
+      })
+      return adminService.load()
+    }
     if (command.type === 'settings.update') {
       // Admin snapshots omit bank names; preserve them from the cashier contract when saving.
       const { config } = await authenticatedRequest<{ config: { bank: { bankName: string; accountName: string } | null } }>('workspaces/cashier')
