@@ -1,12 +1,8 @@
-/** Where in the restaurant the guests would like to sit. */
-export type SeatingArea = 'main' | 'outdoor' | 'private'
-
-export type Occasion = 'none' | 'birthday' | 'family' | 'company' | 'other'
-
 export interface PreorderLine {
   dishId: string
   /** Portions, or kilograms for seafood priced per kg. */
   quantity: number
+  name?: string
 }
 
 export type ReservationStatus =
@@ -25,11 +21,9 @@ export interface ReservationRequest {
   /** HH:mm */
   time: string
   guests: number
-  area: SeatingArea
   areaId: string
   startsAt?: string
   durationMinutes?: number
-  occasion: Occasion
   name: string
   phone: string
   email?: string
@@ -43,15 +37,5 @@ export interface Reservation extends ReservationRequest {
   createdAt: string
   startsAt: string
   durationMinutes: number
-  areaId: string
-}
-
-export class ReservationError extends Error {
-  readonly code: 'INVALID' | 'NETWORK'
-
-  constructor(code: ReservationError['code'], message: string) {
-    super(message)
-    this.name = 'ReservationError'
-    this.code = code
-  }
+  areaName: string
 }

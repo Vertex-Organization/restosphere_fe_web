@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import type { Dish } from '../../../../api/menu/types'
 import { reservationService, type ReservationSettings } from '../../../../api/reservations/service'
-import type { Reservation, SeatingArea } from '../../../../api/reservations/types'
+import type { Reservation } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
 import type { Language } from '../siteData'
 import {
@@ -42,8 +42,7 @@ function availableSlots(date: string, timeZone = TIME_ZONE) {
   return SLOTS.filter((slot) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3)) >= earliest)
 }
 
-const AREA_ICONS: Record<SeatingArea, ReactNode> = {
-  main: (
+const AREA_ICON = (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="3" y="4" width="22" height="7" rx="2" />
       <path d="M7 8c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0" />
@@ -51,22 +50,7 @@ const AREA_ICONS: Record<SeatingArea, ReactNode> = {
       <circle cx="19.5" cy="19.5" r="3.5" />
       <path d="M8.5 14v1.5M8.5 23.5V25M19.5 14v1.5M19.5 23.5V25" />
     </svg>
-  ),
-  outdoor: (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M14 4c-5.5 0-10 4-10 9h20c0-5-4.5-9-10-9Z" />
-      <path d="M14 13v11M9 24h10" />
-      <circle cx="22" cy="6" r="2" />
-    </svg>
-  ),
-  private: (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="22" height="22" rx="4" />
-      <rect x="8" y="10" width="12" height="8" rx="2" />
-      <path d="M10 7.5h2M16 7.5h2M10 20.5h2M16 20.5h2M5.5 13v2M22.5 13v2" />
-    </svg>
-  ),
-}
+)
 
 export function BookingForm({
   language, dishes, cart, guests, onGuestsChange, onCartChange, onCartClear,
@@ -122,7 +106,7 @@ export function BookingForm({
     setFailed(false)
     try {
       const reservation = await reservationService.create({
-        date, time, guests, area: 'main', areaId: area, occasion: 'none', durationMinutes: 120,
+        date, time, guests, areaId: area, durationMinutes: 120,
         name: text('name'), phone: text('phone'), email: text('email') || undefined, note: text('note') || undefined,
         items: chosen.map((d) => ({ dishId: d.id, quantity: cart[d.id] })),
       })
@@ -192,7 +176,7 @@ export function BookingForm({
           </div>
           <div>
             <dt>{t.area}</dt>
-            <dd>{settings?.areas.find(a => a.id === done.areaId)?.name ?? done.areaId}</dd>
+            <dd>{done.areaName}</dd>
           </div>
           <div>
             <dt>{t.doneContact}</dt>
@@ -328,7 +312,7 @@ export function BookingForm({
                     onClick={() => setArea(a.id)}
                   >
                     <div className="bk-area-card-top">
-                      <span className="bk-area-icon">{AREA_ICONS.main}</span>
+                      <span className="bk-area-icon">{AREA_ICON}</span>
                     </div>
                     <strong className="bk-area-name">{a.name}</strong>
                   </button>
