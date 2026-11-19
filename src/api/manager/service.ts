@@ -1,5 +1,5 @@
 import { authenticatedRequest } from '../auth'
-import type { ManagerCommand, ManagerData, MenuCategory, MenuItem } from './types'
+import type { Area, ManagerCommand, ManagerData, MenuCategory, MenuItem, RestaurantTable } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -7,6 +7,14 @@ interface ItemDto {
   imageUrl: string | null; status: MenuItem['status']; unit: 'portion' | 'kg'; updatedAt: string
 }
 
+interface ManagerTableDto {
+  id: string; code: string; areaId: string; areaName: string; seats: number
+  status: RestaurantTable['status']; sessionId: string | null; hasActiveReservation: boolean
+}
+
+const toTable = ({ id, code, areaId, seats, status, sessionId, hasActiveReservation }: ManagerTableDto): RestaurantTable => ({
+  id, code, areaId, seats, status, sessionId: sessionId ?? undefined, hasActiveReservation,
+})
 const toCategory = ({ id, name, visible, sortOrder, group }: CategoryDto): MenuCategory => ({ id, name, visible, sort: sortOrder, group })
 const toItem = ({ id, name, categoryId, price, imageUrl, description, status, unit, updatedAt }: ItemDto): MenuItem => ({
   id, name, categoryId, price: Number(price), image: imageUrl ?? '', description: description ?? '', status, unit, updatedAt,
@@ -15,12 +23,14 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
+      authenticatedRequest<Area[]>('areas'),
+      authenticatedRequest<ManagerTableDto[]>('manager/tables'),
     ])
-    return { ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem) }
+    return { ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable) }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
     if (command.type === 'category.save') {
@@ -38,6 +48,13 @@ export const managerService = {
       const { id, name, categoryId, price, description, image, status, unit } = command.item
       await authenticatedRequest<ItemDto>(command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`, {
         method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, categoryId, price, description, imageUrl: image, status, unit: unit ?? 'portion' }),
+      })
+      return managerService.load()
+    }
+    if (command.type === 'table.update') {
+      const { id, code, areaId, seats, inactive } = command
+      await authenticatedRequest<unknown>(`tables/${encodeURIComponent(id)}`, {
+        method: 'PUT', body: JSON.stringify({ code, areaId, capacity: seats, outOfService: inactive }),
       })
       return managerService.load()
     }

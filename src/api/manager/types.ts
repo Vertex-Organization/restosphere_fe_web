@@ -2,7 +2,7 @@ export type Permission = 'tables.edit' | 'reservations.edit' | 'employees.assign
 export interface ManagerUser { id: string; name: string; role: 'MANAGER' | 'CASHIER'; position: string; permissions: Permission[]; approvalLimit: number }
 export interface Area { id: string; name: string }
 export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'CLEANING' | 'OUT_OF_SERVICE'
-export interface RestaurantTable { id: string; code: string; areaId: string; seats: number; status: TableStatus; sessionId?: string }
+export interface RestaurantTable { id: string; code: string; areaId: string; seats: number; status: TableStatus; sessionId?: string; hasActiveReservation?: boolean }
 export interface TableSession { id: string; tableId: string; guests: number; startedAt: string; waiterId: string; paymentRequested: boolean }
 export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'ARRIVED' | 'SEATED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'NO_SHOW'
 export interface Reservation {
@@ -61,7 +61,7 @@ export interface AuditEvent { id: string; at: string; actorId: string; entityId:
 export interface ManagerData { schema: 1; revision: number; seedDay: string; areas: Area[]; tables: RestaurantTable[]; sessions: TableSession[]; reservations: Reservation[]; orders: Order[]; employees: Employee[]; shifts: Shift[]; categories: MenuCategory[]; menu: MenuItem[]; approvals: Approval[]; incidents: Incident[]; notifications: ManagerNotification[]; bills: Bill[]; payments: Payment[]; history: AuditEvent[]; outbox: OutboxMessage[] }
 export type ManagerCommand =
   | { type: 'reservation.move'; id: string; tableId: string; reason: string }
-  | { type: 'table.update'; id: string; seats: number; areaId: string; inactive: boolean }
+  | { type: 'table.update'; id: string; code: string; seats: number; areaId: string; inactive: boolean }
   | { type: 'employee.assign'; id: string; areaId: string }
   | { type: 'shift.save'; shift: Shift }
   | { type: 'menu.save'; item: MenuItem; creating: boolean }
