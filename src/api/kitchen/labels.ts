@@ -47,7 +47,7 @@ export const MENU_STATUS_LABEL: Record<MenuAvailability, string> = {
   DISCONTINUED: 'Ngừng bán',
 }
 
-export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = {
+const KNOWN_NOTIFICATION_LABELS: Record<NotificationKind, string> = {
   NEW_ORDER: 'Đơn mới',
   ADD_ON: 'Gọi thêm món',
   CANCELLED: 'Món bị hủy',
@@ -55,3 +55,8 @@ export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = {
   PRIORITY: 'Yêu cầu ưu tiên',
   MENU_REQUEST: 'Yêu cầu thực đơn',
 }
+
+/** Kinds the backend adds later still get a label instead of `undefined`. */
+export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = new Proxy(KNOWN_NOTIFICATION_LABELS, {
+  get: (labels, kind) => (typeof kind === 'string' && kind in labels ? labels[kind as NotificationKind] : 'Thông báo'),
+})
