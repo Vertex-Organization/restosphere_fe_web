@@ -1,5 +1,5 @@
 import { authenticatedRequest } from '../auth'
-import type { Area, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable } from './types'
+import type { Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -19,6 +19,14 @@ interface ReservationDto {
   preorder: { menuItemId: string; menuItemName: string; quantity: number; note: string }[]
 }
 
+interface EmployeeDto {
+  id: string; name: string; email: string; role: string; department: Employee['department']; position: string
+  status: 'ACTIVE' | 'INACTIVE'; areaId: string; areaName: string
+}
+
+const toEmployee = ({ id, name, email, role, department, position, status, areaId, areaName }: EmployeeDto): Employee => ({
+  id, name, email, role, department, position, status, areaId, areaName,
+})
 const toReservation = ({ tableId, tableCode, actualGuests, ...rest }: ReservationDto): Reservation => ({
   ...rest, tableId: tableId ?? '', tableCode: tableCode ?? undefined, actualGuests: actualGuests ?? undefined,
 })
@@ -33,15 +41,22 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu, areas, tables, reservations] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables, reservations, employees] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
       authenticatedRequest<Area[]>('areas'),
       authenticatedRequest<ManagerTableDto[]>('manager/tables'),
       authenticatedRequest<ReservationDto[]>('manager/reservations'),
+      authenticatedRequest<EmployeeDto[]>('manager/employees'),
     ])
-    return { ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation) }
+    // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
+    // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
+    const snapshotEmployees = new Map(snapshot.employees.map(e => [e.id, e]))
+    return {
+      ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
+      employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })),
+    }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
     if (command.type === 'category.save') {
@@ -59,6 +74,12 @@ export const managerService = {
       const { id, name, categoryId, price, description, image, status, unit } = command.item
       await authenticatedRequest<ItemDto>(command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`, {
         method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, categoryId, price, description, imageUrl: image, status, unit: unit ?? 'portion' }),
+      })
+      return managerService.load()
+    }
+    if (command.type === 'employee.assign') {
+      await authenticatedRequest<EmployeeDto>(`manager/employees/${encodeURIComponent(command.id)}/area`, {
+        method: 'PATCH', body: JSON.stringify({ areaId: command.areaId }),
       })
       return managerService.load()
     }

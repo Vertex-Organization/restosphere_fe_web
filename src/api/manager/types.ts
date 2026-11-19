@@ -29,7 +29,7 @@ export interface Reservation {
 export type ItemStatus = 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'REJECTED' | 'CANCELLED' | 'VOIDED'
 export interface OrderItem { id: string; menuId: string; name: string; quantity: number; unitPrice: number; status: ItemStatus; note: string; chefId: string; readyAt?: string }
 export interface Order { id: string; sessionId: string; employeeId: string; at: string; round: number; paid: boolean; items: OrderItem[] }
-export interface Employee { id: string; name: string; department: 'SERVICE' | 'KITCHEN' | 'RECEPTION' | 'CASHIER' | 'MANAGEMENT'; position: string; status: 'ACTIVE' | 'LEAVE' | 'INACTIVE'; areaId: string }
+export interface Employee { id: string; name: string; department: 'SERVICE' | 'KITCHEN' | 'RECEPTION' | 'CASHIER' | 'MANAGEMENT'; position: string; status: 'ACTIVE' | 'LEAVE' | 'INACTIVE'; areaId: string; email?: string; role?: string; areaName?: string }
 export interface Shift { id: string; name: string; date: string; start: string; end: string; employeeIds: string[]; minimum: number }
 export interface MenuCategory { id: string; name: string; visible: boolean; sort: number; group?: 'food' | 'drink' }
 export interface MenuItem { id: string; name: string; categoryId: string; price: number; image: string; description: string; status: 'AVAILABLE' | 'SOLD_OUT' | 'DISCONTINUED'; unit?: 'portion' | 'kg'; updatedAt: string }
