@@ -1,5 +1,5 @@
 import { authenticatedRequest } from '../auth'
-import type { Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable } from './types'
+import type { Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -41,7 +41,7 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu, areas, tables, reservations, employees] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
@@ -49,13 +49,14 @@ export const managerService = {
       authenticatedRequest<ManagerTableDto[]>('manager/tables'),
       authenticatedRequest<ReservationDto[]>('manager/reservations'),
       authenticatedRequest<EmployeeDto[]>('manager/employees'),
+      authenticatedRequest<Shift[]>('manager/shifts'),
     ])
     // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
     // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
     const snapshotEmployees = new Map(snapshot.employees.map(e => [e.id, e]))
     return {
       ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
-      employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })),
+      employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })), shifts,
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
@@ -74,6 +75,13 @@ export const managerService = {
       const { id, name, categoryId, price, description, image, status, unit } = command.item
       await authenticatedRequest<ItemDto>(command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`, {
         method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, categoryId, price, description, imageUrl: image, status, unit: unit ?? 'portion' }),
+      })
+      return managerService.load()
+    }
+    if (command.type === 'shift.save') {
+      const { id, name, date, start, end, minimum, employeeIds } = command.shift
+      await authenticatedRequest<Shift>(id ? `manager/shifts/${encodeURIComponent(id)}` : 'manager/shifts', {
+        method: id ? 'PUT' : 'POST', body: JSON.stringify({ name, date, start, end, minimum, employeeIds }),
       })
       return managerService.load()
     }
