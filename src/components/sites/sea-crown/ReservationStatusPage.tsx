@@ -58,8 +58,8 @@ export default function ReservationStatusPage({ language }: { language: Language
         <h1>{en ? 'Look Up Reservation' : 'Tra cứu trạng thái đặt bàn'}</h1>
         <p className="sb-legal-intro">
           {en
-            ? 'Enter your reservation code (e.g. RS-7KQ2MX9P) and phone number to check your status.'
-            : 'Nhập mã đặt bàn (ví dụ: RS-7KQ2MX9P) và số điện thoại đã đăng ký để kiểm tra tình trạng.'}
+            ? 'Enter your reservation code (e.g. RS-251126-007) and phone number to check your status.'
+            : 'Nhập mã đặt bàn (ví dụ: RS-251126-007) và số điện thoại đã đăng ký để kiểm tra tình trạng.'}
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: '24px 0' }}>
