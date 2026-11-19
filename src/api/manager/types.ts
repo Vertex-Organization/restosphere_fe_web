@@ -28,7 +28,7 @@ export interface Order { id: string; sessionId: string; employeeId: string; at: 
 export interface Employee { id: string; name: string; department: 'SERVICE' | 'KITCHEN' | 'RECEPTION' | 'CASHIER' | 'MANAGEMENT'; position: string; status: 'ACTIVE' | 'LEAVE' | 'INACTIVE'; areaId: string }
 export interface Shift { id: string; name: string; date: string; start: string; end: string; employeeIds: string[]; minimum: number }
 export interface MenuCategory { id: string; name: string; visible: boolean; sort: number; group?: 'food' | 'drink' }
-export interface MenuItem { id: string; name: string; categoryId: string; price: number; image: string; description: string; status: 'AVAILABLE' | 'SOLD_OUT' | 'DISCONTINUED'; updatedAt: string }
+export interface MenuItem { id: string; name: string; categoryId: string; price: number; image: string; description: string; status: 'AVAILABLE' | 'SOLD_OUT' | 'DISCONTINUED'; unit?: 'portion' | 'kg'; updatedAt: string }
 export type ApprovalType = 'DISCOUNT' | 'BILL_ADJUSTMENT' | 'PAYMENT_VOID' | 'CANCEL_ITEM' | 'RESERVATION' | 'MENU_STATUS'
 export type ApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'WITHDRAWN'
 export type ApprovalTargetType = 'BILL' | 'PAYMENT' | 'ORDER_ITEM' | 'RESERVATION' | 'MENU_ITEM'
