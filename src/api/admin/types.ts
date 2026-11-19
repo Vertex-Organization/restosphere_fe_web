@@ -42,7 +42,7 @@ export interface AuditLog {
   id: string
   at: string
   actor: string
-  action: 'ROLE_CHANGED' | 'ACCOUNT_LOCKED' | 'ACCOUNT_UNLOCKED' | 'RESTAURANT_UPDATED'
+  action: 'ROLE_CHANGED' | 'ACCOUNT_LOCKED' | 'ACCOUNT_UNLOCKED' | 'RESTAURANT_UPDATED' | 'SETTINGS_UPDATED'
   target: string
   result: 'SUCCESS' | 'FAILED'
 }
@@ -54,9 +54,12 @@ export interface AdminData {
   auditLogs: AuditLog[]
 }
 
+export interface AuditLogFilters { action?: AuditLog['action']; actor?: string; from?: string; to?: string; limit?: number }
+
 export interface AdminService {
   load(signal?: AbortSignal): Promise<AdminData>
   execute(command: AdminCommand): Promise<AdminData>
+  auditLogs(filters: AuditLogFilters, signal?: AbortSignal): Promise<AuditLog[]>
 }
 
 export type AdminCommand =

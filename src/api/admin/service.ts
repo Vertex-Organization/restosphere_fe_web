@@ -1,15 +1,20 @@
 import { authenticatedRequest } from '../auth'
-import type { AdminData, AdminService, AdminSettings, AdminUser, RestaurantProfile } from './types'
+import type { AdminService, AdminSettings, AdminUser, AuditLog, RestaurantProfile } from './types'
 
 export const adminService: AdminService = {
   async load(signal) {
-    const [users, snapshot, restaurant, settings] = await Promise.all([
+    const [users, restaurant, settings, auditLogs] = await Promise.all([
       authenticatedRequest<AdminUser[]>('admin/users', { signal }),
-      authenticatedRequest<AdminData>('workspaces/admin', { signal }),
       authenticatedRequest<RestaurantProfile>('admin/restaurant', { signal }),
       authenticatedRequest<AdminSettings>('admin/settings', { signal }),
+      adminService.auditLogs({ limit: 200 }, signal),
     ])
-    return { ...snapshot, users, restaurant, settings }
+    return { users, restaurant, settings, auditLogs }
+  },
+  auditLogs(filters, signal) {
+    const query = new URLSearchParams()
+    for (const [key, value] of Object.entries(filters)) if (value !== undefined && value !== '') query.set(key, String(value))
+    return authenticatedRequest<AuditLog[]>(`admin/audit-logs?${query}`, { signal })
   },
   async execute(command) {
     if (command.type === 'restaurant.update') {
@@ -36,8 +41,8 @@ export const adminService: AdminService = {
       })
       return adminService.load()
     }
-    return authenticatedRequest<AdminData>('workspaces/admin/commands', {
-      method: 'POST', body: JSON.stringify(command),
-    })
+    // Compile error here means a new AdminCommand was added without a handler.
+    const unreachable: never = command
+    throw new Error(`Lệnh quản trị không được hỗ trợ: ${JSON.stringify(unreachable)}`)
   },
 }

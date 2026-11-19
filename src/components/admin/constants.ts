@@ -14,4 +14,5 @@ export const AUDIT_ACTION_LABELS = {
   ACCOUNT_LOCKED: 'Khóa tài khoản',
   ACCOUNT_UNLOCKED: 'Mở khóa tài khoản',
   RESTAURANT_UPDATED: 'Cập nhật nhà hàng',
+  SETTINGS_UPDATED: 'Cập nhật cài đặt',
 } as const
