@@ -41,6 +41,10 @@ export const adminService: AdminService = {
       })
       return adminService.load()
     }
+    if (command.type === 'user.create') {
+      await authenticatedRequest<AdminUser>('admin/users', { method: 'POST', body: JSON.stringify(command.user) })
+      return adminService.load()
+    }
     // Compile error here means a new AdminCommand was added without a handler.
     const unreachable: never = command
     throw new Error(`Lệnh quản trị không được hỗ trợ: ${JSON.stringify(unreachable)}`)

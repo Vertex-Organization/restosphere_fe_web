@@ -15,4 +15,5 @@ export const AUDIT_ACTION_LABELS = {
   ACCOUNT_UNLOCKED: 'Mở khóa tài khoản',
   RESTAURANT_UPDATED: 'Cập nhật nhà hàng',
   SETTINGS_UPDATED: 'Cập nhật cài đặt',
+  USER_CREATED: 'Tạo tài khoản',
 } as const

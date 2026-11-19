@@ -42,7 +42,7 @@ export interface AuditLog {
   id: string
   at: string
   actor: string
-  action: 'ROLE_CHANGED' | 'ACCOUNT_LOCKED' | 'ACCOUNT_UNLOCKED' | 'RESTAURANT_UPDATED' | 'SETTINGS_UPDATED'
+  action: 'ROLE_CHANGED' | 'ACCOUNT_LOCKED' | 'ACCOUNT_UNLOCKED' | 'RESTAURANT_UPDATED' | 'SETTINGS_UPDATED' | 'USER_CREATED'
   target: string
   result: 'SUCCESS' | 'FAILED'
 }
@@ -65,5 +65,6 @@ export interface AdminService {
 export type AdminCommand =
   | { type: 'user.role'; id: string; role: AdminRole }
   | { type: 'user.status'; id: string; status: AccountStatus }
+  | { type: 'user.create'; user: { fullName: string; email: string; role: AdminRole } }
   | { type: 'restaurant.update'; restaurant: RestaurantProfile }
   | { type: 'settings.update'; settings: AdminSettings }

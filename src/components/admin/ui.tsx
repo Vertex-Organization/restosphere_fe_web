@@ -55,13 +55,15 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry: () 
 
 export function Modal({ title, description, children, footer, onClose, wide = false }: { title: string; description?: string; children: ReactNode; footer?: ReactNode; onClose: () => void; wide?: boolean }) {
   const dialog = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
     dialog.current?.focus()
-    const close = (event: KeyboardEvent) => event.key === 'Escape' && onClose()
+    const close = (event: KeyboardEvent) => event.key === 'Escape' && onCloseRef.current()
     document.addEventListener('keydown', close)
     return () => { document.removeEventListener('keydown', close); previous?.focus() }
-  }, [onClose])
+  }, [])
   return <div className="a-modal-layer" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose() }}><div ref={dialog} className={`a-modal ${wide ? 'a-modal--wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="a-modal-title" tabIndex={-1}><header><div><h2 id="a-modal-title">{title}</h2>{description && <p>{description}</p>}</div><button type="button" className="a-icon-button" aria-label="Đóng hộp thoại" onClick={onClose}><Icon name="close" size={18} /></button></header><div className="a-modal-body">{children}</div>{footer && <footer>{footer}</footer>}</div></div>
 }
 
