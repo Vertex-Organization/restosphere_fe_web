@@ -1,14 +1,15 @@
 import { authenticatedRequest } from '../auth'
-import type { AdminData, AdminService, AdminUser, RestaurantProfile } from './types'
+import type { AdminData, AdminService, AdminSettings, AdminUser, RestaurantProfile } from './types'
 
 export const adminService: AdminService = {
   async load(signal) {
-    const [users, snapshot, restaurant] = await Promise.all([
+    const [users, snapshot, restaurant, settings] = await Promise.all([
       authenticatedRequest<AdminUser[]>('admin/users', { signal }),
       authenticatedRequest<AdminData>('workspaces/admin', { signal }),
       authenticatedRequest<RestaurantProfile>('admin/restaurant', { signal }),
+      authenticatedRequest<AdminSettings>('admin/settings', { signal }),
     ])
-    return { ...snapshot, users, restaurant }
+    return { ...snapshot, users, restaurant, settings }
   },
   async execute(command) {
     if (command.type === 'restaurant.update') {
@@ -30,11 +31,10 @@ export const adminService: AdminService = {
       return adminService.load()
     }
     if (command.type === 'settings.update') {
-      // Admin snapshots omit bank names; preserve them from the cashier contract when saving.
-      const { config } = await authenticatedRequest<{ config: { bank: { bankName: string; accountName: string } | null } }>('workspaces/cashier')
-      command = { ...command, settings: { ...command.settings, billing: {
-        ...command.settings.billing, bankName: config.bank?.bankName ?? '', bankAccountName: config.bank?.accountName ?? '',
-      } } }
+      await authenticatedRequest<AdminSettings>('admin/settings', {
+        method: 'PUT', body: JSON.stringify(command.settings),
+      })
+      return adminService.load()
     }
     return authenticatedRequest<AdminData>('workspaces/admin/commands', {
       method: 'POST', body: JSON.stringify(command),

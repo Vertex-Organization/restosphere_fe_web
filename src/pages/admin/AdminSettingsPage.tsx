@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
+import { ApiError } from '../../api/client'
 import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
+
+const TWO_DECIMALS = /^\d+(\.\d{1,2})?$/
 
 export default function AdminSettingsPage() {
   const { data, execute } = useAdminData()
@@ -12,8 +15,10 @@ export default function AdminSettingsPage() {
   const save = async () => {
     if (settings.noShowMinutes < 5 || settings.noShowMinutes > 120 || settings.bufferMinutes < 0 || settings.bufferMinutes > 60) return setMessage('Số phút no-show từ 5 đến 120, số phút đệm từ 0 đến 60.')
     if (settings.billing.serviceChargePercent < 0 || settings.billing.serviceChargePercent > 30 || settings.billing.vatPercent < 0 || settings.billing.vatPercent > 20) return setMessage('Phí dịch vụ từ 0 đến 30%, VAT từ 0 đến 20%.')
+    if (!TWO_DECIMALS.test(String(settings.billing.serviceChargePercent)) || !TWO_DECIMALS.test(String(settings.billing.vatPercent))) return setMessage('Phí dịch vụ và VAT chỉ được tối đa 2 chữ số thập phân.')
+    if (settings.billing.bankAccount && !/^\d{6,20}$/.test(settings.billing.bankAccount)) return setMessage('Số tài khoản chỉ gồm chữ số, dài 6 đến 20 ký tự (hoặc để trống).')
     try { await execute({ type: 'settings.update', settings }); setMessage('Đã lưu cài đặt.') }
-    catch (reason) { setMessage(reason instanceof Error ? reason.message : 'Không lưu được cài đặt.') }
+    catch (reason) { setMessage(reason instanceof ApiError && reason.status === 409 ? 'Đang có hóa đơn chưa thanh toán nên chưa đổi được phí dịch vụ/VAT. Hãy đổi sau khi các bàn đã thanh toán.' : reason instanceof Error ? reason.message : 'Không lưu được cài đặt.') }
   }
   return <>
     <PageHeader title="Cài đặt" description="Các thiết lập nhỏ gọn phù hợp với tính năng đang tồn tại." actions={<><Button onClick={() => { setSettings(source); setMessage('') }}>Hủy thay đổi</Button><Button tone="primary" onClick={save}>Lưu cài đặt</Button></>} />
