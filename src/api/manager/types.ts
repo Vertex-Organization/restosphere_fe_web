@@ -20,7 +20,11 @@ export interface Reservation {
   status: ReservationStatus
   employeeId: string
   note: string
-  preorder?: { menuItemId: string; quantity: number; note?: string }[]
+  preorder?: { menuItemId: string; menuItemName?: string; quantity: number; note?: string }[]
+  code?: string
+  areaName?: string
+  tableCode?: string
+  actualGuests?: number
 }
 export type ItemStatus = 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'REJECTED' | 'CANCELLED' | 'VOIDED'
 export interface OrderItem { id: string; menuId: string; name: string; quantity: number; unitPrice: number; status: ItemStatus; note: string; chefId: string; readyAt?: string }
