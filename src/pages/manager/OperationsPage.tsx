@@ -1,5 +1,5 @@
 import { businessDay, dayAt, minutes, time } from '../../api/manager/dates'
-import { DEPARTMENT } from '../../api/manager/labels'
+import { DEPARTMENT, incidentTitle } from '../../api/manager/labels'
 import { dashboard, tableCode, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
@@ -47,7 +47,7 @@ export default function OperationsPage() {
     })),
     ...s.incidents.map(incident => ({
       id: incident.id,
-      title: incident.title,
+      title: incidentTitle(incident),
       meta: `${incident.code} · ${incident.status === 'OPEN' ? 'Chưa tiếp nhận' : 'Đang xử lý'}`,
       path: managerPath('incidents', incident.id),
       icon: 'alert' as const,

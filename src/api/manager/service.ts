@@ -1,5 +1,5 @@
 import { authenticatedRequest } from '../auth'
-import type { Approval, Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
+import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -34,6 +34,19 @@ const toApproval = ({ billId, paymentId, itemId, menuStatus, decidedBy, decidedA
   ...rest, amount: Number(amount ?? 0), billId: billId ?? undefined, paymentId: paymentId ?? undefined, itemId: itemId ?? undefined,
   menuStatus: menuStatus ?? undefined, decidedBy: decidedBy ?? undefined, decidedAt: decidedAt ?? undefined, decisionNote: decisionNote ?? undefined,
 })
+interface IncidentDto {
+  id: string; code: string; type: Incident['type']; severity: Incident['severity'] | 'CRITICAL'; status: Incident['status'] | 'CLOSED'
+  title: string; description: string; orderId: string | null; itemId: string | null; orderLabel: string | null; itemName: string | null
+  reporterId: string; reporterName: string; assigneeId: string | null; assigneeName: string | null
+  at: string; response: { by: string | null; at: string; text: string } | null
+}
+
+// The UI knows 3 severities and 3 statuses: CRITICAL shows as HIGH, CLOSED as RESOLVED. Names come from employeeName().
+const toIncident = ({ id, code, type, title, description, reporterId, at, severity, status, orderId, itemId, orderLabel, itemName, assigneeId, response }: IncidentDto): Incident => ({
+  id, code, type, title, description, reporterId, at, severity: severity === 'CRITICAL' ? 'HIGH' : severity, status: status === 'CLOSED' ? 'RESOLVED' : status,
+  orderId: orderId ?? undefined, itemId: itemId ?? undefined, orderLabel: orderLabel ?? undefined, itemName: itemName ?? undefined,
+  assigneeId: assigneeId ?? undefined, response: response ? { ...response, by: response.by ?? '' } : undefined,
+})
 const toReservation = ({ tableId, tableCode, actualGuests, ...rest }: ReservationDto): Reservation => ({
   ...rest, tableId: tableId ?? '', tableCode: tableCode ?? undefined, actualGuests: actualGuests ?? undefined,
 })
@@ -48,7 +61,7 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
@@ -58,6 +71,7 @@ export const managerService = {
       authenticatedRequest<EmployeeDto[]>('manager/employees'),
       authenticatedRequest<Shift[]>('manager/shifts'),
       authenticatedRequest<ApprovalDto[]>('manager/approvals'),
+      authenticatedRequest<IncidentDto[]>('manager/incidents'),
     ])
     // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
     // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
@@ -65,7 +79,7 @@ export const managerService = {
     return {
       ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
       employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })), shifts,
-      approvals: approvals.map(toApproval),
+      approvals: approvals.map(toApproval), incidents: incidents.map(toIncident),
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
@@ -121,6 +135,13 @@ export const managerService = {
     }
     if (command.type === 'menu.delete') {
       await authenticatedRequest<void>(`menu/items/${encodeURIComponent(command.id)}`, { method: 'DELETE' })
+      return managerService.load()
+    }
+    if (command.type === 'incident.update') {
+      await authenticatedRequest<IncidentDto>(`manager/incidents/${encodeURIComponent(command.id)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ assigneeId: command.assigneeId || null, status: command.status, reply: (command.reply ?? command.note)?.trim() || null }),
+      })
       return managerService.load()
     }
     return authenticatedRequest<ManagerData>('workspaces/manager/commands', {

@@ -13,6 +13,9 @@ export const INCIDENT_TYPE_LABEL: Record<string, string> = {
   NOTE_CLARIFICATION: 'Cần xác nhận ghi chú',
   OTHER: 'Sự cố khác',
 }
+// Kitchen-created incidents store the type code itself as the title.
+export const incidentTitle = (i: { title: string; type: string }) =>
+  i.title === i.type ? INCIDENT_TYPE_LABEL[i.type] ?? i.title : i.title
 export const DEPARTMENT: Record<string, string> = { SERVICE: 'Phục vụ', KITCHEN: 'Bếp', RECEPTION: 'Lễ tân', CASHIER: 'Thu ngân', MANAGEMENT: 'Quản lý' }
 export const APPROVAL_TYPE: Record<string, string> = { DISCOUNT: 'Giảm giá', CANCEL_ITEM: 'Hủy món', BILL_ADJUSTMENT: 'Điều chỉnh hóa đơn', PAYMENT_VOID: 'Hủy thanh toán', RESERVATION: 'Đặt bàn đặc biệt', MENU_STATUS: 'Trạng thái món' }
 export const optionsOf = (items: { id: string; name: string }[]) => items.map(i => ({ value: i.id, label: i.name }))

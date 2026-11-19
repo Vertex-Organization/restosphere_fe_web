@@ -4,7 +4,7 @@ import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
 import { Button, DataTable, Icon, Link, PageHeading, Panel, Status } from '../../components/manager/ui'
-import { APPROVAL_TYPE } from '../../api/manager/labels'
+import { APPROVAL_TYPE, incidentTitle } from '../../api/manager/labels'
 
 export default function ManagerDashboardPage() {
   const { data: d, refresh } = useManagerData()
@@ -17,7 +17,7 @@ export default function ManagerDashboardPage() {
   const recentActivity = [...d.history].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 5)
   const alerts = [
     ...s.lateOrders.map(o => ({ id: o.id, title: `Bàn ${tableForOrder(d, o)} chờ món ${minutes(o.at, now)} phút`, description: `${o.id} · Cần kiểm tra với bếp`, path: managerPath('orders', o.id), icon: 'clock' as const, tone: 'danger' })),
-    ...s.incidents.map(i => ({ id: i.id, title: i.title, description: `${i.id} · ${employeeName(d, i.reporterId)}`, path: managerPath('incidents', i.id), icon: 'alert' as const, tone: i.severity === 'HIGH' ? 'danger' : 'warning' })),
+    ...s.incidents.map(i => ({ id: i.id, title: incidentTitle(i), description: `${i.code} · ${employeeName(d, i.reporterId)}`, path: managerPath('incidents', i.id), icon: 'alert' as const, tone: i.severity === 'HIGH' ? 'danger' : 'warning' })),
     ...d.reservations.filter(isLate).map(r => ({ id: r.id, title: `${r.customer} trễ giờ nhận bàn`, description: `${r.id} · Bàn ${tableCode(d, r.tableId)} · ${time(r.at)}`, path: managerPath('reservations', r.id), icon: 'users' as const, tone: 'warning' })),
   ]
   return <div className="m-dashboard-page">
