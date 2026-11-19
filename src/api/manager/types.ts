@@ -36,7 +36,7 @@ export interface MenuItem { id: string; name: string; categoryId: string; price:
 export type ApprovalType = 'DISCOUNT' | 'BILL_ADJUSTMENT' | 'PAYMENT_VOID' | 'CANCEL_ITEM' | 'RESERVATION' | 'MENU_STATUS'
 export type ApprovalStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'WITHDRAWN'
 export type ApprovalTargetType = 'BILL' | 'PAYMENT' | 'ORDER_ITEM' | 'RESERVATION' | 'MENU_ITEM'
-export interface Approval { id: string; code: string; type: ApprovalType; status: ApprovalStatus; targetType: ApprovalTargetType; targetId: string; billId?: string; paymentId?: string; itemId?: string; amount: number; menuStatus?: 'AVAILABLE' | 'SOLD_OUT'; reason: string; requestedBy: string; requestedAt: string; decidedBy?: string; decidedAt?: string; decisionNote?: string }
+export interface Approval { id: string; code: string; type: ApprovalType; status: ApprovalStatus; targetType: ApprovalTargetType; targetId: string; billId?: string; paymentId?: string; itemId?: string; amount: number; menuStatus?: 'AVAILABLE' | 'SOLD_OUT'; reason: string; requestedBy: string; requestedAt: string; decidedBy?: string; decidedAt?: string; decisionNote?: string; targetLabel?: string }
 export type IncidentType = 'OUT_OF_STOCK' | 'EQUIPMENT' | 'CANNOT_PREPARE' | 'NOTE_CLARIFICATION' | 'OTHER'
 export type IncidentSeverity = 'HIGH' | 'MEDIUM' | 'LOW'
 export type IncidentStatus = 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED'

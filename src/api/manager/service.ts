@@ -1,5 +1,5 @@
 import { authenticatedRequest } from '../auth'
-import type { Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
+import type { Approval, Area, Employee, ManagerCommand, ManagerData, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -27,6 +27,13 @@ interface EmployeeDto {
 const toEmployee = ({ id, name, email, role, department, position, status, areaId, areaName }: EmployeeDto): Employee => ({
   id, name, email, role, department, position, status, areaId, areaName,
 })
+type Nullable<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: T[P] | null }
+type ApprovalDto = Nullable<Approval, 'billId' | 'paymentId' | 'itemId' | 'menuStatus' | 'decidedBy' | 'decidedAt' | 'decisionNote'> & { targetLabel: string }
+
+const toApproval = ({ billId, paymentId, itemId, menuStatus, decidedBy, decidedAt, decisionNote, amount, ...rest }: ApprovalDto): Approval => ({
+  ...rest, amount: Number(amount ?? 0), billId: billId ?? undefined, paymentId: paymentId ?? undefined, itemId: itemId ?? undefined,
+  menuStatus: menuStatus ?? undefined, decidedBy: decidedBy ?? undefined, decidedAt: decidedAt ?? undefined, decisionNote: decisionNote ?? undefined,
+})
 const toReservation = ({ tableId, tableCode, actualGuests, ...rest }: ReservationDto): Reservation => ({
   ...rest, tableId: tableId ?? '', tableCode: tableCode ?? undefined, actualGuests: actualGuests ?? undefined,
 })
@@ -41,7 +48,7 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
@@ -50,6 +57,7 @@ export const managerService = {
       authenticatedRequest<ReservationDto[]>('manager/reservations'),
       authenticatedRequest<EmployeeDto[]>('manager/employees'),
       authenticatedRequest<Shift[]>('manager/shifts'),
+      authenticatedRequest<ApprovalDto[]>('manager/approvals'),
     ])
     // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
     // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
@@ -57,6 +65,7 @@ export const managerService = {
     return {
       ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
       employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })), shifts,
+      approvals: approvals.map(toApproval),
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
@@ -75,6 +84,12 @@ export const managerService = {
       const { id, name, categoryId, price, description, image, status, unit } = command.item
       await authenticatedRequest<ItemDto>(command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`, {
         method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, categoryId, price, description, imageUrl: image, status, unit: unit ?? 'portion' }),
+      })
+      return managerService.load()
+    }
+    if (command.type === 'approval.decide') {
+      await authenticatedRequest<ApprovalDto>(`manager/approvals/${encodeURIComponent(command.id)}/decision`, {
+        method: 'POST', body: JSON.stringify({ approve: command.approve, reason: command.reason }),
       })
       return managerService.load()
     }
