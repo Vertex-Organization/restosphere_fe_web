@@ -14,6 +14,16 @@ export const INCIDENT_TYPE_LABEL: Record<string, string> = {
   OTHER: 'Sự cố khác',
 }
 // Kitchen-created incidents store the type code itself as the title.
+// Stored notification titles may be English legacy text, so the title is derived from the kind.
+export const NOTIFICATION_TITLE: Record<string, string> = {
+  INCIDENT: 'Bếp báo sự cố mới',
+  APPROVAL: 'Có yêu cầu cần phê duyệt',
+  MENU_REQUEST: 'Bếp đề nghị đổi trạng thái món',
+  REQUEST_WITHDRAWN: 'Yêu cầu đã được rút lại',
+  ORDER: 'Cập nhật đơn hàng',
+  CASHIER_SHIFT_CLOSED: 'Thu ngân đã đóng ca',
+}
+export const notificationTitle = (n: { kind: string; title: string }) => NOTIFICATION_TITLE[n.kind] ?? n.title
 export const incidentTitle = (i: { title: string; type: string }) =>
   i.title === i.type ? INCIDENT_TYPE_LABEL[i.type] ?? i.title : i.title
 export const DEPARTMENT: Record<string, string> = { SERVICE: 'Phục vụ', KITCHEN: 'Bếp', RECEPTION: 'Lễ tân', CASHIER: 'Thu ngân', MANAGEMENT: 'Quản lý' }

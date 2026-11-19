@@ -58,7 +58,7 @@ export interface Incident {
   orderLabel?: string
   itemName?: string
 }
-export interface ManagerNotification { id: string; title: string; body: string; at: string; path: string; readBy: string[]; kind: 'APPROVAL' | 'INCIDENT' | 'ORDER' | 'MENU_REQUEST' | 'CASHIER_SHIFT_CLOSED' | 'REQUEST_WITHDRAWN' }
+export interface ManagerNotification { id: string; title: string; body: string; at: string; path: string; readBy: string[]; kind: 'APPROVAL' | 'INCIDENT' | 'ORDER' | 'MENU_REQUEST' | 'CASHIER_SHIFT_CLOSED' | 'REQUEST_WITHDRAWN'; targetId?: string }
 export interface Bill { id: string; at: string; shift: 'LUNCH' | 'DINNER'; guests: number; discount: number; items: { name: string; categoryId: string; quantity: number; unitPrice: number }[] }
 export interface Payment { id: string; billId: string; at: string; method: 'CASH' | 'TRANSFER'; amount: number; status: 'COMPLETED' | 'FAILED' | 'PENDING' }
 /** Messages the manager side sends to other roles (shown only in dev tools until a backend exists). */
