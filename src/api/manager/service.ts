@@ -1,6 +1,6 @@
 import { authenticatedRequest } from '../auth'
 import { managerPath, type ManagerPage } from '../../routes/managerRouter'
-import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, Order, OrderItem, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
+import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, ManagerReport, Order, OrderItem, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -92,8 +92,32 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
   id, name, categoryId, price: Number(price), image: imageUrl ?? '', description: description ?? '', status, unit, updatedAt,
 })
 
+type Num = number | string
+interface ReportDto {
+  from: string; to: string
+  summary: { revenue: Num; payments: Num; bills: Num; averageBill: Num; guests: Num }
+  daily: { day: string; payments: Num; revenue: Num }[]
+  dishes: { name: string; quantity: Num; revenue: Num }[]
+  operations: { paidGuests: Num; reservations: Num; arrived: Num; cancelledOrNoShow: Num }
+}
+// Amounts and counts are BigDecimal on the server and may arrive as strings ("1500000.00").
+const toReport = ({ from, to, summary: s, daily, dishes, operations: o }: ReportDto): ManagerReport => ({
+  from, to,
+  summary: { revenue: Number(s.revenue), payments: Number(s.payments), bills: Number(s.bills), averageBill: Number(s.averageBill), guests: Number(s.guests) },
+  daily: daily.map(r => ({ day: r.day, payments: Number(r.payments), revenue: Number(r.revenue) })),
+  dishes: dishes.map(r => ({ name: r.name, quantity: Number(r.quantity), revenue: Number(r.revenue) })),
+  operations: { paidGuests: Number(o.paidGuests), reservations: Number(o.reservations), arrived: Number(o.arrived), cancelledOrNoShow: Number(o.cancelledOrNoShow) },
+})
+
 export const managerService = {
   mode: 'api' as const,
+  // Not part of load(): the report depends on the page's filters, so ReportsPage fetches it itself.
+  async report(q: { from: string; to: string; shift?: string; method?: string }): Promise<ManagerReport> {
+    const params = new URLSearchParams({ from: q.from, to: q.to })
+    if (q.shift) params.set('shift', q.shift)
+    if (q.method) params.set('method', q.method)
+    return toReport(await authenticatedRequest<ReportDto>(`manager/reports?${params}`))
+  },
   async load() {
     const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),

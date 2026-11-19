@@ -65,6 +65,13 @@ export interface Payment { id: string; billId: string; at: string; method: 'CASH
 export interface OutboxMessage { id: string; kind: 'REQUEST_DECIDED' | 'INCIDENT_REPLY' | 'CANCELLED' | 'TABLE_REASSIGNED'; audience: 'CASHIER' | 'WAITER' | 'KITCHEN' | 'RECEPTIONIST' | 'MANAGER'; staffId: string; title: string; body: string; at: string }
 export interface AuditEvent { id: string; at: string; actorId: string; entityId: string; text: string }
 export interface ManagerData { schema: 1; revision: number; seedDay: string; areas: Area[]; tables: RestaurantTable[]; sessions: TableSession[]; reservations: Reservation[]; orders: Order[]; employees: Employee[]; shifts: Shift[]; categories: MenuCategory[]; menu: MenuItem[]; approvals: Approval[]; incidents: Incident[]; notifications: ManagerNotification[]; bills: Bill[]; payments: Payment[]; history: AuditEvent[]; outbox: OutboxMessage[] }
+export interface ManagerReport {
+  from: string; to: string
+  summary: { revenue: number; payments: number; bills: number; averageBill: number; guests: number }
+  daily: { day: string; payments: number; revenue: number }[]
+  dishes: { name: string; quantity: number; revenue: number }[]
+  operations: { paidGuests: number; reservations: number; arrived: number; cancelledOrNoShow: number }
+}
 export type ManagerCommand =
   | { type: 'reservation.move'; id: string; tableId: string; reason: string }
   | { type: 'table.update'; id: string; code: string; seats: number; areaId: string; inactive: boolean }
