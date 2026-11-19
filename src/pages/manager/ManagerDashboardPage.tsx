@@ -1,5 +1,5 @@
 import { businessDay, dateLabel, minutes, money, time } from '../../api/manager/dates'
-import { dashboard, employeeName, tableCode, tableForOrder } from '../../api/manager/selectors'
+import { dashboard, employeeName, orderCode, tableCode, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
@@ -16,7 +16,7 @@ export default function ManagerDashboardPage() {
   const upcoming = waitingReservations.slice(0, 4)
   const recentActivity = [...d.history].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 5)
   const alerts = [
-    ...s.lateOrders.map(o => ({ id: o.id, title: `Bàn ${tableForOrder(d, o)} chờ món ${minutes(o.at, now)} phút`, description: `${o.id} · Cần kiểm tra với bếp`, path: managerPath('orders', o.id), icon: 'clock' as const, tone: 'danger' })),
+    ...s.lateOrders.map(o => ({ id: o.id, title: `Bàn ${tableForOrder(d, o)} chờ món ${minutes(o.at, now)} phút`, description: `${orderCode(o)} · Cần kiểm tra với bếp`, path: managerPath('orders', o.id), icon: 'clock' as const, tone: 'danger' })),
     ...s.incidents.map(i => ({ id: i.id, title: incidentTitle(i), description: `${i.code} · ${employeeName(d, i.reporterId)}`, path: managerPath('incidents', i.id), icon: 'alert' as const, tone: i.severity === 'HIGH' ? 'danger' : 'warning' })),
     ...d.reservations.filter(isLate).map(r => ({ id: r.id, title: `${r.customer} trễ giờ nhận bàn`, description: `${r.id} · Bàn ${tableCode(d, r.tableId)} · ${time(r.at)}`, path: managerPath('reservations', r.id), icon: 'users' as const, tone: 'warning' })),
   ]

@@ -3,7 +3,9 @@ import type { ManagerData, Order } from './types'
 
 export const employeeName = (d: ManagerData, id: string) => d.employees.find(e => e.id === id)?.name ?? id
 export const tableCode = (d: ManagerData, id: string | undefined) => d.tables.find(t => t.id === id)?.code ?? '—'
-export const tableForOrder = (d: ManagerData, order: Order) => tableCode(d, d.sessions.find(s => s.id === order.sessionId)?.tableId)
+export const tableForOrder = (d: ManagerData, order: Order) =>
+  order.tableCode ?? tableCode(d, d.sessions.find(s => s.id === order.sessionId)?.tableId)
+export const orderCode = (o: Order) => o.code ?? o.id
 export const pendingItems = (order: Order) => order.items.filter(i => ['SUBMITTED', 'PREPARING', 'READY'].includes(i.status))
 export function orderStatus(order: Order) {
   if (order.items.some(i => i.status === 'SUBMITTED' || i.status === 'PREPARING')) return 'PREPARING'

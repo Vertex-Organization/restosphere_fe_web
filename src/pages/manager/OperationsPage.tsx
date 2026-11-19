@@ -1,6 +1,6 @@
 import { businessDay, dayAt, minutes, time } from '../../api/manager/dates'
 import { DEPARTMENT, incidentTitle } from '../../api/manager/labels'
-import { dashboard, tableCode, tableForOrder } from '../../api/manager/selectors'
+import { dashboard, orderCode, tableCode, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
@@ -40,7 +40,7 @@ export default function OperationsPage() {
     ...s.lateOrders.map(order => ({
       id: order.id,
       title: `Bàn ${tableForOrder(d, order)} chờ món ${minutes(order.at, now)} phút`,
-      meta: `${order.id} · Vượt ngưỡng 25 phút`,
+      meta: `${orderCode(order)} · Vượt ngưỡng 25 phút`,
       path: managerPath('orders', order.id),
       icon: 'clock' as const,
       tone: 'danger' as const,

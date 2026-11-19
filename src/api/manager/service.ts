@@ -1,6 +1,6 @@
 import { authenticatedRequest } from '../auth'
 import { managerPath, type ManagerPage } from '../../routes/managerRouter'
-import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
+import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, Order, OrderItem, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -48,6 +48,25 @@ const toIncident = ({ id, code, type, title, description, reporterId, at, severi
   orderId: orderId ?? undefined, itemId: itemId ?? undefined, orderLabel: orderLabel ?? undefined, itemName: itemName ?? undefined,
   assigneeId: assigneeId ?? undefined, response: response ? { ...response, by: response.by ?? '' } : undefined,
 })
+interface OrderItemDto {
+  id: string; menuItemId: string; name: string; unit: 'portion' | 'kg'; quantity: number | string; unitPrice: number | string
+  status: OrderItem['status']; note: string | null; chefId: string | null; chefName: string | null
+  startedAt: string | null; readyAt: string | null; servedAt: string | null; rejectionReason: string | null
+}
+interface OrderDto {
+  id: string; code: string; sessionId: string; tableId: string; tableCode: string; areaName: string; guests: number
+  waiterId: string; waiterName: string; round: number; status: 'SUBMITTED' | 'COMPLETED' | 'CANCELLED'; at: string; paid: boolean
+  items: OrderItemDto[]
+}
+
+// quantity/unitPrice are BigDecimal on the server and may arrive as strings ("1.50").
+const toOrder = ({ id, code, sessionId, tableCode, areaName, waiterId, round, at, paid, items }: OrderDto): Order => ({
+  id, code, sessionId, tableCode, areaName, employeeId: waiterId, round, at, paid,
+  items: items.map(({ id, menuItemId, name, quantity, unitPrice, status, note, chefId, readyAt }) => ({
+    id, menuId: menuItemId, name, quantity: Number(quantity), unitPrice: Number(unitPrice), status, note: note ?? '', chefId: chefId ?? '', readyAt: readyAt ?? undefined,
+  })),
+})
+
 interface NotificationDto { id: string; kind: string; title: string; body: string; at: string; targetId: string | null; readBy: string[] }
 
 // Detail page per kind; ORDER and CASHIER_SHIFT_CLOSED have no per-item page, unknown kinds have none at all.
@@ -76,7 +95,7 @@ const toItem = ({ id, name, categoryId, price, imageUrl, description, status, un
 export const managerService = {
   mode: 'api' as const,
   async load() {
-    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications] = await Promise.all([
+    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
@@ -88,6 +107,7 @@ export const managerService = {
       authenticatedRequest<ApprovalDto[]>('manager/approvals'),
       authenticatedRequest<IncidentDto[]>('manager/incidents'),
       authenticatedRequest<NotificationDto[]>('manager/notifications'),
+      authenticatedRequest<OrderDto[]>('manager/orders'),
     ])
     // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
     // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
@@ -96,7 +116,7 @@ export const managerService = {
       ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
       employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })), shifts,
       approvals: approvals.map(toApproval), incidents: incidents.map(toIncident),
-      notifications: notifications.map(toNotification),
+      notifications: notifications.map(toNotification), orders: orders.map(toOrder),
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {

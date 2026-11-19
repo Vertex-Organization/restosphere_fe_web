@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { minutes, time } from '../../api/manager/dates'
-import { employeeName, isLateOrder, orderStatus, tableForOrder } from '../../api/manager/selectors'
+import { employeeName, isLateOrder, orderCode, orderStatus, tableForOrder } from '../../api/manager/selectors'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
@@ -37,14 +37,14 @@ export default function OrdersPage({ selectedId }: { selectedId: string }) {
     setStatus(['PREPARING', 'READY', 'SERVED'].includes(id) ? id : '')
   }
   const rows = d.orders
-    .filter(order => matchesSearch(query, order.id, tableForOrder(d, order), employeeName(d, order.employeeId)) && (!status || orderStatus(order) === status) && (!lateOnly || isLateOrder(order, now)))
+    .filter(order => matchesSearch(query, order.id, orderCode(order), tableForOrder(d, order), employeeName(d, order.employeeId)) && (!status || orderStatus(order) === status) && (!lateOnly || isLateOrder(order, now)))
     .sort((a, b) => {
       const rank = (order: typeof a) => isLateOrder(order, now) ? 0 : orderStatus(order) === 'READY' ? 1 : orderStatus(order) === 'PREPARING' ? 2 : 3
       return rank(a) - rank(b) || a.at.localeCompare(b.at)
     })
   const selectedOrder = d.orders.find(o => o.id === selected)
   return <div className="m-orders-page">
-    <PageHeading title="Giám sát đơn hàng" description="Theo dõi tiến độ món theo từng bàn và ưu tiên đơn chờ lâu." actions={<Link className="k-btn" to={managerPath('kitchen')}>Mở màn hình bếp</Link>} />
+    <PageHeading title="Giám sát đơn hàng" description="Đơn trong ngày và các bàn đang phục vụ · Theo dõi tiến độ món và ưu tiên đơn chờ lâu." actions={<Link className="k-btn" to={managerPath('kitchen')}>Mở màn hình bếp</Link>} />
 
     <div className="m-orders-filters" aria-label="Lọc nhanh danh sách đơn hàng">{filters.map(filter => <button
       key={filter.id}
@@ -75,11 +75,11 @@ export default function OrdersPage({ selectedId }: { selectedId: string }) {
           return <button type="button" className={`m-order-pulse ${late ? 'is-late' : `is-${state.toLowerCase()}`}`} key={order.id} onClick={() => setSelected(order.id)}>
             <span className="m-order-identity">
               <b>{table}</b>
-              <span><strong>{order.id}</strong><small>Lượt {order.round} · gửi {time(order.at)}</small></span>
+              <span><strong>{orderCode(order)}</strong><small>Lượt {order.round} · gửi {time(order.at)}</small></span>
             </span>
             <span className="m-order-progress-cell">
               <span className="m-order-progress-top"><Status value={state} /><small>{total} món</small></span>
-              <span className="m-order-states" role="group" aria-label={`Tiến độ món ${order.id}`}>{stages.filter(stage => stage.count > 0).map(stage => <span key={stage.status} className={`m-order-state is-${stage.tone}`}>
+              <span className="m-order-states" role="group" aria-label={`Tiến độ món ${orderCode(order)}`}>{stages.filter(stage => stage.count > 0).map(stage => <span key={stage.status} className={`m-order-state is-${stage.tone}`}>
                 <span className="m-order-state-icon"><Icon name={stage.icon} size={14} /></span>
                 <span className="m-order-state-detail"><b>{stage.count}</b><span>{stage.label}</span></span>
               </span>)}</span>
