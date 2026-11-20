@@ -45,6 +45,18 @@ export const adminService: AdminService = {
       await authenticatedRequest<AdminUser>('admin/users', { method: 'POST', body: JSON.stringify(command.user) })
       return adminService.load()
     }
+    if (command.type === 'restaurant.image.upload') {
+      await authenticatedRequest<RestaurantProfile>(`admin/restaurant/images/${command.kind}`, {
+        method: 'POST',
+        body: JSON.stringify({ contentType: command.contentType, data: command.data }),
+        signal: AbortSignal.timeout(60000),
+      })
+      return adminService.load()
+    }
+    if (command.type === 'restaurant.image.remove') {
+      await authenticatedRequest<RestaurantProfile>(`admin/restaurant/images/${command.kind}`, { method: 'DELETE' })
+      return adminService.load()
+    }
     // Compile error here means a new AdminCommand was added without a handler.
     const unreachable: never = command
     throw new Error(`Lệnh quản trị không được hỗ trợ: ${JSON.stringify(unreachable)}`)

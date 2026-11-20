@@ -66,5 +66,7 @@ export type AdminCommand =
   | { type: 'user.role'; id: string; role: AdminRole }
   | { type: 'user.status'; id: string; status: AccountStatus }
   | { type: 'user.create'; user: { fullName: string; email: string; role: AdminRole } }
+  | { type: 'restaurant.image.upload'; kind: 'logo' | 'cover'; contentType: string; data: string }
+  | { type: 'restaurant.image.remove'; kind: 'logo' | 'cover' }
   | { type: 'restaurant.update'; restaurant: RestaurantProfile }
   | { type: 'settings.update'; settings: AdminSettings }
