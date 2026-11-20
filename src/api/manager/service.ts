@@ -1,6 +1,24 @@
 import { authenticatedRequest } from '../auth'
 import { managerPath, type ManagerPage } from '../../routes/managerRouter'
-import type { Approval, Area, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, ManagerReport, Order, OrderItem, MenuCategory, MenuItem, Reservation, ReservationStatus, RestaurantTable, Shift } from './types'
+import { businessDay } from './dates'
+import type { Approval, Area, AuditEvent, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, ManagerReport, ManagerUser, Order, OrderItem, MenuCategory, MenuItem, Payment, Permission, Reservation, ReservationStatus, RestaurantTable, Shift, TableSession } from './types'
+
+interface MeDto { id: string; name: string; email: string; role: string; position: string; permissions: string[]; approvalLimit: number | string }
+interface SessionDto { id: string; tableId: string; tableCode: string; waiterId: string | null; waiterName: string | null; guests: number; startedAt: string; paymentRequested: boolean }
+interface PaymentDto { id: string; billId: string; at: string; method: Payment['method']; amount: number | string; status: Payment['status'] }
+interface ActivityDto { id: string; at: string; actorId: string | null; actorName: string | null; entityId: string | null; action: string; text: string }
+export type Activity = AuditEvent & { actorName?: string }
+
+const toMe = ({ role, permissions, approvalLimit, ...rest }: MeDto): ManagerUser => ({
+  ...rest, role: role as ManagerUser['role'], permissions: permissions as Permission[], approvalLimit: Number(approvalLimit),
+})
+const toSession = ({ id, tableId, guests, startedAt, waiterId, paymentRequested }: SessionDto): TableSession => ({
+  id, tableId, guests, startedAt, waiterId: waiterId ?? '', paymentRequested,
+})
+const toPayment = ({ id, billId, at, method, amount, status }: PaymentDto): Payment => ({ id, billId, at, method, amount: Number(amount), status })
+const toActivity = ({ id, at, actorId, actorName, entityId, text }: ActivityDto): Activity => ({
+  id, at, actorId: actorId ?? '', entityId: entityId ?? '', text, actorName: actorName ?? undefined,
+})
 
 interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
 interface ItemDto {
@@ -124,9 +142,16 @@ export const managerService = {
     })
     return res.url
   },
-  async load() {
-    const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
-      authenticatedRequest<ManagerData>('workspaces/manager'),
+  async activity(entityId: string, limit = 50): Promise<Activity[]> {
+    const params = new URLSearchParams({ entityId, limit: String(limit) })
+    return (await authenticatedRequest<ActivityDto[]>(`manager/activity?${params}`)).map(toActivity)
+  },
+  async load(): Promise<ManagerData> {
+    const [me, sessions, payments, history, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
+      authenticatedRequest<MeDto>('manager/me'),
+      authenticatedRequest<SessionDto[]>('manager/sessions'),
+      authenticatedRequest<PaymentDto[]>('manager/payments'),
+      authenticatedRequest<ActivityDto[]>('manager/activity?limit=50'),
       authenticatedRequest<CategoryDto[]>('menu/categories?all=true'),
       authenticatedRequest<ItemDto[]>('menu/items?all=true'),
       authenticatedRequest<Area[]>('areas'),
@@ -139,12 +164,11 @@ export const managerService = {
       authenticatedRequest<NotificationDto[]>('manager/notifications'),
       authenticatedRequest<OrderDto[]>('manager/orders'),
     ])
-    // Merge onto the snapshot row: ManagerDataProvider reads the signed-in manager's permissions,
-    // approvalLimit, shift… from data.employees and the REST list lacks them. R1 replaces this with a profile API.
-    const snapshotEmployees = new Map(snapshot.employees.map(e => [e.id, e]))
     return {
-      ...snapshot, categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
-      employees: employees.map(dto => ({ ...snapshotEmployees.get(dto.id), ...toEmployee(dto) })), shifts,
+      schema: 1, revision: 0, seedDay: businessDay(), bills: [], outbox: [], me: toMe(me),
+      sessions: sessions.map(toSession), payments: payments.map(toPayment), history: history.map(toActivity),
+      categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
+      employees: employees.map(toEmployee), shifts,
       approvals: approvals.map(toApproval), incidents: incidents.map(toIncident),
       notifications: notifications.map(toNotification), orders: orders.map(toOrder),
     }
@@ -217,9 +241,8 @@ export const managerService = {
       })
       return managerService.load()
     }
-    return authenticatedRequest<ManagerData>('workspaces/manager/commands', {
-      method: 'POST', body: JSON.stringify(command),
-    })
+    const unreachable: never = command
+    throw new Error(`Lệnh quản lý không được hỗ trợ: ${JSON.stringify(unreachable)}`)
   },
   subscribe(listener: () => void) {
     const timer = window.setInterval(() => { if (!document.hidden) listener() }, 5000)

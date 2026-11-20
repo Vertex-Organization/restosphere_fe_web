@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactNode } from 'react'
 import { Badge, Dialog } from '../billing/ui'
 import { Icon, type IconName } from '../billing/Icon'
 import { KitchenLink } from '../kitchen/KitchenLink'
@@ -7,6 +7,7 @@ import { employeeName } from '../../api/manager/selectors'
 import { ManagerError } from '../../api/manager/rules'
 import { STATUS } from '../../api/manager/labels'
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
+import { managerService, type Activity } from '../../api/manager/service'
 
 export { Badge, Dialog, Icon }
 export const Link = KitchenLink
@@ -37,8 +38,14 @@ export function Metrics({ items }: { items: { label: string; value: ReactNode; h
 }
 export function History({ entityId }: { entityId: string }) {
   const { data } = useManagerData()
-  const events = data?.history.filter(h => h.entityId === entityId) ?? []
-  return <div className="m-detail-block"><h3>Lịch sử xử lý</h3>{events.length ? <ul className="m-history">{events.map(e => <li key={e.id}><i /><div><span>{e.text}</span><small>{time(e.at)} · {dateLabel(e.at)} · {employeeName(data!, e.actorId)}</small></div></li>)}</ul> : <p className="m-muted">Chưa có thay đổi được ghi nhận.</p>}</div>
+  const [result, setResult] = useState<{ entityId: string; events: Activity[] | null }>()
+  useEffect(() => {
+    let active = true
+    managerService.activity(entityId).then(events => { if (active) setResult({ entityId, events }) }, () => { if (active) setResult({ entityId, events: null }) })
+    return () => { active = false }
+  }, [entityId])
+  const events = result?.entityId === entityId ? result.events : undefined
+  return <div className="m-detail-block"><h3>Lịch sử xử lý</h3>{events === undefined ? <p className="m-muted">Đang tải lịch sử…</p> : events === null ? <p className="m-muted">Không tải được lịch sử.</p> : events.length ? <ul className="m-history">{events.map(e => <li key={e.id}><i /><div><span>{e.text}</span><small>{time(e.at)} · {dateLabel(e.at)} · {e.actorName ?? employeeName(data!, e.actorId)}</small></div></li>)}</ul> : <p className="m-muted">Chưa có thay đổi được ghi nhận.</p>}</div>
 }
 export function DetailDialog({ title, subtitle, onClose, children, entityId, actions }: { title: string; subtitle?: ReactNode; onClose: () => void; children: ReactNode; entityId?: string; actions?: ReactNode }) {
   return <Dialog title={title} subtitle={subtitle} onClose={onClose} footer={<><Button onClick={onClose}>Đóng chi tiết</Button>{actions}</>}><div className="m-detail">{children}{entityId && <History entityId={entityId} />}</div></Dialog>

@@ -1,5 +1,5 @@
 export type Permission = 'tables.edit' | 'reservations.edit' | 'employees.assign' | 'shifts.manage' | 'menu.manage' | 'approvals.decide' | 'incidents.manage' | 'reports.export'
-export interface ManagerUser { id: string; name: string; role: 'MANAGER' | 'CASHIER'; position: string; permissions: Permission[]; approvalLimit: number }
+export interface ManagerUser { id: string; name: string; email?: string; role: 'MANAGER' | 'CASHIER'; position: string; permissions: Permission[]; approvalLimit: number }
 export interface Area { id: string; name: string }
 export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'CLEANING' | 'OUT_OF_SERVICE'
 export interface RestaurantTable { id: string; code: string; areaId: string; seats: number; status: TableStatus; sessionId?: string; hasActiveReservation?: boolean }
@@ -64,7 +64,7 @@ export interface Payment { id: string; billId: string; at: string; method: 'CASH
 /** Messages the manager side sends to other roles (shown only in dev tools until a backend exists). */
 export interface OutboxMessage { id: string; kind: 'REQUEST_DECIDED' | 'INCIDENT_REPLY' | 'CANCELLED' | 'TABLE_REASSIGNED'; audience: 'CASHIER' | 'WAITER' | 'KITCHEN' | 'RECEPTIONIST' | 'MANAGER'; staffId: string; title: string; body: string; at: string }
 export interface AuditEvent { id: string; at: string; actorId: string; entityId: string; text: string }
-export interface ManagerData { schema: 1; revision: number; seedDay: string; areas: Area[]; tables: RestaurantTable[]; sessions: TableSession[]; reservations: Reservation[]; orders: Order[]; employees: Employee[]; shifts: Shift[]; categories: MenuCategory[]; menu: MenuItem[]; approvals: Approval[]; incidents: Incident[]; notifications: ManagerNotification[]; bills: Bill[]; payments: Payment[]; history: AuditEvent[]; outbox: OutboxMessage[] }
+export interface ManagerData { schema: 1; revision: number; seedDay: string; areas: Area[]; tables: RestaurantTable[]; sessions: TableSession[]; reservations: Reservation[]; orders: Order[]; employees: Employee[]; shifts: Shift[]; categories: MenuCategory[]; menu: MenuItem[]; approvals: Approval[]; incidents: Incident[]; notifications: ManagerNotification[]; bills: Bill[]; payments: Payment[]; history: AuditEvent[]; outbox: OutboxMessage[]; me?: ManagerUser }
 export interface ManagerReport {
   from: string; to: string
   summary: { revenue: number; payments: number; bills: number; averageBill: number; guests: number }

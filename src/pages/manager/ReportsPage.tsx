@@ -22,23 +22,23 @@ export default function ReportsPage() {
   const [from, setFrom] = useState(addDays(businessDay(), -6)); const [to, setTo] = useState(businessDay()); const [shift, setShift] = useState(''); const [method, setMethod] = useState(''); const [tab, setTab] = useState('revenue')
   // Each response is stored with the filter that produced it; report/loading/loadError are derived below
   // (lint forbids synchronous setState inside an effect).
-  const [result, setResult] = useState<{ filter: string; revision?: number; report: ManagerReport | null; error: string }>()
-  const revision = d?.revision
+  const [result, setResult] = useState<{ filter: string; paymentsKey: string; report: ManagerReport | null; error: string }>()
+  const paymentsKey = d ? d.payments.map(p => `${p.id}:${p.status}`).join('|') : ''
   const filter = `${from}|${to}|${shift}|${method}`
   useEffect(() => {
     if (rangeError(from, to)) return
     // A slower response for an older filter must not overwrite the current one.
     let active = true
-    const key = { filter: `${from}|${to}|${shift}|${method}`, revision }
+    const key = { filter: `${from}|${to}|${shift}|${method}`, paymentsKey }
     managerService.report({ from, to, shift, method })
       .then(r => { if (active) setResult({ ...key, report: r, error: '' }) }, e => { if (active) setResult({ ...key, report: null, error: reportError(e) }) })
     return () => { active = false }
-  }, [from, to, shift, method, revision]) // revision: the 5 s snapshot refresh bumps it after new payments
+  }, [from, to, shift, method, paymentsKey])
   if (!d) return null
   const rangeMessage = rangeError(from, to); const invalid = !!rangeMessage
   const current = !invalid && result?.filter === filter ? result : undefined
   const report = current?.report ?? null; const loadError = current?.error ?? ''
-  const loading = !invalid && (result?.filter !== filter || result.revision !== revision)
+  const loading = !invalid && (result?.filter !== filter || result.paymentsKey !== paymentsKey)
   const s = report?.summary ?? { revenue: 0, payments: 0, bills: 0, averageBill: 0, guests: 0 }
   const op = report?.operations ?? { paidGuests: 0, reservations: 0, arrived: 0, cancelledOrNoShow: 0 }
   const daily = report?.daily ?? []; const dishes = report?.dishes ?? []
