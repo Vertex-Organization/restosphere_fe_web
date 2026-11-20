@@ -118,6 +118,12 @@ export const managerService = {
     if (q.method) params.set('method', q.method)
     return toReport(await authenticatedRequest<ReportDto>(`manager/reports?${params}`))
   },
+  async uploadMenuImage(contentType: string, data: string): Promise<string> {
+    const res = await authenticatedRequest<{ url: string }>('menu/images', {
+      method: 'POST', body: JSON.stringify({ contentType, data }), signal: AbortSignal.timeout(60000),
+    })
+    return res.url
+  },
   async load() {
     const [snapshot, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
       authenticatedRequest<ManagerData>('workspaces/manager'),

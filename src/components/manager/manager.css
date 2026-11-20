@@ -280,3 +280,4 @@ html.m-html { background:#f4f7f6; scroll-behavior:auto; scroll-padding-top:0 }
 .m-recent-footer { padding:9px 16px; border-top:1px solid var(--k-border-soft); background:var(--k-surface-alt); font-size:11px; color:var(--k-text-2) }
 .m-recent-empty { display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px 16px; color:var(--k-text-2); font-size:12px }
 @media(max-width:639px) { .m-recent-activity { padding:4px 12px }.m-recent-footer { padding:9px 12px } }
+.m-image-field { display:flex; gap:12px; align-items:flex-start }.m-image-field>div { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; min-width:0 }.m-image-field small { flex-basis:100% }.m-image-field .k-field-error { flex-basis:100% }.m-image-field .c-thumb { flex:none; border-radius:8px; object-fit:cover; border:1px solid var(--k-border-soft) }
