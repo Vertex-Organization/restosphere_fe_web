@@ -7,6 +7,8 @@ export interface TableSession { id: string; tableId: string; guests: number; sta
 export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'ARRIVED' | 'SEATED' | 'COMPLETED' | 'REJECTED' | 'CANCELLED' | 'NO_SHOW'
 export interface Reservation {
   id: string
+  /** Human-readable booking code (RS-ddMMyy-NNN); `id` is the internal UUID. */
+  code?: string
   customer: string
   phone?: string
   email?: string

@@ -2,11 +2,14 @@ const baseUrl = (import.meta.env.VITE_API_BASE_URL || '/api/v1').replace(/\/+$/,
 
 export class ApiError extends Error {
   readonly status: number
+  /** Server-provided reason (ProblemDetail.detail), when available. */
+  readonly detail?: string
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, detail?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -36,7 +39,10 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
     throw new ApiError(0, 'Không thể kết nối máy chủ. Vui lòng thử lại.')
   }
 
-  if (!response.ok) throw new ApiError(response.status, errorMessage(response.status))
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { detail?: unknown } | null
+    throw new ApiError(response.status, errorMessage(response.status), typeof body?.detail === 'string' ? body.detail : undefined)
+  }
   if (response.status === 204) return undefined as T
 
   try {

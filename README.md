@@ -9,6 +9,7 @@ với tiếng Việt mặc định và lựa chọn tiếng Anh.
 - Trang chủ giới thiệu nhà hàng, cua hoàng đế, tôm hùm, tôm, mực và các món dùng chung.
 - Thực đơn món ăn, đồ uống và đặt tiệc bằng SVG, có thể mở xem ở kích thước đầy đủ.
 - Biểu mẫu tư vấn đặt tiệc có kiểm tra thông tin và tạo email nháp để khách tự gửi.
+- Trang `/reservation-status`: tra cứu đặt bàn bằng mã + số điện thoại; khách tự hủy (kèm lý do) khi đơn đang chờ xác nhận hoặc đã xác nhận.
 - Chuyển ngôn ngữ VI / EN, thông tin chi nhánh, giờ hoạt động và câu hỏi thường gặp.
 - Cuộn mượt, chuyển trang, slider kéo thả, ảnh chạy ngang, video và bong bóng tương tác ở footer.
 
@@ -119,11 +120,10 @@ Các đường dẫn `/auth/*` và danh mục `/menu/*` cũ được đưa về 
 
 ## Biểu mẫu và cấu hình API
 
-Biểu mẫu đặt tiệc tạo email nháp bằng `mailto:`. Khách cần mở ứng dụng email,
-kiểm tra và tự gửi; biểu mẫu chưa lưu yêu cầu đặt tiệc vào backend.
+Biểu mẫu đặt bàn gửi `POST /reservations` tới backend và trả về mã đặt bàn.
+Khách tra cứu hoặc hủy tại `/reservation-status` bằng mã và số điện thoại.
 
-`src/api/` và `useAuth.ts` giữ mã tích hợp xác thực cũ. Nếu sử dụng lại phần này,
-tạo `.env` dựa trên [.env.example](.env.example):
+Cấu hình API qua `.env`:
 
 ```dotenv
 VITE_API_BASE_URL=/api/v1
@@ -136,8 +136,8 @@ và preview. Máy chủ production cần cấu hình proxy riêng nếu sử d�
 
 Thông tin liên hệ, địa chỉ, mạng xã hội, dịch vụ bên ngoài và thông tin pháp lý
 hiện còn dùng cấu hình tham khảo. Cập nhật các file tương ứng trong bảng trên
-khi có thông tin chính thức của nhà hàng. Giờ hoạt động và ngày đặt tiệc hiện
-được tính theo múi giờ `Europe/Amsterdam`.
+khi có thông tin chính thức của nhà hàng. Ngày giờ đặt bàn được tính theo múi giờ
+backend trả về (mặc định `Asia/Ho_Chi_Minh`).
 
 ## Build và triển khai
 

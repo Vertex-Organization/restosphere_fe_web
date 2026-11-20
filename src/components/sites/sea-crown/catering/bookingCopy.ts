@@ -1,11 +1,8 @@
 import type { Dish, Localized } from '../../../../api/menu/types'
-import type { SeatingArea } from '../../../../api/reservations/types'
 import type { Language } from '../siteData'
 
 /** Pre-ordered dishes: dish id → portions (or kg for per-kg seafood). */
 export type Cart = Record<string, number>
-
-export const AREAS: SeatingArea[] = ['main', 'outdoor', 'private']
 
 export interface PartySet {
   id: string
@@ -109,27 +106,12 @@ export const BOOKING_COPY = {
     time: 'Khung giờ đến',
     lunchSession: 'Ca trưa (10:00 – 14:30)',
     dinnerSession: 'Ca tối (15:00 – 21:30)',
-    chooseTime: 'Chọn khung giờ bên dưới',
     noSlots: 'Hôm nay đã hết giờ nhận đặt bàn trực tuyến, vui lòng chọn ngày khác.',
     guests: 'Số lượng khách',
     guestUnit: 'khách',
     fewer: 'Bớt một khách',
     more: 'Thêm một khách',
-    recommendPrivate: 'Nhóm từ 8 khách trở lên: Gợi ý chọn Phòng VIP riêng để có không gian kín đáo.',
-    switchPrivate: 'Chọn Phòng riêng',
     area: 'Không gian chỗ ngồi',
-    areaLabel: { main: 'Sảnh chính', outdoor: 'Sân ngoài trời', private: 'Phòng VIP riêng' } satisfies Record<SeatingArea, string>,
-    areaCapacity: { main: '1 – 40 khách', outdoor: '2 – 24 khách', private: '8 – 60 khách' } satisfies Record<SeatingArea, string>,
-    areaHint: {
-      main: 'Không gian sôi động ngay cạnh bể hải sản tươi sống, thuận tiện chọn hải sản tại chỗ.',
-      outdoor: 'Sân vườn thoáng đãng nhiều cây xanh, lý tưởng cho tiệc tối và họp mặt bạn bè.',
-      private: 'Phòng máy lạnh khép kín có âm thanh & màn hình riêng cho tiệc sinh nhật, công ty, gia đình.',
-    } satisfies Record<SeatingArea, string>,
-    areaFeatures: {
-      main: ['Cạnh bể hải sản', 'Không khí sôi động'],
-      outdoor: ['Thoáng mát tự nhiên', 'View buổi tối đẹp'],
-      private: ['Không gian riêng tư', 'Hỗ trợ trang trí & màn chiếu'],
-    } satisfies Record<SeatingArea, string[]>,
     step1: 'Thời gian & Không gian tiệc',
     step2: 'Thông tin người đặt & Thực đơn',
     name: 'Họ và tên người đặt',
@@ -151,7 +133,6 @@ export const BOOKING_COPY = {
     submit: 'Hoàn tất yêu cầu đặt tiệc',
     submitting: 'Đang gửi yêu cầu…',
     failed: 'Chưa gửi được yêu cầu. Vui lòng kiểm tra lại thông tin liên hệ và khung giờ.',
-    privateTooSmall: 'Phòng VIP riêng chỉ áp dụng cho đoàn từ 8 khách trở lên.',
     requiredHint: 'Các mục đánh dấu * là thông tin bắt buộc.',
 
     doneBadge: 'Phiếu Xác Nhận Đặt Tiệc',
@@ -205,27 +186,12 @@ export const BOOKING_COPY = {
     time: 'Arrival time',
     lunchSession: 'Lunch service (10:00 – 14:30)',
     dinnerSession: 'Dinner service (15:00 – 21:30)',
-    chooseTime: 'Select a time slot below',
     noSlots: 'No more online slots available for today. Please choose another date.',
     guests: 'Party size',
     guestUnit: 'guests',
     fewer: 'One guest fewer',
     more: 'One guest more',
-    recommendPrivate: 'Party of 8+ guests: We recommend our VIP Private Room for an exclusive dining experience.',
-    switchPrivate: 'Switch to Private Room',
     area: 'Seating zone',
-    areaLabel: { main: 'Main Hall', outdoor: 'Garden Terrace', private: 'VIP Private Room' } satisfies Record<SeatingArea, string>,
-    areaCapacity: { main: '1 – 40 guests', outdoor: '2 – 24 guests', private: '8 – 60 guests' } satisfies Record<SeatingArea, string>,
-    areaHint: {
-      main: 'Vibrant dining room right beside our live seafood tanks where you can pick your catch.',
-      outdoor: 'Breezy open-air terrace with greenery, ideal for evening gatherings and toasts.',
-      private: 'Enclosed air-conditioned room with private audio & screen for birthdays, family or corporate events.',
-    } satisfies Record<SeatingArea, string>,
-    areaFeatures: {
-      main: ['Next to live tanks', 'Lively atmosphere'],
-      outdoor: ['Open-air breeze', 'Best in the evening'],
-      private: ['Full privacy', 'Decor & screen ready'],
-    } satisfies Record<SeatingArea, string[]>,
     step1: 'Date, Time & Seating Zone',
     step2: 'Host Details & Pre-order Summary',
     name: 'Host full name',
@@ -247,7 +213,6 @@ export const BOOKING_COPY = {
     submit: 'Confirm booking request',
     submitting: 'Sending request…',
     failed: 'Your request could not be sent. Please check your contact details and time slot.',
-    privateTooSmall: 'VIP Private Rooms are reserved for parties of 8 guests or more.',
     requiredHint: 'Fields marked * are required.',
 
     doneBadge: 'Reservation Pass',
