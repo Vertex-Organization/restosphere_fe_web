@@ -47,7 +47,7 @@ export default function KitchenNotificationsPage() {
       {list.length ? (
         <ul className="k-notifs">
           {list.map((n) => {
-            const kind = KIND[n.kind]
+            const kind = KIND[n.kind] ?? { icon: 'bell' as const, tone: 'info' }
             const fresh = isUnread(n)
             return (
               <li key={n.id}>
