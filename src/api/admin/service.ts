@@ -1,15 +1,16 @@
 import { authenticatedRequest } from '../auth'
-import type { AdminService, AdminSettings, AdminUser, AuditLog, RestaurantProfile } from './types'
+import type { AdminService, AdminSettings, AdminUser, AuditLog, DiscountLimits, RestaurantProfile } from './types'
 
 export const adminService: AdminService = {
   async load(signal) {
-    const [users, restaurant, settings, auditLogs] = await Promise.all([
+    const [users, restaurant, settings, discountLimits, auditLogs] = await Promise.all([
       authenticatedRequest<AdminUser[]>('admin/users', { signal }),
       authenticatedRequest<RestaurantProfile>('admin/restaurant', { signal }),
       authenticatedRequest<AdminSettings>('admin/settings', { signal }),
+      authenticatedRequest<DiscountLimits>('admin/settings/discount-limits', { signal }),
       adminService.auditLogs({ limit: 200 }, signal),
     ])
-    return { users, restaurant, settings, auditLogs }
+    return { users, restaurant, settings, discountLimits, auditLogs }
   },
   auditLogs(filters, signal) {
     const query = new URLSearchParams()
@@ -55,6 +56,10 @@ export const adminService: AdminService = {
     }
     if (command.type === 'restaurant.image.remove') {
       await authenticatedRequest<RestaurantProfile>(`admin/restaurant/images/${command.kind}`, { method: 'DELETE' })
+      return adminService.load()
+    }
+    if (command.type === 'discountLimits.update') {
+      await authenticatedRequest<DiscountLimits>('admin/settings/discount-limits', { method: 'PUT', body: JSON.stringify(command.limits) })
       return adminService.load()
     }
     // Compile error here means a new AdminCommand was added without a handler.

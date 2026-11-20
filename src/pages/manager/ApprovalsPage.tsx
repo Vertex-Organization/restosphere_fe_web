@@ -32,7 +32,7 @@ export default function ApprovalsPage({ selectedId }: { selectedId: string }) {
       const reason = String(v.reason ?? '').trim()
       if (reason.length < 5) throw new ManagerError('Nhập lý do xử lý ít nhất 5 ký tự.', 'reason')
       try { await execute({ type: 'approval.decide', id: a.id, approve: v.decision === 'APPROVED', reason }) }
-      catch (e) { throw e instanceof ApiError && e.status === 409 ? new Error('Không xử lý được: yêu cầu đã được xử lý, do chính bạn gửi, hoặc đối tượng đã thay đổi (món đã hủy, hóa đơn đã khóa…).') : e }
+      catch (e) { throw e instanceof ApiError && e.status === 409 ? new Error('Không xử lý được: yêu cầu đã được xử lý, do chính bạn gửi, vượt hạn mức phê duyệt của bạn, hoặc đối tượng đã thay đổi (món đã hủy, hóa đơn đã khóa…).') : e }
     }} submitLabel="Lưu quyết định" />}
   </>
 }

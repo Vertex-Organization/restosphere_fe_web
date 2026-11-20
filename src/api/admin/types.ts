@@ -38,6 +38,8 @@ export interface AdminSettings {
   emailNotifications: boolean
 }
 
+export interface DiscountLimits { cashierDiscountPercent: number; managerApprovalLimit: number }
+
 export interface AuditLog {
   id: string
   at: string
@@ -51,6 +53,7 @@ export interface AdminData {
   users: AdminUser[]
   restaurant: RestaurantProfile
   settings: AdminSettings
+  discountLimits: DiscountLimits
   auditLogs: AuditLog[]
 }
 
@@ -70,3 +73,4 @@ export type AdminCommand =
   | { type: 'restaurant.image.remove'; kind: 'logo' | 'cover' }
   | { type: 'restaurant.update'; restaurant: RestaurantProfile }
   | { type: 'settings.update'; settings: AdminSettings }
+  | { type: 'discountLimits.update'; limits: DiscountLimits }
