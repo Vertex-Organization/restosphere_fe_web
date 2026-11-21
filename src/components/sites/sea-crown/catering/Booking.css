@@ -1853,8 +1853,14 @@
 
 .bk-ticket-menu li {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.bk-ticket-menu .bk-summary-thumb {
+  width: 48px;
+  height: 48px;
 }
 
 .bk-ticket-menu em {

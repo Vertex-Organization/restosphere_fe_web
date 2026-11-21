@@ -293,8 +293,17 @@ export function BookingForm({
             <ul>
               {doneItems.map(({ dish, quantity }) => (
                 <li key={dish.id}>
-                  <span>
-                    {dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em>
+                  <span className="bk-summary-dish">
+                    <span className="bk-summary-thumb" aria-hidden="true">
+                      {dish.imageUrl ? (
+                        <img src={dish.imageUrl} alt="" />
+                      ) : (
+                        <MenuIcon name="dish" size={16} />
+                      )}
+                    </span>
+                    <span>
+                      {dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em>
+                    </span>
                   </span>
                   <strong>{formatMoney(dish.price * quantity, language)}</strong>
                 </li>
