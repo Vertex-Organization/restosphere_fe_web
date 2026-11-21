@@ -197,6 +197,19 @@ export default function ReservationStatusPage({ language }: { language: Language
                 {statusLabel[result.status] ?? result.status}
               </span>
             </p>
+            {result.deposit && (
+              <p>
+                <strong>{en ? 'Deposit:' : 'Tiền cọc:'}</strong>{' '}
+                {result.deposit.amount.toLocaleString('vi-VN')}đ ·{' '}
+                {result.deposit.paidAt
+                  ? en
+                    ? 'received'
+                    : 'đã nhận'
+                  : en
+                    ? `awaiting transfer, note "${result.deposit.reference}"`
+                    : `chưa nhận, nội dung chuyển khoản "${result.deposit.reference}"`}
+              </p>
+            )}
             {result.items?.length > 0 && (
               <div style={{ marginTop: '12px' }}>
                 <strong>{en ? 'Preordered Dishes:' : 'Món đặt trước:'}</strong>

@@ -4,6 +4,7 @@ import { ApiError } from '../../../../api/client'
 import { reservationService, type ReservationSettings } from '../../../../api/reservations/service'
 import type { Reservation } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
+import DepositPanel from './DepositPanel'
 import type { Language } from '../siteData'
 import {
   BOOKING_COPY,
@@ -222,6 +223,10 @@ export function BookingForm({
     } catch {
       // Fallback ignored if clipboard is blocked
     }
+  }
+
+  if (done?.deposit && !done.deposit.paidAt && done.status === 'PENDING') {
+    return <DepositPanel reservation={done} language={language} onPaid={setDone} />
   }
 
   if (done) {

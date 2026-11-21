@@ -31,6 +31,17 @@ export interface ReservationRequest {
   items: PreorderLine[]
 }
 
+export interface Deposit {
+  /** Whole VND. */
+  amount: number
+  dueAt: string
+  paidAt?: string
+  /** Transfer note the customer must use. */
+  reference: string
+  /** Present only while the deposit is unpaid and the restaurant set a bank account. */
+  bank?: { bankName?: string; accountNumber: string; accountName?: string }
+}
+
 export interface Reservation extends ReservationRequest {
   code: string
   status: ReservationStatus
@@ -38,4 +49,5 @@ export interface Reservation extends ReservationRequest {
   startsAt: string
   durationMinutes: number
   areaName: string
+  deposit?: Deposit
 }

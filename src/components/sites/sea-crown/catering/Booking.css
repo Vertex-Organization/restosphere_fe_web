@@ -2062,3 +2062,18 @@
     text-align: center;
   }
 }
+
+.bk-deposit-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.bk-deposit-qr {
+  width: 220px;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-plum) 15%, transparent);
+  border-radius: 12px;
+  background: #fff;
+}
