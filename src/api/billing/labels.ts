@@ -1,6 +1,13 @@
 import type {
-  BillStatus, CashierNotificationKind, DiscountMode, PaymentMethod, PaymentStatus, RequestStatus,
-  RequestType, SentItemStatus, TableStatus,
+  BillStatus,
+  CashierNotificationKind,
+  DiscountMode,
+  PaymentMethod,
+  PaymentStatus,
+  RequestStatus,
+  RequestType,
+  SentItemStatus,
+  TableStatus,
 } from './types'
 
 export type Tone = 'neutral' | 'info' | 'warning' | 'success' | 'danger' | 'primary'

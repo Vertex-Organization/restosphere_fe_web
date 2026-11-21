@@ -10,7 +10,11 @@ import { Badge, type BadgeTone } from '../../../components/kitchen/KitchenStatus
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 
-const TONE: Record<MenuAvailability, BadgeTone> = { AVAILABLE: 'success', SOLD_OUT: 'danger', DISCONTINUED: 'neutral' }
+const TONE: Record<MenuAvailability, BadgeTone> = {
+  AVAILABLE: 'success',
+  SOLD_OUT: 'danger',
+  DISCONTINUED: 'neutral',
+}
 
 export default function KitchenMenuStatusPage() {
   const { data, run, isPending, user } = useKitchenSnapshot()
@@ -38,24 +42,63 @@ export default function KitchenMenuStatusPage() {
 
   const action = (menu: MenuItem) => {
     const busy = isPending(`menu:${menu.id}`)
-    if (menu.status === 'DISCONTINUED') return <span className="k-muted">Do Quản lý (Manager) quản lý</span>
+    if (menu.status === 'DISCONTINUED')
+      return <span className="k-muted">Do Quản lý (Manager) quản lý</span>
     if (canEdit) {
       if (menu.status === 'SOLD_OUT') {
-        return <button type="button" className="k-btn k-btn--outline" disabled={busy} onClick={() => { void setStatus(menu, 'AVAILABLE') }}>Mở bán lại</button>
+        return (
+          <button
+            type="button"
+            className="k-btn k-btn--outline"
+            disabled={busy}
+            onClick={() => {
+              void setStatus(menu, 'AVAILABLE')
+            }}
+          >
+            Mở bán lại
+          </button>
+        )
       }
       if (confirming === menu.id) {
         return (
           <span className="k-confirm">
             <span className="k-muted">Báo tạm hết?</span>
-            <button type="button" className="k-btn k-btn--danger" disabled={busy} onClick={() => { void setStatus(menu, 'SOLD_OUT') }}>Xác nhận</button>
-            <button type="button" className="k-btn k-btn--ghost" onClick={() => setConfirming(null)}>Hủy</button>
+            <button
+              type="button"
+              className="k-btn k-btn--danger"
+              disabled={busy}
+              onClick={() => {
+                void setStatus(menu, 'SOLD_OUT')
+              }}
+            >
+              Xác nhận
+            </button>
+            <button
+              type="button"
+              className="k-btn k-btn--ghost"
+              onClick={() => setConfirming(null)}
+            >
+              Hủy
+            </button>
           </span>
         )
       }
-      return <button type="button" className="k-btn" disabled={busy} onClick={() => setConfirming(menu.id)}>Báo tạm hết</button>
+      return (
+        <button
+          type="button"
+          className="k-btn"
+          disabled={busy}
+          onClick={() => setConfirming(menu.id)}
+        >
+          Báo tạm hết
+        </button>
+      )
     }
-    const pending = data.menuRequests.find((r) => r.menuItemId === menu.id && r.status === 'PENDING')
-    if (pending) return <span className="k-muted">Đã gửi yêu cầu lúc {formatTime(pending.requestedAt)}</span>
+    const pending = data.menuRequests.find(
+      (r) => r.menuItemId === menu.id && r.status === 'PENDING',
+    )
+    if (pending)
+      return <span className="k-muted">Đã gửi yêu cầu lúc {formatTime(pending.requestedAt)}</span>
     const target = menu.status === 'AVAILABLE' ? 'SOLD_OUT' : 'AVAILABLE'
     return (
       <button type="button" className="k-btn" disabled={busy} onClick={() => request(menu, target)}>
@@ -76,26 +119,60 @@ export default function KitchenMenuStatusPage() {
         <label className="k-search">
           <Icon name="search" size={15} />
           <span className="k-visually-hidden">Tìm món</span>
-          <input className="k-input" type="search" placeholder="Tìm món…" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input
+            className="k-input"
+            type="search"
+            placeholder="Tìm món…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </label>
-        <KitchenFilters label="Danh mục" value={category} onChange={setCategory} options={[
-          { value: 'all', label: 'Tất cả' },
-          ...data.menuCategories.map((c) => ({ value: c.id, label: c.name })),
-        ]} />
-        <span className="k-toolbar-count">{data.menuItems.length} món · {soldOut} tạm hết</span>
+        <KitchenFilters
+          label="Danh mục"
+          value={category}
+          onChange={setCategory}
+          options={[
+            { value: 'all', label: 'Tất cả' },
+            ...data.menuCategories.map((c) => ({ value: c.id, label: c.name })),
+          ]}
+        />
+        <span className="k-toolbar-count">
+          {data.menuItems.length} món · {soldOut} tạm hết
+        </span>
       </div>
       <div className="k-table-wrap">
         <table className="k-table">
           <thead>
-            <tr><th>Món</th><th>Danh mục</th><th>Tình trạng</th><th>Cập nhật</th><th className="k-cell-actions">Thao tác</th></tr>
+            <tr>
+              <th>Món</th>
+              <th>Danh mục</th>
+              <th>Tình trạng</th>
+              <th>Cập nhật</th>
+              <th className="k-cell-actions">Thao tác</th>
+            </tr>
           </thead>
           <tbody>
             {rows.map((menu) => (
-              <tr key={menu.id} className={menu.status === 'DISCONTINUED' ? 'k-row-muted' : undefined}>
-                <td><span className="k-cell-dish"><DishPhoto menu={menu} /><span className="k-strong">{menu.name}</span></span></td>
+              <tr
+                key={menu.id}
+                className={menu.status === 'DISCONTINUED' ? 'k-row-muted' : undefined}
+              >
+                <td>
+                  <span className="k-cell-dish">
+                    <DishPhoto menu={menu} />
+                    <span className="k-strong">{menu.name}</span>
+                  </span>
+                </td>
                 <td>{categoryName(menu.categoryId)}</td>
-                <td><Badge tone={TONE[menu.status]}>{MENU_STATUS_LABEL[menu.status]}</Badge></td>
-                <td className="k-mono">{formatWhen(menu.updatedAt, now)}{menu.updatedBy && <span className="k-muted"> · {staffName(data, menu.updatedBy)}</span>}</td>
+                <td>
+                  <Badge tone={TONE[menu.status]}>{MENU_STATUS_LABEL[menu.status]}</Badge>
+                </td>
+                <td className="k-mono">
+                  {formatWhen(menu.updatedAt, now)}
+                  {menu.updatedBy && (
+                    <span className="k-muted"> · {staffName(data, menu.updatedBy)}</span>
+                  )}
+                </td>
                 <td className="k-cell-actions">{action(menu)}</td>
               </tr>
             ))}

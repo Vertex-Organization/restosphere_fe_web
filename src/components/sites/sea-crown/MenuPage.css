@@ -38,7 +38,11 @@
   position: relative;
   width: 100%;
   padding: 132px var(--menu-gutter) 56px;
-  background: linear-gradient(180deg, var(--color-dark, #870000) 0%, var(--color-plum, #b40000) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-dark, #870000) 0%,
+    var(--color-plum, #b40000) 100%
+  );
   color: var(--color-cream, #fff);
   text-align: center;
   border-bottom: 3px solid var(--color-gold, #ffc400);
@@ -97,7 +101,10 @@
   color: var(--color-cream, #fff);
   font-size: 14px;
   font-weight: 600;
-  transition: background .2s ease, border-color .2s ease, color .2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .menu-jump a:hover {
@@ -109,7 +116,7 @@
 .menu-jump span {
   font-size: 12px;
   font-weight: 500;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 .menu-search {
@@ -123,7 +130,9 @@
   border-radius: 999px;
   background: var(--color-cream, #fff);
   color: var(--color-plum, #b40000);
-  transition: border-color .2s ease, box-shadow .2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .menu-search:focus-within {
@@ -156,7 +165,9 @@
   border-radius: 50%;
   background: var(--menu-soft);
   color: var(--color-dark, #870000);
-  transition: background .2s ease, color .2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .menu-search-clear:hover {
@@ -193,7 +204,9 @@
   color: var(--color-dark, #870000);
   font-size: 14px;
   font-weight: 600;
-  transition: border-color .2s ease, background .2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .menu-filter-toggle:hover,
@@ -209,7 +222,7 @@
   border: 1px solid var(--menu-line);
   border-radius: 16px;
   background: var(--menu-soft);
-  animation: menu-fade-in .2s ease;
+  animation: menu-fade-in 0.2s ease;
 }
 
 .menu-filter-group {
@@ -275,7 +288,9 @@
   color: var(--color-dark, #870000);
   font-size: 13px;
   font-weight: 500;
-  transition: background .2s ease, color .2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .menu-active-chip:hover {
@@ -294,7 +309,10 @@
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
-  transition: background .2s ease, color .2s ease, border-color .2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .menu-toggle:hover {
@@ -314,7 +332,6 @@
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;
 }
-
 
 .menu-check {
   display: inline-flex;
@@ -345,7 +362,6 @@
   font-weight: 700;
 }
 
-
 /* 3. Dish Card */
 
 .menu-card-button {
@@ -360,7 +376,10 @@
   background: var(--color-cream, #fff);
   color: inherit;
   text-align: left;
-  transition: transform .3s cubic-bezier(.23, 1, .32, 1), border-color .3s ease, box-shadow .3s ease;
+  transition:
+    transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .menu-card-button:hover {
@@ -390,7 +409,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform .6s cubic-bezier(.23, 1, .32, 1);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .menu-card-button:hover .menu-card-media img {
@@ -496,8 +515,8 @@
 }
 
 .menu-card.is-sold-out .menu-card-media img {
-  filter: grayscale(.85);
-  opacity: .6;
+  filter: grayscale(0.85);
+  opacity: 0.6;
 }
 
 .menu-card.is-sold-out .menu-card-name,
@@ -509,12 +528,15 @@
   flex: 0 0 auto;
   height: 380px;
   border-radius: 16px;
-  background: linear-gradient(100deg, var(--menu-soft) 40%, #fff 50%, var(--menu-soft) 60%) 0 0 / 200% 100%;
+  background: linear-gradient(100deg, var(--menu-soft) 40%, #fff 50%, var(--menu-soft) 60%) 0 0 /
+    200% 100%;
   animation: menu-shimmer 1.4s linear infinite;
 }
 
 @keyframes menu-shimmer {
-  to { background-position: -200% 0; }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 /* 4. Chips & Tags */
@@ -610,19 +632,24 @@ html:has(.menu-dialog[open]) {
 }
 
 .menu-dialog[open] {
-  animation: menu-sheet-in .4s cubic-bezier(.23, 1, .32, 1);
+  animation: menu-sheet-in 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .menu-dialog[open]::backdrop {
-  animation: menu-fade-in .3s ease;
+  animation: menu-fade-in 0.3s ease;
 }
 
 @keyframes menu-sheet-in {
-  from { transform: translateY(40px); opacity: 0; }
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
 }
 
 @keyframes menu-fade-in {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 .menu-dialog-panel {
@@ -760,7 +787,9 @@ html:has(.menu-dialog[open]) {
   border-radius: 14px;
   background: none;
   text-align: left;
-  transition: border-color .2s, background .2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .menu-pairs button:hover {
@@ -821,7 +850,10 @@ html:has(.menu-dialog[open]) {
   }
 
   @keyframes menu-pop-in {
-    from { transform: scale(.96); opacity: 0; }
+    from {
+      transform: scale(0.96);
+      opacity: 0;
+    }
   }
 }
 

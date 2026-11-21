@@ -19,22 +19,37 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const controller = new AbortController()
-    adminService.load(controller.signal).then(next => {
-      if (!controller.signal.aborted) { setData(next); setError('') }
-    }).catch((reason: unknown) => {
-      if (controller.signal.aborted) return
-      setError(reason instanceof Error ? reason.message : 'Không tải được dữ liệu quản trị.')
-    })
+    adminService
+      .load(controller.signal)
+      .then((next) => {
+        if (!controller.signal.aborted) {
+          setData(next)
+          setError('')
+        }
+      })
+      .catch((reason: unknown) => {
+        if (controller.signal.aborted) return
+        setError(reason instanceof Error ? reason.message : 'Không tải được dữ liệu quản trị.')
+      })
     return () => controller.abort()
   }, [reloadKey])
 
-  const value = useMemo<AdminDataState>(() => ({
-    data,
-    loading: !data && !error,
-    error,
-    execute: async (command) => { setData(await adminService.execute(command)) },
-    reload: () => { setError(''); setData(null); setReloadKey((value) => value + 1) },
-  }), [data, error])
+  const value = useMemo<AdminDataState>(
+    () => ({
+      data,
+      loading: !data && !error,
+      error,
+      execute: async (command) => {
+        setData(await adminService.execute(command))
+      },
+      reload: () => {
+        setError('')
+        setData(null)
+        setReloadKey((value) => value + 1)
+      },
+    }),
+    [data, error],
+  )
 
   return <AdminDataContext.Provider value={value}>{children}</AdminDataContext.Provider>
 }

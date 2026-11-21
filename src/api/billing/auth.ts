@@ -10,7 +10,11 @@ let cached: { id: string; user: CashierStaff | null } | null = null
 export function getCashierUser(): CashierStaff | null {
   const session = getStaffSession()
   if (!session || session.role !== 'CASHIER') return null
-  if (cached?.id !== session.id) cached = { id: session.id, user: { ...session, role: 'CASHIER', permissions: [], discountLimitPercent: 0 } }
+  if (cached?.id !== session.id)
+    cached = {
+      id: session.id,
+      user: { ...session, role: 'CASHIER', permissions: [], discountLimitPercent: 0 },
+    }
   return cached.user
 }
 

@@ -11,7 +11,10 @@ function getAdminUser(): AuthUser | null {
   const session = getStaffSession()
   if (!session || session.role !== 'ADMIN') return null
   if (cached?.id !== session.id) {
-    cached = { id: session.id, user: { id: session.id, email: session.email ?? '', fullName: session.name, role: 'ADMIN' } }
+    cached = {
+      id: session.id,
+      user: { id: session.id, email: session.email ?? '', fullName: session.name, role: 'ADMIN' },
+    }
   }
   return cached.user
 }

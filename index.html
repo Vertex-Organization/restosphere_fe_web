@@ -3,13 +3,140 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/sites/sea-crown/images/logo.png" />
+    <link rel="stylesheet" href="/src/index.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#4d343f" />
-    <meta name="description" content="Thưởng thức cua, tôm, mực, tôm hùm và cua hoàng đế tại The Sea's Crown. Khám phá thực đơn hải sản và tư vấn đặt tiệc." />
+    <meta
+      name="description"
+      content="Thưởng thức cua, tôm, mực, tôm hùm và cua hoàng đế tại The Sea's Crown. Khám phá thực đơn hải sản và tư vấn đặt tiệc."
+    />
     <title>The Sea's Crown — Hải sản tươi ngon mỗi ngày</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      .app-boot {
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        padding: 24px;
+        background: #fff;
+        color: #870000;
+        font:
+          600 14px/1.5 system-ui,
+          sans-serif;
+      }
+      .app-progress {
+        width: min(360px, calc(100vw - 48px));
+      }
+      .app-progress__meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .app-progress__track {
+        height: 6px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #f2dddd;
+      }
+      .app-progress__value {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: #b40000;
+        transition: width 180ms ease-out;
+      }
+      .app-progress p {
+        margin: 10px 0 0;
+        color: #6b4545;
+        font-weight: 500;
+      }
+      .app-progress__retry {
+        min-height: 40px;
+        margin-top: 16px;
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 8px;
+        background: #870000;
+        color: #fff;
+        font: inherit;
+        cursor: pointer;
+      }
+      .app-progress__retry {
+        min-height: 40px;
+        margin-top: 16px;
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 8px;
+        background: #870000;
+        color: #fff;
+        font: inherit;
+        cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="app-boot" data-app-bootstrap role="status" aria-live="polite" aria-busy="true">
+        <div class="app-progress">
+          <div class="app-progress__meta">
+            <strong>RestoSphere</strong>
+            <span>12%</span>
+          </div>
+          <div
+            class="app-progress__track"
+            role="progressbar"
+            aria-label="Đã nhận trang · đang nạp mã ứng dụng"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="12"
+          >
+            <span class="app-progress__value" style="width: 12%"></span>
+          </div>
+          <p>Đã nhận trang · đang nạp mã ứng dụng</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      ;(() => {
+        const retryKey = 'restosphere.bootstrap-retry-at'
+        window.setTimeout(() => {
+          const bootstrap = document.querySelector('[data-app-bootstrap]')
+          const progress = bootstrap?.querySelector('[role="progressbar"]')
+          if (progress?.getAttribute('aria-valuenow') !== '12') return
+
+          const label = bootstrap.querySelector('p')
+          let retriedAt = 0
+          try {
+            retriedAt = Number(sessionStorage.getItem(retryKey) || 0)
+          } catch {
+            // Continue with the visible manual recovery below.
+          }
+
+          if (Date.now() - retriedAt > 15_000) {
+            try {
+              sessionStorage.setItem(retryKey, String(Date.now()))
+            } catch {
+              // A reload is still safe without storage; the next attempt will
+              // fall back to the manual action if storage becomes available.
+            }
+            if (label) label.textContent = 'Kết nối bị gián đoạn · đang thử lại'
+            window.setTimeout(() => window.location.reload(), 400)
+            return
+          }
+
+          if (label) label.textContent = 'Không tải được mã ứng dụng'
+          const retry = document.createElement('button')
+          retry.className = 'app-progress__retry'
+          retry.type = 'button'
+          retry.textContent = 'Thử tải lại'
+          retry.addEventListener('click', () => window.location.reload())
+          bootstrap.querySelector('.app-progress')?.append(retry)
+        }, 8_000)
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

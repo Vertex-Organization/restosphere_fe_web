@@ -28,7 +28,9 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
     return (
       <div className="k-state">
         <p className="k-state-title">Không tìm thấy hóa đơn</p>
-        <Link to={cashierPaths.pos} className="k-btn k-btn--primary">Về quầy thu ngân</Link>
+        <Link to={cashierPaths.pos} className="k-btn k-btn--primary">
+          Về quầy thu ngân
+        </Link>
       </div>
     )
   }
@@ -36,7 +38,13 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
   const { bill, table, session } = view
   const paid = bill.status === 'PAID'
   if (!hasPermission(user, paid ? 'receipts.print' : 'bills.prepare')) {
-    return <div className="k-state"><p className="k-state-title">Bạn không có quyền in {paid ? 'hóa đơn' : 'phiếu tạm tính'}.</p></div>
+    return (
+      <div className="k-state">
+        <p className="k-state-title">
+          Bạn không có quyền in {paid ? 'hóa đơn' : 'phiếu tạm tính'}.
+        </p>
+      </div>
+    )
   }
 
   // Same dish at the same price from several rounds prints as one line.
@@ -57,17 +65,28 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
   return (
     <div className="c-receipt-page">
       <div className="k-page-head c-no-print">
-        <Link to={cashierPaths.posBill(bill.id)} className="k-back"><Icon name="chevronLeft" />Quầy thu ngân</Link>
+        <Link to={cashierPaths.posBill(bill.id)} className="k-back">
+          <Icon name="chevronLeft" />
+          Quầy thu ngân
+        </Link>
         <div className="k-page-heading">
-          <h2 className="k-h2">{paid ? 'Hóa đơn thanh toán' : 'Phiếu tạm tính'} · {bill.code}</h2>
+          <h2 className="k-h2">
+            {paid ? 'Hóa đơn thanh toán' : 'Phiếu tạm tính'} · {bill.code}
+          </h2>
         </div>
         <div className="k-page-actions">
-          <Link to={cashierPaths.bill(bill.id)} className="k-btn k-btn--ghost">Chi tiết hóa đơn</Link>
-          <button type="button" className="k-btn k-btn--primary" onClick={() => window.print()}><Icon name="printer" />In</button>
+          <Link to={cashierPaths.bill(bill.id)} className="k-btn k-btn--ghost">
+            Chi tiết hóa đơn
+          </Link>
+          <button type="button" className="k-btn k-btn--primary" onClick={() => window.print()}>
+            <Icon name="printer" />
+            In
+          </button>
         </div>
       </div>
       <p className="k-hint c-no-print">
-        Bố cục cho giấy in nhiệt 80mm. Bấm In để mở hộp thoại in của trình duyệt và chọn máy in hóa đơn đã cài driver.
+        Bố cục cho giấy in nhiệt 80mm. Bấm In để mở hộp thoại in của trình duyệt và chọn máy in hóa
+        đơn đã cài driver.
         {!paid && ' Phiếu tạm tính không thay cho hóa đơn thanh toán.'}
       </p>
 
@@ -80,58 +99,120 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
         </header>
 
         <dl className="c-r-meta">
-          <div><dt>Số HĐ</dt><dd>{bill.code}</dd></div>
-          <div><dt>Bàn</dt><dd>{table.code} · {session.guests} khách</dd></div>
-          <div><dt>{paid ? 'Thanh toán' : 'Giờ in'}</dt><dd>{formatTime(at)} {formatDate(at)}</dd></div>
-          <div><dt>Thu ngân</dt><dd>{staffName(data, cashierId)}</dd></div>
-          <div><dt>Phục vụ</dt><dd>{view.waiterName}</dd></div>
+          <div>
+            <dt>Số HĐ</dt>
+            <dd>{bill.code}</dd>
+          </div>
+          <div>
+            <dt>Bàn</dt>
+            <dd>
+              {table.code} · {session.guests} khách
+            </dd>
+          </div>
+          <div>
+            <dt>{paid ? 'Thanh toán' : 'Giờ in'}</dt>
+            <dd>
+              {formatTime(at)} {formatDate(at)}
+            </dd>
+          </div>
+          <div>
+            <dt>Thu ngân</dt>
+            <dd>{staffName(data, cashierId)}</dd>
+          </div>
+          <div>
+            <dt>Phục vụ</dt>
+            <dd>{view.waiterName}</dd>
+          </div>
         </dl>
 
         <ul className="c-r-items">
           {[...lines.values()].map((line) => (
             <li key={`${line.name}:${line.unitPrice}`}>
               <span className="c-r-item">{line.name}</span>
-              <span className="c-r-calc">{line.quantity} × {formatAmount(line.unitPrice)}</span>
+              <span className="c-r-calc">
+                {line.quantity} × {formatAmount(line.unitPrice)}
+              </span>
               <span className="c-r-amt">{formatAmount(line.quantity * line.unitPrice)}</span>
             </li>
           ))}
         </ul>
 
         <dl className="c-r-totals">
-          <div><dt>Tạm tính</dt><dd>{formatAmount(t.subtotal)}</dd></div>
+          <div>
+            <dt>Tạm tính</dt>
+            <dd>{formatAmount(t.subtotal)}</dd>
+          </div>
           {t.discount > 0 && (
-            <div><dt>Giảm giá{bill.discount?.mode === 'PERCENT' ? ` ${bill.discount.value}%` : ''}</dt><dd>-{formatAmount(t.discount)}</dd></div>
+            <div>
+              <dt>Giảm giá{bill.discount?.mode === 'PERCENT' ? ` ${bill.discount.value}%` : ''}</dt>
+              <dd>-{formatAmount(t.discount)}</dd>
+            </div>
           )}
-          {config.serviceChargeRate ? <div><dt>Phí dịch vụ {config.serviceChargeRate / 100}%</dt><dd>{formatAmount(t.serviceCharge)}</dd></div> : null}
-          {config.taxRate ? <div><dt>Thuế {config.taxRate / 100}%</dt><dd>{formatAmount(t.tax)}</dd></div> : null}
-          <div className="c-r-grand"><dt>{paid ? 'TỔNG THANH TOÁN' : 'TỔNG CỘNG'}</dt><dd>{formatVnd(t.total)}</dd></div>
+          {config.serviceChargeRate ? (
+            <div>
+              <dt>Phí dịch vụ {config.serviceChargeRate / 100}%</dt>
+              <dd>{formatAmount(t.serviceCharge)}</dd>
+            </div>
+          ) : null}
+          {config.taxRate ? (
+            <div>
+              <dt>Thuế {config.taxRate / 100}%</dt>
+              <dd>{formatAmount(t.tax)}</dd>
+            </div>
+          ) : null}
+          <div className="c-r-grand">
+            <dt>{paid ? 'TỔNG THANH TOÁN' : 'TỔNG CỘNG'}</dt>
+            <dd>{formatVnd(t.total)}</dd>
+          </div>
         </dl>
 
         {paid ? (
           <dl className="c-r-pay">
             {succeeded.map((p) => (
               <div key={p.id} className="c-r-paygroup">
-                <div><dt>{METHOD_LABEL[p.method]}</dt><dd>{formatAmount(p.amount)}</dd></div>
+                <div>
+                  <dt>{METHOD_LABEL[p.method]}</dt>
+                  <dd>{formatAmount(p.amount)}</dd>
+                </div>
                 {p.method === 'CASH' && (
                   <>
-                    <div className="c-r-sub"><dt>Khách đưa</dt><dd>{formatAmount(p.tendered ?? p.amount)}</dd></div>
-                    <div className="c-r-sub"><dt>Tiền thừa</dt><dd>{formatAmount(p.change ?? 0)}</dd></div>
+                    <div className="c-r-sub">
+                      <dt>Khách đưa</dt>
+                      <dd>{formatAmount(p.tendered ?? p.amount)}</dd>
+                    </div>
+                    <div className="c-r-sub">
+                      <dt>Tiền thừa</dt>
+                      <dd>{formatAmount(p.change ?? 0)}</dd>
+                    </div>
                   </>
                 )}
-                {p.method === 'TRANSFER' && p.bankReference && <div className="c-r-sub"><dt>Mã GD</dt><dd>{p.bankReference}</dd></div>}
+                {p.method === 'TRANSFER' && p.bankReference && (
+                  <div className="c-r-sub">
+                    <dt>Mã GD</dt>
+                    <dd>{p.bankReference}</dd>
+                  </div>
+                )}
               </div>
             ))}
           </dl>
         ) : view.paid > 0 ? (
           <dl className="c-r-pay">
-            <div><dt>Đã thanh toán</dt><dd>{formatAmount(view.paid)}</dd></div>
-            <div><dt>Còn phải thu</dt><dd>{formatAmount(view.remaining)}</dd></div>
+            <div>
+              <dt>Đã thanh toán</dt>
+              <dd>{formatAmount(view.paid)}</dd>
+            </div>
+            <div>
+              <dt>Còn phải thu</dt>
+              <dd>{formatAmount(view.remaining)}</dd>
+            </div>
           </dl>
         ) : null}
 
         <footer className="c-r-foot">
           <p>Cảm ơn quý khách! Hẹn gặp lại.</p>
-          <p className="c-r-small">{bill.code} · in lúc {formatTime(now)} {formatDate(now)}</p>
+          <p className="c-r-small">
+            {bill.code} · in lúc {formatTime(now)} {formatDate(now)}
+          </p>
         </footer>
       </article>
     </div>

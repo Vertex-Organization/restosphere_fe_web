@@ -1,6 +1,14 @@
-export const ADMIN_ROLES = ['CUSTOMER', 'RECEPTIONIST', 'WAITER', 'KITCHEN', 'CASHIER', 'MANAGER', 'ADMIN'] as const
+export const ADMIN_ROLES = [
+  'CUSTOMER',
+  'RECEPTIONIST',
+  'WAITER',
+  'KITCHEN',
+  'CASHIER',
+  'MANAGER',
+  'ADMIN',
+] as const
 
-export type AdminRole = typeof ADMIN_ROLES[number]
+export type AdminRole = (typeof ADMIN_ROLES)[number]
 export type AccountStatus = 'ACTIVE' | 'LOCKED'
 
 export interface AdminUser {
@@ -32,19 +40,34 @@ export interface AdminSettings {
   tableHoldMinutes: number
   noShowMinutes: number
   bufferMinutes: number
-  billing: { serviceChargePercent: number; vatPercent: number; bankAccount: string; bankName?: string; bankAccountName?: string }
+  billing: {
+    serviceChargePercent: number
+    vatPercent: number
+    bankAccount: string
+    bankName?: string
+    bankAccountName?: string
+  }
   timezone: string
   currency: string
   emailNotifications: boolean
 }
 
-export interface DiscountLimits { cashierDiscountPercent: number; managerApprovalLimit: number }
+export interface DiscountLimits {
+  cashierDiscountPercent: number
+  managerApprovalLimit: number
+}
 
 export interface AuditLog {
   id: string
   at: string
   actor: string
-  action: 'ROLE_CHANGED' | 'ACCOUNT_LOCKED' | 'ACCOUNT_UNLOCKED' | 'RESTAURANT_UPDATED' | 'SETTINGS_UPDATED' | 'USER_CREATED'
+  action:
+    | 'ROLE_CHANGED'
+    | 'ACCOUNT_LOCKED'
+    | 'ACCOUNT_UNLOCKED'
+    | 'RESTAURANT_UPDATED'
+    | 'SETTINGS_UPDATED'
+    | 'USER_CREATED'
   target: string
   result: 'SUCCESS' | 'FAILED'
 }
@@ -57,7 +80,13 @@ export interface AdminData {
   auditLogs: AuditLog[]
 }
 
-export interface AuditLogFilters { action?: AuditLog['action']; actor?: string; from?: string; to?: string; limit?: number }
+export interface AuditLogFilters {
+  action?: AuditLog['action']
+  actor?: string
+  from?: string
+  to?: string
+  limit?: number
+}
 
 export interface AdminService {
   load(signal?: AbortSignal): Promise<AdminData>

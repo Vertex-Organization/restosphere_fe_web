@@ -31,9 +31,17 @@ const listeners = new Set<() => void>()
 function readSession(): Session | null {
   try {
     const value: unknown = JSON.parse(sessionStorage.getItem(sessionKey) || 'null')
-    if (value && typeof value === 'object' && 'accessToken' in value && typeof value.accessToken === 'string'
-      && 'refreshToken' in value && typeof value.refreshToken === 'string'
-      && 'expiresAt' in value && typeof value.expiresAt === 'number') return value as Session
+    if (
+      value &&
+      typeof value === 'object' &&
+      'accessToken' in value &&
+      typeof value.accessToken === 'string' &&
+      'refreshToken' in value &&
+      typeof value.refreshToken === 'string' &&
+      'expiresAt' in value &&
+      typeof value.expiresAt === 'number'
+    )
+      return value as Session
   } catch {
     // An unavailable or invalid stored session is treated as signed out.
   }
@@ -52,9 +60,14 @@ function publish(next: AuthState) {
 }
 
 function saveSession(tokens: TokenResponse): Session {
-  if (typeof tokens.accessToken !== 'string' || !tokens.accessToken
-    || typeof tokens.refreshToken !== 'string' || !tokens.refreshToken
-    || !Number.isFinite(tokens.expiresIn) || tokens.expiresIn <= 0) {
+  if (
+    typeof tokens.accessToken !== 'string' ||
+    !tokens.accessToken ||
+    typeof tokens.refreshToken !== 'string' ||
+    !tokens.refreshToken ||
+    !Number.isFinite(tokens.expiresIn) ||
+    tokens.expiresIn <= 0
+  ) {
     throw new ApiError(502, 'Không thể hoàn tất đăng nhập. Vui lòng thử lại.')
   }
   const next = {
@@ -76,7 +89,9 @@ function clearSession() {
 
 export function subscribeAuth(listener: () => void) {
   listeners.add(listener)
-  return () => { listeners.delete(listener) }
+  return () => {
+    listeners.delete(listener)
+  }
 }
 
 export function getAuthState() {
@@ -132,7 +147,8 @@ export async function authenticatedRequest<T>(path: string, options: RequestInit
     try {
       return await request(renewed)
     } catch (retryError) {
-      if (retryError instanceof ApiError && retryError.status === 401 && session === renewed) clearSession()
+      if (retryError instanceof ApiError && retryError.status === 401 && session === renewed)
+        clearSession()
       throw retryError
     }
   }

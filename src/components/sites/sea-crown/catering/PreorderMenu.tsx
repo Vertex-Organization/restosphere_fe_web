@@ -7,8 +7,16 @@ import { MenuIcon } from '../menu/MenuIcons'
 import '../MenuPage.css'
 import type { Language } from '../siteData'
 import {
-  BOOKING_COPY, cartCount, cartTotal, formatMoney, formatQuantity, isSetApplied, PARTY_SETS, stepOf,
-  type Cart, type PartySet,
+  BOOKING_COPY,
+  cartCount,
+  cartTotal,
+  formatMoney,
+  formatQuantity,
+  isSetApplied,
+  PARTY_SETS,
+  stepOf,
+  type Cart,
+  type PartySet,
 } from './bookingCopy'
 
 type PreorderMenuProps = {
@@ -25,7 +33,15 @@ type PreorderMenuProps = {
 
 /** Dish picker on the catering page: curated party sets, search + category filter, dish modal, and +/- steppers. */
 export function PreorderMenu({
-  data, status, onRetry, cart, guests, onChange, onApplySet, onClearCart, language,
+  data,
+  status,
+  onRetry,
+  cart,
+  guests,
+  onChange,
+  onApplySet,
+  onClearCart,
+  language,
 }: PreorderMenuProps) {
   const t = BOOKING_COPY[language]
   const [group, setGroup] = useState<MenuGroup>('food')
@@ -39,10 +55,12 @@ export function PreorderMenu({
   const needle = searchable(query.trim())
 
   const allAvailable = (data?.dishes ?? []).filter((d) => d.status !== 'DISCONTINUED')
-  const dishes = allAvailable.filter((d) =>
-    groupIds.has(d.categoryId)
-    && (category === 'all' || d.categoryId === category)
-    && (!needle || searchable(`${d.name[language]} ${d.name.vi} ${d.description[language]}`).includes(needle)),
+  const dishes = allAvailable.filter(
+    (d) =>
+      groupIds.has(d.categoryId) &&
+      (category === 'all' || d.categoryId === category) &&
+      (!needle ||
+        searchable(`${d.name[language]} ${d.name.vi} ${d.description[language]}`).includes(needle)),
   )
 
   const categoryGroupById = new Map(data?.categories.map((c) => [c.id, c.group]))
@@ -97,7 +115,13 @@ export function PreorderMenu({
           <div className="bk-toolbar">
             <div className="bk-tabs" role="tablist" aria-label={t.menuTitle}>
               {(['food', 'drink'] as const).map((g) => (
-                <button key={g} type="button" role="tab" aria-selected={group === g} onClick={() => switchGroup(g)}>
+                <button
+                  key={g}
+                  type="button"
+                  role="tab"
+                  aria-selected={group === g}
+                  onClick={() => switchGroup(g)}
+                >
                   <MenuIcon name={g === 'food' ? 'dish' : 'cup'} size={16} />
                   <span>{g === 'food' ? t.food : t.drinks}</span>
                 </button>
@@ -105,8 +129,19 @@ export function PreorderMenu({
             </div>
 
             <div className="bk-chips" role="group">
-              {[{ id: 'all', label: t.all }, ...categories.map((c) => ({ id: c.id, label: c.name[language] }))].map(({ id, label }) => (
-                <button key={id} type="button" className="bk-chip" aria-pressed={category === id} onClick={() => setCategory(id)}>{label}</button>
+              {[
+                { id: 'all', label: t.all },
+                ...categories.map((c) => ({ id: c.id, label: c.name[language] })),
+              ].map(({ id, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className="bk-chip"
+                  aria-pressed={category === id}
+                  onClick={() => setCategory(id)}
+                >
+                  {label}
+                </button>
               ))}
             </div>
 
@@ -119,7 +154,12 @@ export function PreorderMenu({
                 onChange={(e) => setQuery(e.target.value)}
               />
               {query && (
-                <button type="button" className="bk-search-clear" onClick={() => setQuery('')} aria-label={t.clearSearch}>
+                <button
+                  type="button"
+                  className="bk-search-clear"
+                  onClick={() => setQuery('')}
+                  aria-label={t.clearSearch}
+                >
                   <MenuIcon name="close" size={15} />
                 </button>
               )}
@@ -127,18 +167,28 @@ export function PreorderMenu({
           </div>
         </div>
 
-        {status === 'loading' && <p className="bk-state" role="status">{t.loading}</p>}
+        {status === 'loading' && (
+          <p className="bk-state" role="status">
+            {t.loading}
+          </p>
+        )}
         {status === 'error' && (
           <div className="bk-state" role="alert">
             <p>{t.error}</p>
-            <button type="button" className="bk-link" onClick={onRetry}>{t.retry}</button>
+            <button type="button" className="bk-link" onClick={onRetry}>
+              {t.retry}
+            </button>
           </div>
         )}
 
         {status === 'ready' && dishes.length === 0 && (
           <div className="bk-state" role="status">
             <p>{t.noSearchMatch}</p>
-            {query && <button type="button" className="bk-link" onClick={() => setQuery('')}>{t.clearSearch}</button>}
+            {query && (
+              <button type="button" className="bk-link" onClick={() => setQuery('')}>
+                {t.clearSearch}
+              </button>
+            )}
           </div>
         )}
 
@@ -161,19 +211,35 @@ export function PreorderMenu({
               <div className="bk-cart-thumbs" aria-hidden="true">
                 {chosenDishes.slice(0, 4).map((d) => (
                   <span key={d.id} className="bk-cart-thumb">
-                    {d.imageUrl ? <img src={d.imageUrl} alt="" /> : <MenuIcon name="dish" size={14} />}
+                    {d.imageUrl ? (
+                      <img src={d.imageUrl} alt="" />
+                    ) : (
+                      <MenuIcon name="dish" size={14} />
+                    )}
                   </span>
                 ))}
-                {chosenDishes.length > 4 && <span className="bk-cart-thumb bk-cart-thumb--more">+{chosenDishes.length - 4}</span>}
+                {chosenDishes.length > 4 && (
+                  <span className="bk-cart-thumb bk-cart-thumb--more">
+                    +{chosenDishes.length - 4}
+                  </span>
+                )}
               </div>
               <div className="bk-cart-text">
-                <strong>{t.selected(count)} · {formatMoney(total, language)}</strong>
-                <span>{t.perGuest(formatMoney(Math.round(total / Math.max(1, guests)), language))}</span>
+                <strong>
+                  {t.selected(count)} · {formatMoney(total, language)}
+                </strong>
+                <span>
+                  {t.perGuest(formatMoney(Math.round(total / Math.max(1, guests)), language))}
+                </span>
               </div>
             </div>
             <div className="bk-cart-actions">
-              <button type="button" className="bk-cart-reset" onClick={onClearCart}>{t.clearCart}</button>
-              <a href="#catering-booking" className="bk-cart-cta">{t.toBooking} →</a>
+              <button type="button" className="bk-cart-reset" onClick={onClearCart}>
+                {t.clearCart}
+              </button>
+              <a href="#catering-booking" className="bk-cart-cta">
+                {t.toBooking} →
+              </a>
             </div>
           </div>
         )}
@@ -216,7 +282,15 @@ type PartySetCardProps = {
   onApply: () => void
 }
 
-function PartySetCard({ set, dishes, applied, isDrink, language, onOpen, onApply }: PartySetCardProps) {
+function PartySetCard({
+  set,
+  dishes,
+  applied,
+  isDrink,
+  language,
+  onOpen,
+  onApply,
+}: PartySetCardProps) {
   const t = BOOKING_COPY[language]
   const setPrice = cartTotal(set.items, dishes)
   const avgGuests = Math.round((set.guestRange[0] + set.guestRange[1]) / 2)
@@ -248,9 +322,11 @@ function PartySetCard({ set, dishes, applied, isDrink, language, onOpen, onApply
           {previewItems.map(({ dish, qty }) => (
             <li key={dish.id} className="bk-set-preview-item">
               <span className={`bk-set-preview-thumb${isDrink(dish) ? ' is-drink' : ''}`}>
-                {dish.imageUrl
-                  ? <img src={dish.imageUrl} alt="" width="40" height="40" loading="lazy" />
-                  : <MenuIcon name={isDrink(dish) ? 'cup' : 'dish'} size={18} />}
+                {dish.imageUrl ? (
+                  <img src={dish.imageUrl} alt="" width="40" height="40" loading="lazy" />
+                ) : (
+                  <MenuIcon name={isDrink(dish) ? 'cup' : 'dish'} size={18} />
+                )}
               </span>
               <span className="bk-set-preview-name">{dish.name[language]}</span>
               <strong className="bk-set-preview-qty">×{formatQuantity(dish, qty, language)}</strong>
@@ -268,7 +344,11 @@ function PartySetCard({ set, dishes, applied, isDrink, language, onOpen, onApply
           <strong>{formatMoney(setPrice, language)}</strong>
           <span>{t.perGuest(perGuestPrice)}</span>
         </div>
-        <button type="button" className={`bk-set-btn${applied ? ' is-active' : ''}`} onClick={onApply}>
+        <button
+          type="button"
+          className={`bk-set-btn${applied ? ' is-active' : ''}`}
+          onClick={onApply}
+        >
           {applied ? `✓ ${t.appliedSet}` : `+ ${t.applySet}`}
         </button>
       </div>
@@ -286,7 +366,15 @@ type PartySetDialogProps = {
   onClose: () => void
 }
 
-function PartySetDialog({ set, dishes, applied, isDrink, language, onApply, onClose }: PartySetDialogProps) {
+function PartySetDialog({
+  set,
+  dishes,
+  applied,
+  isDrink,
+  language,
+  onApply,
+  onClose,
+}: PartySetDialogProps) {
   const dialog = useRef<HTMLDialogElement>(null)
   const t = BOOKING_COPY[language]
 
@@ -317,7 +405,9 @@ function PartySetDialog({ set, dishes, applied, isDrink, language, onApply, onCl
       aria-labelledby="bk-set-dialog-title"
       data-lenis-prevent
       onClose={onClose}
-      onClick={(event) => { if (event.target === event.currentTarget) onClose() }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
     >
       {set && (
         <div className="menu-dialog-panel bk-set-dialog-panel">
@@ -329,7 +419,12 @@ function PartySetDialog({ set, dishes, applied, isDrink, language, onApply, onCl
                 {set.guestsLabel[language]}
               </span>
             </div>
-            <button type="button" className="bk-set-dialog-close" onClick={onClose} aria-label={t.close}>
+            <button
+              type="button"
+              className="bk-set-dialog-close"
+              onClick={onClose}
+              aria-label={t.close}
+            >
               <MenuIcon name="close" size={18} />
             </button>
           </div>
@@ -346,9 +441,11 @@ function PartySetDialog({ set, dishes, applied, isDrink, language, onApply, onCl
               {resolvedItems.map(({ dish, qty }) => (
                 <li key={dish.id} className="bk-set-dialog-item">
                   <span className={`bk-set-dialog-thumb${isDrink(dish) ? ' is-drink' : ''}`}>
-                    {dish.imageUrl
-                      ? <img src={dish.imageUrl} alt="" width="60" height="60" loading="lazy" />
-                      : <MenuIcon name={isDrink(dish) ? 'cup' : 'dish'} size={22} />}
+                    {dish.imageUrl ? (
+                      <img src={dish.imageUrl} alt="" width="60" height="60" loading="lazy" />
+                    ) : (
+                      <MenuIcon name={isDrink(dish) ? 'cup' : 'dish'} size={22} />
+                    )}
                   </span>
 
                   <span className="bk-set-dialog-info">
@@ -367,10 +464,16 @@ function PartySetDialog({ set, dishes, applied, isDrink, language, onApply, onCl
 
           <div className="bk-set-dialog-footer">
             <div className="bk-set-dialog-total">
-              <span>{t.estimate} ({t.perGuest(perGuestPrice)})</span>
+              <span>
+                {t.estimate} ({t.perGuest(perGuestPrice)})
+              </span>
               <strong>{formatMoney(setPrice, language)}</strong>
             </div>
-            <button type="button" className="sb-catering-submit bk-set-dialog-apply" onClick={onApply}>
+            <button
+              type="button"
+              className="sb-catering-submit bk-set-dialog-apply"
+              onClick={onApply}
+            >
               {applied ? `✓ ${t.appliedSet}` : `+ ${t.applySet}`}
             </button>
           </div>
@@ -404,11 +507,17 @@ function PreorderCard({ dish, quantity, onChange, onOpen, language }: PreorderCa
         aria-label={`${t.viewDetails}: ${name}`}
       >
         <span className="bk-card-media">
-          {dish.imageUrl ? <img src={dish.imageUrl} alt="" loading="lazy" decoding="async" /> : <MenuIcon name="dish" size={36} />}
+          {dish.imageUrl ? (
+            <img src={dish.imageUrl} alt="" loading="lazy" decoding="async" />
+          ) : (
+            <MenuIcon name="dish" size={36} />
+          )}
           {soldOut && <span className="bk-card-flag">{t.soldOut}</span>}
           {!soldOut && primaryTag && (
             <span className="bk-card-tags">
-              <span className={`menu-chip menu-chip--${primaryTag}`}>{TAG_LABEL[language][primaryTag]}</span>
+              <span className={`menu-chip menu-chip--${primaryTag}`}>
+                {TAG_LABEL[language][primaryTag]}
+              </span>
             </span>
           )}
           {quantity > 0 && (
@@ -437,17 +546,31 @@ function PreorderCard({ dish, quantity, onChange, onOpen, language }: PreorderCa
         <span className="bk-card-footer">
           <span className="bk-card-price">{formatPrice(dish, language)}</span>
 
-          {soldOut
-            ? <span className="bk-card-unavailable">{t.soldOut}</span>
-            : quantity
-              ? (
-                <span className="bk-stepper">
-                  <button type="button" onClick={() => onChange(dish.id, quantity - step)} aria-label={`${t.remove}: ${name}`}>−</button>
-                  <output aria-live="polite">{formatQuantity(dish, quantity, language)}</output>
-                  <button type="button" onClick={() => onChange(dish.id, quantity + step)} aria-label={`${t.add}: ${name}`}>+</button>
-                </span>
-              )
-              : <button type="button" className="bk-add" onClick={() => onChange(dish.id, step)}>+ {t.add}</button>}
+          {soldOut ? (
+            <span className="bk-card-unavailable">{t.soldOut}</span>
+          ) : quantity ? (
+            <span className="bk-stepper">
+              <button
+                type="button"
+                onClick={() => onChange(dish.id, quantity - step)}
+                aria-label={`${t.remove}: ${name}`}
+              >
+                −
+              </button>
+              <output aria-live="polite">{formatQuantity(dish, quantity, language)}</output>
+              <button
+                type="button"
+                onClick={() => onChange(dish.id, quantity + step)}
+                aria-label={`${t.add}: ${name}`}
+              >
+                +
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="bk-add" onClick={() => onChange(dish.id, step)}>
+              + {t.add}
+            </button>
+          )}
         </span>
       </span>
     </li>

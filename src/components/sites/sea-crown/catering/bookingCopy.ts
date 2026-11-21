@@ -54,8 +54,16 @@ export function isSetApplied(cart: Cart, setItems: Cart) {
 }
 
 const money = {
-  vi: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }),
-  en: new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }),
+  vi: new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 0,
+  }),
+  en: new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 0,
+  }),
 }
 export const formatMoney = (value: number, language: Language) => money[language].format(value)
 
@@ -69,7 +77,8 @@ export const BOOKING_COPY = {
   vi: {
     eyebrow: 'Đặt món trước',
     menuTitle: 'Chọn món cho bàn tiệc',
-    menuIntro: 'Chọn nhanh gói thực đơn gợi ý hoặc tự chọn từng món để bếp chuẩn bị chu đáo trước khi bạn đến. Hải sản tính theo kg được đặt theo nửa ký và cân thực tế tại bàn.',
+    menuIntro:
+      'Chọn nhanh gói thực đơn gợi ý hoặc tự chọn từng món để bếp chuẩn bị chu đáo trước khi bạn đến. Hải sản tính theo kg được đặt theo nửa ký và cân thực tế tại bàn.',
     setsEyebrow: 'Gợi ý nhanh theo quy mô bàn',
     setsTitle: 'Combo bàn tiệc gợi ý',
     setDishCount: (n: number) => `${n} món`,
@@ -100,7 +109,8 @@ export const BOOKING_COPY = {
 
     bookingEyebrow: 'Đặt bàn & Không gian',
     bookingTitle: 'Giữ bàn cho bữa tiệc của bạn',
-    bookingIntro: 'Chọn ngày giờ, số lượng khách và không gian ngồi yêu thích. Nhà hàng sẽ liên hệ xác nhận vị trí bàn cùng thực đơn đặt trước.',
+    bookingIntro:
+      'Chọn ngày giờ, số lượng khách và không gian ngồi yêu thích. Nhà hàng sẽ liên hệ xác nhận vị trí bàn cùng thực đơn đặt trước.',
     bookingNote: 'Tiệc từ 20 khách hoặc phòng VIP riêng vui lòng đặt trước ít nhất 1 ngày.',
     date: 'Ngày dùng tiệc',
     time: 'Khung giờ đến',
@@ -125,10 +135,13 @@ export const BOOKING_COPY = {
     preorder: 'Thực đơn đặt trước',
     noPreorder: 'Bạn chưa chọn món đặt trước. Bạn có thể gọi món trực tiếp tại bàn hoặc',
     pickDishes: 'chọn món ở phía trên',
-    coverageGood: (min: number, max: number) => `Định lượng món ăn hiện tại phù hợp cho khoảng ${min}–${max} khách.`,
-    coverageLow: (guests: number) => `Định lượng món hiện tại hơi ít so với bàn ${guests} khách — bạn có thể chọn thêm món dùng chung.`,
+    coverageGood: (min: number, max: number) =>
+      `Định lượng món ăn hiện tại phù hợp cho khoảng ${min}–${max} khách.`,
+    coverageLow: (guests: number) =>
+      `Định lượng món hiện tại hơi ít so với bàn ${guests} khách — bạn có thể chọn thêm món dùng chung.`,
     estimatePerGuest: 'Trung bình mỗi khách',
-    estimateNote: 'Giá tạm tính chưa gồm phụ thu dịch vụ; hải sản tính theo kg sẽ được cân thực tế tại bàn.',
+    estimateNote:
+      'Giá tạm tính chưa gồm phụ thu dịch vụ; hải sản tính theo kg sẽ được cân thực tế tại bàn.',
     clearCart: 'Xóa tất cả món',
     submit: 'Hoàn tất yêu cầu đặt tiệc',
     submitting: 'Đang gửi yêu cầu…',
@@ -137,19 +150,22 @@ export const BOOKING_COPY = {
 
     doneBadge: 'Phiếu Xác Nhận Đặt Tiệc',
     doneTitle: 'Đã ghi nhận yêu cầu đặt bàn!',
-    doneText: (code: string) => `Cảm ơn bạn đã chọn The Sea's Crown. Nhân viên lễ tân sẽ gọi lại trong giờ mở cửa để xác nhận bàn mã ${code}.`,
+    doneText: (code: string) =>
+      `Cảm ơn bạn đã chọn The Sea's Crown. Nhân viên lễ tân sẽ gọi lại trong giờ mở cửa để xác nhận bàn mã ${code}.`,
     bookingCodeLabel: 'Mã đặt bàn của bạn',
     copyCode: 'Sao chép mã',
     copiedCode: 'Đã sao chép!',
     doneContact: 'Người đặt',
     doneAgain: 'Tạo yêu cầu đặt bàn mới',
     lookup: 'Tra cứu trạng thái đặt bàn',
-    onlineClosed: 'Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.',
+    onlineClosed:
+      'Hệ thống đang tạm ngừng nhận đặt bàn trực tuyến. Vui lòng liên hệ trực tiếp qua số hotline.',
   },
   en: {
     eyebrow: 'Pre-order Menu',
     menuTitle: 'Curate dishes for your table',
-    menuIntro: 'Start with a curated party set or hand-pick dishes and quantities so our kitchen is ready when you arrive. Live seafood per kg is ordered in half-kilo steps and weighed at your table.',
+    menuIntro:
+      'Start with a curated party set or hand-pick dishes and quantities so our kitchen is ready when you arrive. Live seafood per kg is ordered in half-kilo steps and weighed at your table.',
     setsEyebrow: 'Quick sets by party size',
     setsTitle: 'Curated Party Set Menus',
     setDishCount: (n: number) => `${n} ${n === 1 ? 'dish' : 'dishes'}`,
@@ -180,8 +196,10 @@ export const BOOKING_COPY = {
 
     bookingEyebrow: 'Table & Space Reservation',
     bookingTitle: 'Reserve a space for your occasion',
-    bookingIntro: 'Select your preferred date, arrival time, party size and seating zone. Our host team will call back to confirm your table and pre-ordered menu.',
-    bookingNote: 'Parties of 20+ guests or VIP private rooms require at least 1 day advance notice.',
+    bookingIntro:
+      'Select your preferred date, arrival time, party size and seating zone. Our host team will call back to confirm your table and pre-ordered menu.',
+    bookingNote:
+      'Parties of 20+ guests or VIP private rooms require at least 1 day advance notice.',
     date: 'Event date',
     time: 'Arrival time',
     lunchSession: 'Lunch service (10:00 – 14:30)',
@@ -205,10 +223,13 @@ export const BOOKING_COPY = {
     preorder: 'Pre-ordered menu',
     noPreorder: 'No dishes selected yet. You can order at the table or',
     pickDishes: 'choose dishes above',
-    coverageGood: (min: number, max: number) => `Current food portions comfortably cover around ${min}–${max} guests.`,
-    coverageLow: (guests: number) => `Current portions may be light for ${guests} guests — consider adding another sharing dish.`,
+    coverageGood: (min: number, max: number) =>
+      `Current food portions comfortably cover around ${min}–${max} guests.`,
+    coverageLow: (guests: number) =>
+      `Current portions may be light for ${guests} guests — consider adding another sharing dish.`,
     estimatePerGuest: 'Estimated per guest',
-    estimateNote: 'Estimate excludes service charges; live seafood priced per kg is billed by actual weight at the table.',
+    estimateNote:
+      'Estimate excludes service charges; live seafood priced per kg is billed by actual weight at the table.',
     clearCart: 'Clear all dishes',
     submit: 'Confirm booking request',
     submitting: 'Sending request…',
@@ -217,13 +238,15 @@ export const BOOKING_COPY = {
 
     doneBadge: 'Reservation Pass',
     doneTitle: 'Booking request received!',
-    doneText: (code: string) => `Thank you for choosing The Sea's Crown. Our host team will call you during opening hours to confirm reservation ${code}.`,
+    doneText: (code: string) =>
+      `Thank you for choosing The Sea's Crown. Our host team will call you during opening hours to confirm reservation ${code}.`,
     bookingCodeLabel: 'Your Reservation Code',
     copyCode: 'Copy code',
     copiedCode: 'Copied!',
     doneContact: 'Reserved by',
     doneAgain: 'Make another reservation',
     lookup: 'Check reservation status',
-    onlineClosed: 'Online reservations are temporarily paused. Please contact us directly via our hotline.',
+    onlineClosed:
+      'Online reservations are temporarily paused. Please contact us directly via our hotline.',
   },
 } satisfies Record<Language, unknown>

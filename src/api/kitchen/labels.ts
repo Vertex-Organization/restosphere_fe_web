@@ -1,5 +1,11 @@
 import type {
-  IncidentSeverity, IncidentStatus, IncidentType, MenuAvailability, NotificationKind, OrderItemStatus, StaffRole,
+  IncidentSeverity,
+  IncidentStatus,
+  IncidentType,
+  MenuAvailability,
+  NotificationKind,
+  OrderItemStatus,
+  StaffRole,
 } from './types'
 
 export const ITEM_STATUS_LABEL: Record<OrderItemStatus, string> = {
@@ -57,6 +63,10 @@ const KNOWN_NOTIFICATION_LABELS: Record<NotificationKind, string> = {
 }
 
 /** Kinds the backend adds later still get a label instead of `undefined`. */
-export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = new Proxy(KNOWN_NOTIFICATION_LABELS, {
-  get: (labels, kind) => (typeof kind === 'string' && kind in labels ? labels[kind as NotificationKind] : 'Thông báo'),
-})
+export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = new Proxy(
+  KNOWN_NOTIFICATION_LABELS,
+  {
+    get: (labels, kind) =>
+      typeof kind === 'string' && kind in labels ? labels[kind as NotificationKind] : 'Thông báo',
+  },
+)

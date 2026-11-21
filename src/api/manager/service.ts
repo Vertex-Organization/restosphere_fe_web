@@ -1,136 +1,494 @@
 import { authenticatedRequest } from '../auth'
 import { managerPath, type ManagerPage } from '../../routes/managerRouter'
 import { businessDay } from './dates'
-import type { Approval, Area, AuditEvent, Employee, Incident, ManagerCommand, ManagerData, ManagerNotification, ManagerReport, ManagerUser, Order, OrderItem, MenuCategory, MenuItem, Payment, Permission, Reservation, ReservationStatus, RestaurantTable, Shift, TableSession } from './types'
+import type {
+  Approval,
+  Area,
+  AuditEvent,
+  Employee,
+  Incident,
+  ManagerCommand,
+  ManagerData,
+  ManagerNotification,
+  ManagerReport,
+  ManagerUser,
+  Order,
+  OrderItem,
+  MenuCategory,
+  MenuItem,
+  Payment,
+  Permission,
+  Reservation,
+  ReservationStatus,
+  RestaurantTable,
+  Shift,
+  TableSession,
+} from './types'
 
-interface MeDto { id: string; name: string; email: string; role: string; position: string; permissions: string[]; approvalLimit: number | string }
-interface SessionDto { id: string; tableId: string; tableCode: string; waiterId: string | null; waiterName: string | null; guests: number; startedAt: string; paymentRequested: boolean }
-interface PaymentDto { id: string; billId: string; at: string; method: Payment['method']; amount: number | string; status: Payment['status'] }
-interface ActivityDto { id: string; at: string; actorId: string | null; actorName: string | null; entityId: string | null; action: string; text: string }
+interface MeDto {
+  id: string
+  name: string
+  email: string
+  role: string
+  position: string
+  permissions: string[]
+  approvalLimit: number | string
+}
+interface SessionDto {
+  id: string
+  tableId: string
+  tableCode: string
+  waiterId: string | null
+  waiterName: string | null
+  guests: number
+  startedAt: string
+  paymentRequested: boolean
+}
+interface PaymentDto {
+  id: string
+  billId: string
+  at: string
+  method: Payment['method']
+  amount: number | string
+  status: Payment['status']
+}
+interface ActivityDto {
+  id: string
+  at: string
+  actorId: string | null
+  actorName: string | null
+  entityId: string | null
+  action: string
+  text: string
+}
 export type Activity = AuditEvent & { actorName?: string }
 
 const toMe = ({ role, permissions, approvalLimit, ...rest }: MeDto): ManagerUser => ({
-  ...rest, role: role as ManagerUser['role'], permissions: permissions as Permission[], approvalLimit: Number(approvalLimit),
+  ...rest,
+  role: role as ManagerUser['role'],
+  permissions: permissions as Permission[],
+  approvalLimit: Number(approvalLimit),
 })
-const toSession = ({ id, tableId, guests, startedAt, waiterId, paymentRequested }: SessionDto): TableSession => ({
-  id, tableId, guests, startedAt, waiterId: waiterId ?? '', paymentRequested,
+const toSession = ({
+  id,
+  tableId,
+  guests,
+  startedAt,
+  waiterId,
+  paymentRequested,
+}: SessionDto): TableSession => ({
+  id,
+  tableId,
+  guests,
+  startedAt,
+  waiterId: waiterId ?? '',
+  paymentRequested,
 })
-const toPayment = ({ id, billId, at, method, amount, status }: PaymentDto): Payment => ({ id, billId, at, method, amount: Number(amount), status })
+const toPayment = ({ id, billId, at, method, amount, status }: PaymentDto): Payment => ({
+  id,
+  billId,
+  at,
+  method,
+  amount: Number(amount),
+  status,
+})
 const toActivity = ({ id, at, actorId, actorName, entityId, text }: ActivityDto): Activity => ({
-  id, at, actorId: actorId ?? '', entityId: entityId ?? '', text, actorName: actorName ?? undefined,
+  id,
+  at,
+  actorId: actorId ?? '',
+  entityId: entityId ?? '',
+  text,
+  actorName: actorName ?? undefined,
 })
 
-interface CategoryDto { id: string; name: string; sortOrder: number; visible: boolean; group: 'food' | 'drink' }
+interface CategoryDto {
+  id: string
+  name: string
+  sortOrder: number
+  visible: boolean
+  group: 'food' | 'drink'
+}
 interface ItemDto {
-  id: string; name: string; categoryId: string; categoryName: string; price: number; description: string | null
-  imageUrl: string | null; status: MenuItem['status']; unit: 'portion' | 'kg'; updatedAt: string
+  id: string
+  name: string
+  categoryId: string
+  categoryName: string
+  price: number
+  description: string | null
+  imageUrl: string | null
+  status: MenuItem['status']
+  unit: 'portion' | 'kg'
+  updatedAt: string
 }
 
 interface ManagerTableDto {
-  id: string; code: string; areaId: string; areaName: string; seats: number
-  status: RestaurantTable['status']; sessionId: string | null; hasActiveReservation: boolean
+  id: string
+  code: string
+  areaId: string
+  areaName: string
+  seats: number
+  status: RestaurantTable['status']
+  sessionId: string | null
+  hasActiveReservation: boolean
 }
 
 interface ReservationDto {
-  id: string; code: string; customer: string; phone: string; email: string; occasion: string; areaId: string; areaName: string
-  source: 'WEB' | 'PHONE' | 'WALK_IN'; guests: number; actualGuests: number | null; at: string; until: string
-  tableId: string | null; tableCode: string | null; status: ReservationStatus; employeeId: string; note: string
+  id: string
+  code: string
+  customer: string
+  phone: string
+  email: string
+  occasion: string
+  areaId: string
+  areaName: string
+  source: 'WEB' | 'PHONE' | 'WALK_IN'
+  guests: number
+  actualGuests: number | null
+  at: string
+  until: string
+  tableId: string | null
+  tableCode: string | null
+  status: ReservationStatus
+  employeeId: string
+  note: string
   preorder: { menuItemId: string; menuItemName: string; quantity: number; note: string }[]
 }
 
 interface EmployeeDto {
-  id: string; name: string; email: string; role: string; department: Employee['department']; position: string
-  status: 'ACTIVE' | 'INACTIVE'; areaId: string; areaName: string
+  id: string
+  name: string
+  email: string
+  role: string
+  department: Employee['department']
+  position: string
+  status: 'ACTIVE' | 'INACTIVE'
+  areaId: string
+  areaName: string
 }
 
-const toEmployee = ({ id, name, email, role, department, position, status, areaId, areaName }: EmployeeDto): Employee => ({
-  id, name, email, role, department, position, status, areaId, areaName,
+const toEmployee = ({
+  id,
+  name,
+  email,
+  role,
+  department,
+  position,
+  status,
+  areaId,
+  areaName,
+}: EmployeeDto): Employee => ({
+  id,
+  name,
+  email,
+  role,
+  department,
+  position,
+  status,
+  areaId,
+  areaName,
 })
 type Nullable<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: T[P] | null }
-type ApprovalDto = Nullable<Approval, 'billId' | 'paymentId' | 'itemId' | 'menuStatus' | 'decidedBy' | 'decidedAt' | 'decisionNote'> & { targetLabel: string }
+type ApprovalDto = Nullable<
+  Approval,
+  'billId' | 'paymentId' | 'itemId' | 'menuStatus' | 'decidedBy' | 'decidedAt' | 'decisionNote'
+> & { targetLabel: string }
 
-const toApproval = ({ billId, paymentId, itemId, menuStatus, decidedBy, decidedAt, decisionNote, amount, ...rest }: ApprovalDto): Approval => ({
-  ...rest, amount: Number(amount ?? 0), billId: billId ?? undefined, paymentId: paymentId ?? undefined, itemId: itemId ?? undefined,
-  menuStatus: menuStatus ?? undefined, decidedBy: decidedBy ?? undefined, decidedAt: decidedAt ?? undefined, decisionNote: decisionNote ?? undefined,
+const toApproval = ({
+  billId,
+  paymentId,
+  itemId,
+  menuStatus,
+  decidedBy,
+  decidedAt,
+  decisionNote,
+  amount,
+  ...rest
+}: ApprovalDto): Approval => ({
+  ...rest,
+  amount: Number(amount ?? 0),
+  billId: billId ?? undefined,
+  paymentId: paymentId ?? undefined,
+  itemId: itemId ?? undefined,
+  menuStatus: menuStatus ?? undefined,
+  decidedBy: decidedBy ?? undefined,
+  decidedAt: decidedAt ?? undefined,
+  decisionNote: decisionNote ?? undefined,
 })
 interface IncidentDto {
-  id: string; code: string; type: Incident['type']; severity: Incident['severity'] | 'CRITICAL'; status: Incident['status'] | 'CLOSED'
-  title: string; description: string; orderId: string | null; itemId: string | null; orderLabel: string | null; itemName: string | null
-  reporterId: string; reporterName: string; assigneeId: string | null; assigneeName: string | null
-  at: string; response: { by: string | null; at: string; text: string } | null
+  id: string
+  code: string
+  type: Incident['type']
+  severity: Incident['severity'] | 'CRITICAL'
+  status: Incident['status'] | 'CLOSED'
+  title: string
+  description: string
+  orderId: string | null
+  itemId: string | null
+  orderLabel: string | null
+  itemName: string | null
+  reporterId: string
+  reporterName: string
+  assigneeId: string | null
+  assigneeName: string | null
+  at: string
+  response: { by: string | null; at: string; text: string } | null
 }
 
 // The UI knows 3 severities and 3 statuses: CRITICAL shows as HIGH, CLOSED as RESOLVED. Names come from employeeName().
-const toIncident = ({ id, code, type, title, description, reporterId, at, severity, status, orderId, itemId, orderLabel, itemName, assigneeId, response }: IncidentDto): Incident => ({
-  id, code, type, title, description, reporterId, at, severity: severity === 'CRITICAL' ? 'HIGH' : severity, status: status === 'CLOSED' ? 'RESOLVED' : status,
-  orderId: orderId ?? undefined, itemId: itemId ?? undefined, orderLabel: orderLabel ?? undefined, itemName: itemName ?? undefined,
-  assigneeId: assigneeId ?? undefined, response: response ? { ...response, by: response.by ?? '' } : undefined,
+const toIncident = ({
+  id,
+  code,
+  type,
+  title,
+  description,
+  reporterId,
+  at,
+  severity,
+  status,
+  orderId,
+  itemId,
+  orderLabel,
+  itemName,
+  assigneeId,
+  response,
+}: IncidentDto): Incident => ({
+  id,
+  code,
+  type,
+  title,
+  description,
+  reporterId,
+  at,
+  severity: severity === 'CRITICAL' ? 'HIGH' : severity,
+  status: status === 'CLOSED' ? 'RESOLVED' : status,
+  orderId: orderId ?? undefined,
+  itemId: itemId ?? undefined,
+  orderLabel: orderLabel ?? undefined,
+  itemName: itemName ?? undefined,
+  assigneeId: assigneeId ?? undefined,
+  response: response ? { ...response, by: response.by ?? '' } : undefined,
 })
 interface OrderItemDto {
-  id: string; menuItemId: string; name: string; unit: 'portion' | 'kg'; quantity: number | string; unitPrice: number | string
-  status: OrderItem['status']; note: string | null; chefId: string | null; chefName: string | null
-  startedAt: string | null; readyAt: string | null; servedAt: string | null; rejectionReason: string | null
+  id: string
+  menuItemId: string
+  name: string
+  unit: 'portion' | 'kg'
+  quantity: number | string
+  unitPrice: number | string
+  status: OrderItem['status']
+  note: string | null
+  chefId: string | null
+  chefName: string | null
+  startedAt: string | null
+  readyAt: string | null
+  servedAt: string | null
+  rejectionReason: string | null
 }
 interface OrderDto {
-  id: string; code: string; sessionId: string; tableId: string; tableCode: string; areaName: string; guests: number
-  waiterId: string; waiterName: string; round: number; status: 'SUBMITTED' | 'COMPLETED' | 'CANCELLED'; at: string; paid: boolean
+  id: string
+  code: string
+  sessionId: string
+  tableId: string
+  tableCode: string
+  areaName: string
+  guests: number
+  waiterId: string
+  waiterName: string
+  round: number
+  status: 'SUBMITTED' | 'COMPLETED' | 'CANCELLED'
+  at: string
+  paid: boolean
   items: OrderItemDto[]
 }
 
 // quantity/unitPrice are BigDecimal on the server and may arrive as strings ("1.50").
-const toOrder = ({ id, code, sessionId, tableCode, areaName, waiterId, round, at, paid, items }: OrderDto): Order => ({
-  id, code, sessionId, tableCode, areaName, employeeId: waiterId, round, at, paid,
-  items: items.map(({ id, menuItemId, name, quantity, unitPrice, status, note, chefId, readyAt }) => ({
-    id, menuId: menuItemId, name, quantity: Number(quantity), unitPrice: Number(unitPrice), status, note: note ?? '', chefId: chefId ?? '', readyAt: readyAt ?? undefined,
-  })),
+const toOrder = ({
+  id,
+  code,
+  sessionId,
+  tableCode,
+  areaName,
+  waiterId,
+  round,
+  at,
+  paid,
+  items,
+}: OrderDto): Order => ({
+  id,
+  code,
+  sessionId,
+  tableCode,
+  areaName,
+  employeeId: waiterId,
+  round,
+  at,
+  paid,
+  items: items.map(
+    ({ id, menuItemId, name, quantity, unitPrice, status, note, chefId, readyAt }) => ({
+      id,
+      menuId: menuItemId,
+      name,
+      quantity: Number(quantity),
+      unitPrice: Number(unitPrice),
+      status,
+      note: note ?? '',
+      chefId: chefId ?? '',
+      readyAt: readyAt ?? undefined,
+    }),
+  ),
 })
 
-interface NotificationDto { id: string; kind: string; title: string; body: string; at: string; targetId: string | null; readBy: string[] }
+interface NotificationDto {
+  id: string
+  kind: string
+  title: string
+  body: string
+  at: string
+  targetId: string | null
+  readBy: string[]
+}
 
 // Detail page per kind; ORDER and CASHIER_SHIFT_CLOSED have no per-item page, unknown kinds have none at all.
 const NOTIFICATION_PAGE: Record<string, [ManagerPage, boolean]> = {
-  INCIDENT: ['incidents', true], APPROVAL: ['approvals', true], MENU_REQUEST: ['approvals', true], REQUEST_WITHDRAWN: ['approvals', true],
-  ORDER: ['orders', false], CASHIER_SHIFT_CLOSED: ['reports', false],
+  INCIDENT: ['incidents', true],
+  APPROVAL: ['approvals', true],
+  MENU_REQUEST: ['approvals', true],
+  REQUEST_WITHDRAWN: ['approvals', true],
+  ORDER: ['orders', false],
+  CASHIER_SHIFT_CLOSED: ['reports', false],
 }
-const toNotification = ({ id, kind, title, body, at, targetId, readBy }: NotificationDto): ManagerNotification => {
+const toNotification = ({
+  id,
+  kind,
+  title,
+  body,
+  at,
+  targetId,
+  readBy,
+}: NotificationDto): ManagerNotification => {
   const [page, withId] = NOTIFICATION_PAGE[kind] ?? []
   return {
-    id, kind: kind as ManagerNotification['kind'], title, body, at, readBy, targetId: targetId ?? undefined,
-    path: page ? managerPath(page, withId ? targetId ?? undefined : undefined) : '',
+    id,
+    kind: kind as ManagerNotification['kind'],
+    title,
+    body,
+    at,
+    readBy,
+    targetId: targetId ?? undefined,
+    path: page ? managerPath(page, withId ? (targetId ?? undefined) : undefined) : '',
   }
 }
-const toReservation = ({ tableId, tableCode, actualGuests, ...rest }: ReservationDto): Reservation => ({
-  ...rest, tableId: tableId ?? '', tableCode: tableCode ?? undefined, actualGuests: actualGuests ?? undefined,
+const toReservation = ({
+  tableId,
+  tableCode,
+  actualGuests,
+  ...rest
+}: ReservationDto): Reservation => ({
+  ...rest,
+  tableId: tableId ?? '',
+  tableCode: tableCode ?? undefined,
+  actualGuests: actualGuests ?? undefined,
 })
-const toTable = ({ id, code, areaId, seats, status, sessionId, hasActiveReservation }: ManagerTableDto): RestaurantTable => ({
-  id, code, areaId, seats, status, sessionId: sessionId ?? undefined, hasActiveReservation,
+const toTable = ({
+  id,
+  code,
+  areaId,
+  seats,
+  status,
+  sessionId,
+  hasActiveReservation,
+}: ManagerTableDto): RestaurantTable => ({
+  id,
+  code,
+  areaId,
+  seats,
+  status,
+  sessionId: sessionId ?? undefined,
+  hasActiveReservation,
 })
-const toCategory = ({ id, name, visible, sortOrder, group }: CategoryDto): MenuCategory => ({ id, name, visible, sort: sortOrder, group })
-const toItem = ({ id, name, categoryId, price, imageUrl, description, status, unit, updatedAt }: ItemDto): MenuItem => ({
-  id, name, categoryId, price: Number(price), image: imageUrl ?? '', description: description ?? '', status, unit, updatedAt,
+const toCategory = ({ id, name, visible, sortOrder, group }: CategoryDto): MenuCategory => ({
+  id,
+  name,
+  visible,
+  sort: sortOrder,
+  group,
+})
+const toItem = ({
+  id,
+  name,
+  categoryId,
+  price,
+  imageUrl,
+  description,
+  status,
+  unit,
+  updatedAt,
+}: ItemDto): MenuItem => ({
+  id,
+  name,
+  categoryId,
+  price: Number(price),
+  image: imageUrl ?? '',
+  description: description ?? '',
+  status,
+  unit,
+  updatedAt,
 })
 
 type Num = number | string
 interface ReportDto {
-  from: string; to: string
+  from: string
+  to: string
   summary: { revenue: Num; payments: Num; bills: Num; averageBill: Num; guests: Num }
   daily: { day: string; payments: Num; revenue: Num }[]
   dishes: { name: string; quantity: Num; revenue: Num }[]
   operations: { paidGuests: Num; reservations: Num; arrived: Num; cancelledOrNoShow: Num }
 }
 // Amounts and counts are BigDecimal on the server and may arrive as strings ("1500000.00").
-const toReport = ({ from, to, summary: s, daily, dishes, operations: o }: ReportDto): ManagerReport => ({
-  from, to,
-  summary: { revenue: Number(s.revenue), payments: Number(s.payments), bills: Number(s.bills), averageBill: Number(s.averageBill), guests: Number(s.guests) },
-  daily: daily.map(r => ({ day: r.day, payments: Number(r.payments), revenue: Number(r.revenue) })),
-  dishes: dishes.map(r => ({ name: r.name, quantity: Number(r.quantity), revenue: Number(r.revenue) })),
-  operations: { paidGuests: Number(o.paidGuests), reservations: Number(o.reservations), arrived: Number(o.arrived), cancelledOrNoShow: Number(o.cancelledOrNoShow) },
+const toReport = ({
+  from,
+  to,
+  summary: s,
+  daily,
+  dishes,
+  operations: o,
+}: ReportDto): ManagerReport => ({
+  from,
+  to,
+  summary: {
+    revenue: Number(s.revenue),
+    payments: Number(s.payments),
+    bills: Number(s.bills),
+    averageBill: Number(s.averageBill),
+    guests: Number(s.guests),
+  },
+  daily: daily.map((r) => ({
+    day: r.day,
+    payments: Number(r.payments),
+    revenue: Number(r.revenue),
+  })),
+  dishes: dishes.map((r) => ({
+    name: r.name,
+    quantity: Number(r.quantity),
+    revenue: Number(r.revenue),
+  })),
+  operations: {
+    paidGuests: Number(o.paidGuests),
+    reservations: Number(o.reservations),
+    arrived: Number(o.arrived),
+    cancelledOrNoShow: Number(o.cancelledOrNoShow),
+  },
 })
 
 export const managerService = {
   mode: 'api' as const,
   // Not part of load(): the report depends on the page's filters, so ReportsPage fetches it itself.
-  async report(q: { from: string; to: string; shift?: string; method?: string }): Promise<ManagerReport> {
+  async report(q: {
+    from: string
+    to: string
+    shift?: string
+    method?: string
+  }): Promise<ManagerReport> {
     const params = new URLSearchParams({ from: q.from, to: q.to })
     if (q.shift) params.set('shift', q.shift)
     if (q.method) params.set('method', q.method)
@@ -138,7 +496,9 @@ export const managerService = {
   },
   async uploadMenuImage(contentType: string, data: string): Promise<string> {
     const res = await authenticatedRequest<{ url: string }>('menu/images', {
-      method: 'POST', body: JSON.stringify({ contentType, data }), signal: AbortSignal.timeout(60000),
+      method: 'POST',
+      body: JSON.stringify({ contentType, data }),
+      signal: AbortSignal.timeout(60000),
     })
     return res.url
   },
@@ -147,7 +507,23 @@ export const managerService = {
     return (await authenticatedRequest<ActivityDto[]>(`manager/activity?${params}`)).map(toActivity)
   },
   async load(): Promise<ManagerData> {
-    const [me, sessions, payments, history, categories, menu, areas, tables, reservations, employees, shifts, approvals, incidents, notifications, orders] = await Promise.all([
+    const [
+      me,
+      sessions,
+      payments,
+      history,
+      categories,
+      menu,
+      areas,
+      tables,
+      reservations,
+      employees,
+      shifts,
+      approvals,
+      incidents,
+      notifications,
+      orders,
+    ] = await Promise.all([
       authenticatedRequest<MeDto>('manager/me'),
       authenticatedRequest<SessionDto[]>('manager/sessions'),
       authenticatedRequest<PaymentDto[]>('manager/payments'),
@@ -165,79 +541,138 @@ export const managerService = {
       authenticatedRequest<OrderDto[]>('manager/orders'),
     ])
     return {
-      schema: 1, revision: 0, seedDay: businessDay(), bills: [], outbox: [], me: toMe(me),
-      sessions: sessions.map(toSession), payments: payments.map(toPayment), history: history.map(toActivity),
-      categories: categories.map(toCategory), menu: menu.map(toItem), areas, tables: tables.map(toTable), reservations: reservations.map(toReservation),
-      employees: employees.map(toEmployee), shifts,
-      approvals: approvals.map(toApproval), incidents: incidents.map(toIncident),
-      notifications: notifications.map(toNotification), orders: orders.map(toOrder),
+      schema: 1,
+      revision: 0,
+      seedDay: businessDay(),
+      bills: [],
+      outbox: [],
+      me: toMe(me),
+      sessions: sessions.map(toSession),
+      payments: payments.map(toPayment),
+      history: history.map(toActivity),
+      categories: categories.map(toCategory),
+      menu: menu.map(toItem),
+      areas,
+      tables: tables.map(toTable),
+      reservations: reservations.map(toReservation),
+      employees: employees.map(toEmployee),
+      shifts,
+      approvals: approvals.map(toApproval),
+      incidents: incidents.map(toIncident),
+      notifications: notifications.map(toNotification),
+      orders: orders.map(toOrder),
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
     if (command.type === 'category.save') {
       const { id, name, sort, visible, group } = command.category
-      await authenticatedRequest<CategoryDto>(command.creating ? 'menu/categories' : `menu/categories/${encodeURIComponent(id)}`, {
-        method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, sortOrder: sort, visible, group: group ?? 'food' }),
-      })
+      await authenticatedRequest<CategoryDto>(
+        command.creating ? 'menu/categories' : `menu/categories/${encodeURIComponent(id)}`,
+        {
+          method: command.creating ? 'POST' : 'PUT',
+          body: JSON.stringify({ name, sortOrder: sort, visible, group: group ?? 'food' }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'category.delete') {
-      await authenticatedRequest<void>(`menu/categories/${encodeURIComponent(command.id)}`, { method: 'DELETE' })
+      await authenticatedRequest<void>(`menu/categories/${encodeURIComponent(command.id)}`, {
+        method: 'DELETE',
+      })
       return managerService.load()
     }
     if (command.type === 'menu.save') {
       const { id, name, categoryId, price, description, image, status, unit } = command.item
-      await authenticatedRequest<ItemDto>(command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`, {
-        method: command.creating ? 'POST' : 'PUT', body: JSON.stringify({ name, categoryId, price, description, imageUrl: image, status, unit: unit ?? 'portion' }),
-      })
+      await authenticatedRequest<ItemDto>(
+        command.creating ? 'menu/items' : `menu/items/${encodeURIComponent(id)}`,
+        {
+          method: command.creating ? 'POST' : 'PUT',
+          body: JSON.stringify({
+            name,
+            categoryId,
+            price,
+            description,
+            imageUrl: image,
+            status,
+            unit: unit ?? 'portion',
+          }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'approval.decide') {
-      await authenticatedRequest<ApprovalDto>(`manager/approvals/${encodeURIComponent(command.id)}/decision`, {
-        method: 'POST', body: JSON.stringify({ approve: command.approve, reason: command.reason }),
-      })
+      await authenticatedRequest<ApprovalDto>(
+        `manager/approvals/${encodeURIComponent(command.id)}/decision`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ approve: command.approve, reason: command.reason }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'shift.save') {
       const { id, name, date, start, end, minimum, employeeIds } = command.shift
-      await authenticatedRequest<Shift>(id ? `manager/shifts/${encodeURIComponent(id)}` : 'manager/shifts', {
-        method: id ? 'PUT' : 'POST', body: JSON.stringify({ name, date, start, end, minimum, employeeIds }),
-      })
+      await authenticatedRequest<Shift>(
+        id ? `manager/shifts/${encodeURIComponent(id)}` : 'manager/shifts',
+        {
+          method: id ? 'PUT' : 'POST',
+          body: JSON.stringify({ name, date, start, end, minimum, employeeIds }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'employee.assign') {
-      await authenticatedRequest<EmployeeDto>(`manager/employees/${encodeURIComponent(command.id)}/area`, {
-        method: 'PATCH', body: JSON.stringify({ areaId: command.areaId }),
-      })
+      await authenticatedRequest<EmployeeDto>(
+        `manager/employees/${encodeURIComponent(command.id)}/area`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ areaId: command.areaId }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'reservation.move') {
-      await authenticatedRequest<ReservationDto>(`manager/reservations/${encodeURIComponent(command.id)}/table`, {
-        method: 'PATCH', body: JSON.stringify({ tableId: command.tableId, reason: command.reason }),
-      })
+      await authenticatedRequest<ReservationDto>(
+        `manager/reservations/${encodeURIComponent(command.id)}/table`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ tableId: command.tableId, reason: command.reason }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'table.update') {
       const { id, code, areaId, seats, inactive } = command
       await authenticatedRequest<unknown>(`tables/${encodeURIComponent(id)}`, {
-        method: 'PUT', body: JSON.stringify({ code, areaId, capacity: seats, outOfService: inactive }),
+        method: 'PUT',
+        body: JSON.stringify({ code, areaId, capacity: seats, outOfService: inactive }),
       })
       return managerService.load()
     }
     if (command.type === 'menu.delete') {
-      await authenticatedRequest<void>(`menu/items/${encodeURIComponent(command.id)}`, { method: 'DELETE' })
+      await authenticatedRequest<void>(`menu/items/${encodeURIComponent(command.id)}`, {
+        method: 'DELETE',
+      })
       return managerService.load()
     }
     if (command.type === 'incident.update') {
-      await authenticatedRequest<IncidentDto>(`manager/incidents/${encodeURIComponent(command.id)}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ assigneeId: command.assigneeId || null, status: command.status, reply: (command.reply ?? command.note)?.trim() || null }),
-      })
+      await authenticatedRequest<IncidentDto>(
+        `manager/incidents/${encodeURIComponent(command.id)}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            assigneeId: command.assigneeId || null,
+            status: command.status,
+            reply: (command.reply ?? command.note)?.trim() || null,
+          }),
+        },
+      )
       return managerService.load()
     }
     if (command.type === 'notification.read') {
       await authenticatedRequest<NotificationDto[]>('manager/notifications/read', {
-        method: 'POST', body: JSON.stringify(command.id ? { ids: [command.id] } : {}),
+        method: 'POST',
+        body: JSON.stringify(command.id ? { ids: [command.id] } : {}),
       })
       return managerService.load()
     }
@@ -245,7 +680,9 @@ export const managerService = {
     throw new Error(`Lệnh quản lý không được hỗ trợ: ${JSON.stringify(unreachable)}`)
   },
   subscribe(listener: () => void) {
-    const timer = window.setInterval(() => { if (!document.hidden) listener() }, 5000)
+    const timer = window.setInterval(() => {
+      if (!document.hidden) listener()
+    }, 5000)
     return () => window.clearInterval(timer)
   },
 }

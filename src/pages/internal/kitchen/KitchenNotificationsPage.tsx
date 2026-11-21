@@ -26,7 +26,8 @@ export default function KitchenNotificationsPage() {
 
   const open = (n: KitchenNotification) => {
     if (isUnread(n)) void run({ type: 'read-notifications', ids: [n.id] }, [`notif:${n.id}`])
-    if (n.orderId && data.orders.some((o) => o.id === n.orderId)) navigate(kitchenPaths.ticket(n.orderId))
+    if (n.orderId && data.orders.some((o) => o.id === n.orderId))
+      navigate(kitchenPaths.ticket(n.orderId))
     else if (n.incidentId) navigate(kitchenPaths.incidents)
     else if (n.kind === 'MENU_REQUEST') navigate(kitchenPaths.menuStatus)
   }
@@ -34,14 +35,28 @@ export default function KitchenNotificationsPage() {
   return (
     <div className="k-page k-page--list">
       <div className="k-toolbar">
-        <span className="k-toolbar-lead"><b>{unread.length}</b> chưa đọc · {sorted.length} thông báo</span>
-        <KitchenFilters label="Lọc thông báo" value={filter} onChange={setFilter} options={[
-          { value: 'all', label: 'Tất cả', count: sorted.length },
-          { value: 'unread', label: 'Chưa đọc', count: unread.length },
-        ]} />
-        <button type="button" className="k-btn k-btn--ghost k-toolbar-end" disabled={!unread.length || isPending('notif:all')}
-          onClick={() => { void run({ type: 'read-notifications' }, ['notif:all']) }}>
-          <Icon name="check" size={15} />Đánh dấu tất cả đã đọc
+        <span className="k-toolbar-lead">
+          <b>{unread.length}</b> chưa đọc · {sorted.length} thông báo
+        </span>
+        <KitchenFilters
+          label="Lọc thông báo"
+          value={filter}
+          onChange={setFilter}
+          options={[
+            { value: 'all', label: 'Tất cả', count: sorted.length },
+            { value: 'unread', label: 'Chưa đọc', count: unread.length },
+          ]}
+        />
+        <button
+          type="button"
+          className="k-btn k-btn--ghost k-toolbar-end"
+          disabled={!unread.length || isPending('notif:all')}
+          onClick={() => {
+            void run({ type: 'read-notifications' }, ['notif:all'])
+          }}
+        >
+          <Icon name="check" size={15} />
+          Đánh dấu tất cả đã đọc
         </button>
       </div>
       {list.length ? (
@@ -51,16 +66,30 @@ export default function KitchenNotificationsPage() {
             const fresh = isUnread(n)
             return (
               <li key={n.id}>
-                <button type="button" className={`k-notif${fresh ? ' k-notif--unread' : ''}`} onClick={() => open(n)}>
-                  <span className={`k-notif-icon k-notif-icon--${kind.tone}`}><Icon name={kind.icon} size={16} /></span>
+                <button
+                  type="button"
+                  className={`k-notif${fresh ? ' k-notif--unread' : ''}`}
+                  onClick={() => open(n)}
+                >
+                  <span className={`k-notif-icon k-notif-icon--${kind.tone}`}>
+                    <Icon name={kind.icon} size={16} />
+                  </span>
                   <span className="k-notif-main">
-                    <span className={`k-notif-kind k-notif-kind--${kind.tone}`}>{NOTIFICATION_KIND_LABEL[n.kind]}</span>
+                    <span className={`k-notif-kind k-notif-kind--${kind.tone}`}>
+                      {NOTIFICATION_KIND_LABEL[n.kind]}
+                    </span>
                     <span className="k-notif-title">{n.title}</span>
                     <span className="k-notif-body">{n.body}</span>
                   </span>
                   <span className="k-notif-side">
-                    <span className="k-mono">{formatTime(n.at)} · {formatDate(n.at)}</span>
-                    <span className={fresh ? 'k-notif-state k-notif-state--unread' : 'k-notif-state'}>{fresh ? 'Chưa đọc' : 'Đã đọc'}</span>
+                    <span className="k-mono">
+                      {formatTime(n.at)} · {formatDate(n.at)}
+                    </span>
+                    <span
+                      className={fresh ? 'k-notif-state k-notif-state--unread' : 'k-notif-state'}
+                    >
+                      {fresh ? 'Chưa đọc' : 'Đã đọc'}
+                    </span>
                   </span>
                 </button>
               </li>
@@ -68,7 +97,9 @@ export default function KitchenNotificationsPage() {
           })}
         </ul>
       ) : (
-        <p className="k-empty k-panel">{filter === 'unread' ? 'Bạn đã đọc hết thông báo.' : 'Chưa có thông báo.'}</p>
+        <p className="k-empty k-panel">
+          {filter === 'unread' ? 'Bạn đã đọc hết thông báo.' : 'Chưa có thông báo.'}
+        </p>
       )}
     </div>
   )

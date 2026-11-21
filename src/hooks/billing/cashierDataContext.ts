@@ -1,5 +1,10 @@
 import { createContext, useContext } from 'react'
-import type { CashierCommand, CashierData, CashierStaff, CommandResult } from '../../api/billing/types'
+import type {
+  CashierCommand,
+  CashierData,
+  CashierStaff,
+  CommandResult,
+} from '../../api/billing/types'
 
 export interface Feedback {
   id: number
@@ -18,7 +23,11 @@ export interface CashierDataValue {
   loadError: string | null
   refresh: () => Promise<void>
   /** Runs a command once per key at a time. A second call with a busy key is ignored. */
-  run: (command: CashierCommand, keys: string[], options?: { quiet?: boolean }) => Promise<RunResult | null>
+  run: (
+    command: CashierCommand,
+    keys: string[],
+    options?: { quiet?: boolean },
+  ) => Promise<RunResult | null>
   isPending: (key: string) => boolean
   feedback: Feedback | null
   dismissFeedback: () => void

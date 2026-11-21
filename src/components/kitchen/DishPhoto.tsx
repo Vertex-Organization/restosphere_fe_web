@@ -10,12 +10,23 @@ export function DishPhoto({ menu, size = 'md' }: { menu?: MenuItem; size?: 'sm' 
   if (!menu?.imageUrl || failed) {
     return (
       <span className={`k-dish k-dish--${size} k-dish--empty`} aria-hidden="true">
-        <Icon name={menu?.categoryId === 'drink' ? 'cup' : 'utensils'} size={size === 'sm' ? 14 : 17} />
+        <Icon
+          name={menu?.categoryId === 'drink' ? 'cup' : 'utensils'}
+          size={size === 'sm' ? 14 : 17}
+        />
       </span>
     )
   }
   return (
-    <img className={`k-dish k-dish--${size}`} src={menu.imageUrl} width={px} height={px} alt="" loading="lazy" decoding="async"
-      onError={() => setFailed(true)} />
+    <img
+      className={`k-dish k-dish--${size}`}
+      src={menu.imageUrl}
+      width={px}
+      height={px}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   )
 }

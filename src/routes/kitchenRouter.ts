@@ -18,7 +18,8 @@ export type KitchenRoute =
   | { name: 'dev' }
   | { name: 'not-found' }
 
-export const isKitchenPath = (pathname: string) => pathname === KITCHEN_BASE || pathname.startsWith(`${KITCHEN_BASE}/`)
+export const isKitchenPath = (pathname: string) =>
+  pathname === KITCHEN_BASE || pathname.startsWith(`${KITCHEN_BASE}/`)
 
 const listeners = new Set<() => void>()
 const emit = () => listeners.forEach((listener) => listener())
@@ -47,7 +48,11 @@ export function useKitchenUrl() {
   const url = useSyncExternalStore(subscribe, currentUrl)
   return useMemo(() => {
     const parsed = new URL(url, window.location.origin)
-    return { url, pathname: parsed.pathname.replace(/\/+$/, '') || '/', params: parsed.searchParams }
+    return {
+      url,
+      pathname: parsed.pathname.replace(/\/+$/, '') || '/',
+      params: parsed.searchParams,
+    }
   }, [url])
 }
 
@@ -58,13 +63,20 @@ export function matchKitchenRoute(pathname: string): KitchenRoute {
   const ticket = /^tickets\/([\w-]+)$/.exec(rest)
   if (ticket) return { name: 'ticket', id: decodeURIComponent(ticket[1]) }
   switch (rest) {
-    case 'history': return { name: 'history' }
-    case 'incidents': return { name: 'incidents' }
-    case 'menu-status': return { name: 'menu-status' }
-    case 'notifications': return { name: 'notifications' }
-    case 'profile': return { name: 'profile' }
-    case 'dev': return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
-    default: return { name: 'not-found' }
+    case 'history':
+      return { name: 'history' }
+    case 'incidents':
+      return { name: 'incidents' }
+    case 'menu-status':
+      return { name: 'menu-status' }
+    case 'notifications':
+      return { name: 'notifications' }
+    case 'profile':
+      return { name: 'profile' }
+    case 'dev':
+      return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
+    default:
+      return { name: 'not-found' }
   }
 }
 

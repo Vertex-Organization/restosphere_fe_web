@@ -22,11 +22,28 @@ export function DishCard({ dish, language, index, variant, category, onOpen }: D
 
   return (
     <li className={`menu-card menu-card--${variant}${soldOut ? ' is-sold-out' : ''}`} style={style}>
-      <button type="button" className="menu-card-button" onClick={() => onOpen(dish.id)} aria-haspopup="dialog">
+      <button
+        type="button"
+        className="menu-card-button"
+        onClick={() => onOpen(dish.id)}
+        aria-haspopup="dialog"
+      >
         <span className="menu-card-media">
-          {dish.imageUrl
-            ? <img src={dish.imageUrl} alt="" loading="lazy" decoding="async" draggable={false} width={variant === 'food' ? 800 : 600} height={600} />
-            : <span className="menu-card-placeholder"><MenuIcon name={variant === 'drink' ? 'cup' : 'dish'} size={36} /></span>}
+          {dish.imageUrl ? (
+            <img
+              src={dish.imageUrl}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              width={variant === 'food' ? 800 : 600}
+              height={600}
+            />
+          ) : (
+            <span className="menu-card-placeholder">
+              <MenuIcon name={variant === 'drink' ? 'cup' : 'dish'} size={36} />
+            </span>
+          )}
           {soldOut && <span className="menu-card-flag">{t.soldOut}</span>}
         </span>
 

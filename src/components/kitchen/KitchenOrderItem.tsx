@@ -9,7 +9,13 @@ import { KitchenStatusBadge } from './KitchenStatusBadge'
 
 export type KitchenItemAction = 'start' | 'complete'
 
-export function KitchenActionConfirmDialog({ action, items, tableCode, onClose, onConfirm }: {
+export function KitchenActionConfirmDialog({
+  action,
+  items,
+  tableCode,
+  onClose,
+  onConfirm,
+}: {
   action: KitchenItemAction
   items: Item[]
   tableCode: string
@@ -20,12 +26,30 @@ export function KitchenActionConfirmDialog({ action, items, tableCode, onClose, 
   const titleId = useId()
   const descriptionId = useId()
   const starting = action === 'start'
-  useEffect(() => { const dialog = ref.current; dialog?.showModal(); return () => dialog?.close() }, [])
+  useEffect(() => {
+    const dialog = ref.current
+    dialog?.showModal()
+    return () => dialog?.close()
+  }, [])
 
   return (
-    <dialog ref={ref} className="k-confirm-dialog" aria-labelledby={titleId} aria-describedby={descriptionId}
-      onCancel={(event) => { event.preventDefault(); onClose() }}>
-      <form className="k-confirm-form" onSubmit={(event) => { event.preventDefault(); onConfirm() }}>
+    <dialog
+      ref={ref}
+      className="k-confirm-dialog"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
+      onCancel={(event) => {
+        event.preventDefault()
+        onClose()
+      }}
+    >
+      <form
+        className="k-confirm-form"
+        onSubmit={(event) => {
+          event.preventDefault()
+          onConfirm()
+        }}
+      >
         <header className="k-confirm-head">
           <span className={`k-confirm-icon k-confirm-icon--${action}`} aria-hidden="true">
             <Icon name={starting ? 'utensils' : 'checkCircle'} size={20} />
@@ -42,11 +66,17 @@ export function KitchenActionConfirmDialog({ action, items, tableCode, onClose, 
         <div className="k-confirm-items">
           <p className="k-confirm-table">Bàn {tableCode}</p>
           <ul>
-            {items.map((item) => <li key={item.id}><b>{item.quantity} ×</b> {item.name}</li>)}
+            {items.map((item) => (
+              <li key={item.id}>
+                <b>{item.quantity} ×</b> {item.name}
+              </li>
+            ))}
           </ul>
         </div>
         <footer className="k-confirm-actions">
-          <button type="button" className="k-btn k-btn--lg" autoFocus onClick={onClose}>Quay lại</button>
+          <button type="button" className="k-btn k-btn--lg" autoFocus onClick={onClose}>
+            Quay lại
+          </button>
           <button type="submit" className="k-btn k-btn--primary k-btn--lg">
             {starting ? 'Xác nhận bắt đầu' : 'Xác nhận đã xong'}
           </button>
@@ -63,15 +93,68 @@ export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () =>
   const [reason, setReason] = useState('')
   const [error, setError] = useState('')
   const pending = isPending(item.id)
-  useEffect(() => { const dialog = ref.current; dialog?.showModal(); return () => dialog?.close() }, [])
-  return <dialog ref={ref} aria-labelledby={titleId} className="k-panel" onCancel={(e) => { e.preventDefault(); if (!pending) onClose() }}>
-    <form className="k-form" onSubmit={(e) => { e.preventDefault(); if (pending) return; void run({ type: 'reject', itemId: item.id, version: item.version, reason }, [item.id]).then((ok) => { if (ok) onClose(); else setError('Không thể từ chối món. Kiểm tra trạng thái và lý do, rồi thử lại.') }) }}>
-      <h2 id={titleId} className="k-panel-title">Từ chối {item.name}</h2>
-      <label className="k-field"><span className="k-label">Lý do từ chối</span><textarea className="k-input" required minLength={5} maxLength={200} value={reason} onChange={(e) => setReason(e.target.value)} /></label>
-      {error && <p role="alert" className="k-form-error">{error}</p>}
-      <div className="k-form-row"><button type="button" className="k-btn" disabled={pending} onClick={onClose}>Quay lại</button><button type="submit" className="k-btn k-btn--danger" disabled={pending || reason.trim().length < 5}>Từ chối</button></div>
-    </form>
-  </dialog>
+  useEffect(() => {
+    const dialog = ref.current
+    dialog?.showModal()
+    return () => dialog?.close()
+  }, [])
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby={titleId}
+      className="k-panel"
+      onCancel={(e) => {
+        e.preventDefault()
+        if (!pending) onClose()
+      }}
+    >
+      <form
+        className="k-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (pending) return
+          void run({ type: 'reject', itemId: item.id, version: item.version, reason }, [
+            item.id,
+          ]).then((ok) => {
+            if (ok) onClose()
+            else setError('Không thể từ chối món. Kiểm tra trạng thái và lý do, rồi thử lại.')
+          })
+        }}
+      >
+        <h2 id={titleId} className="k-panel-title">
+          Từ chối {item.name}
+        </h2>
+        <label className="k-field">
+          <span className="k-label">Lý do từ chối</span>
+          <textarea
+            className="k-input"
+            required
+            minLength={5}
+            maxLength={200}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </label>
+        {error && (
+          <p role="alert" className="k-form-error">
+            {error}
+          </p>
+        )}
+        <div className="k-form-row">
+          <button type="button" className="k-btn" disabled={pending} onClick={onClose}>
+            Quay lại
+          </button>
+          <button
+            type="submit"
+            className="k-btn k-btn--danger"
+            disabled={pending || reason.trim().length < 5}
+          >
+            Từ chối
+          </button>
+        </div>
+      </form>
+    </dialog>
+  )
 }
 
 interface Props {
@@ -88,7 +171,17 @@ interface Props {
 
 /** One OrderItem line on a ticket, with the single action its status allows.
  * Quantity, name and status share one line so a ticket stays short. */
-export function KitchenOrderItem({ item, menu, now, variant, cookName, pending, onStart, onComplete, onReject }: Props) {
+export function KitchenOrderItem({
+  item,
+  menu,
+  now,
+  variant,
+  cookName,
+  pending,
+  onStart,
+  onComplete,
+  onReject,
+}: Props) {
   const preparing = item.status === 'PREPARING'
   return (
     <li className={`k-item k-item--${item.status.toLowerCase()} k-item--${variant}`}>
@@ -101,25 +194,60 @@ export function KitchenOrderItem({ item, menu, now, variant, cookName, pending, 
             {variant === 'active' ? (
               <span className="k-item-meta">
                 <KitchenStatusBadge status={item.status} />
-                {preparing && <span>{formatDuration(minutesBetween(item.startedAt, now))}{cookName && ` · ${cookName}`}</span>}
+                {preparing && (
+                  <span>
+                    {formatDuration(minutesBetween(item.startedAt, now))}
+                    {cookName && ` · ${cookName}`}
+                  </span>
+                )}
               </span>
             ) : (
-              <span className="k-item-meta k-item-done">Xong {formatTime(item.readyAt)}{cookName && ` · ${cookName}`}</span>
+              <span className="k-item-meta k-item-done">
+                Xong {formatTime(item.readyAt)}
+                {cookName && ` · ${cookName}`}
+              </span>
             )}
           </div>
         </div>
-        {item.note && <span className="k-note"><Icon name="note" size={13} />{item.note}</span>}
+        {item.note && (
+          <span className="k-note">
+            <Icon name="note" size={13} />
+            {item.note}
+          </span>
+        )}
       </div>
       {variant === 'active' && item.status === 'SUBMITTED' && onStart && (
-        <button type="button" className="k-btn k-btn--outline k-item-action" onClick={onStart} disabled={pending} aria-busy={pending}
-          aria-label={`Bắt đầu chế biến ${item.quantity} ${item.name}`}>
+        <button
+          type="button"
+          className="k-btn k-btn--outline k-item-action"
+          onClick={onStart}
+          disabled={pending}
+          aria-busy={pending}
+          aria-label={`Bắt đầu chế biến ${item.quantity} ${item.name}`}
+        >
           Bắt đầu
         </button>
       )}
-      {variant === 'active' && item.status === 'SUBMITTED' && onReject && <button type="button" className="k-btn k-btn--danger" onClick={onReject} disabled={pending} aria-label={`Từ chối ${item.name}`}>Từ chối</button>}
+      {variant === 'active' && item.status === 'SUBMITTED' && onReject && (
+        <button
+          type="button"
+          className="k-btn k-btn--danger"
+          onClick={onReject}
+          disabled={pending}
+          aria-label={`Từ chối ${item.name}`}
+        >
+          Từ chối
+        </button>
+      )}
       {variant === 'active' && preparing && onComplete && (
-        <button type="button" className="k-btn k-btn--primary k-item-action" onClick={onComplete} disabled={pending} aria-busy={pending}
-          aria-label={`Hoàn thành ${item.quantity} ${item.name}`}>
+        <button
+          type="button"
+          className="k-btn k-btn--primary k-item-action"
+          onClick={onComplete}
+          disabled={pending}
+          aria-busy={pending}
+          aria-label={`Hoàn thành ${item.quantity} ${item.name}`}
+        >
           Hoàn thành
         </button>
       )}

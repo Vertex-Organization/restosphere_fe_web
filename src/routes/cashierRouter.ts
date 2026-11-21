@@ -21,7 +21,8 @@ export type CashierRoute =
   | { name: 'dev' }
   | { name: 'not-found' }
 
-export const isCashierPath = (pathname: string) => pathname === CASHIER_BASE || pathname.startsWith(`${CASHIER_BASE}/`)
+export const isCashierPath = (pathname: string) =>
+  pathname === CASHIER_BASE || pathname.startsWith(`${CASHIER_BASE}/`)
 
 const withId = /^(bills|payments|transactions|receipts)\/([\w-]+)$/
 
@@ -33,20 +34,31 @@ export function matchCashierRoute(pathname: string): CashierRoute {
   if (match) {
     const id = decodeURIComponent(match[2])
     switch (match[1]) {
-      case 'bills': return { name: 'bill', id }
-      case 'payments': return { name: 'payment', billId: id }
-      case 'transactions': return { name: 'transaction', id }
-      default: return { name: 'receipt', id }
+      case 'bills':
+        return { name: 'bill', id }
+      case 'payments':
+        return { name: 'payment', billId: id }
+      case 'transactions':
+        return { name: 'transaction', id }
+      default:
+        return { name: 'receipt', id }
     }
   }
   switch (rest) {
-    case 'transactions': return { name: 'transactions' }
-    case 'requests': return { name: 'requests' }
-    case 'shift': return { name: 'shift' }
-    case 'notifications': return { name: 'notifications' }
-    case 'profile': return { name: 'profile' }
-    case 'dev': return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
-    default: return { name: 'not-found' }
+    case 'transactions':
+      return { name: 'transactions' }
+    case 'requests':
+      return { name: 'requests' }
+    case 'shift':
+      return { name: 'shift' }
+    case 'notifications':
+      return { name: 'notifications' }
+    case 'profile':
+      return { name: 'profile' }
+    case 'dev':
+      return import.meta.env.DEV ? { name: 'dev' } : { name: 'not-found' }
+    default:
+      return { name: 'not-found' }
   }
 }
 

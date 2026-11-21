@@ -11,19 +11,26 @@ const listeners = new Set<() => void>()
 export function updateManagerProfile(user: ManagerUser) {
   if (getStaffSession()?.id !== user.id) return
   cached = { id: user.id, user }
-  listeners.forEach(listener => listener())
+  listeners.forEach((listener) => listener())
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener)
   const unsubscribe = subscribeStaffAuth(listener)
-  return () => { listeners.delete(listener); unsubscribe() }
+  return () => {
+    listeners.delete(listener)
+    unsubscribe()
+  }
 }
 
 export function getManagerUser(): ManagerUser | null {
   const session = getStaffSession()
   if (!session || session.role !== 'MANAGER') return null
-  if (cached?.id !== session.id) cached = { id: session.id, user: { ...session, role: 'MANAGER', permissions: [], approvalLimit: 0 } }
+  if (cached?.id !== session.id)
+    cached = {
+      id: session.id,
+      user: { ...session, role: 'MANAGER', permissions: [], approvalLimit: 0 },
+    }
   return cached.user
 }
 

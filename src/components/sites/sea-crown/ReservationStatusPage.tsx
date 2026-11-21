@@ -62,9 +62,15 @@ export default function ReservationStatusPage({ language }: { language: Language
             : 'Nhập mã đặt bàn (ví dụ: RS-251126-007) và số điện thoại đã đăng ký để kiểm tra tình trạng.'}
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: '24px 0' }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: '24px 0' }}
+        >
           <div>
-            <label htmlFor="rs-code" style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>
+            <label
+              htmlFor="rs-code"
+              style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}
+            >
               {en ? 'Reservation Code' : 'Mã đặt bàn'} *
             </label>
             <input
@@ -74,11 +80,19 @@ export default function ReservationStatusPage({ language }: { language: Language
               placeholder="RS..."
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #ccc' }}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+              }}
             />
           </div>
           <div>
-            <label htmlFor="rs-phone" style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>
+            <label
+              htmlFor="rs-phone"
+              style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}
+            >
               {en ? 'Phone Number' : 'Số điện thoại'} *
             </label>
             <input
@@ -88,7 +102,12 @@ export default function ReservationStatusPage({ language }: { language: Language
               placeholder="09..."
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #ccc' }}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+              }}
             />
           </div>
           <button
@@ -97,13 +116,22 @@ export default function ReservationStatusPage({ language }: { language: Language
             disabled={loading}
             style={{ marginTop: '8px', cursor: loading ? 'not-allowed' : 'pointer' }}
           >
-            {loading ? (en ? 'Searching...' : 'Đang tra cứu...') : (en ? 'Check Status' : 'Tra cứu')}
+            {loading ? (en ? 'Searching...' : 'Đang tra cứu...') : en ? 'Check Status' : 'Tra cứu'}
           </button>
         </form>
 
         {error && <p role="alert">{error}</p>}
         {result === null && (
-          <div role="status" style={{ padding: '14px', background: '#fee2e2', borderRadius: '8px', color: '#991b1b', marginTop: '16px' }}>
+          <div
+            role="status"
+            style={{
+              padding: '14px',
+              background: '#fee2e2',
+              borderRadius: '8px',
+              color: '#991b1b',
+              marginTop: '16px',
+            }}
+          >
             {en
               ? 'No reservation found matching this code and phone number.'
               : 'Không tìm thấy thông tin đặt bàn khớp với mã và số điện thoại trên.'}
@@ -111,18 +139,46 @@ export default function ReservationStatusPage({ language }: { language: Language
         )}
 
         {result && (
-          <div role="status" style={{ padding: '20px', background: '#f3f4f6', borderRadius: '8px', marginTop: '16px' }}>
+          <div
+            role="status"
+            style={{
+              padding: '20px',
+              background: '#f3f4f6',
+              borderRadius: '8px',
+              marginTop: '16px',
+            }}
+          >
             <h2 style={{ fontSize: '1.25rem', marginTop: 0 }}>
               {en ? 'Reservation Details' : 'Chi tiết đặt bàn'}
             </h2>
-            <p><strong>{en ? 'Code:' : 'Mã đặt bàn:'}</strong> {result.code}</p>
-            <p><strong>{en ? 'Guest Name:' : 'Tên khách:'}</strong> {result.name}</p>
-            <p><strong>{en ? 'Time:' : 'Thời gian:'}</strong> {result.date} · {result.time}</p>
-            <p><strong>{en ? 'Guests:' : 'Số khách:'}</strong> {result.guests}</p>
-            <p><strong>{en ? 'Area:' : 'Khu vực:'}</strong> {result.areaName}</p>
+            <p>
+              <strong>{en ? 'Code:' : 'Mã đặt bàn:'}</strong> {result.code}
+            </p>
+            <p>
+              <strong>{en ? 'Guest Name:' : 'Tên khách:'}</strong> {result.name}
+            </p>
+            <p>
+              <strong>{en ? 'Time:' : 'Thời gian:'}</strong> {result.date} · {result.time}
+            </p>
+            <p>
+              <strong>{en ? 'Guests:' : 'Số khách:'}</strong> {result.guests}
+            </p>
+            <p>
+              <strong>{en ? 'Area:' : 'Khu vực:'}</strong> {result.areaName}
+            </p>
             <p>
               <strong>{en ? 'Status:' : 'Trạng thái:'}</strong>{' '}
-              <span style={{ fontWeight: 600, color: result.status === 'CONFIRMED' || result.status === 'SEATED' ? '#166534' : result.status === 'REJECTED' || result.status === 'CANCELLED' ? '#991b1b' : '#854d0e' }}>
+              <span
+                style={{
+                  fontWeight: 600,
+                  color:
+                    result.status === 'CONFIRMED' || result.status === 'SEATED'
+                      ? '#166534'
+                      : result.status === 'REJECTED' || result.status === 'CANCELLED'
+                        ? '#991b1b'
+                        : '#854d0e',
+                }}
+              >
                 {statusLabel[result.status] ?? result.status}
               </span>
             </p>
@@ -139,7 +195,9 @@ export default function ReservationStatusPage({ language }: { language: Language
               </div>
             )}
             {(result.status === 'PENDING' || result.status === 'CONFIRMED') && (
-              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}
+              >
                 <label htmlFor="rs-reason" style={{ fontWeight: 600 }}>
                   {en ? 'Cancellation reason' : 'Lý do hủy'} *
                 </label>
@@ -148,7 +206,12 @@ export default function ReservationStatusPage({ language }: { language: Language
                   maxLength={1000}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #ccc' }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid #ccc',
+                  }}
                 />
                 <button
                   type="button"

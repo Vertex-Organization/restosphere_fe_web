@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { useStaffLoading, useStaffSession } from '../../api/staff/auth'
 import { StaffAccessDenied, StaffRedirecting } from '../../components/staff/StaffAccessDenied'
+import { navigate } from '../../routes/kitchenRouter'
 import { loginPath, type WorkspaceRole } from '../../routes/staffRouter'
 
 /** Guard for a workspace. Returns what to show instead of the workspace, or null to let it render:
@@ -12,12 +13,13 @@ export function useStaffGate(role: WorkspaceRole, hasProfile: boolean): ReactNod
   const signedOut = !session && !loading
 
   useEffect(() => {
-    // The sign-in page is a separate app, so this is a full page load.
-    if (signedOut) window.location.replace(loginPath(window.location.pathname + window.location.search))
+    if (signedOut)
+      navigate(loginPath(window.location.pathname + window.location.search), { replace: true })
   }, [signedOut])
 
   if (!session) return <StaffRedirecting />
-  if (session.role !== role) return <StaffAccessDenied session={session} workspace={role} reason="role" />
+  if (session.role !== role)
+    return <StaffAccessDenied session={session} workspace={role} reason="role" />
   if (!hasProfile) return <StaffAccessDenied session={session} workspace={role} reason="profile" />
   return null
 }

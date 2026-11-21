@@ -7,13 +7,22 @@ import { homePathFor, landingPath, STAFF_BASE, staffPaths } from '../../routes/s
 import StaffLoginPage from './StaffLoginPage'
 import '../../components/staff/staff.css'
 
-/** Opens a workspace (a separate app, so a full page load). */
+/** Opens the lazy workspace app without reloading the document. */
 function Open({ to }: { to: string }) {
-  useEffect(() => { window.location.replace(to) }, [to])
-  return <div className="st" aria-busy="true"><p className="st-wait"><span className="st-spinner" aria-hidden="true" />Đang mở khu làm việc…</p></div>
+  useEffect(() => {
+    navigate(to, { replace: true })
+  }, [to])
+  return (
+    <div className="st" aria-busy="true">
+      <p className="st-wait">
+        <span className="st-spinner" aria-hidden="true" />
+        Đang mở khu làm việc…
+      </p>
+    </div>
+  )
 }
 
-/** /staff and /staff/login. Workspaces under /staff/<role> are their own apps. */
+/** /staff and /staff/login. Workspaces under /staff/<role> are lazy root apps. */
 export default function StaffApp() {
   const { pathname, params } = useStaffUrl()
   const session = useStaffSession()
@@ -53,7 +62,9 @@ export default function StaffApp() {
             <h1 className="st-title">Không tìm thấy trang</h1>
             <p className="st-sub">Đường dẫn này không thuộc khu nhân viên.</p>
           </div>
-          <a className="st-btn st-btn--primary" href={STAFF_BASE}>Về khu làm việc</a>
+          <a className="st-btn st-btn--primary" href={STAFF_BASE}>
+            Về khu làm việc
+          </a>
         </div>
       </div>
     </main>

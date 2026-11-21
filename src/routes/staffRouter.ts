@@ -51,7 +51,11 @@ export function homePathFor(role: StaffRole): string | null {
 
 /** The workspace a staff URL belongs to, if any. */
 export function workspaceOf(url: string): WorkspaceRole | null {
-  return (Object.keys(WORKSPACES) as WorkspaceRole[]).find((role) => isUnder(url, WORKSPACES[role].base)) ?? null
+  return (
+    (Object.keys(WORKSPACES) as WorkspaceRole[]).find((role) =>
+      isUnder(url, WORKSPACES[role].base),
+    ) ?? null
+  )
 }
 
 /** Where to go after signing in: the requested page when it is in this role's

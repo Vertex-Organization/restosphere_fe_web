@@ -8,7 +8,8 @@ gsap.registerPlugin(ScrollTrigger)
 
 const LOGO_SOURCES = ['/sites/sea-crown/images/logo.png', '/sites/sea-crown/images/logo.png']
 type LogoCircle = { body: Body; radius: number; image: HTMLImageElement }
-type MouseHandlers = Mouse & Record<'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel', EventListener>
+type MouseHandlers = Mouse &
+  Record<'mousemove' | 'mousedown' | 'mouseup' | 'mousewheel', EventListener>
 
 /** The original footer uses Matter circles with its two logo images as textures. */
 export function FooterPlayground() {
@@ -22,14 +23,33 @@ export function FooterPlayground() {
     let disposeScene: (() => void) | undefined
 
     const initialize = async () => {
-      const [{ default: Matter }, images] = await Promise.all([import('matter-js'), Promise.all(LOGO_SOURCES.map(source => new Promise<HTMLImageElement>(resolve => {
-        const image = new Image()
-        image.onload = image.onerror = () => resolve(image)
-        image.src = source
-      })))])
+      const [{ default: Matter }, images] = await Promise.all([
+        import('matter-js'),
+        Promise.all(
+          LOGO_SOURCES.map(
+            (source) =>
+              new Promise<HTMLImageElement>((resolve) => {
+                const image = new Image()
+                image.onload = image.onerror = () => resolve(image)
+                image.src = source
+              }),
+          ),
+        ),
+      ])
       if (disposed) return
 
-      const { Engine, Render, Runner, Bodies, Body, Composite, Events, Mouse, MouseConstraint, Query } = Matter
+      const {
+        Engine,
+        Render,
+        Runner,
+        Bodies,
+        Body,
+        Composite,
+        Events,
+        Mouse,
+        MouseConstraint,
+        Query,
+      } = Matter
       const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
       const engine = Engine.create()
       const runner = Runner.create()
@@ -38,15 +58,23 @@ export function FooterPlayground() {
       let started = false
       let circles: LogoCircle[] = []
       let walls: Body[] = []
-      const render = Render.create({ canvas, engine, options: {
-        width, height, pixelRatio: window.devicePixelRatio || 1,
-        background: 'transparent', wireframes: false,
-      } })
+      const render = Render.create({
+        canvas,
+        engine,
+        options: {
+          width,
+          height,
+          pixelRatio: window.devicePixelRatio || 1,
+          background: 'transparent',
+          wireframes: false,
+        },
+      })
       const mouse = Mouse.create(canvas)
       mouse.pixelRatio = window.devicePixelRatio || 1
       const mouseHandlers = mouse as MouseHandlers
       const mouseConstraint = MouseConstraint.create(engine, {
-        mouse, constraint: { stiffness: .2, render: { visible: false } },
+        mouse,
+        constraint: { stiffness: 0.2, render: { visible: false } },
       })
       Composite.add(engine.world, mouseConstraint)
       render.mouse = mouse
@@ -69,14 +97,23 @@ export function FooterPlayground() {
         Composite.add(engine.world, walls)
         const mobile = width < 768
         const radiusBase = mobile ? 30 : 58
-        const count = mobile ? Math.max(12, Math.floor(width / 60)) : Math.max(8, Math.floor(width / 110))
+        const count = mobile
+          ? Math.max(12, Math.floor(width / 60))
+          : Math.max(8, Math.floor(width / 110))
         const staticColumns = Math.max(1, Math.floor(width / (radiusBase * 2 + 24)))
         circles = Array.from({ length: count }, (_, index) => {
           const radius = radiusBase + Math.random() * 20 - 10
-          const x = motion.matches ? (index % staticColumns + .5) * width / staticColumns : radius + Math.random() * (width - radius * 2)
-          const y = motion.matches ? height - radius - Math.floor(index / staticColumns) * (radiusBase * 2 + 24) : -2 * radius - 2.6 * radius * index
+          const x = motion.matches
+            ? (((index % staticColumns) + 0.5) * width) / staticColumns
+            : radius + Math.random() * (width - radius * 2)
+          const y = motion.matches
+            ? height - radius - Math.floor(index / staticColumns) * (radiusBase * 2 + 24)
+            : -2 * radius - 2.6 * radius * index
           const body = Bodies.circle(x, y, radius, {
-            restitution: .5, friction: .08, frictionAir: .01, density: .002,
+            restitution: 0.5,
+            friction: 0.08,
+            frictionAir: 0.01,
+            density: 0.002,
             isStatic: motion.matches,
             render: { fillStyle: 'transparent', strokeStyle: 'transparent', lineWidth: 0 },
           })
@@ -98,7 +135,8 @@ export function FooterPlayground() {
           context.fill()
           context.save()
           context.clip()
-          if (image.complete && image.naturalWidth) context.drawImage(image, -radius, -radius, radius * 2, radius * 2)
+          if (image.complete && image.naturalWidth)
+            context.drawImage(image, -radius, -radius, radius * 2, radius * 2)
           context.restore()
           context.beginPath()
           context.arc(0, 0, radius, 0, Math.PI * 2)
@@ -117,21 +155,32 @@ export function FooterPlayground() {
       const play = () => {
         Runner.stop(runner)
         Render.stop(render)
-        if (motion.matches) { Render.world(render); return }
+        if (motion.matches) {
+          Render.world(render)
+          return
+        }
         if (!visible) return
         Render.run(render)
         if (started) Runner.run(runner, engine)
       }
-      const visibility = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting === visible) return
-        visible = entry.isIntersecting
-        play()
-      }, { rootMargin: '120px 0px' })
+      const visibility = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting === visible) return
+          visible = entry.isIntersecting
+          play()
+        },
+        { rootMargin: '120px 0px' },
+      )
       const start = () => {
         started = true
         play()
       }
-      const scrollTrigger = ScrollTrigger.create({ trigger: footer, start: 'top 90%', once: true, onEnter: start })
+      const scrollTrigger = ScrollTrigger.create({
+        trigger: footer,
+        start: 'top 90%',
+        once: true,
+        onEnter: start,
+      })
       const updateMotion = () => {
         createScene()
         play()
@@ -161,9 +210,20 @@ export function FooterPlayground() {
         Render.world(render)
         scrollTrigger.refresh()
       }
-      const hover = () => { canvas.dataset.hovering = Query.point(circles.map(circle => circle.body), mouse.position).length ? 'true' : 'false' }
-      const beginDrag = () => { canvas.dataset.dragging = 'true' }
-      const endDrag = () => { canvas.dataset.dragging = 'false' }
+      const hover = () => {
+        canvas.dataset.hovering = Query.point(
+          circles.map((circle) => circle.body),
+          mouse.position,
+        ).length
+          ? 'true'
+          : 'false'
+      }
+      const beginDrag = () => {
+        canvas.dataset.dragging = 'true'
+      }
+      const endDrag = () => {
+        canvas.dataset.dragging = 'false'
+      }
       Events.on(mouseConstraint, 'startdrag', beginDrag)
       Events.on(mouseConstraint, 'enddrag', endDrag)
       // The window-level touchend only exists to release a drag whose finger lifts
@@ -171,7 +231,9 @@ export function FooterPlayground() {
       // so it must never see touches that did not start on the canvas: forwarding
       // every touchend cancelled the click of every button on the page on phones.
       let touchStartedOnCanvas = false
-      const markCanvasTouch = () => { touchStartedOnCanvas = true }
+      const markCanvasTouch = () => {
+        touchStartedOnCanvas = true
+      }
       const releaseCanvasTouch = (event: TouchEvent) => {
         if (!touchStartedOnCanvas) return
         touchStartedOnCanvas = false
@@ -201,11 +263,15 @@ export function FooterPlayground() {
         window.removeEventListener('touchend', releaseCanvasTouch)
         window.removeEventListener('touchcancel', releaseCanvasTouch)
         for (const [event, handler] of [
-          ['mousemove', mouseHandlers.mousemove], ['mousedown', mouseHandlers.mousedown],
-          ['mouseup', mouseHandlers.mouseup], ['wheel', mouseHandlers.mousewheel],
-          ['touchmove', mouseHandlers.mousemove], ['touchstart', mouseHandlers.mousedown],
+          ['mousemove', mouseHandlers.mousemove],
+          ['mousedown', mouseHandlers.mousedown],
+          ['mouseup', mouseHandlers.mouseup],
+          ['wheel', mouseHandlers.mousewheel],
+          ['touchmove', mouseHandlers.mousemove],
+          ['touchstart', mouseHandlers.mousedown],
           ['touchend', mouseHandlers.mouseup],
-        ] as const) canvas.removeEventListener(event, handler)
+        ] as const)
+          canvas.removeEventListener(event, handler)
         Events.off(render, 'afterRender', drawTextures)
         Events.off(mouseConstraint, 'startdrag', beginDrag)
         Events.off(mouseConstraint, 'enddrag', endDrag)
@@ -219,7 +285,10 @@ export function FooterPlayground() {
       }
     }
     void initialize()
-    return () => { disposed = true; disposeScene?.() }
+    return () => {
+      disposed = true
+      disposeScene?.()
+    }
   }, [])
 
   return <canvas ref={canvasRef} className="sb-footer-physics" aria-hidden="true" />

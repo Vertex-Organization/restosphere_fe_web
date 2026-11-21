@@ -1,4 +1,5 @@
 const baseUrl = (import.meta.env.VITE_API_BASE_URL || '/api/v1').replace(/\/+$/, '')
+const networkRetryDelays = [100, 300] as const
 
 export class ApiError extends Error {
   readonly status: number
@@ -14,7 +15,8 @@ export class ApiError extends Error {
 }
 
 function errorMessage(status: number) {
-  if (status >= 500) return 'Máy chủ đang gặp sự cố hoặc không thể kết nối backend. Vui lòng thử lại sau.'
+  if (status >= 500)
+    return 'Máy chủ đang gặp sự cố hoặc không thể kết nối backend. Vui lòng thử lại sau.'
   if (status === 401) return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
   if (status === 403) return 'Bạn không có quyền thực hiện thao tác này.'
   if (status === 400) return 'Thông tin chưa hợp lệ. Vui lòng kiểm tra lại.'
@@ -27,27 +29,44 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
   headers.set('Accept', 'application/json')
   if (options.body) headers.set('Content-Type', 'application/json')
 
-  let response: Response
-  try {
-    response = await fetch(`${baseUrl}/${path.replace(/^\/+/, '')}`, {
-      ...options,
-      headers,
-      signal: options.signal || AbortSignal.timeout(15000),
-      cache: 'no-store',
-    })
-  } catch {
-    throw new ApiError(0, 'Không thể kết nối máy chủ. Vui lòng thử lại.')
+  const url = `${baseUrl}/${path.replace(/^\/+/, '')}`
+  const method = (options.method || 'GET').toUpperCase()
+  const mayRetry = method === 'GET' || method === 'HEAD'
+  let response: Response | undefined
+  for (let attempt = 0; attempt <= networkRetryDelays.length; attempt += 1) {
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+        signal: options.signal || AbortSignal.timeout(15000),
+        cache: 'no-store',
+      })
+      break
+    } catch (error) {
+      const retryable = mayRetry && error instanceof TypeError && !options.signal?.aborted
+      if (!retryable || attempt === networkRetryDelays.length)
+        throw new ApiError(0, 'Không thể kết nối máy chủ. Vui lòng thử lại.')
+      await new Promise((resolve) => setTimeout(resolve, networkRetryDelays[attempt]))
+    }
   }
 
+  if (!response) throw new ApiError(0, 'Không thể kết nối máy chủ. Vui lòng thử lại.')
   if (!response.ok) {
-    const body = await response.json().catch(() => null) as { detail?: unknown } | null
-    throw new ApiError(response.status, errorMessage(response.status), typeof body?.detail === 'string' ? body.detail : undefined)
+    const body = (await response.json().catch(() => null)) as { detail?: unknown } | null
+    throw new ApiError(
+      response.status,
+      errorMessage(response.status),
+      typeof body?.detail === 'string' ? body.detail : undefined,
+    )
   }
   if (response.status === 204) return undefined as T
 
   try {
-    return await response.json() as T
+    return (await response.json()) as T
   } catch {
-    throw new ApiError(502, 'Máy chủ trả về dữ liệu không hợp lệ. Vui lòng kiểm tra kết nối backend.')
+    throw new ApiError(
+      502,
+      'Máy chủ trả về dữ liệu không hợp lệ. Vui lòng kiểm tra kết nối backend.',
+    )
   }
 }

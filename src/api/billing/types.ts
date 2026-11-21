@@ -221,7 +221,12 @@ export interface ScheduledShift {
   cashierId: string
 }
 
-export type CashierNotificationKind = 'PAYMENT_REQUEST' | 'PAYMENT_REQUEST_WITHDRAWN' | 'TRANSFER_RECEIVED' | 'TRANSFER_FAILED' | 'REQUEST_DECIDED'
+export type CashierNotificationKind =
+  | 'PAYMENT_REQUEST'
+  | 'PAYMENT_REQUEST_WITHDRAWN'
+  | 'TRANSFER_RECEIVED'
+  | 'TRANSFER_FAILED'
+  | 'REQUEST_DECIDED'
 
 export interface CashierNotification {
   id: string
@@ -237,7 +242,14 @@ export interface CashierNotification {
 }
 
 /** Messages the cashier side sends to other roles (shown only in the dev simulator). */
-export type OutboxKind = 'BILL_UPDATED' | 'PAYMENT' | 'PAYMENT_RETURNED' | 'PAYMENT_VOIDED' | 'APPROVAL' | 'REQUEST_WITHDRAWN' | 'CASHIER_SHIFT_CLOSED'
+export type OutboxKind =
+  | 'BILL_UPDATED'
+  | 'PAYMENT'
+  | 'PAYMENT_RETURNED'
+  | 'PAYMENT_VOIDED'
+  | 'APPROVAL'
+  | 'REQUEST_WITHDRAWN'
+  | 'CASHIER_SHIFT_CLOSED'
 
 export interface OutboxMessage {
   id: string
@@ -322,8 +334,21 @@ export type CashierCommand =
   | { type: 'request-void'; paymentId: string; reason: string }
   | { type: 'withdraw-request'; requestId: string }
   | { type: 'return-payment-request'; billId: string; billVersion: number; reason: string }
-  | { type: 'pay-cash'; billId: string; billVersion: number; amount: number; tendered: number; idempotencyKey: string }
-  | { type: 'create-transfer'; billId: string; billVersion: number; amount: number; idempotencyKey: string }
+  | {
+      type: 'pay-cash'
+      billId: string
+      billVersion: number
+      amount: number
+      tendered: number
+      idempotencyKey: string
+    }
+  | {
+      type: 'create-transfer'
+      billId: string
+      billVersion: number
+      amount: number
+      idempotencyKey: string
+    }
   | { type: 'confirm-transfer'; paymentId: string; bankReference: string }
   | { type: 'cancel-transfer'; paymentId: string }
   | { type: 'open-shift'; openingFloat: number; scheduledShiftId?: string }

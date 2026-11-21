@@ -6,10 +6,21 @@ export interface MenuService {
   subscribe(listener: () => void): () => void
 }
 
-interface CategoryResponse { id: string; name: string; sortOrder: number; visible: boolean; group: MenuGroup }
+interface CategoryResponse {
+  id: string
+  name: string
+  sortOrder: number
+  visible: boolean
+  group: MenuGroup
+}
 interface ItemResponse {
-  id: string; name: string; categoryId: string; price: number
-  description: string | null; imageUrl: string | null; status: DishAvailability
+  id: string
+  name: string
+  categoryId: string
+  price: number
+  description: string | null
+  imageUrl: string | null
+  status: DishAvailability
   unit: PriceUnit
 }
 
@@ -20,18 +31,24 @@ export const menuService: MenuService = {
       apiRequest<ItemResponse[]>('/menu/items'),
     ])
     return {
-      categories: categories.map(category => ({
-        id: category.id, name: { vi: category.name, en: category.name },
+      categories: categories.map((category) => ({
+        id: category.id,
+        name: { vi: category.name, en: category.name },
         group: category.group,
       })),
-      dishes: items.map(item => {
+      dishes: items.map((item) => {
         const description = item.description ?? ''
         return {
-          id: item.id, categoryId: item.categoryId,
+          id: item.id,
+          categoryId: item.categoryId,
           name: { vi: item.name, en: item.name },
           description: { vi: description, en: description },
-          imageUrl: item.imageUrl ?? undefined, price: item.price,
-          unit: item.unit, tags: [], allergens: [], status: item.status,
+          imageUrl: item.imageUrl ?? undefined,
+          price: item.price,
+          unit: item.unit,
+          tags: [],
+          allergens: [],
+          status: item.status,
         }
       }),
     }

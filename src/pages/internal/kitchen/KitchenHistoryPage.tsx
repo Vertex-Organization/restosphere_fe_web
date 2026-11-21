@@ -12,7 +12,16 @@ import { useNow } from '../../../hooks/kitchen/useNow'
 import { kitchenPaths } from '../../../routes/kitchenRouter'
 
 type StatusFilter = 'ALL' | SentItemStatus
-const STATUS_OPTIONS: StatusFilter[] = ['ALL', 'SUBMITTED', 'PREPARING', 'READY', 'SERVED', 'REJECTED', 'CANCELLED', 'VOIDED']
+const STATUS_OPTIONS: StatusFilter[] = [
+  'ALL',
+  'SUBMITTED',
+  'PREPARING',
+  'READY',
+  'SERVED',
+  'REJECTED',
+  'CANCELLED',
+  'VOIDED',
+]
 
 interface Row {
   item: KitchenOrderItem
@@ -36,12 +45,19 @@ export default function KitchenHistoryPage() {
       if (day && localDayKey(item.submittedAt) !== day) return false
       if (status !== 'ALL' && item.status !== status) return false
       if (!needle) return true
-      return searchable(`${order.code} ${order.tableCode} ${item.name} ${item.note}`).includes(needle)
+      return searchable(`${order.code} ${order.tableCode} ${item.name} ${item.note}`).includes(
+        needle,
+      )
     })
-    .sort((a, b) => b.item.submittedAt.localeCompare(a.item.submittedAt) || a.item.id.localeCompare(b.item.id, undefined, { numeric: true }))
+    .sort(
+      (a, b) =>
+        b.item.submittedAt.localeCompare(a.item.submittedAt) ||
+        a.item.id.localeCompare(b.item.id, undefined, { numeric: true }),
+    )
 
   const filtered = query || day !== today || status !== 'ALL'
-  const time = (iso?: string) => (iso ? (day ? formatTime(iso) : `${formatDate(iso).slice(0, 5)} ${formatTime(iso)}`) : '—')
+  const time = (iso?: string) =>
+    iso ? (day ? formatTime(iso) : `${formatDate(iso).slice(0, 5)} ${formatTime(iso)}`) : '—'
   const cook = (id?: string) => (id ? shortName(staffName(data, id)) : '—')
 
   return (
@@ -50,38 +66,79 @@ export default function KitchenHistoryPage() {
         <label className="k-search">
           <Icon name="search" size={15} />
           <span className="k-visually-hidden">Tìm kiếm</span>
-          <input className="k-input" type="search" placeholder="Mã phiếu, bàn, tên món…" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input
+            className="k-input"
+            type="search"
+            placeholder="Mã phiếu, bàn, tên món…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </label>
         <label className="k-inline-field">
           <span className="k-label">Ngày</span>
-          <input className="k-input" type="date" value={day} max={today} onChange={(e) => setDay(e.target.value)} />
+          <input
+            className="k-input"
+            type="date"
+            value={day}
+            max={today}
+            onChange={(e) => setDay(e.target.value)}
+          />
         </label>
         <label className="k-inline-field">
           <span className="k-label">Trạng thái</span>
-          <select className="k-select" value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
-            {STATUS_OPTIONS.map((value) => <option key={value} value={value}>{value === 'ALL' ? 'Tất cả' : ITEM_STATUS_LABEL[value]}</option>)}
+          <select
+            className="k-select"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as StatusFilter)}
+          >
+            {STATUS_OPTIONS.map((value) => (
+              <option key={value} value={value}>
+                {value === 'ALL' ? 'Tất cả' : ITEM_STATUS_LABEL[value]}
+              </option>
+            ))}
           </select>
         </label>
         {filtered && (
-          <button type="button" className="k-btn k-btn--ghost" onClick={() => { setQuery(''); setDay(today); setStatus('ALL') }}>
+          <button
+            type="button"
+            className="k-btn k-btn--ghost"
+            onClick={() => {
+              setQuery('')
+              setDay(today)
+              setStatus('ALL')
+            }}
+          >
             Xóa bộ lọc
           </button>
         )}
-        <span className="k-toolbar-count">{rows.length} món{day ? '' : ' · mọi ngày'}</span>
+        <span className="k-toolbar-count">
+          {rows.length} món{day ? '' : ' · mọi ngày'}
+        </span>
       </div>
 
       <div className="k-table-wrap k-table-wrap--fill">
         <table className="k-table">
           <thead>
             <tr>
-              <th>Mã phiếu</th><th>Bàn</th><th>Món</th><th className="k-num">SL</th>
-              <th>Gửi</th><th>Bắt đầu</th><th>Hoàn thành</th><th>Người làm</th><th>Trạng thái</th>
+              <th>Mã phiếu</th>
+              <th>Bàn</th>
+              <th>Món</th>
+              <th className="k-num">SL</th>
+              <th>Gửi</th>
+              <th>Bắt đầu</th>
+              <th>Hoàn thành</th>
+              <th>Người làm</th>
+              <th>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
             {rows.map(({ item, order }) => (
               <tr key={item.id}>
-                <td><KitchenLink className="k-link k-mono" to={kitchenPaths.ticket(order.id)}>#{order.code}</KitchenLink></td>
+                <td>
+                  <KitchenLink className="k-link k-mono" to={kitchenPaths.ticket(order.id)}>
+                    #{order.code}
+                  </KitchenLink>
+                </td>
                 <td className="k-strong">{order.tableCode}</td>
                 <td>
                   <div className="k-cell-dish">
@@ -97,7 +154,9 @@ export default function KitchenHistoryPage() {
                 <td className="k-mono">{time(item.startedAt)}</td>
                 <td className="k-mono">{time(item.readyAt)}</td>
                 <td>{cook(item.readyBy ?? item.startedBy)}</td>
-                <td><KitchenStatusBadge status={item.status} /></td>
+                <td>
+                  <KitchenStatusBadge status={item.status} />
+                </td>
               </tr>
             ))}
           </tbody>

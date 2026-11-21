@@ -71,8 +71,7 @@ docs/
 ```
 
 Mã nguồn và tài nguyên đang chạy đã được chuyển sang `sea-crown`.
-Các thư mục `src/components/sites/sandwich-bar/` và `public/sites/sandwich-bar/`
-đã được dọn. Tài liệu trong `docs/research/sandwich-bar/` được giữ làm tham khảo lịch sử.
+Các thư mục `src/components/sites/sandwich-bar/` và `public/sites/sandwich-bar/` đã được dọn.
 
 ## Chỉnh sửa nội dung
 

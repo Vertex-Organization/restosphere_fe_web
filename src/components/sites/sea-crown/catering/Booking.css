@@ -25,7 +25,7 @@
 .bk-eyebrow {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-muted) 75%, transparent);
 }
@@ -59,7 +59,10 @@
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
-  transition: background .2s, color .2s, border-color .2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .bk-chip:hover {
@@ -107,7 +110,7 @@
   font-size: 48px;
   font-weight: 700;
   line-height: 1.12;
-  letter-spacing: -.025em;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
   color: var(--color-dark);
 }
@@ -154,7 +157,11 @@
   border: 1px solid color-mix(in srgb, var(--color-plum) 18%, transparent);
   border-radius: 18px;
   background: #fff6f3;
-  transition: transform .22s cubic-bezier(.23, 1, .32, 1), border-color .22s, background .22s, box-shadow .22s;
+  transition:
+    transform 0.22s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.22s,
+    background 0.22s,
+    box-shadow 0.22s;
 }
 
 .bk-set-card:hover {
@@ -198,7 +205,7 @@
   color: var(--color-dark);
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -336,7 +343,9 @@
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
-  transition: background .2s, color .2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .bk-set-btn:hover,
@@ -405,7 +414,7 @@
   margin-top: 8px;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: .06em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
@@ -566,7 +575,9 @@
   color: var(--color-dark);
   font-size: 14px;
   font-weight: 600;
-  transition: background .25s, color .25s;
+  transition:
+    background 0.25s,
+    color 0.25s;
 }
 
 .bk-tabs button[aria-selected='true'] {
@@ -590,7 +601,9 @@
   border-radius: 999px;
   background: #fff;
   color: var(--color-muted);
-  transition: border-color .2s, box-shadow .2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .bk-search:focus-within {
@@ -652,7 +665,10 @@
   border: 1px solid color-mix(in srgb, var(--color-plum) 14%, transparent);
   border-radius: 18px;
   background: #fff;
-  transition: transform .22s cubic-bezier(.23, 1, .32, 1), border-color .22s, box-shadow .22s;
+  transition:
+    transform 0.22s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.22s,
+    box-shadow 0.22s;
 }
 
 .bk-card:hover {
@@ -663,7 +679,9 @@
 
 .bk-card.is-selected {
   border-color: var(--color-plum);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-plum) 25%, transparent), 0 14px 28px -16px rgb(135 0 0 / 35%);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--color-plum) 25%, transparent),
+    0 14px 28px -16px rgb(135 0 0 / 35%);
 }
 
 .bk-card-preview {
@@ -694,7 +712,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform .5s cubic-bezier(.23, 1, .32, 1);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .bk-grid--drink .bk-card-media img {
@@ -707,8 +725,8 @@
 }
 
 .bk-card.is-sold-out .bk-card-media img {
-  filter: grayscale(.85);
-  opacity: .55;
+  filter: grayscale(0.85);
+  opacity: 0.55;
 }
 
 .bk-card-flag {
@@ -771,7 +789,7 @@
   font-weight: 700;
   line-height: 1.3;
   color: var(--color-dark);
-  transition: color .2s;
+  transition: color 0.2s;
 }
 
 .bk-card-title-btn:hover .bk-card-name {
@@ -838,7 +856,9 @@
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
-  transition: background .2s, color .2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .bk-add:hover {
@@ -915,11 +935,14 @@
   color: var(--color-cream);
   box-shadow: 0 20px 40px -14px rgb(135 0 0 / 65%);
   font-size: 14px;
-  animation: bk-rise .35s cubic-bezier(.23, 1, .32, 1);
+  animation: bk-rise 0.35s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 @keyframes bk-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
 
 .bk-cart-info {
@@ -1000,7 +1023,7 @@
   color: var(--color-dark);
   font-weight: 700;
   white-space: nowrap;
-  transition: background .2s;
+  transition: background 0.2s;
 }
 
 .bk-cart-cta:hover {
@@ -1028,11 +1051,21 @@
 .bk-footer-divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgb(255 196 0 / 55%) 50%, var(--color-gold) 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 196 0 / 55%) 50%,
+    var(--color-gold) 100%
+  );
 }
 
 .bk-footer-divider-line:last-child {
-  background: linear-gradient(90deg, var(--color-gold) 0%, rgb(255 196 0 / 55%) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    var(--color-gold) 0%,
+    rgb(255 196 0 / 55%) 50%,
+    transparent 100%
+  );
 }
 
 .bk-footer-divider-emblem {
@@ -1097,7 +1130,7 @@
   font-size: 48px;
   font-weight: 700;
   line-height: 1.15;
-  letter-spacing: -.025em;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
 }
 
@@ -1126,7 +1159,7 @@
 
 .bk-form {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, .95fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr);
   gap: 32px 44px;
 }
 
@@ -1201,7 +1234,7 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 16px;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
@@ -1231,7 +1264,9 @@
   line-height: 20px;
   outline: none;
   resize: vertical;
-  transition: border-color .2s, box-shadow .2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .sb-catering-field select:focus,
@@ -1262,7 +1297,7 @@
 }
 
 .bk-guests button:disabled {
-  opacity: .3;
+  opacity: 0.3;
 }
 
 .sb-catering-field .bk-guests input {
@@ -1367,7 +1402,10 @@
   color: var(--color-dark);
   font-size: 13px;
   font-weight: 600;
-  transition: background .18s, color .18s, border-color .18s;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
 }
 
 .bk-time-pill:hover {
@@ -1400,7 +1438,10 @@
   background: #fff;
   color: var(--color-dark);
   text-align: left;
-  transition: border-color .2s, background .2s, box-shadow .2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
 }
 
 .bk-area-card:hover {
@@ -1500,7 +1541,7 @@
 .bk-summary h3 {
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-dark);
 }
@@ -1651,7 +1692,7 @@
 }
 
 .sb-catering-submit:disabled {
-  opacity: .5;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -1665,7 +1706,7 @@
   border-radius: 24px;
   background: linear-gradient(180deg, #fff6f3 0%, #fff 100%);
   color: var(--color-dark);
-  animation: bk-rise .4s cubic-bezier(.23, 1, .32, 1);
+  animation: bk-rise 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .bk-ticket-header {
@@ -1693,7 +1734,7 @@
   color: var(--color-cream);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -1731,7 +1772,7 @@
 .bk-ticket-code-box span {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: .06em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
@@ -1739,7 +1780,7 @@
 .bk-ticket-code-box strong {
   font-size: 26px;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   color: var(--color-plum);
 }
 
@@ -1774,7 +1815,7 @@
 .bk-done-details dt {
   font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
@@ -1796,7 +1837,7 @@
   margin-bottom: 10px;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-muted);
 }

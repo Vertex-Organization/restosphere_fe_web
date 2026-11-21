@@ -3,7 +3,12 @@ import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { KitchenDataProvider } from '../../../hooks/kitchen/KitchenDataProvider'
 import { useKitchenUser } from '../../../hooks/kitchen/useKitchenAuth'
 import { KitchenLayout } from '../../../layouts/KitchenLayout'
-import { kitchenPaths, matchKitchenRoute, useKitchenUrl, type KitchenRoute } from '../../../routes/kitchenRouter'
+import {
+  kitchenPaths,
+  matchKitchenRoute,
+  useKitchenUrl,
+  type KitchenRoute,
+} from '../../../routes/kitchenRouter'
 import KitchenBoardPage from './KitchenBoardPage'
 import KitchenHistoryPage from './KitchenHistoryPage'
 import KitchenIncidentsPage from './KitchenIncidentsPage'
@@ -13,7 +18,6 @@ import KitchenProfilePage from './KitchenProfilePage'
 import KitchenTicketPage from './KitchenTicketPage'
 import '../../../components/kitchen/kitchen.css'
 import './kitchenPages.css'
-
 
 const TITLES: Record<KitchenRoute['name'], string> = {
   board: 'Bảng bếp',
@@ -29,21 +33,37 @@ const TITLES: Record<KitchenRoute['name'], string> = {
 
 function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactNode {
   switch (route.name) {
-    case 'board': return <KitchenBoardPage />
-    case 'ticket': return <KitchenTicketPage key={route.id} id={route.id} />
-    case 'history': return <KitchenHistoryPage />
+    case 'board':
+      return <KitchenBoardPage />
+    case 'ticket':
+      return <KitchenTicketPage key={route.id} id={route.id} />
+    case 'history':
+      return <KitchenHistoryPage />
     // Re-mount when a new ticket is passed in so the form starts prefilled.
-    case 'incidents': return <KitchenIncidentsPage key={url} orderId={params.get('order') ?? ''} itemId={params.get('item') ?? ''} />
-    case 'menu-status': return <KitchenMenuStatusPage />
-    case 'notifications': return <KitchenNotificationsPage />
-    case 'profile': return <KitchenProfilePage />
-    default: return (
-      <div className="k-state">
-        <p className="k-state-title">Không tìm thấy trang</p>
-        <p>Đường dẫn này không thuộc khu vực Bếp.</p>
-        <a className="k-btn k-btn--primary" href={kitchenPaths.board}>Về bảng bếp</a>
-      </div>
-    )
+    case 'incidents':
+      return (
+        <KitchenIncidentsPage
+          key={url}
+          orderId={params.get('order') ?? ''}
+          itemId={params.get('item') ?? ''}
+        />
+      )
+    case 'menu-status':
+      return <KitchenMenuStatusPage />
+    case 'notifications':
+      return <KitchenNotificationsPage />
+    case 'profile':
+      return <KitchenProfilePage />
+    default:
+      return (
+        <div className="k-state">
+          <p className="k-state-title">Không tìm thấy trang</p>
+          <p>Đường dẫn này không thuộc khu vực Bếp.</p>
+          <a className="k-btn k-btn--primary" href={kitchenPaths.board}>
+            Về bảng bếp
+          </a>
+        </div>
+      )
   }
 }
 
@@ -66,7 +86,11 @@ export default function KitchenApp() {
 
   return (
     <KitchenDataProvider key={user.id} user={user}>
-      <KitchenLayout route={route} title={TITLES[route.name]} fill={route.name === 'board' || route.name === 'history'}>
+      <KitchenLayout
+        route={route}
+        title={TITLES[route.name]}
+        fill={route.name === 'board' || route.name === 'history'}
+      >
         {page(route, params, url)}
       </KitchenLayout>
     </KitchenDataProvider>

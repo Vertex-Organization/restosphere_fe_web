@@ -2,9 +2,21 @@ import { authenticatedRequest } from '../auth'
 import { ApiError } from '../client'
 import { KitchenError } from './types'
 import type {
-  CommandResult, Incident, IncidentSeverity, IncidentStatus, IncidentType, KitchenCommand, KitchenData,
-  KitchenNotification, KitchenOrder, KitchenOrderItem, MenuAvailability, MenuItem, MenuStatusRequest,
-  NotificationKind, StaffMember,
+  CommandResult,
+  Incident,
+  IncidentSeverity,
+  IncidentStatus,
+  IncidentType,
+  KitchenCommand,
+  KitchenData,
+  KitchenNotification,
+  KitchenOrder,
+  KitchenOrderItem,
+  MenuAvailability,
+  MenuItem,
+  MenuStatusRequest,
+  NotificationKind,
+  StaffMember,
 } from './types'
 
 export interface KitchenService {
@@ -19,7 +31,10 @@ export interface KitchenService {
 type KitchenOrderDto = KitchenOrder & { items?: KitchenOrderItem[] }
 
 const STATUS_CODES: Record<number, 'FORBIDDEN' | 'CONFLICT' | 'INVALID' | 'NOT_FOUND'> = {
-  403: 'FORBIDDEN', 409: 'CONFLICT', 400: 'INVALID', 404: 'NOT_FOUND',
+  403: 'FORBIDDEN',
+  409: 'CONFLICT',
+  400: 'INVALID',
+  404: 'NOT_FOUND',
 }
 
 /** Maps HTTP failures to KitchenError; other errors (e.g. 401, 5xx) pass through unchanged. */
@@ -45,31 +60,64 @@ const patch = <T>(path: string, body: unknown) => send<T>('PATCH', path, body)
 // The backend serialises absent values as null and has a few wider enums.
 
 interface MenuItemDto {
-  id: string; name: string; categoryId: string; imageUrl?: string | null
-  status: MenuAvailability; updatedAt: string
+  id: string
+  name: string
+  categoryId: string
+  imageUrl?: string | null
+  status: MenuAvailability
+  updatedAt: string
 }
 interface MenuRequestDto {
-  id: string; menuItemId: string; requested: string; requestedBy: string; requestedAt: string
-  status: string; decidedAt?: string | null; decidedBy?: string | null
+  id: string
+  menuItemId: string
+  requested: string
+  requestedBy: string
+  requestedAt: string
+  status: string
+  decidedAt?: string | null
+  decidedBy?: string | null
 }
 interface IncidentDto {
-  id: string; code: string; type: string; severity: string; status: string; title: string; description: string
-  orderId?: string | null; itemId?: string | null; reporterId: string; at: string
-  notifiedStaffIds?: string[] | null; response?: { by: string; at: string; text: string } | null
+  id: string
+  code: string
+  type: string
+  severity: string
+  status: string
+  title: string
+  description: string
+  orderId?: string | null
+  itemId?: string | null
+  reporterId: string
+  at: string
+  notifiedStaffIds?: string[] | null
+  response?: { by: string; at: string; text: string } | null
 }
 interface NotificationDto {
-  id: string; kind: string; title: string; body: string; at: string
-  orderId?: string | null; readBy?: string[] | null
+  id: string
+  kind: string
+  title: string
+  body: string
+  at: string
+  orderId?: string | null
+  readBy?: string[] | null
 }
 
-const INCIDENT_TYPES: IncidentType[] = ['OUT_OF_STOCK', 'EQUIPMENT', 'CANNOT_PREPARE', 'NOTE_CLARIFICATION', 'OTHER']
+const INCIDENT_TYPES: IncidentType[] = [
+  'OUT_OF_STOCK',
+  'EQUIPMENT',
+  'CANNOT_PREPARE',
+  'NOTE_CLARIFICATION',
+  'OTHER',
+]
 const MENU_AVAILABILITY: MenuAvailability[] = ['AVAILABLE', 'SOLD_OUT', 'DISCONTINUED']
 
 const orUndefined = <T>(value: T | null | undefined): T | undefined => value ?? undefined
 
 function toMenuItem(dto: MenuItemDto): MenuItem {
   return {
-    id: dto.id, name: dto.name, categoryId: dto.categoryId,
+    id: dto.id,
+    name: dto.name,
+    categoryId: dto.categoryId,
     ...(dto.imageUrl ? { imageUrl: dto.imageUrl } : {}),
     status: MENU_AVAILABILITY.includes(dto.status) ? dto.status : 'AVAILABLE',
     updatedAt: dto.updatedAt,
@@ -78,11 +126,15 @@ function toMenuItem(dto: MenuItemDto): MenuItem {
 
 /** WITHDRAWN requests have no counterpart in the UI model and are dropped by the caller. */
 function toMenuRequest(dto: MenuRequestDto): MenuStatusRequest | null {
-  if (dto.status !== 'PENDING' && dto.status !== 'APPROVED' && dto.status !== 'REJECTED') return null
+  if (dto.status !== 'PENDING' && dto.status !== 'APPROVED' && dto.status !== 'REJECTED')
+    return null
   return {
-    id: dto.id, menuItemId: dto.menuItemId,
+    id: dto.id,
+    menuItemId: dto.menuItemId,
     requested: dto.requested === 'AVAILABLE' ? 'AVAILABLE' : 'SOLD_OUT',
-    requestedBy: dto.requestedBy, requestedAt: dto.requestedAt, status: dto.status,
+    requestedBy: dto.requestedBy,
+    requestedAt: dto.requestedAt,
+    status: dto.status,
     ...(dto.decidedAt ? { decidedAt: dto.decidedAt } : {}),
     ...(dto.decidedBy ? { decidedBy: dto.decidedBy } : {}),
   }
@@ -90,13 +142,22 @@ function toMenuRequest(dto: MenuRequestDto): MenuStatusRequest | null {
 
 function toIncident(dto: IncidentDto): Incident {
   const type = INCIDENT_TYPES.find((value) => value === dto.type) ?? 'OTHER'
-  const severity: IncidentSeverity = dto.severity === 'LOW' || dto.severity === 'MEDIUM' ? dto.severity : 'HIGH' // CRITICAL -> HIGH
-  const status: IncidentStatus = dto.status === 'OPEN' || dto.status === 'ACKNOWLEDGED' ? dto.status : 'RESOLVED' // CLOSED -> RESOLVED
+  const severity: IncidentSeverity =
+    dto.severity === 'LOW' || dto.severity === 'MEDIUM' ? dto.severity : 'HIGH' // CRITICAL -> HIGH
+  const status: IncidentStatus =
+    dto.status === 'OPEN' || dto.status === 'ACKNOWLEDGED' ? dto.status : 'RESOLVED' // CLOSED -> RESOLVED
   return {
-    id: dto.id, code: dto.code, type, severity, title: dto.title, description: dto.description ?? '',
+    id: dto.id,
+    code: dto.code,
+    type,
+    severity,
+    title: dto.title,
+    description: dto.description ?? '',
     ...(dto.orderId ? { orderId: dto.orderId } : {}),
     ...(dto.itemId ? { itemId: dto.itemId } : {}),
-    reporterId: dto.reporterId, at: dto.at, status,
+    reporterId: dto.reporterId,
+    at: dto.at,
+    status,
     notifiedStaffIds: dto.notifiedStaffIds ?? [],
     ...(dto.response ? { response: dto.response } : {}),
   }
@@ -108,7 +169,9 @@ function toNotification(dto: NotificationDto): KitchenNotification {
     // REQUEST_DECIDED (manager approved/rejected a menu request) is shown as MENU_REQUEST;
     // other unknown kinds pass through and get the fallback label.
     kind: (dto.kind === 'REQUEST_DECIDED' ? 'MENU_REQUEST' : dto.kind) as NotificationKind,
-    title: dto.title, body: dto.body, at: dto.at,
+    title: dto.title,
+    body: dto.body,
+    at: dto.at,
     ...(orUndefined(dto.orderId) ? { orderId: dto.orderId as string } : {}),
     readBy: dto.readBy ?? [],
   }
@@ -152,14 +215,20 @@ export const kitchenService: KitchenService = {
       summary = `Đã hoàn thành ${command.items.length} món`
     } else if (command.type === 'reject') {
       await post<KitchenOrderItem[]>(`kitchen/items/${encodeURIComponent(command.itemId)}/reject`, {
-        version: command.version, reason: command.reason,
+        version: command.version,
+        reason: command.reason,
       })
       summary = 'Đã từ chối món'
     } else if (command.type === 'set-menu-status') {
-      await patch(`kitchen/menu-items/${encodeURIComponent(command.menuItemId)}/status`, { status: command.status })
+      await patch(`kitchen/menu-items/${encodeURIComponent(command.menuItemId)}/status`, {
+        status: command.status,
+      })
       summary = 'Đã cập nhật trạng thái món'
     } else if (command.type === 'request-menu-status') {
-      await post('kitchen/menu-requests', { menuItemId: command.menuItemId, status: command.status })
+      await post('kitchen/menu-requests', {
+        menuItemId: command.menuItemId,
+        status: command.status,
+      })
       summary = 'Đã gửi yêu cầu đổi trạng thái món'
     } else if (command.type === 'report-incident') {
       await post('kitchen/incidents', command.input)

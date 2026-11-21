@@ -1,6 +1,11 @@
 import { useEffect } from 'react'
 import { leaveStaffArea, type StaffAccount } from '../../api/staff/auth'
-import { homePathFor, STAFF_ROLE_LABEL, WORKSPACES, type WorkspaceRole } from '../../routes/staffRouter'
+import {
+  homePathFor,
+  STAFF_ROLE_LABEL,
+  WORKSPACES,
+  type WorkspaceRole,
+} from '../../routes/staffRouter'
 import { BrandLogo } from '../kitchen/BrandLogo'
 import { Icon } from '../kitchen/Icon'
 import './staff.css'
@@ -19,7 +24,9 @@ export function StaffAccessDenied({ session, workspace, reason }: Props) {
   const home = homePathFor(session.role)
   const here = window.location.pathname + window.location.search
 
-  useEffect(() => { document.title = `Không có quyền · RestoSphere ${label}` }, [label])
+  useEffect(() => {
+    document.title = `Không có quyền · RestoSphere ${label}`
+  }, [label])
 
   return (
     <div className="st">
@@ -27,9 +34,15 @@ export function StaffAccessDenied({ session, workspace, reason }: Props) {
         <div className="st-main">
           <BrandLogo width={168} />
           <div className="st-denied">
-            <span className="st-denied-icon"><Icon name="alert" size={18} /></span>
+            <span className="st-denied-icon">
+              <Icon name="alert" size={18} />
+            </span>
             <div>
-              <h1 className="st-title">{reason === 'role' ? `Không có quyền vào khu ${label}` : 'Không tìm thấy hồ sơ nhân viên'}</h1>
+              <h1 className="st-title">
+                {reason === 'role'
+                  ? `Không có quyền vào khu ${label}`
+                  : 'Không tìm thấy hồ sơ nhân viên'}
+              </h1>
               <p className="st-sub">
                 Bạn đang đăng nhập bằng <b>{session.name}</b> · {STAFF_ROLE_LABEL[session.role]}.{' '}
                 {reason === 'role'
@@ -41,11 +54,17 @@ export function StaffAccessDenied({ session, workspace, reason }: Props) {
           <div className="st-actions">
             {home && reason === 'role' && (
               <a className="st-btn st-btn--primary" href={home}>
-                Về khu {WORKSPACES[session.role as WorkspaceRole].label}<Icon name="arrowRight" size={16} />
+                Về khu {WORKSPACES[session.role as WorkspaceRole].label}
+                <Icon name="arrowRight" size={16} />
               </a>
             )}
-            <button type="button" className={`st-btn${home && reason === 'role' ? '' : ' st-btn--primary'}`} onClick={() => leaveStaffArea(here)}>
-              <Icon name="logout" size={16} />Đăng nhập tài khoản khác
+            <button
+              type="button"
+              className={`st-btn${home && reason === 'role' ? '' : ' st-btn--primary'}`}
+              onClick={() => leaveStaffArea(here)}
+            >
+              <Icon name="logout" size={16} />
+              Đăng nhập tài khoản khác
             </button>
           </div>
         </div>
@@ -58,7 +77,10 @@ export function StaffAccessDenied({ session, workspace, reason }: Props) {
 export function StaffRedirecting() {
   return (
     <div className="st" aria-busy="true">
-      <p className="st-wait"><span className="st-spinner" aria-hidden="true" />Đang chuyển tới trang đăng nhập…</p>
+      <p className="st-wait">
+        <span className="st-spinner" aria-hidden="true" />
+        Đang chuyển tới trang đăng nhập…
+      </p>
     </div>
   )
 }

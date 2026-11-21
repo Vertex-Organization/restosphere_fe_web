@@ -6,7 +6,6 @@
 - Preserved five fonts, twelve partner logos and the intro illustration from the old public directory, with SHA-256 verification. Font filenames now describe their family and weight.
 - Removed 60 unused source-brand assets (24,120,033 bytes), including old food photos, videos, logos, document previews/PDFs and unused font subsets.
 - The old source directory was moved; the old public directory was deleted after verifying every required asset at its new location.
-- Historical research in `docs/research/sandwich-bar/` remains for reference. It is not a runtime asset dependency.
 
 Validation passed: server-rendered checks for both languages and all page components; 43 unique runtime asset paths, including partner logos created dynamically and font URLs; production build after removal; all 45 retained asset/license files match the final build byte for byte. Original animation settings, layouts and content are preserved.
 

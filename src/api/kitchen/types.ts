@@ -5,9 +5,7 @@
 export type StaffRole = 'KITCHEN' | 'WAITER' | 'RECEPTIONIST' | 'CASHIER' | 'MANAGER'
 
 export type KitchenPermission =
-  | 'kitchen.items.update'
-  | 'kitchen.incidents.create'
-  | 'kitchen.menu.availability'
+  'kitchen.items.update' | 'kitchen.incidents.create' | 'kitchen.menu.availability'
 
 export interface StaffMember {
   id: string
@@ -19,7 +17,8 @@ export interface StaffMember {
   permissions: KitchenPermission[]
 }
 
-export type OrderItemStatus = 'DRAFT' | 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'REJECTED' | 'CANCELLED' | 'VOIDED'
+export type OrderItemStatus =
+  'DRAFT' | 'SUBMITTED' | 'PREPARING' | 'READY' | 'SERVED' | 'REJECTED' | 'CANCELLED' | 'VOIDED'
 /** DRAFT items stay on the waiter's device and never reach the kitchen. */
 export type SentItemStatus = Exclude<OrderItemStatus, 'DRAFT'>
 
@@ -100,7 +99,8 @@ export interface MenuStatusRequest {
   decidedBy?: string
 }
 
-export type IncidentType = 'OUT_OF_STOCK' | 'EQUIPMENT' | 'CANNOT_PREPARE' | 'NOTE_CLARIFICATION' | 'OTHER'
+export type IncidentType =
+  'OUT_OF_STOCK' | 'EQUIPMENT' | 'CANNOT_PREPARE' | 'NOTE_CLARIFICATION' | 'OTHER'
 export type IncidentSeverity = 'LOW' | 'MEDIUM' | 'HIGH'
 export type IncidentStatus = 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED'
 
@@ -121,7 +121,8 @@ export interface Incident {
   response?: { by: string; at: string; text: string }
 }
 
-export type NotificationKind = 'NEW_ORDER' | 'ADD_ON' | 'CANCELLED' | 'INCIDENT_REPLY' | 'PRIORITY' | 'MENU_REQUEST'
+export type NotificationKind =
+  'NEW_ORDER' | 'ADD_ON' | 'CANCELLED' | 'INCIDENT_REPLY' | 'PRIORITY' | 'MENU_REQUEST'
 
 export interface KitchenNotification {
   id: string

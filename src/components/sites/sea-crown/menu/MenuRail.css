@@ -59,7 +59,11 @@
   color: var(--color-dark, #870000);
   font-size: 24px;
   line-height: 1;
-  transition: background .2s, color .2s, border-color .2s, opacity .2s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    opacity 0.2s;
 }
 
 .menu-rail-arrows button:not(:disabled):hover {
@@ -69,7 +73,7 @@
 }
 
 .menu-rail-arrows button:disabled {
-  opacity: .35;
+  opacity: 0.35;
   cursor: default;
 }
 
@@ -91,7 +95,7 @@
   width: min(64px, var(--menu-gutter));
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s ease;
+  transition: opacity 0.25s ease;
 }
 
 .menu-track-wrap::before {
@@ -161,7 +165,7 @@
 
 .menu-card {
   min-width: 0;
-  animation: menu-rise .5s cubic-bezier(.23, 1, .32, 1) both;
+  animation: menu-rise 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
   animation-delay: calc(var(--i, 0) * 50ms);
 }
 
@@ -179,7 +183,10 @@
 }
 
 @keyframes menu-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

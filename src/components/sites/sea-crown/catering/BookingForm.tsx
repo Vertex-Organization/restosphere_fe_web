@@ -6,8 +6,13 @@ import type { Reservation } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
 import type { Language } from '../siteData'
 import {
-  BOOKING_COPY, cartGuestCoverage, cartTotal, formatMoney, formatQuantity,
-  stepOf, type Cart,
+  BOOKING_COPY,
+  cartGuestCoverage,
+  cartTotal,
+  formatMoney,
+  formatQuantity,
+  stepOf,
+  type Cart,
 } from './bookingCopy'
 
 type BookingFormProps = {
@@ -24,14 +29,26 @@ const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 const MAX_GUESTS = 60
 
 /** 10:00 – 21:30 every half hour. */
-const SLOTS = Array.from({ length: 24 }, (_, i) => `${String(10 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`)
+const SLOTS = Array.from(
+  { length: 24 },
+  (_, i) => `${String(10 + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`,
+)
 
 function restaurantNow(timeZone = TIME_ZONE) {
   const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
   }).formatToParts(new Date())
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? ''
-  return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${get('hour')}:${get('minute')}` }
+  return {
+    date: `${get('year')}-${get('month')}-${get('day')}`,
+    time: `${get('hour')}:${get('minute')}`,
+  }
 }
 
 const DURATION_MINUTES = 120
@@ -40,7 +57,8 @@ const minutesOf = (slot: string) => Number(slot.slice(0, 2)) * 60 + Number(slot.
 /** Slots inside the restaurant's opening hours (arrival + duration); today's slots need at least an hour's notice. */
 function availableSlots(date: string, settings?: ReservationSettings | null) {
   const now = restaurantNow(settings?.timezone)
-  const open = settings?.openMinutes, close = settings?.closeMinutes
+  const open = settings?.openMinutes,
+    close = settings?.closeMinutes
   const [h, m] = now.time.split(':').map(Number)
   const earliest = date === now.date ? h * 60 + m + 60 : 0
   return SLOTS.filter((slot) => {
@@ -53,32 +71,63 @@ function availableSlots(date: string, settings?: ReservationSettings | null) {
 }
 
 const AREA_ICON = (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="4" width="22" height="7" rx="2" />
-      <path d="M7 8c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0" />
-      <circle cx="8.5" cy="19.5" r="3.5" />
-      <circle cx="19.5" cy="19.5" r="3.5" />
-      <path d="M8.5 14v1.5M8.5 23.5V25M19.5 14v1.5M19.5 23.5V25" />
-    </svg>
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 28 28"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="3" y="4" width="22" height="7" rx="2" />
+    <path d="M7 8c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0" />
+    <circle cx="8.5" cy="19.5" r="3.5" />
+    <circle cx="19.5" cy="19.5" r="3.5" />
+    <path d="M8.5 14v1.5M8.5 23.5V25M19.5 14v1.5M19.5 23.5V25" />
+  </svg>
 )
 
 export function BookingForm({
-  language, dishes, cart, guests, onGuestsChange, onCartChange, onCartClear,
+  language,
+  dishes,
+  cart,
+  guests,
+  onGuestsChange,
+  onCartChange,
+  onCartClear,
 }: BookingFormProps) {
   const t = BOOKING_COPY[language]
   const [settings, setSettings] = useState<ReservationSettings | null>(null)
   const today = restaurantNow(settings?.timezone).date
   const initialSlots = availableSlots(today, settings)
   const [date, setDate] = useState(today)
-  const [picked, setTime] = useState(() => (initialSlots.includes('18:30') ? '18:30' : initialSlots[0] ?? ''))
+  const [picked, setTime] = useState(() =>
+    initialSlots.includes('18:30') ? '18:30' : (initialSlots[0] ?? ''),
+  )
   const [area, setArea] = useState('')
   const [settingsError, setSettingsError] = useState('')
   useEffect(() => {
     let active = true
-    reservationService.settings().then(value => {
-      if (active) { setSettings(value); setArea(value.areas[0]?.id ?? '') }
-    }).catch((error: unknown) => { if (active) setSettingsError(error instanceof Error ? error.message : 'Không tải được cấu hình đặt bàn.') })
-    return () => { active = false }
+    reservationService
+      .settings()
+      .then((value) => {
+        if (active) {
+          setSettings(value)
+          setArea(value.areas[0]?.id ?? '')
+        }
+      })
+      .catch((error: unknown) => {
+        if (active)
+          setSettingsError(
+            error instanceof Error ? error.message : 'Không tải được cấu hình đặt bàn.',
+          )
+      })
+    return () => {
+      active = false
+    }
   }, [])
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState('')
@@ -87,7 +136,11 @@ export function BookingForm({
 
   const slots = availableSlots(date, settings)
   // Settings arrive after the first render; a picked time outside opening hours falls back to a valid slot.
-  const time = slots.includes(picked) ? picked : slots.includes('18:30') ? '18:30' : slots[0] ?? ''
+  const time = slots.includes(picked)
+    ? picked
+    : slots.includes('18:30')
+      ? '18:30'
+      : (slots[0] ?? '')
   const lunchSlots = slots.filter((s) => Number(s.slice(0, 2)) < 15)
   const dinnerSlots = slots.filter((s) => Number(s.slice(0, 2)) >= 15)
 
@@ -96,13 +149,14 @@ export function BookingForm({
   const total = cartTotal(cart, dishes)
   const [minCovered, maxCovered] = cartGuestCoverage(cart, dishes)
   const hasFoodInCart = chosen.some((d) => d.serves)
-  const setGuestCount = (value: number) => onGuestsChange(Math.max(1, Math.min(MAX_GUESTS, Math.round(value) || 1)))
+  const setGuestCount = (value: number) =>
+    onGuestsChange(Math.max(1, Math.min(MAX_GUESTS, Math.round(value) || 1)))
 
   function handleDateChange(nextDate: string) {
     setDate(nextDate)
     const nextSlots = availableSlots(nextDate, settings)
     if (!nextSlots.includes(time)) {
-      setTime(nextSlots.includes('18:30') ? '18:30' : nextSlots[0] ?? '')
+      setTime(nextSlots.includes('18:30') ? '18:30' : (nextSlots[0] ?? ''))
     }
   }
 
@@ -118,15 +172,24 @@ export function BookingForm({
     setFailed('')
     try {
       const reservation = await reservationService.create({
-        date, time, guests, areaId: area, durationMinutes: DURATION_MINUTES,
-        name: text('name'), phone: text('phone'), email: text('email') || undefined, note: text('note') || undefined,
+        date,
+        time,
+        guests,
+        areaId: area,
+        durationMinutes: DURATION_MINUTES,
+        name: text('name'),
+        phone: text('phone'),
+        email: text('email') || undefined,
+        note: text('note') || undefined,
         items: chosen.map((d) => ({ dishId: d.id, quantity: cart[d.id] })),
       })
       setDone(reservation)
       onCartClear()
     } catch (error) {
       // Server reasons are Vietnamese; the English page keeps its own generic copy.
-      setFailed(language === 'vi' && error instanceof ApiError && error.detail ? error.detail : t.failed)
+      setFailed(
+        language === 'vi' && error instanceof ApiError && error.detail ? error.detail : t.failed,
+      )
     } finally {
       setSending(false)
     }
@@ -156,7 +219,9 @@ export function BookingForm({
         <div className="bk-ticket-header">
           <div className="bk-ticket-title-group">
             <span className="bk-ticket-badge">
-              <span className="bk-done-icon" aria-hidden="true">✓</span>
+              <span className="bk-done-icon" aria-hidden="true">
+                ✓
+              </span>
               {t.doneBadge}
             </span>
             <h3>{t.doneTitle}</h3>
@@ -166,7 +231,11 @@ export function BookingForm({
           <div className="bk-ticket-code-box">
             <span>{t.bookingCodeLabel}</span>
             <strong>{done.code}</strong>
-            <button type="button" className="bk-copy-btn" onClick={() => copyBookingCode(done.code)}>
+            <button
+              type="button"
+              className="bk-copy-btn"
+              onClick={() => copyBookingCode(done.code)}
+            >
               {copied ? `✓ ${t.copiedCode}` : t.copyCode}
             </button>
           </div>
@@ -176,16 +245,27 @@ export function BookingForm({
 
         <dl className="bk-done-details">
           <div>
-            <dt>{t.date} & {t.time}</dt>
+            <dt>
+              {t.date} & {t.time}
+            </dt>
             <dd>
-              {new Date(`${done.date}T12:00:00`).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-GB', {
-                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-              })} · {done.time}
+              {new Date(`${done.date}T12:00:00`).toLocaleDateString(
+                language === 'vi' ? 'vi-VN' : 'en-GB',
+                {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                },
+              )}{' '}
+              · {done.time}
             </dd>
           </div>
           <div>
             <dt>{t.guests}</dt>
-            <dd>{done.guests} {t.guestUnit}</dd>
+            <dd>
+              {done.guests} {t.guestUnit}
+            </dd>
           </div>
           <div>
             <dt>{t.area}</dt>
@@ -193,7 +273,9 @@ export function BookingForm({
           </div>
           <div>
             <dt>{t.doneContact}</dt>
-            <dd>{done.name} · {done.phone}</dd>
+            <dd>
+              {done.name} · {done.phone}
+            </dd>
           </div>
           {done.note && (
             <div>
@@ -205,11 +287,15 @@ export function BookingForm({
 
         {doneItems.length > 0 && (
           <div className="bk-ticket-menu">
-            <h4>{t.preorder} ({doneItems.length})</h4>
+            <h4>
+              {t.preorder} ({doneItems.length})
+            </h4>
             <ul>
               {doneItems.map(({ dish, quantity }) => (
                 <li key={dish.id}>
-                  <span>{dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em></span>
+                  <span>
+                    {dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em>
+                  </span>
                   <strong>{formatMoney(dish.price * quantity, language)}</strong>
                 </li>
               ))}
@@ -222,8 +308,12 @@ export function BookingForm({
         )}
 
         <div className="bk-ticket-footer">
-          <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
-          <button type="button" className="sb-catering-submit" onClick={() => setDone(null)}>{t.doneAgain}</button>
+          <a className="bk-link" href={`/${language}/reservation-status`}>
+            {t.lookup}
+          </a>
+          <button type="button" className="sb-catering-submit" onClick={() => setDone(null)}>
+            {t.doneAgain}
+          </button>
         </div>
       </div>
     )
@@ -232,206 +322,321 @@ export function BookingForm({
   return (
     <form className="bk-form" onSubmit={submit} onChange={() => setFailed('')}>
       <div className="bk-form-top">
-        <a className="bk-link" href={`/${language}/reservation-status`}>{t.lookup}</a>
+        <a className="bk-link" href={`/${language}/reservation-status`}>
+          {t.lookup}
+        </a>
         {settingsError && <p role="alert">{settingsError}</p>}
-        {!settings && !settingsError && <p role="status">{language === 'vi' ? 'Đang tải cấu hình đặt bàn…' : 'Loading booking settings…'}</p>}
-        {settings && !onlineAllowed && <p className="bk-offline-banner" role="alert">{t.onlineClosed}</p>}
+        {!settings && !settingsError && (
+          <p role="status">
+            {language === 'vi' ? 'Đang tải cấu hình đặt bàn…' : 'Loading booking settings…'}
+          </p>
+        )}
+        {settings && !onlineAllowed && (
+          <p className="bk-offline-banner" role="alert">
+            {t.onlineClosed}
+          </p>
+        )}
       </div>
       <fieldset className="bk-form-fields" disabled={!onlineAllowed}>
-      <div className="bk-form-col">
-        <fieldset className="bk-step">
-          <legend><span className="bk-step-no">1</span>{t.step1}</legend>
+        <div className="bk-form-col">
+          <fieldset className="bk-step">
+            <legend>
+              <span className="bk-step-no">1</span>
+              {t.step1}
+            </legend>
 
-          <div className="bk-row">
-            <div className="sb-catering-field">
-              <label htmlFor="bk-date">{t.date} <span>*</span></label>
-              <input id="bk-date" type="date" required min={today} value={date} onChange={(e) => handleDateChange(e.target.value)} />
-            </div>
-
-            <div className="sb-catering-field">
-              <label htmlFor="bk-guests">{t.guests} <span>*</span></label>
-              <div className="bk-guests">
-                <button type="button" onClick={() => setGuestCount(guests - 1)} disabled={guests <= 1} aria-label={t.fewer}>−</button>
-                <input id="bk-guests" type="number" inputMode="numeric" min={1} max={MAX_GUESTS} value={guests} onChange={(e) => setGuestCount(Number(e.target.value))} />
-                <button type="button" onClick={() => setGuestCount(guests + 1)} disabled={guests >= MAX_GUESTS} aria-label={t.more}>+</button>
+            <div className="bk-row">
+              <div className="sb-catering-field">
+                <label htmlFor="bk-date">
+                  {t.date} <span>*</span>
+                </label>
+                <input
+                  id="bk-date"
+                  type="date"
+                  required
+                  min={today}
+                  value={date}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                />
               </div>
-            </div>
-          </div>
 
-
-          <div className="bk-time-picker">
-            <div className="bk-time-head">
-              <span className="bk-label">{t.time} <span className="bk-required">*</span></span>
-              {time && <span className="bk-time-selected">{time}</span>}
-            </div>
-
-            {!slots.length ? (
-              <p className="bk-error">{t.noSlots}</p>
-            ) : (
-              <div className="bk-time-sessions">
-                {lunchSlots.length > 0 && (
-                  <div className="bk-time-group">
-                    <span className="bk-time-group-label">{t.lunchSession}</span>
-                    <div className="bk-time-grid" role="group" aria-label={t.lunchSession}>
-                      {lunchSlots.map((slot) => (
-                        <button
-                          key={slot}
-                          type="button"
-                          className="bk-time-pill"
-                          aria-pressed={time === slot}
-                          onClick={() => setTime(slot)}
-                        >
-                          {slot}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {dinnerSlots.length > 0 && (
-                  <div className="bk-time-group">
-                    <span className="bk-time-group-label">{t.dinnerSession}</span>
-                    <div className="bk-time-grid" role="group" aria-label={t.dinnerSession}>
-                      {dinnerSlots.map((slot) => (
-                        <button
-                          key={slot}
-                          type="button"
-                          className="bk-time-pill"
-                          aria-pressed={time === slot}
-                          onClick={() => setTime(slot)}
-                        >
-                          {slot}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <span className="bk-label">{t.area} <span className="bk-required">*</span></span>
-            <div className="bk-area-cards" role="radiogroup" aria-label={t.area}>
-              {settings?.areas.map((a) => {
-                const selected = area === a.id
-                return (
+              <div className="sb-catering-field">
+                <label htmlFor="bk-guests">
+                  {t.guests} <span>*</span>
+                </label>
+                <div className="bk-guests">
                   <button
-                    key={a.id}
                     type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    className={`bk-area-card${selected ? ' is-selected' : ''}`}
-                    onClick={() => setArea(a.id)}
+                    onClick={() => setGuestCount(guests - 1)}
+                    disabled={guests <= 1}
+                    aria-label={t.fewer}
                   >
-                    <div className="bk-area-card-top">
-                      <span className="bk-area-icon">{AREA_ICON}</span>
-                    </div>
-                    <strong className="bk-area-name">{a.name}</strong>
+                    −
                   </button>
-                )
-              })}
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div className="bk-form-col">
-        <fieldset className="bk-step">
-          <legend><span className="bk-step-no">2</span>{t.step2}</legend>
-
-          <div className="bk-row">
-            <div className="sb-catering-field">
-              <label htmlFor="bk-name">{t.name} <span>*</span></label>
-              <input id="bk-name" name="name" required autoComplete="name" placeholder={t.namePlaceholder} />
-            </div>
-            <div className="sb-catering-field">
-              <label htmlFor="bk-phone">{t.phone} <span>*</span></label>
-              <input id="bk-phone" name="phone" type="tel" required autoComplete="tel" pattern="[0-9+ ().-]{8,}" placeholder={t.phonePlaceholder} />
-            </div>
-          </div>
-
-          <div className="sb-catering-field">
-            <label htmlFor="bk-email">{t.email}</label>
-            <input id="bk-email" name="email" type="email" autoComplete="email" placeholder={t.emailPlaceholder} />
-          </div>
-
-          <div className="sb-catering-field">
-            <label htmlFor="bk-note">{t.note}</label>
-            <textarea id="bk-note" name="note" rows={3} placeholder={t.notePlaceholder} />
-          </div>
-        </fieldset>
-
-        <section className="bk-summary" aria-labelledby="bk-summary-title">
-          <header>
-            <h3 id="bk-summary-title">{t.preorder} ({chosen.length})</h3>
-            {chosen.length > 0 && <button type="button" className="bk-link" onClick={onCartClear}>{t.clearCart}</button>}
-          </header>
-
-          {chosen.length ? (
-            <>
-              <ul className="bk-summary-list">
-                {chosen.map((dish) => (
-                  <li key={dish.id}>
-                    <span className="bk-summary-dish">
-                      <span className="bk-summary-thumb" aria-hidden="true">
-                        {dish.imageUrl ? <img src={dish.imageUrl} alt="" /> : <MenuIcon name="dish" size={16} />}
-                      </span>
-                      <span className="bk-summary-dish-meta">
-                        <span className="bk-summary-name">{dish.name[language]}</span>
-                        <span className="bk-summary-unit-price">{formatMoney(dish.price, language)}{dish.unit === 'kg' ? ' / kg' : ''}</span>
-                      </span>
-                    </span>
-
-                    <span className="bk-stepper bk-stepper--small">
-                      <button type="button" onClick={() => onCartChange(dish.id, cart[dish.id] - stepOf(dish))} aria-label={`${t.remove}: ${dish.name[language]}`}>−</button>
-                      <output>{formatQuantity(dish, cart[dish.id], language)}</output>
-                      <button type="button" onClick={() => onCartChange(dish.id, cart[dish.id] + stepOf(dish))} aria-label={`${t.add}: ${dish.name[language]}`}>+</button>
-                    </span>
-
-                    <span className="bk-summary-price">{formatMoney(cart[dish.id] * dish.price, language)}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {hasFoodInCart && maxCovered > 0 && (
-                <p className={`bk-coverage-badge${maxCovered < guests * 0.7 ? ' is-low' : ''}`}>
-                  <MenuIcon name="people" size={15} />
-                  <span>
-                    {maxCovered < guests * 0.7
-                      ? t.coverageLow(guests)
-                      : t.coverageGood(Math.max(1, minCovered), Math.max(minCovered, maxCovered))}
-                  </span>
-                </p>
-              )}
-
-              <div className="bk-summary-totals">
-                <p className="bk-summary-total">
-                  <span>{t.estimate}</span>
-                  <strong>{formatMoney(total, language)}</strong>
-                </p>
-                <p className="bk-summary-per-guest">
-                  <span>{t.estimatePerGuest} ({guests} {t.guestUnit})</span>
-                  <strong>{formatMoney(Math.round(total / Math.max(1, guests)), language)}</strong>
-                </p>
+                  <input
+                    id="bk-guests"
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={MAX_GUESTS}
+                    value={guests}
+                    onChange={(e) => setGuestCount(Number(e.target.value))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setGuestCount(guests + 1)}
+                    disabled={guests >= MAX_GUESTS}
+                    aria-label={t.more}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <p className="bk-summary-note">{t.estimateNote}</p>
-            </>
-          ) : (
-            <p className="bk-summary-empty">
-              {t.noPreorder} <a href="#catering-preorder">{t.pickDishes}</a>.
+            </div>
+
+            <div className="bk-time-picker">
+              <div className="bk-time-head">
+                <span className="bk-label">
+                  {t.time} <span className="bk-required">*</span>
+                </span>
+                {time && <span className="bk-time-selected">{time}</span>}
+              </div>
+
+              {!slots.length ? (
+                <p className="bk-error">{t.noSlots}</p>
+              ) : (
+                <div className="bk-time-sessions">
+                  {lunchSlots.length > 0 && (
+                    <div className="bk-time-group">
+                      <span className="bk-time-group-label">{t.lunchSession}</span>
+                      <div className="bk-time-grid" role="group" aria-label={t.lunchSession}>
+                        {lunchSlots.map((slot) => (
+                          <button
+                            key={slot}
+                            type="button"
+                            className="bk-time-pill"
+                            aria-pressed={time === slot}
+                            onClick={() => setTime(slot)}
+                          >
+                            {slot}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {dinnerSlots.length > 0 && (
+                    <div className="bk-time-group">
+                      <span className="bk-time-group-label">{t.dinnerSession}</span>
+                      <div className="bk-time-grid" role="group" aria-label={t.dinnerSession}>
+                        {dinnerSlots.map((slot) => (
+                          <button
+                            key={slot}
+                            type="button"
+                            className="bk-time-pill"
+                            aria-pressed={time === slot}
+                            onClick={() => setTime(slot)}
+                          >
+                            {slot}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <span className="bk-label">
+                {t.area} <span className="bk-required">*</span>
+              </span>
+              <div className="bk-area-cards" role="radiogroup" aria-label={t.area}>
+                {settings?.areas.map((a) => {
+                  const selected = area === a.id
+                  return (
+                    <button
+                      key={a.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      className={`bk-area-card${selected ? ' is-selected' : ''}`}
+                      onClick={() => setArea(a.id)}
+                    >
+                      <div className="bk-area-card-top">
+                        <span className="bk-area-icon">{AREA_ICON}</span>
+                      </div>
+                      <strong className="bk-area-name">{a.name}</strong>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <div className="bk-form-col">
+          <fieldset className="bk-step">
+            <legend>
+              <span className="bk-step-no">2</span>
+              {t.step2}
+            </legend>
+
+            <div className="bk-row">
+              <div className="sb-catering-field">
+                <label htmlFor="bk-name">
+                  {t.name} <span>*</span>
+                </label>
+                <input
+                  id="bk-name"
+                  name="name"
+                  required
+                  autoComplete="name"
+                  placeholder={t.namePlaceholder}
+                />
+              </div>
+              <div className="sb-catering-field">
+                <label htmlFor="bk-phone">
+                  {t.phone} <span>*</span>
+                </label>
+                <input
+                  id="bk-phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  autoComplete="tel"
+                  pattern="[0-9+ ().-]{8,}"
+                  placeholder={t.phonePlaceholder}
+                />
+              </div>
+            </div>
+
+            <div className="sb-catering-field">
+              <label htmlFor="bk-email">{t.email}</label>
+              <input
+                id="bk-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder={t.emailPlaceholder}
+              />
+            </div>
+
+            <div className="sb-catering-field">
+              <label htmlFor="bk-note">{t.note}</label>
+              <textarea id="bk-note" name="note" rows={3} placeholder={t.notePlaceholder} />
+            </div>
+          </fieldset>
+
+          <section className="bk-summary" aria-labelledby="bk-summary-title">
+            <header>
+              <h3 id="bk-summary-title">
+                {t.preorder} ({chosen.length})
+              </h3>
+              {chosen.length > 0 && (
+                <button type="button" className="bk-link" onClick={onCartClear}>
+                  {t.clearCart}
+                </button>
+              )}
+            </header>
+
+            {chosen.length ? (
+              <>
+                <ul className="bk-summary-list">
+                  {chosen.map((dish) => (
+                    <li key={dish.id}>
+                      <span className="bk-summary-dish">
+                        <span className="bk-summary-thumb" aria-hidden="true">
+                          {dish.imageUrl ? (
+                            <img src={dish.imageUrl} alt="" />
+                          ) : (
+                            <MenuIcon name="dish" size={16} />
+                          )}
+                        </span>
+                        <span className="bk-summary-dish-meta">
+                          <span className="bk-summary-name">{dish.name[language]}</span>
+                          <span className="bk-summary-unit-price">
+                            {formatMoney(dish.price, language)}
+                            {dish.unit === 'kg' ? ' / kg' : ''}
+                          </span>
+                        </span>
+                      </span>
+
+                      <span className="bk-stepper bk-stepper--small">
+                        <button
+                          type="button"
+                          onClick={() => onCartChange(dish.id, cart[dish.id] - stepOf(dish))}
+                          aria-label={`${t.remove}: ${dish.name[language]}`}
+                        >
+                          −
+                        </button>
+                        <output>{formatQuantity(dish, cart[dish.id], language)}</output>
+                        <button
+                          type="button"
+                          onClick={() => onCartChange(dish.id, cart[dish.id] + stepOf(dish))}
+                          aria-label={`${t.add}: ${dish.name[language]}`}
+                        >
+                          +
+                        </button>
+                      </span>
+
+                      <span className="bk-summary-price">
+                        {formatMoney(cart[dish.id] * dish.price, language)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {hasFoodInCart && maxCovered > 0 && (
+                  <p className={`bk-coverage-badge${maxCovered < guests * 0.7 ? ' is-low' : ''}`}>
+                    <MenuIcon name="people" size={15} />
+                    <span>
+                      {maxCovered < guests * 0.7
+                        ? t.coverageLow(guests)
+                        : t.coverageGood(Math.max(1, minCovered), Math.max(minCovered, maxCovered))}
+                    </span>
+                  </p>
+                )}
+
+                <div className="bk-summary-totals">
+                  <p className="bk-summary-total">
+                    <span>{t.estimate}</span>
+                    <strong>{formatMoney(total, language)}</strong>
+                  </p>
+                  <p className="bk-summary-per-guest">
+                    <span>
+                      {t.estimatePerGuest} ({guests} {t.guestUnit})
+                    </span>
+                    <strong>
+                      {formatMoney(Math.round(total / Math.max(1, guests)), language)}
+                    </strong>
+                  </p>
+                </div>
+                <p className="bk-summary-note">{t.estimateNote}</p>
+              </>
+            ) : (
+              <p className="bk-summary-empty">
+                {t.noPreorder} <a href="#catering-preorder">{t.pickDishes}</a>.
+              </p>
+            )}
+          </section>
+
+          {failed && (
+            <p className="bk-error" role="alert">
+              {failed}
             </p>
           )}
-        </section>
-
-        {failed && <p className="bk-error" role="alert">{failed}</p>}
-        <div className="bk-submit-row">
-          <button className="sb-catering-submit" type="submit" disabled={sending || !onlineAllowed || !slots.length}>
-            {sending ? t.submitting : t.submit}
-          </button>
-          <p>{t.requiredHint}</p>
+          <div className="bk-submit-row">
+            <button
+              className="sb-catering-submit"
+              type="submit"
+              disabled={sending || !onlineAllowed || !slots.length}
+            >
+              {sending ? t.submitting : t.submit}
+            </button>
+            <p>{t.requiredHint}</p>
+          </div>
         </div>
-      </div>
       </fieldset>
     </form>
   )

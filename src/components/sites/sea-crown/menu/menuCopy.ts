@@ -20,7 +20,8 @@ export const COPY = {
   vi: {
     eyebrow: "THE SEA'S CROWN · FINE SEAFOOD",
     title: 'Thực đơn hải sản',
-    intro: 'Hải sản tươi sống và thức uống tinh tuyển. Chạm vào một món để xem cách chế biến, khẩu phần và thành phần gây dị ứng.',
+    intro:
+      'Hải sản tươi sống và thức uống tinh tuyển. Chạm vào một món để xem cách chế biến, khẩu phần và thành phần gây dị ứng.',
     search: 'Tìm món',
     searchPlaceholder: 'Tìm cua, tôm, lẩu, trà…',
     food: 'Món ăn',
@@ -32,10 +33,19 @@ export const COPY = {
     removeFilter: (label: string) => `Bỏ lọc: ${label}`,
     features: 'Đặc điểm',
     party: 'Số người',
-    partyLabel: { all: 'Tất cả', small: '1–2 người', medium: '3–4 người', large: 'Từ 5 người' } satisfies Record<PartySize, string>,
+    partyLabel: {
+      all: 'Tất cả',
+      small: '1–2 người',
+      medium: '3–4 người',
+      large: 'Từ 5 người',
+    } satisfies Record<PartySize, string>,
     avoid: 'Tránh dị ứng',
     sort: 'Sắp xếp',
-    sortLabel: { suggested: 'Gợi ý', 'price-asc': 'Giá thấp → cao', 'price-desc': 'Giá cao → thấp' } satisfies Record<SortOrder, string>,
+    sortLabel: {
+      suggested: 'Gợi ý',
+      'price-asc': 'Giá thấp → cao',
+      'price-desc': 'Giá cao → thấp',
+    } satisfies Record<SortOrder, string>,
     hideSoldOut: 'Ẩn món tạm hết',
     clear: 'Xóa bộ lọc',
     count: (n: number) => `${n} món`,
@@ -55,7 +65,8 @@ export const COPY = {
     spice: 'Độ cay',
     pairs: 'Gợi ý dùng kèm',
     close: 'Đóng',
-    priceNote: 'Giá tham khảo, có thể thay đổi theo mùa. Hải sản tính theo kg được cân tại bàn trước khi chế biến.',
+    priceNote:
+      'Giá tham khảo, có thể thay đổi theo mùa. Hải sản tính theo kg được cân tại bàn trước khi chế biến.',
     allergyNote: 'Vui lòng báo nhân viên nếu bạn bị dị ứng; bếp dùng chung dụng cụ cho nhiều món.',
     print: 'Bản in',
     printMenu: 'Thực đơn',
@@ -64,7 +75,8 @@ export const COPY = {
   en: {
     eyebrow: "THE SEA'S CROWN · FINE SEAFOOD",
     title: 'Our Seafood Menu',
-    intro: 'Live seafood and signature drinks. Select a dish to see cooking styles, portions and allergens.',
+    intro:
+      'Live seafood and signature drinks. Select a dish to see cooking styles, portions and allergens.',
     search: 'Search dishes',
     searchPlaceholder: 'Search crab, prawns, hotpot, tea…',
     food: 'Food',
@@ -76,10 +88,19 @@ export const COPY = {
     removeFilter: (label: string) => `Remove filter: ${label}`,
     features: 'Features',
     party: 'Party size',
-    partyLabel: { all: 'Any', small: '1–2 guests', medium: '3–4 guests', large: '5+ guests' } satisfies Record<PartySize, string>,
+    partyLabel: {
+      all: 'Any',
+      small: '1–2 guests',
+      medium: '3–4 guests',
+      large: '5+ guests',
+    } satisfies Record<PartySize, string>,
     avoid: 'Avoid allergens',
     sort: 'Sort by',
-    sortLabel: { suggested: 'Suggested', 'price-asc': 'Price: low → high', 'price-desc': 'Price: high → low' } satisfies Record<SortOrder, string>,
+    sortLabel: {
+      suggested: 'Suggested',
+      'price-asc': 'Price: low → high',
+      'price-desc': 'Price: high → low',
+    } satisfies Record<SortOrder, string>,
     hideSoldOut: 'Hide sold-out dishes',
     clear: 'Clear filters',
     count: (n: number) => `${n} ${n === 1 ? 'item' : 'items'}`,
@@ -99,8 +120,10 @@ export const COPY = {
     spice: 'Spice',
     pairs: 'Goes well with',
     close: 'Close',
-    priceNote: 'Indicative prices that may change with the season. Seafood priced per kg is weighed at your table before cooking.',
-    allergyNote: 'Please tell our team about any allergies; our kitchen shares equipment between dishes.',
+    priceNote:
+      'Indicative prices that may change with the season. Seafood priced per kg is weighed at your table before cooking.',
+    allergyNote:
+      'Please tell our team about any allergies; our kitchen shares equipment between dishes.',
     print: 'Printable',
     printMenu: 'Menu',
     printDrinks: 'Drinks',
@@ -113,8 +136,22 @@ export const TAG_LABEL: Record<Language, Record<DishTag, string>> = {
 }
 
 export const ALLERGEN_LABEL: Record<Language, Record<Allergen, string>> = {
-  vi: { shellfish: 'Giáp xác', fish: 'Cá', gluten: 'Gluten', dairy: 'Sữa', egg: 'Trứng', soy: 'Đậu nành' },
-  en: { shellfish: 'Shellfish', fish: 'Fish', gluten: 'Gluten', dairy: 'Dairy', egg: 'Egg', soy: 'Soy' },
+  vi: {
+    shellfish: 'Giáp xác',
+    fish: 'Cá',
+    gluten: 'Gluten',
+    dairy: 'Sữa',
+    egg: 'Trứng',
+    soy: 'Đậu nành',
+  },
+  en: {
+    shellfish: 'Shellfish',
+    fish: 'Fish',
+    gluten: 'Gluten',
+    dairy: 'Dairy',
+    egg: 'Egg',
+    soy: 'Soy',
+  },
 }
 
 const UNIT: Record<Language, Record<PriceUnit, string>> = {
@@ -123,8 +160,16 @@ const UNIT: Record<Language, Record<PriceUnit, string>> = {
 }
 
 const money = {
-  vi: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }),
-  en: new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }),
+  vi: new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 0,
+  }),
+  en: new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'VND',
+    maximumFractionDigits: 0,
+  }),
 }
 
 export function formatPrice(dish: Dish, language: Language) {

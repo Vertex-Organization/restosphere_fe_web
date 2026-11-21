@@ -16,9 +16,28 @@ interface Props {
 }
 
 /** One board column with its own scroll area. */
-export function KitchenBoardColumn({ id, labelledBy, hidden, title, tone, summary, toolbar, hideHeader = false, layout = 'cards', empty, isEmpty, children }: Props) {
+export function KitchenBoardColumn({
+  id,
+  labelledBy,
+  hidden,
+  title,
+  tone,
+  summary,
+  toolbar,
+  hideHeader = false,
+  layout = 'cards',
+  empty,
+  isEmpty,
+  children,
+}: Props) {
   return (
-    <section className={`k-col k-col--${tone}`} id={id} role="tabpanel" aria-labelledby={labelledBy} hidden={hidden}>
+    <section
+      className={`k-col k-col--${tone}`}
+      id={id}
+      role="tabpanel"
+      aria-labelledby={labelledBy}
+      hidden={hidden}
+    >
       {!hideHeader && (
         <header className="k-col-head">
           <div className="k-col-titlebar">
@@ -29,9 +48,25 @@ export function KitchenBoardColumn({ id, labelledBy, hidden, title, tone, summar
         </header>
       )}
       {/* Focusable so keyboard users can scroll a long column. */}
-      <div className={`k-col-body${layout === 'workbench' ? ' k-col-body--workbench' : ''}`} tabIndex={0} aria-label={title}>
-        {isEmpty ? <p className="k-empty">{empty}</p> : (
-          <div className={layout === 'workbench' ? 'k-workbench' : layout === 'full' ? 'k-board-list' : 'k-ticket-grid'}>{children}</div>
+      <div
+        className={`k-col-body${layout === 'workbench' ? ' k-col-body--workbench' : ''}`}
+        tabIndex={0}
+        aria-label={title}
+      >
+        {isEmpty ? (
+          <p className="k-empty">{empty}</p>
+        ) : (
+          <div
+            className={
+              layout === 'workbench'
+                ? 'k-workbench'
+                : layout === 'full'
+                  ? 'k-board-list'
+                  : 'k-ticket-grid'
+            }
+          >
+            {children}
+          </div>
         )}
       </div>
     </section>

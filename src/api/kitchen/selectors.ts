@@ -14,7 +14,11 @@ export function minutesBetween(fromIso: string | undefined, now: number) {
   return Math.max(0, Math.floor((now - new Date(fromIso).getTime()) / 60000))
 }
 
-export function waitTone(minutes: number, warn = WAIT_WARN_MINUTES, late = WAIT_LATE_MINUTES): TimeTone {
+export function waitTone(
+  minutes: number,
+  warn = WAIT_WARN_MINUTES,
+  late = WAIT_LATE_MINUTES,
+): TimeTone {
   return minutes >= late ? 'late' : minutes >= warn ? 'warn' : 'normal'
 }
 
@@ -55,7 +59,13 @@ export type KitchenFilter = 'all' | 'new' | 'preparing' | 'late'
 export interface BoardView {
   active: TicketView[]
   ready: TicketView[]
-  counts: { newTickets: number; newItems: number; preparingItems: number; readyItems: number; late: number }
+  counts: {
+    newTickets: number
+    newItems: number
+    preparingItems: number
+    readyItems: number
+    late: number
+  }
 }
 
 export function buildBoard(data: KitchenData, now: number): BoardView {
@@ -75,18 +85,41 @@ export function buildBoard(data: KitchenData, now: number): BoardView {
     const waiter = data.staff.find((s) => s.id === order.waiterId)
     if (left.length) {
       const minutes = minutesBetween(order.submittedAt, now)
-      active.push({ order, waiter, items: left, otherReady: right.length, otherActive: 0, minutes, tone: waitTone(minutes) })
+      active.push({
+        order,
+        waiter,
+        items: left,
+        otherReady: right.length,
+        otherActive: 0,
+        minutes,
+        tone: waitTone(minutes),
+      })
     }
     if (right.length) {
-      const oldest = right.reduce((min, i) => (i.readyAt && i.readyAt < min ? i.readyAt : min), right[0].readyAt ?? order.submittedAt)
+      const oldest = right.reduce(
+        (min, i) => (i.readyAt && i.readyAt < min ? i.readyAt : min),
+        right[0].readyAt ?? order.submittedAt,
+      )
       const minutes = minutesBetween(oldest, now)
-      ready.push({ order, waiter, items: right, otherReady: 0, otherActive: left.length, minutes, tone: waitTone(minutes, READY_WARN_MINUTES, READY_LATE_MINUTES) })
+      ready.push({
+        order,
+        waiter,
+        items: right,
+        otherReady: 0,
+        otherActive: left.length,
+        minutes,
+        tone: waitTone(minutes, READY_WARN_MINUTES, READY_LATE_MINUTES),
+      })
     }
   }
 
   // Priority requests first, then the longest-waiting tickets.
-  active.sort((a, b) => Number(!!b.order.priority) - Number(!!a.order.priority) || b.minutes - a.minutes
-    || a.order.submittedAt.localeCompare(b.order.submittedAt))
+  active.sort(
+    (a, b) =>
+      Number(!!b.order.priority) - Number(!!a.order.priority) ||
+      b.minutes - a.minutes ||
+      a.order.submittedAt.localeCompare(b.order.submittedAt),
+  )
   // Dishes that have waited longest for the waiter come first.
   ready.sort((a, b) => b.minutes - a.minutes || a.order.code.localeCompare(b.order.code))
 
@@ -106,10 +139,14 @@ export function buildBoard(data: KitchenData, now: number): BoardView {
 
 export function filterActive(tickets: TicketView[], filter: KitchenFilter) {
   switch (filter) {
-    case 'new': return tickets.filter((t) => t.items.some((i) => i.status === 'SUBMITTED'))
-    case 'preparing': return tickets.filter((t) => t.items.some((i) => i.status === 'PREPARING'))
-    case 'late': return tickets.filter((t) => t.tone === 'late')
-    default: return tickets
+    case 'new':
+      return tickets.filter((t) => t.items.some((i) => i.status === 'SUBMITTED'))
+    case 'preparing':
+      return tickets.filter((t) => t.items.some((i) => i.status === 'PREPARING'))
+    case 'late':
+      return tickets.filter((t) => t.tone === 'late')
+    default:
+      return tickets
   }
 }
 
@@ -120,7 +157,8 @@ export function buildActiveDishQueue(data: KitchenData, now: number): ActiveDish
   const orders = new Map(data.orders.map((order) => [order.id, order]))
   const readyByOrder = new Map<string, number>()
   for (const item of data.items) {
-    if (item.status === 'READY') readyByOrder.set(item.orderId, (readyByOrder.get(item.orderId) ?? 0) + 1)
+    if (item.status === 'READY')
+      readyByOrder.set(item.orderId, (readyByOrder.get(item.orderId) ?? 0) + 1)
   }
 
   return data.items
@@ -129,25 +167,35 @@ export function buildActiveDishQueue(data: KitchenData, now: number): ActiveDish
       const order = orders.get(item.orderId)
       if (!order) return []
       const minutes = minutesBetween(item.submittedAt, now)
-      return [{
-        item,
-        order,
-        waiter: data.staff.find((staff) => staff.id === order.waiterId),
-        otherReady: readyByOrder.get(order.id) ?? 0,
-        minutes,
-        tone: waitTone(minutes),
-      } satisfies ActiveDishView]
+      return [
+        {
+          item,
+          order,
+          waiter: data.staff.find((staff) => staff.id === order.waiterId),
+          otherReady: readyByOrder.get(order.id) ?? 0,
+          minutes,
+          tone: waitTone(minutes),
+        } satisfies ActiveDishView,
+      ]
     })
-    .sort((a, b) => a.item.submittedAt.localeCompare(b.item.submittedAt)
-      || a.order.code.localeCompare(b.order.code) || a.item.id.localeCompare(b.item.id))
+    .sort(
+      (a, b) =>
+        a.item.submittedAt.localeCompare(b.item.submittedAt) ||
+        a.order.code.localeCompare(b.order.code) ||
+        a.item.id.localeCompare(b.item.id),
+    )
 }
 
 export function filterActiveDishes(dishes: ActiveDishView[], filter: KitchenFilter) {
   switch (filter) {
-    case 'new': return dishes.filter((dish) => dish.item.status === 'SUBMITTED')
-    case 'preparing': return dishes.filter((dish) => dish.item.status === 'PREPARING')
-    case 'late': return dishes.filter((dish) => dish.tone === 'late')
-    default: return dishes
+    case 'new':
+      return dishes.filter((dish) => dish.item.status === 'SUBMITTED')
+    case 'preparing':
+      return dishes.filter((dish) => dish.item.status === 'PREPARING')
+    case 'late':
+      return dishes.filter((dish) => dish.tone === 'late')
+    default:
+      return dishes
   }
 }
 
@@ -168,17 +216,23 @@ export function buildReadyDishQueue(data: KitchenData, now: number): ReadyDishVi
       const order = orders.get(item.orderId)
       if (!order) return []
       const minutes = minutesBetween(item.readyAt, now)
-      return [{
-        item,
-        order,
-        waiter: data.staff.find((staff) => staff.id === order.waiterId),
-        otherActive: activeByOrder.get(order.id) ?? 0,
-        minutes,
-        tone: waitTone(minutes, READY_WARN_MINUTES, READY_LATE_MINUTES),
-      } satisfies ReadyDishView]
+      return [
+        {
+          item,
+          order,
+          waiter: data.staff.find((staff) => staff.id === order.waiterId),
+          otherActive: activeByOrder.get(order.id) ?? 0,
+          minutes,
+          tone: waitTone(minutes, READY_WARN_MINUTES, READY_LATE_MINUTES),
+        } satisfies ReadyDishView,
+      ]
     })
-    .sort((a, b) => (a.item.readyAt ?? '').localeCompare(b.item.readyAt ?? '')
-      || a.order.code.localeCompare(b.order.code) || a.item.id.localeCompare(b.item.id))
+    .sort(
+      (a, b) =>
+        (a.item.readyAt ?? '').localeCompare(b.item.readyAt ?? '') ||
+        a.order.code.localeCompare(b.order.code) ||
+        a.item.id.localeCompare(b.item.id),
+    )
 }
 
 export function unreadCount(data: KitchenData, userId: string) {

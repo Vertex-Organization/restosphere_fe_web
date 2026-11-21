@@ -8,7 +8,12 @@ import type { BillDiscount, BillTotals, BillingConfig, DiscountMode, OrderItem }
 export const MAX_AMOUNT = 1_000_000_000
 
 export function isMoney(value: unknown): value is number {
-  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= MAX_AMOUNT * 10
+  return (
+    typeof value === 'number' &&
+    Number.isSafeInteger(value) &&
+    value >= 0 &&
+    value <= MAX_AMOUNT * 10
+  )
 }
 
 /** amount × basisPoints / 10000, rounded half up to the đồng. */
@@ -16,19 +21,25 @@ export function applyRate(amount: number, basisPoints: number) {
   return Math.round((amount * basisPoints) / 10000)
 }
 
-export const lineTotal = (item: Pick<OrderItem, 'unitPrice' | 'quantity'>) => item.unitPrice * item.quantity
+export const lineTotal = (item: Pick<OrderItem, 'unitPrice' | 'quantity'>) =>
+  item.unitPrice * item.quantity
 
 /** Cancelled lines are never billed. */
-export const isBillable = (item: Pick<OrderItem, 'status'>) => !['REJECTED', 'CANCELLED', 'VOIDED'].includes(item.status)
+export const isBillable = (item: Pick<OrderItem, 'status'>) =>
+  !['REJECTED', 'CANCELLED', 'VOIDED'].includes(item.status)
 
 export function subtotalOf(items: Pick<OrderItem, 'unitPrice' | 'quantity' | 'status'>[]) {
   return items.reduce((sum, item) => (isBillable(item) ? sum + lineTotal(item) : sum), 0)
 }
 
 /** Discount in đồng for a given subtotal; never more than the subtotal. */
-export function discountAmount(discount: Pick<BillDiscount, 'mode' | 'value'> | undefined, subtotal: number) {
+export function discountAmount(
+  discount: Pick<BillDiscount, 'mode' | 'value'> | undefined,
+  subtotal: number,
+) {
   if (!discount || subtotal <= 0) return 0
-  const raw = discount.mode === 'PERCENT' ? applyRate(subtotal, discount.value * 100) : discount.value
+  const raw =
+    discount.mode === 'PERCENT' ? applyRate(subtotal, discount.value * 100) : discount.value
   return Math.min(Math.max(0, raw), subtotal)
 }
 
@@ -46,7 +57,13 @@ export function computeTotals(
   const base = subtotal - discountValue
   const serviceCharge = config.serviceChargeRate ? applyRate(base, config.serviceChargeRate) : 0
   const tax = config.taxRate ? applyRate(base + serviceCharge, config.taxRate) : 0
-  return { subtotal, discount: discountValue, serviceCharge, tax, total: base + serviceCharge + tax }
+  return {
+    subtotal,
+    discount: discountValue,
+    serviceCharge,
+    tax,
+    total: base + serviceCharge + tax,
+  }
 }
 
 /** True when `amount` is within `limitPercent` of `subtotal` (integer comparison, no floats). */
@@ -96,7 +113,8 @@ export function parseMoney(text: string): ParsedMoney {
   const digits = trimmed.replace(/[\s.,]/g, '')
   if (!/^\d+$/.test(digits)) return { value: null, error: 'Chỉ nhập chữ số.' }
   const value = Number(digits)
-  if (!Number.isSafeInteger(value) || value > MAX_AMOUNT) return { value: null, error: 'Số tiền vượt giới hạn cho phép.' }
+  if (!Number.isSafeInteger(value) || value > MAX_AMOUNT)
+    return { value: null, error: 'Số tiền vượt giới hạn cho phép.' }
   return { value, error: '' }
 }
 
@@ -106,5 +124,8 @@ export function cashSuggestions(due: number) {
   const values = new Set<number>([due])
   for (const step of [10_000, 50_000, 100_000, 500_000]) values.add(Math.ceil(due / step) * step)
   for (const note of [200_000, 500_000, 1_000_000, 2_000_000]) if (note > due) values.add(note)
-  return [...values].filter((v) => v >= due && v <= MAX_AMOUNT).sort((a, b) => a - b).slice(0, 6)
+  return [...values]
+    .filter((v) => v >= due && v <= MAX_AMOUNT)
+    .sort((a, b) => a - b)
+    .slice(0, 6)
 }

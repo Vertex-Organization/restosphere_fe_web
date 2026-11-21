@@ -68,3 +68,14 @@ $RECYCLE.BIN/
 *.njsproj
 *.sln
 *.sw?
+
+# Personal settings and output; do not ignore shared agent config
+/.local/
+/.tmp/
+/.vs/
+/.opencode/*.local.json
+/.opencode/*.local.jsonc
+/opencode.local.json
+/opencode.local.jsonc
+/AGENTS.local.md
+*~

@@ -3,7 +3,12 @@ import { CashierDataProvider } from '../../../hooks/billing/CashierDataProvider'
 import { useStaffGate } from '../../../hooks/staff/useStaffGate'
 import { useCashierUser } from '../../../hooks/billing/useCashierAuth'
 import { CashierLayout } from '../../../layouts/CashierLayout'
-import { cashierPaths, matchCashierRoute, useCashierUrl, type CashierRoute } from '../../../routes/cashierRouter'
+import {
+  cashierPaths,
+  matchCashierRoute,
+  useCashierUrl,
+  type CashierRoute,
+} from '../../../routes/cashierRouter'
 import CashierBillPage from './CashierBillPage'
 import CashierNotificationsPage from './CashierNotificationsPage'
 import CashierPaymentPage from './CashierPaymentPage'
@@ -18,7 +23,6 @@ import CashierTransactionsPage from './CashierTransactionsPage'
 import '../../../components/kitchen/kitchen.css'
 import '../kitchen/kitchenPages.css'
 import '../../../components/billing/billing.css'
-
 
 const TITLES: Record<CashierRoute['name'], string> = {
   pos: 'Quầy thu ngân',
@@ -37,23 +41,36 @@ const TITLES: Record<CashierRoute['name'], string> = {
 
 function page(route: CashierRoute, params: URLSearchParams): ReactNode {
   switch (route.name) {
-    case 'pos': return <CashierPosPage selectedId={params.get('bill') ?? ''} />
-    case 'bill': return <CashierBillPage key={route.id} id={route.id} />
-    case 'payment': return <CashierPaymentPage key={route.billId} billId={route.billId} />
-    case 'transactions': return <CashierTransactionsPage />
-    case 'transaction': return <CashierTransactionPage key={route.id} id={route.id} />
-    case 'receipt': return <CashierReceiptPage key={route.id} billId={route.id} />
-    case 'requests': return <CashierRequestsPage selectedId={params.get('id') ?? ''} />
-    case 'shift': return <CashierShiftPage />
-    case 'notifications': return <CashierNotificationsPage selectedId={params.get('id') ?? ''} />
-    case 'profile': return <CashierProfilePage />
-    default: return (
-      <div className="k-state">
-        <p className="k-state-title">Không tìm thấy trang</p>
-        <p>Đường dẫn này không thuộc khu vực Thu ngân.</p>
-        <a className="k-btn k-btn--primary" href={cashierPaths.pos}>Về quầy thu ngân</a>
-      </div>
-    )
+    case 'pos':
+      return <CashierPosPage selectedId={params.get('bill') ?? ''} />
+    case 'bill':
+      return <CashierBillPage key={route.id} id={route.id} />
+    case 'payment':
+      return <CashierPaymentPage key={route.billId} billId={route.billId} />
+    case 'transactions':
+      return <CashierTransactionsPage />
+    case 'transaction':
+      return <CashierTransactionPage key={route.id} id={route.id} />
+    case 'receipt':
+      return <CashierReceiptPage key={route.id} billId={route.id} />
+    case 'requests':
+      return <CashierRequestsPage selectedId={params.get('id') ?? ''} />
+    case 'shift':
+      return <CashierShiftPage />
+    case 'notifications':
+      return <CashierNotificationsPage selectedId={params.get('id') ?? ''} />
+    case 'profile':
+      return <CashierProfilePage />
+    default:
+      return (
+        <div className="k-state">
+          <p className="k-state-title">Không tìm thấy trang</p>
+          <p>Đường dẫn này không thuộc khu vực Thu ngân.</p>
+          <a className="k-btn k-btn--primary" href={cashierPaths.pos}>
+            Về quầy thu ngân
+          </a>
+        </div>
+      )
   }
 }
 
@@ -75,7 +92,11 @@ export default function CashierApp() {
   if (blocked || !user) return blocked
 
   // Two-pane screens manage their own scroll areas and fill the viewport.
-  const fill = route.name === 'pos' || route.name === 'transactions' || route.name === 'requests' || route.name === 'notifications'
+  const fill =
+    route.name === 'pos' ||
+    route.name === 'transactions' ||
+    route.name === 'requests' ||
+    route.name === 'notifications'
   return (
     <CashierDataProvider key={user.id} user={user}>
       <CashierLayout route={route} title={TITLES[route.name]} fill={fill}>
