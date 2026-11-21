@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { formatVnd } from '../../../api/billing/money'
 import {
   hasPermission,
+  openableScheduledShifts,
   openShiftOf,
   shiftSummary,
   type ShiftSummary,
@@ -11,7 +12,12 @@ import { minutesBetween } from '../../../api/kitchen/selectors'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { Alert, Badge, Dialog, MoneyInput } from '../../../components/billing/ui'
-import { formatDate, formatTime } from '../../../components/kitchen/format'
+import {
+  formatDate,
+  formatShiftRange,
+  formatTime,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 
@@ -77,7 +83,7 @@ export default function CashierShiftPage() {
               const expected = s.expectedCash ?? sum.expectedCash
               return (
                 <li key={s.id}>
-                  <b>{s.code}</b>
+                  <b>{shortCode(s.code)}</b>
                   <span className="k-mono">
                     {formatDate(s.openedAt).slice(0, 5)} · {formatTime(s.openedAt)}–
                     {s.closedAt ? formatTime(s.closedAt) : '—'}
@@ -103,9 +109,13 @@ export default function CashierShiftPage() {
 function OpenShift() {
   const { user, run, isPending } = useCashierSnapshot()
   const { data } = useCashierSnapshot()
+  const now = useNow()
   const [float, setFloat] = useState<number | null>(null)
-  const mine = data.scheduledShifts.filter((s) => s.cashierId === user.id)
-  const [scheduledShiftId, setScheduledShiftId] = useState(mine[0]?.id ?? '')
+  const openable = openableScheduledShifts(data, user.id, new Date(now))
+  const [picked, setPicked] = useState('')
+  const scheduledShiftId = openable.some((o) => o.shift.id === picked)
+    ? picked
+    : (openable[0]?.shift.id ?? '')
   const [error, setError] = useState('')
   const canManage = hasPermission(user, 'shifts.manage')
   const busy = isPending('shift')
@@ -140,23 +150,25 @@ function OpenShift() {
           void submit()
         }}
       >
-        {mine.length > 0 && (
-          <label className="k-field">
-            <span>Ca đã xếp</span>
+        <label className="k-field">
+          <span>Ca đã xếp</span>
+          {openable.length ? (
             <select
               className="k-input"
               value={scheduledShiftId}
-              onChange={(e) => setScheduledShiftId(e.target.value)}
+              onChange={(e) => setPicked(e.target.value)}
               disabled={!canManage}
             >
-              {mine.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} · {s.start}–{s.end}
+              {openable.map(({ shift, start, end }) => (
+                <option key={shift.id} value={shift.id}>
+                  {shift.name} · {formatShiftRange(start, end)}
                 </option>
               ))}
             </select>
-          </label>
-        )}
+          ) : (
+            <span className="k-hint">Không có ca được xếp lúc này</span>
+          )}
+        </label>
         <MoneyInput
           label="Tiền đầu ca"
           value={float}
@@ -280,7 +292,7 @@ function CurrentShift({ shift }: { shift: CashierShift }) {
       <div className="c-stats">
         <Stat
           icon="clock"
-          label={`Ca ${shift.code}${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name ? ` · ${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name}` : ''}`}
+          label={`Ca ${shortCode(shift.code)}${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name ? ` · ${data.scheduledShifts.find((x) => x.id === shift.scheduledShiftId)?.name}` : ''}`}
           value={<span className="c-stat-open">Đang mở</span>}
           sub={`Từ ${formatTime(shift.openedAt)} · ${shortDuration(minutesBetween(shift.openedAt, now))}`}
           tone="success"
@@ -392,7 +404,7 @@ function CloseShiftDialog({
 
   return (
     <Dialog
-      title={`Đóng ca ${shift.code}`}
+      title={`Đóng ca ${shortCode(shift.code)}`}
       subtitle={`Tiền mặt dự kiến trong két: ${formatVnd(s.expectedCash)}`}
       onClose={onClose}
       onSubmit={close}

@@ -15,7 +15,12 @@ import {
 import { minutesBetween, waitTone } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
-import { formatDate, formatDuration, formatTime } from '../../../components/kitchen/format'
+import {
+  formatDate,
+  formatDuration,
+  formatTime,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { Badge, KitchenStatusBadge } from '../../../components/kitchen/KitchenStatusBadge'
@@ -144,7 +149,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
             <div className="k-ticket-title-row">
               <h2>Bàn {order.tableCode}</h2>
               <span>
-                Phiếu #{order.code} · Lượt {order.sequence}
+                Phiếu #{shortCode(order.code)} · Lượt {order.sequence}
               </span>
               {order.priority && (
                 <Badge tone="danger">
@@ -367,7 +372,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                       to={kitchenPaths.ticket(round.id)}
                       aria-current={round.id === order.id ? 'page' : undefined}
                     >
-                      #{round.code} · Lượt {round.sequence}
+                      #{shortCode(round.code)} · Lượt {round.sequence}
                     </KitchenLink>
                     <span className="k-muted">
                       {formatTime(round.submittedAt)} · {roundItems.length} món

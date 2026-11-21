@@ -5,7 +5,7 @@ import { ROLE_LABEL } from '../../../api/kitchen/labels'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
-import { formatTime, initials } from '../../../components/kitchen/format'
+import { formatTime, initials, shortCode } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { leaveCashier } from '../../../hooks/billing/useCashierAuth'
@@ -86,7 +86,7 @@ export default function CashierProfilePage() {
             {ROLE_LABEL[user.role]} · {user.position}
           </span>
           <span className="k-muted c-small">
-            {user.id} · đăng nhập bằng {user.username}
+            {shortCode(user.id)} · đăng nhập bằng {user.username}
           </span>
         </div>
         <button type="button" className="k-btn" onClick={leaveCashier}>
@@ -103,7 +103,7 @@ export default function CashierProfilePage() {
                 <Icon name="clock" size={14} />
                 Ca hiện tại
               </span>
-              <b className="c-stat-value">{shift.code}</b>
+              <b className="c-stat-value">{shortCode(shift.code)}</b>
               <span className="c-stat-sub">
                 Từ {formatTime(shift.openedAt)} ·{' '}
                 {shortDuration(minutesBetween(shift.openedAt, now))}

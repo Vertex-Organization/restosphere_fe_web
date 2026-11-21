@@ -219,3 +219,34 @@ test('cashier opens a shift picked from the manager schedule and cannot use anot
     /không thuộc lịch/,
   )
 })
+
+test('openable scheduled shifts follow the [start - 30 min, end] window', async () => {
+  const { openableScheduledShifts, scheduledShiftWindow } = await import(
+    moduleUrl('src/api/billing/selectors.ts')
+  )
+  const at = new Date('2026-11-21T10:28:00+07:00')
+  const mk = (id, start, end, cashierId = cashier) => ({ id, name: id, start, end, cashierId })
+  const data = {
+    scheduledShifts: [
+      mk('in', '2026-11-21T10:00:00+07:00', '2026-11-21T21:28:00+07:00'),
+      mk('early', '2026-11-21T10:50:00+07:00', '2026-11-21T22:00:00+07:00'),
+      mk('too-early', '2026-11-21T11:00:00+07:00', '2026-11-21T22:00:00+07:00'),
+      mk('ended', '2026-11-21T06:00:00+07:00', '2026-11-21T10:27:00+07:00'),
+      mk('other', '2026-11-21T10:00:00+07:00', '2026-11-21T21:00:00+07:00', 'NV021'),
+      mk('bad', 'oops', 'oops'),
+    ],
+  }
+  const ids = openableScheduledShifts(data, cashier, at).map((o) => o.shift.id)
+  assert.deepEqual(ids, ['in', 'early'])
+  const overnight = scheduledShiftWindow(mk('n', '22:00', '06:00'), at)
+  assert.ok(overnight.end > overnight.start)
+})
+
+test('shortCode keeps the prefix and shows the last 8 characters without dashes', async () => {
+  const { shortCode } = await import(moduleUrl('src/components/kitchen/format.ts'))
+  const uuid = '3f2a9c1e-7b4d-4e8a-9d11-0a1b2c3d4e5f'
+  assert.equal(shortCode(uuid), '2C3D4E5F')
+  assert.equal(shortCode(`O-${uuid}`), 'O-2C3D4E5F')
+  assert.equal(shortCode('#O-3f2a9c1e-7b4d'), '#O-9C1E7B4D')
+  assert.equal(shortCode('PAY-001'), 'PAY-001')
+})

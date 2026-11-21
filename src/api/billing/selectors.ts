@@ -12,6 +12,7 @@ import type {
   OrderItem,
   Payment,
   RestaurantTable,
+  ScheduledShift,
   TableSession,
 } from './types'
 
@@ -30,6 +31,40 @@ export function staffName(data: CashierData, id?: string) {
 
 export function openShiftOf(data: CashierData, staffId: string): CashierShift | undefined {
   return data.shifts.find((s) => s.cashierId === staffId && s.status === 'OPEN')
+}
+
+const SHIFT_EARLY_OPEN_MS = 30 * 60_000
+const DAY_MS = 24 * 3_600_000
+
+function parseShiftBound(value: string, now: Date) {
+  const clock = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(value)
+  if (clock) {
+    const date = new Date(now)
+    date.setHours(Number(clock[1]), Number(clock[2]), 0, 0)
+    return date.getTime()
+  }
+  const parsed = Date.parse(value)
+  return Number.isNaN(parsed) ? null : parsed
+}
+
+export function scheduledShiftWindow(shift: ScheduledShift, now: Date) {
+  const start = parseShiftBound(shift.start, now)
+  const end = parseShiftBound(shift.end, now)
+  if (start === null || end === null) return null
+  return { start: new Date(start), end: new Date(end <= start ? end + DAY_MS : end) }
+}
+
+/** Shifts assigned to the cashier that can be opened right now: from 30 minutes before start until end. */
+export function openableScheduledShifts(data: CashierData, cashierId: string, now: Date) {
+  return data.scheduledShifts.flatMap((shift) => {
+    if (shift.cashierId !== cashierId) return []
+    const window = scheduledShiftWindow(shift, now)
+    if (!window) return []
+    const time = now.getTime()
+    const open =
+      time >= window.start.getTime() - SHIFT_EARLY_OPEN_MS && time <= window.end.getTime()
+    return open ? [{ shift, ...window }] : []
+  })
 }
 
 export const sessionItems = (data: CashierData, sessionId: string) => {

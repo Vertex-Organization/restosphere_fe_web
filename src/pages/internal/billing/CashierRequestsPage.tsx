@@ -7,7 +7,7 @@ import { minutesBetween } from '../../../api/kitchen/selectors'
 import { ago } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { RequestStatusBadge } from '../../../components/billing/ui'
-import { formatDate, formatTime } from '../../../components/kitchen/format'
+import { formatDate, formatTime, shortCode } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
@@ -151,7 +151,7 @@ function RequestDetail({ request: r }: { request: CashierRequest }) {
         </span>
         <div className="c-detail-heading">
           <span className="c-detail-kicker">
-            {REQUEST_TYPE_LABEL[r.type]} · {r.code}
+            {REQUEST_TYPE_LABEL[r.type]} · {shortCode(r.code)}
           </span>
           <h2 className="c-detail-title">{headline(data, r)}</h2>
         </div>

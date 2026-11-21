@@ -5,7 +5,7 @@ import { hasPermission, staffName } from '../../../api/billing/selectors'
 import { VoidDialog } from '../../../components/billing/BillDialogs'
 import { Icon } from '../../../components/billing/Icon'
 import { PaymentStatusBadge, RequestStatusBadge } from '../../../components/billing/ui'
-import { formatDate, formatTime } from '../../../components/kitchen/format'
+import { formatDate, formatTime, shortCode } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { cashierPaths } from '../../../routes/cashierRouter'
@@ -55,7 +55,7 @@ export default function CashierTransactionPage({ id }: { id: string }) {
           Lịch sử giao dịch
         </Link>
         <div className="k-page-heading">
-          <h2 className="k-h2">Giao dịch {payment.code}</h2>
+          <h2 className="k-h2">Giao dịch {shortCode(payment.code)}</h2>
           <PaymentStatusBadge status={payment.status} />
         </div>
         <div className="k-page-actions">
@@ -84,7 +84,7 @@ export default function CashierTransactionPage({ id }: { id: string }) {
           <dt>Payment ID</dt>
           <dd className="k-mono">{payment.id}</dd>
           <dt>Mã giao dịch</dt>
-          <dd>{payment.code}</dd>
+          <dd>{shortCode(payment.code)}</dd>
           <dt>Hóa đơn</dt>
           <dd>
             {bill ? (

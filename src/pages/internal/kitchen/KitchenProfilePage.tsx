@@ -1,6 +1,6 @@
 import { ROLE_LABEL } from '../../../api/kitchen/labels'
 import { hasPermission } from '../../../api/kitchen/rules'
-import { initials, localDayKey } from '../../../components/kitchen/format'
+import { initials, localDayKey, shortCode } from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
@@ -29,7 +29,7 @@ export default function KitchenProfilePage() {
             {ROLE_LABEL[me.role]} · {me.position}
           </p>
           <p className="k-muted">
-            Mã nhân viên {me.id} · {me.shift}
+            Mã nhân viên {shortCode(me.id)} · {me.shift}
           </p>
         </div>
       </section>
@@ -38,7 +38,7 @@ export default function KitchenProfilePage() {
         <h3 className="k-panel-title">Thông tin tài khoản</h3>
         <dl className="k-dl">
           <dt>Mã nhân viên</dt>
-          <dd>{me.id}</dd>
+          <dd>{shortCode(me.id)}</dd>
           <dt>Vai trò</dt>
           <dd>
             {ROLE_LABEL[me.role]} ({me.role})

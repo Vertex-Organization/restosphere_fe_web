@@ -3,7 +3,13 @@ import { ITEM_STATUS_LABEL } from '../../../api/kitchen/labels'
 import { shortName, staffName } from '../../../api/kitchen/rules'
 import type { KitchenOrder, KitchenOrderItem, SentItemStatus } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
-import { formatDate, formatTime, localDayKey, searchable } from '../../../components/kitchen/format'
+import {
+  formatDate,
+  formatTime,
+  localDayKey,
+  searchable,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { KitchenStatusBadge } from '../../../components/kitchen/KitchenStatusBadge'
@@ -136,7 +142,7 @@ export default function KitchenHistoryPage() {
               <tr key={item.id}>
                 <td>
                   <KitchenLink className="k-link k-mono" to={kitchenPaths.ticket(order.id)}>
-                    #{order.code}
+                    #{shortCode(order.code)}
                   </KitchenLink>
                 </td>
                 <td className="k-strong">{order.tableCode}</td>
