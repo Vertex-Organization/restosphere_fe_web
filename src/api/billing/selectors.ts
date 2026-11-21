@@ -305,14 +305,23 @@ export function posRows(data: CashierData, now: number): PosRow[] {
   )
 }
 
-export function matchesFilter(row: PosRow, filter: PosFilter) {
+/** Paid bills list starts at the open shift, or at midnight when no shift is open. */
+export function paidSinceOf(data: CashierData, staffId: string, now: number) {
+  const shift = openShiftOf(data, staffId)
+  if (shift) return Date.parse(shift.openedAt)
+  const midnight = new Date(now)
+  midnight.setHours(0, 0, 0, 0)
+  return midnight.getTime()
+}
+
+export function matchesFilter(row: PosRow, filter: PosFilter, paidSince = 0) {
   switch (filter) {
     case 'due':
       return row.status === 'PAYMENT_REQUESTED'
     case 'serving':
       return row.status === 'UNPAID'
     case 'paid':
-      return row.status === 'PAID'
+      return row.status === 'PAID' && !!row.paidAt && Date.parse(row.paidAt) >= paidSince
     default:
       return true
   }

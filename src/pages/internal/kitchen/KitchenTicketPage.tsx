@@ -362,10 +362,11 @@ export default function KitchenTicketPage({ id }: { id: string }) {
             <ul className="k-rounds">
               {rounds.map((round) => {
                 const roundItems = data.items.filter((i) => i.orderId === round.id)
-                const left = roundItems.filter(
-                  (i) => i.status === 'SUBMITTED' || i.status === 'PREPARING',
+                const fresh = roundItems.filter((i) => i.status === 'SUBMITTED').length
+                const cooking = roundItems.filter((i) => i.status === 'PREPARING').length
+                const done = roundItems.filter(
+                  (i) => i.status === 'READY' || i.status === 'SERVED',
                 ).length
-                const ready = roundItems.filter((i) => i.status === 'READY').length
                 return (
                   <li key={round.id}>
                     <KitchenLink
@@ -376,8 +377,9 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                     </KitchenLink>
                     <span className="k-muted">
                       {formatTime(round.submittedAt)} · {roundItems.length} món
-                      {left ? ` · ${left} đang làm` : ''}
-                      {ready ? ` · ${ready} đã xong` : ''}
+                      {fresh ? ` · ${fresh} mới` : ''}
+                      {cooking ? ` · ${cooking} đang làm` : ''}
+                      {done ? ` · ${done} xong` : ''}
                     </span>
                   </li>
                 )

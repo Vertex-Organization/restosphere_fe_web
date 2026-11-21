@@ -5,6 +5,7 @@ import {
   discountBlock,
   hasPermission,
   matchesFilter,
+  paidSinceOf,
   paymentBlock,
   posRows,
   type BillView,
@@ -87,7 +88,7 @@ function tileLook(row: PosRow, now: number): TileLook {
 }
 
 export default function CashierPosPage({ selectedId }: { selectedId: string }) {
-  const { data } = useCashierSnapshot()
+  const { data, user } = useCashierSnapshot()
   const now = useNow()
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState<PosFilter>('due')
@@ -97,11 +98,12 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
   const needle = searchable(useDeferredValue(query).trim())
 
   const rows = posRows(data, now)
+  const paidSince = paidSinceOf(data, user.id, now)
   const counts = Object.fromEntries(
-    TABS.map((t) => [t.id, rows.filter((r) => matchesFilter(r, t.id)).length]),
+    TABS.map((t) => [t.id, rows.filter((r) => matchesFilter(r, t.id, paidSince)).length]),
   ) as Record<PosFilter, number>
   const visible = rows.filter((r) =>
-    needle ? searchable(r.search).includes(needle) : matchesFilter(r, tab),
+    needle ? searchable(r.search).includes(needle) : matchesFilter(r, tab, paidSince),
   )
   const shownId =
     selectedId && data.bills.some((b) => b.id === selectedId)

@@ -286,3 +286,20 @@ test('weighed dishes count as one line and show their quantity with a unit', asy
   target.quantity = 0.375
   assert.equal(billView(d, bill.id).dishCount, view.items.filter((i) => isBillable(i)).length)
 })
+
+test('paid tab only lists bills paid since the open shift, or since midnight without a shift', async () => {
+  const { matchesFilter, paidSinceOf } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  const at = new Date('2026-11-21T10:28:00+07:00').getTime()
+  const open = {
+    shifts: [{ cashierId: cashier, status: 'OPEN', openedAt: '2026-11-21T08:00:00+07:00' }],
+  }
+  const since = paidSinceOf(open, cashier, at)
+  assert.equal(since, Date.parse('2026-11-21T08:00:00+07:00'))
+  const row = (paidAt) => ({ status: 'PAID', paidAt })
+  assert.equal(matchesFilter(row('2026-11-21T09:00:00+07:00'), 'paid', since), true)
+  assert.equal(matchesFilter(row('2026-11-21T07:59:00+07:00'), 'paid', since), false)
+  const none = paidSinceOf({ shifts: [] }, cashier, at)
+  const midnight = new Date(at)
+  midnight.setHours(0, 0, 0, 0)
+  assert.equal(none, midnight.getTime())
+})
