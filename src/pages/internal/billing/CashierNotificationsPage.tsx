@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { NOTIFICATION_KIND_LABEL } from '../../../api/billing/labels'
 import { formatVnd } from '../../../api/billing/money'
 import { billView } from '../../../api/billing/selectors'
 import type { CashierNotification, CashierNotificationKind } from '../../../api/billing/types'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { ago } from '../../../components/billing/format'
-import { Icon, type IconName } from '../../../components/billing/Icon'
+import { Icon } from '../../../components/billing/Icon'
+import { cashierNotificationPresentation } from '../../../components/billing/notificationPresentation'
 import { BillStatusBadge } from '../../../components/billing/ui'
 import { formatTime, localDayKey } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
@@ -25,14 +25,6 @@ const FILTERS: { id: Filter; label: string; kinds?: CashierNotificationKind[] }[
   { id: 'error', label: 'Lỗi', kinds: ['TRANSFER_FAILED'] },
   { id: 'request', label: 'Yêu cầu', kinds: ['REQUEST_DECIDED'] },
 ]
-
-const LOOK: Record<CashierNotificationKind, { icon: IconName; tone: string }> = {
-  PAYMENT_REQUEST: { icon: 'receipt', tone: 'primary' },
-  PAYMENT_REQUEST_WITHDRAWN: { icon: 'xCircle', tone: 'warning' },
-  TRANSFER_RECEIVED: { icon: 'bank', tone: 'success' },
-  TRANSFER_FAILED: { icon: 'xCircle', tone: 'danger' },
-  REQUEST_DECIDED: { icon: 'clipboard', tone: 'warning' },
-}
 
 /** The one thing a cashier usually does next with this notification. */
 function quickAction(n: CashierNotification): { label: string; to: string } | null {
@@ -116,7 +108,7 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
                 <h4 className="c-notes-group">{g.label}</h4>
                 <ul>
                   {g.items.map((n) => {
-                    const look = LOOK[n.kind]
+                    const look = cashierNotificationPresentation(n.kind)
                     const action = quickAction(n)
                     const unreadNow = isUnread(n)
                     return (
@@ -185,7 +177,7 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
 
 function NoteDetail({ note: n, now }: { note: CashierNotification; now: number }) {
   const { data } = useCashierSnapshot()
-  const look = LOOK[n.kind]
+  const look = cashierNotificationPresentation(n.kind)
   const view = n.billId ? billView(data, n.billId) : null
   const payment = n.paymentId ? data.payments.find((p) => p.id === n.paymentId) : undefined
   const action = quickAction(n)
@@ -202,8 +194,7 @@ function NoteDetail({ note: n, now }: { note: CashierNotification; now: number }
         </span>
         <div className="c-detail-heading">
           <span className="c-detail-kicker">
-            {NOTIFICATION_KIND_LABEL[n.kind]} · {formatTime(n.at)} ({ago(minutesBetween(n.at, now))}
-            )
+            {look.label} · {formatTime(n.at)} ({ago(minutesBetween(n.at, now))})
           </span>
           <h2 className="c-detail-title">{n.title}</h2>
         </div>
