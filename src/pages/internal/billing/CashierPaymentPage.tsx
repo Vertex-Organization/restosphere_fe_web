@@ -455,6 +455,9 @@ function PendingTransfer({
   const [error, setError] = useState('')
   const busy = isPending(`pay:${payment.billId}`)
   const bank = data.config.bank
+  const bankLine = bank
+    ? [bank.bankName, bank.accountName].filter((part) => part?.trim()).join(' · ')
+    : ''
   const canConfirm = hasPermission(user, 'payments.confirm_transfer')
 
   const confirm = async () => {
@@ -502,12 +505,10 @@ function PendingTransfer({
             </dd>
           </div>
         )}
-        {bank && (
+        {bankLine && (
           <div>
             <dt>Ngân hàng</dt>
-            <dd>
-              {bank.bankName} · {bank.accountName}
-            </dd>
+            <dd>{bankLine}</dd>
           </div>
         )}
       </dl>

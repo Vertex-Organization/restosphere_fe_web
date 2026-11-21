@@ -3,7 +3,7 @@ import { METHOD_LABEL } from '../../../api/billing/labels'
 import { formatAmount, formatVnd, isBillable } from '../../../api/billing/money'
 import { billView, hasPermission, staffName } from '../../../api/billing/selectors'
 import { Icon } from '../../../components/billing/Icon'
-import { formatDate, formatTime } from '../../../components/kitchen/format'
+import { formatDate, formatTime, quantityLabel } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
@@ -48,13 +48,22 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
   }
 
   // Same dish at the same price from several rounds prints as one line.
-  const lines = new Map<string, { name: string; quantity: number; unitPrice: number }>()
+  const lines = new Map<
+    string,
+    { name: string; quantity: number; unit?: string; unitPrice: number }
+  >()
   for (const item of view.items) {
     if (!isBillable(item)) continue
     const key = `${item.menuItemId}:${item.unitPrice}`
     const line = lines.get(key)
     if (line) line.quantity += item.quantity
-    else lines.set(key, { name: item.name, quantity: item.quantity, unitPrice: item.unitPrice })
+    else
+      lines.set(key, {
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        unitPrice: item.unitPrice,
+      })
   }
   const succeeded = view.payments.filter((p) => p.status === 'SUCCEEDED')
   const cashierId = succeeded.at(-1)?.createdBy ?? user.id
@@ -130,7 +139,7 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
             <li key={`${line.name}:${line.unitPrice}`}>
               <span className="c-r-item">{line.name}</span>
               <span className="c-r-calc">
-                {line.quantity} × {formatAmount(line.unitPrice)}
+                {quantityLabel(line.quantity, line.unit)} × {formatAmount(line.unitPrice)}
               </span>
               <span className="c-r-amt">{formatAmount(line.quantity * line.unitPrice)}</span>
             </li>

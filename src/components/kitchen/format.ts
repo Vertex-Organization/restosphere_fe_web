@@ -74,3 +74,10 @@ export function shortCode(value: string) {
 export function formatShiftRange(start: Date, end: Date) {
   return `${formatDate(start.getTime()).slice(0, 5)} ${formatTime(start.getTime())}–${formatTime(end.getTime())}`
 }
+
+const quantityFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3 })
+
+export function quantityLabel(quantity: number, unit?: string) {
+  if (Number.isInteger(quantity)) return String(quantity)
+  return `${quantityFormat.format(quantity)} ${unit || 'kg'}`
+}

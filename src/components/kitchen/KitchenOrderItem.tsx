@@ -6,6 +6,7 @@ import { DishPhoto } from './DishPhoto'
 import { formatDuration, formatTime } from './format'
 import { Icon } from './Icon'
 import { KitchenStatusBadge } from './KitchenStatusBadge'
+import { ReasonHint } from './ReasonHint'
 
 export type KitchenItemAction = 'start' | 'complete'
 
@@ -90,6 +91,7 @@ export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () =>
   const { run, isPending } = useKitchenSnapshot()
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
+  const hintId = useId()
   const [reason, setReason] = useState('')
   const [error, setError] = useState('')
   const pending = isPending(item.id)
@@ -133,7 +135,9 @@ export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () =>
             maxLength={200}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            aria-describedby={hintId}
           />
+          <ReasonHint id={hintId} value={reason} />
         </label>
         {error && (
           <p role="alert" className="k-form-error">

@@ -11,6 +11,7 @@ import { hasPermission, type BillView } from '../../api/billing/selectors'
 import type { BillingConfig, CashierStaff, DiscountMode, Payment } from '../../api/billing/types'
 import { useCashierData } from '../../hooks/billing/cashierDataContext'
 import { Icon } from './Icon'
+import { ReasonHint } from '../kitchen/ReasonHint'
 import { Dialog, MoneyInput } from './ui'
 
 const QUICK_PERCENT = [5, 10, 15, 20]
@@ -182,7 +183,9 @@ export function DiscountDialog({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Bắt buộc, ghi rõ để Quản lý đối soát"
+          aria-describedby="discount-reason-hint"
         />
+        <ReasonHint id="discount-reason-hint" value={reason} />
         <div className="k-chips">
           {QUICK_REASONS.map((r) => (
             <button key={r} type="button" className="k-chip c-chip-sm" onClick={() => setReason(r)}>
@@ -213,6 +216,12 @@ export function DiscountDialog({
             <dt>Giảm</dt>
             <dd>−{formatVnd(preview.discount)}</dd>
           </div>
+          {preview.serviceCharge + preview.tax > 0 && (
+            <div>
+              <dt>Phí dịch vụ + thuế</dt>
+              <dd>{formatVnd(preview.serviceCharge + preview.tax)}</dd>
+            </div>
+          )}
           <div className="c-totals-sum">
             <dt>Tổng sau giảm</dt>
             <dd>{formatVnd(preview.total)}</dd>
@@ -307,8 +316,10 @@ export function AdjustmentDialog({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Ví dụ: khách không gọi món này, phục vụ đã xác nhận"
+          aria-describedby="adjust-reason-hint"
           autoFocus
         />
+        <ReasonHint id="adjust-reason-hint" value={reason} />
       </div>
       <p className="k-hint">
         Thu ngân không tự sửa món trên hóa đơn. Quản lý duyệt thì món được hủy và tổng tiền tính
@@ -369,8 +380,10 @@ export function VoidDialog({ payment, onClose }: { payment: Payment; onClose: ()
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Ví dụ: ghi nhầm phương thức, khách đã chuyển khoản"
+          aria-describedby="void-reason-hint"
           autoFocus
         />
+        <ReasonHint id="void-reason-hint" value={reason} />
       </div>
       <p className="k-hint">
         Giao dịch giữ nguyên đến khi Quản lý duyệt. Khi được duyệt, hóa đơn trở lại trạng thái chờ

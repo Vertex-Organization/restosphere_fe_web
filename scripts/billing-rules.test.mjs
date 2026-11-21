@@ -272,3 +272,17 @@ test('rejection details and notification titles are shown in Vietnamese', async 
   assert.equal(notificationTitle('NEW_ORDER', 'New order'), 'Đơn mới')
   assert.equal(notificationTitle('UNKNOWN_KIND', 'Original'), 'Original')
 })
+
+test('weighed dishes count as one line and show their quantity with a unit', async () => {
+  const { quantityLabel } = await import(moduleUrl('src/components/kitchen/format.ts'))
+  const { billView } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  assert.equal(quantityLabel(3), '3')
+  assert.equal(quantityLabel(0.375), '0,375 kg')
+  assert.equal(quantityLabel(1.5, 'kg'), '1,5 kg')
+  const d = seed()
+  const bill = d.bills.find((b) => billView(d, b.id).items.some((i) => isBillable(i)))
+  const view = billView(d, bill.id)
+  const target = view.items.find((i) => isBillable(i))
+  target.quantity = 0.375
+  assert.equal(billView(d, bill.id).dishCount, view.items.filter((i) => isBillable(i)).length)
+})

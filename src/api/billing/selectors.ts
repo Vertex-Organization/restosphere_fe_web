@@ -148,7 +148,7 @@ export function billView(data: CashierData, billId: string): BillView | null {
       (r) => r.status === 'PENDING' && BLOCKING_REQUESTS.includes(r.type),
     ),
     unserved: items.filter((i) => isBillable(i) && i.status !== 'SERVED'),
-    dishCount: items.reduce((sum, i) => (isBillable(i) ? sum + i.quantity : sum), 0),
+    dishCount: items.filter(isBillable).length,
   }
 }
 

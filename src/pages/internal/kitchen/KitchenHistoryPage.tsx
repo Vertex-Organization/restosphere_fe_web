@@ -7,6 +7,7 @@ import {
   formatDate,
   formatTime,
   localDayKey,
+  quantityLabel,
   searchable,
   shortCode,
 } from '../../../components/kitchen/format'
@@ -155,7 +156,7 @@ export default function KitchenHistoryPage() {
                     </span>
                   </div>
                 </td>
-                <td className="k-num k-strong">{item.quantity}</td>
+                <td className="k-num k-strong">{quantityLabel(item.quantity, item.unit)}</td>
                 <td className="k-mono">{time(item.submittedAt)}</td>
                 <td className="k-mono">{time(item.startedAt)}</td>
                 <td className="k-mono">{time(item.readyAt)}</td>

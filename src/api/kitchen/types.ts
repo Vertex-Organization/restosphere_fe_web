@@ -49,6 +49,7 @@ export interface KitchenOrderItem {
   menuItemId: string
   name: string
   quantity: number
+  unit?: string
   note: string
   status: SentItemStatus
   /** Incremented on every change; commands must send the version they saw. */
