@@ -250,3 +250,25 @@ test('shortCode keeps the prefix and shows the last 8 characters without dashes'
   assert.equal(shortCode('#O-3f2a9c1e-7b4d'), '#O-9C1E7B4D')
   assert.equal(shortCode('PAY-001'), 'PAY-001')
 })
+
+test('rejection details and notification titles are shown in Vietnamese', async () => {
+  const { describeRejection, notificationTitle } = await import(
+    moduleUrl('src/api/kitchen/labels.ts')
+  )
+  assert.equal(
+    describeRejection('Outside scheduled shift window', 'x'),
+    'Ca đã chọn chưa tới giờ hoặc đã hết giờ',
+  )
+  assert.equal(describeRejection('A shift is already open', 'x'), 'Bạn đang có ca mở')
+  assert.equal(
+    describeRejection('Resolve pending transfers first', 'x'),
+    'Còn chuyển khoản chờ xác nhận, xử lý trước khi đóng ca',
+  )
+  assert.equal(describeRejection('Item changed; refresh', 'x'), 'Món vừa thay đổi, tải lại trang')
+  assert.equal(describeRejection('Something else', 'x'), 'Something else')
+  assert.equal(describeRejection(undefined, 'fallback'), 'fallback')
+  assert.equal(notificationTitle('PAYMENT_REQUEST', 'Payment requested'), 'Yêu cầu thanh toán')
+  assert.equal(notificationTitle('READY', 'Dish ready'), 'Món đã xong')
+  assert.equal(notificationTitle('NEW_ORDER', 'New order'), 'Đơn mới')
+  assert.equal(notificationTitle('UNKNOWN_KIND', 'Original'), 'Original')
+})

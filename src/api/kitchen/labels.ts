@@ -70,3 +70,38 @@ export const NOTIFICATION_KIND_LABEL: Record<NotificationKind, string> = new Pro
       typeof kind === 'string' && kind in labels ? labels[kind as NotificationKind] : 'Thông báo',
   },
 )
+
+const NOTIFICATION_TITLES: Record<string, string> = {
+  NEW_ORDER: 'Đơn mới',
+  ADD_ON: 'Gọi thêm món',
+  CANCELLED: 'Món bị hủy',
+  PRIORITY: 'Yêu cầu ưu tiên',
+  INCIDENT_REPLY: 'Sự cố đã được phản hồi',
+  MENU_REQUEST: 'Kết quả yêu cầu thực đơn',
+  READY: 'Món đã xong',
+  ITEM_REJECTED: 'Bếp từ chối món',
+  PAYMENT_REQUEST: 'Yêu cầu thanh toán',
+  PAYMENT_REQUEST_WITHDRAWN: 'Phục vụ rút yêu cầu thanh toán',
+  TRANSFER_RECEIVED: 'Đã nhận chuyển khoản',
+  TRANSFER_FAILED: 'Chuyển khoản lỗi',
+  REQUEST_DECIDED: 'Kết quả yêu cầu',
+}
+
+/** Vietnamese title for a backend notification kind; unknown kinds keep the original title. */
+export function notificationTitle(kind: string, title: string) {
+  return NOTIFICATION_TITLES[kind] ?? title
+}
+
+const API_DETAIL_MESSAGES: Record<string, string> = {
+  'outside scheduled shift window': 'Ca đã chọn chưa tới giờ hoặc đã hết giờ',
+  'a shift is already open': 'Bạn đang có ca mở',
+  'resolve pending transfers first': 'Còn chuyển khoản chờ xác nhận, xử lý trước khi đóng ca',
+  'item changed; refresh': 'Món vừa thay đổi, tải lại trang',
+}
+
+/** Readable reason for a 400/409 rejection: translated when known, otherwise the server detail. */
+export function describeRejection(detail: string | undefined, fallback: string) {
+  if (!detail) return fallback
+  const key = detail.trim().replace(/\.$/, '').toLowerCase()
+  return API_DETAIL_MESSAGES[key] ?? detail
+}

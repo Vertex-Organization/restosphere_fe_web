@@ -1,5 +1,6 @@
 import { authenticatedRequest } from '../auth'
 import { ApiError } from '../client'
+import { describeRejection } from '../kitchen/labels'
 import { CashierError } from './types'
 import type {
   Bill,
@@ -48,7 +49,13 @@ async function call<T>(request: Promise<T>): Promise<T> {
     if (error instanceof ApiError) {
       if (error.status === 0) throw new CashierError('NETWORK', error.message)
       const code = STATUS_CODES[error.status]
-      if (code) throw new CashierError(code, error.message)
+      if (code) {
+        const rejected = error.status === 400 || error.status === 409
+        throw new CashierError(
+          code,
+          rejected ? describeRejection(error.detail, error.message) : error.message,
+        )
+      }
     }
     throw error
   }

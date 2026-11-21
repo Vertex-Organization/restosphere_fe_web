@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NOTIFICATION_KIND_LABEL } from '../../../api/kitchen/labels'
+import { NOTIFICATION_KIND_LABEL, notificationTitle } from '../../../api/kitchen/labels'
 import type { KitchenNotification, NotificationKind } from '../../../api/kitchen/types'
 import { formatDate, formatTime } from '../../../components/kitchen/format'
 import { Icon, type IconName } from '../../../components/kitchen/Icon'
@@ -78,7 +78,7 @@ export default function KitchenNotificationsPage() {
                     <span className={`k-notif-kind k-notif-kind--${kind.tone}`}>
                       {NOTIFICATION_KIND_LABEL[n.kind]}
                     </span>
-                    <span className="k-notif-title">{n.title}</span>
+                    <span className="k-notif-title">{notificationTitle(n.kind, n.title)}</span>
                     <span className="k-notif-body">{n.body}</span>
                   </span>
                   <span className="k-notif-side">
