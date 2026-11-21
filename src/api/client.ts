@@ -5,12 +5,15 @@ export class ApiError extends Error {
   readonly status: number
   /** Server-provided reason (ProblemDetail.detail), when available. */
   readonly detail?: string
+  /** Request field the server blamed for a validation error, when it named one. */
+  readonly field?: string
 
-  constructor(status: number, message: string, detail?: string) {
+  constructor(status: number, message: string, detail?: string, field?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.detail = detail
+    this.field = field
   }
 }
 
@@ -52,11 +55,15 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
 
   if (!response) throw new ApiError(0, 'Không thể kết nối máy chủ. Vui lòng thử lại.')
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as { detail?: unknown } | null
+    const body = (await response.json().catch(() => null)) as {
+      detail?: unknown
+      field?: unknown
+    } | null
     throw new ApiError(
       response.status,
       errorMessage(response.status),
       typeof body?.detail === 'string' ? body.detail : undefined,
+      typeof body?.field === 'string' ? body.field : undefined,
     )
   }
   if (response.status === 204) return undefined as T

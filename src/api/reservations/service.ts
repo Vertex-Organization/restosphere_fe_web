@@ -19,7 +19,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     return await apiRequest<T>(path, options)
   } catch (error) {
     if (error instanceof ApiError && error.detail && error.status < 500)
-      throw new ApiError(error.status, error.detail, error.detail)
+      throw new ApiError(error.status, error.detail, error.detail, error.field)
     throw error
   }
 }

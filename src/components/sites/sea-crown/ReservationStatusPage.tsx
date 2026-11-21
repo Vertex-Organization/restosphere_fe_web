@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { ApiError } from '../../../api/client'
 import { reservationService } from '../../../api/reservations/service'
 import type { PreorderLine, Reservation } from '../../../api/reservations/types'
 import type { Language } from './siteData'
@@ -9,19 +10,31 @@ export default function ReservationStatusPage({ language }: { language: Language
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [errorField, setErrorField] = useState('')
   const [result, setResult] = useState<Reservation | null | undefined>(undefined)
+
+  const fail = (e: unknown, fallback: string) => {
+    setError(e instanceof Error ? e.message : fallback)
+    setErrorField(e instanceof ApiError ? (e.field ?? '') : '')
+  }
+  const fieldError = (field: string) =>
+    errorField === field ? (
+      <p role="alert" style={{ color: '#991b1b', margin: '6px 0 0', fontWeight: 600 }}>
+        {error}
+      </p>
+    ) : null
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!code.trim() || !phone.trim()) return
     setLoading(true)
     setResult(undefined)
     setError('')
+    setErrorField('')
     try {
       const res = await reservationService.lookup(code, phone)
       setResult(res)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Không thể tra cứu đặt bàn.')
+      fail(e, 'Không thể tra cứu đặt bàn.')
     } finally {
       setLoading(false)
     }
@@ -29,13 +42,14 @@ export default function ReservationStatusPage({ language }: { language: Language
 
   const [reason, setReason] = useState('')
   const handleCancel = async () => {
-    if (!result || !reason.trim()) return
+    if (!result) return
     setLoading(true)
     setError('')
+    setErrorField('')
     try {
       setResult(await reservationService.cancel(result.code, result.phone, reason))
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Không thể hủy đặt bàn.')
+      fail(e, 'Không thể hủy đặt bàn.')
     } finally {
       setLoading(false)
     }
@@ -63,6 +77,7 @@ export default function ReservationStatusPage({ language }: { language: Language
         </p>
 
         <form
+          noValidate
           onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: '24px 0' }}
         >
@@ -76,7 +91,6 @@ export default function ReservationStatusPage({ language }: { language: Language
             <input
               id="rs-code"
               type="text"
-              required
               placeholder="RS..."
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -87,6 +101,7 @@ export default function ReservationStatusPage({ language }: { language: Language
                 border: '1px solid #ccc',
               }}
             />
+            {fieldError('code')}
           </div>
           <div>
             <label
@@ -98,7 +113,6 @@ export default function ReservationStatusPage({ language }: { language: Language
             <input
               id="rs-phone"
               type="tel"
-              required
               placeholder="09..."
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -109,6 +123,7 @@ export default function ReservationStatusPage({ language }: { language: Language
                 border: '1px solid #ccc',
               }}
             />
+            {fieldError('phone')}
           </div>
           <button
             type="submit"
@@ -120,7 +135,7 @@ export default function ReservationStatusPage({ language }: { language: Language
           </button>
         </form>
 
-        {error && <p role="alert">{error}</p>}
+        {error && !['code', 'phone', 'reason'].includes(errorField) && <p role="alert">{error}</p>}
         {result === null && (
           <div
             role="status"
@@ -203,7 +218,6 @@ export default function ReservationStatusPage({ language }: { language: Language
                 </label>
                 <textarea
                   id="rs-reason"
-                  maxLength={1000}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   style={{
@@ -213,10 +227,11 @@ export default function ReservationStatusPage({ language }: { language: Language
                     border: '1px solid #ccc',
                   }}
                 />
+                {fieldError('reason')}
                 <button
                   type="button"
                   className="sb-catering-submit"
-                  disabled={loading || !reason.trim()}
+                  disabled={loading}
                   onClick={handleCancel}
                 >
                   {en ? 'Cancel Reservation' : 'Hủy đặt bàn'}
