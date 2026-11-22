@@ -6,7 +6,7 @@ import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import FooterPlayground from './FooterPlayground'
 import { IntroCrab } from './IntroCrab'
-import { asset, external, type Language } from './siteData'
+import { asset, type Language } from './siteData'
 import './Shared.css'
 
 export function SmoothScrolling() {
@@ -61,17 +61,11 @@ export function SocialIcon({ kind }: { kind: 'instagram' | 'tiktok' }) {
 
 function SocialLinks() {
   return (
-    <div className="sb-social-links">
+    <div className="sb-social-links" aria-hidden="true">
       {(['instagram', 'tiktok'] as const).map((kind) => (
-        <a
-          key={kind}
-          href={external[kind]}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={kind === 'instagram' ? 'Instagram' : 'TikTok'}
-        >
+        <span className="sb-social-icon" key={kind}>
           <SocialIcon kind={kind} />
-        </a>
+        </span>
       ))}
     </div>
   )

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Draggable } from 'gsap/Draggable'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
 import { PalazzoTable } from './PalazzoTable'
 import { MemberSignup } from './MemberSignup'
-import { asset, external, type Language } from './siteData'
+import { asset, cateringHref, type Language } from './siteData'
 import content from './homeContent.json'
 import './HomePage.css'
 import './PalazzoTable.css'
@@ -91,82 +91,6 @@ function ScrollPath({ location = false }: { location?: boolean }) {
         }
       />
     </svg>
-  )
-}
-
-function Sticker() {
-  const element = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null)
-  const [grabbed, setGrabbed] = useState(false)
-  const [tilt, setTilt] = useState(0)
-  const [zIndex, setZIndex] = useState(11)
-  const pointer = useRef<{ x: number; y: number; lastX: number } | null>(null)
-  const releaseTimer = useRef<number | undefined>(undefined)
-
-  useEffect(() => () => clearTimeout(releaseTimer.current), [])
-  const release = () => {
-    pointer.current = null
-    setGrabbed(false)
-    setTilt(0)
-    clearTimeout(releaseTimer.current)
-    releaseTimer.current = window.setTimeout(() => setZIndex(11), 400)
-  }
-
-  return (
-    <div
-      ref={element}
-      className="sb-about-sticker"
-      style={{
-        ...(position
-          ? {
-              left: 0,
-              top: 0,
-              right: 'auto',
-              bottom: 'auto',
-              transform: `translate(${position.x}px, ${position.y}px)`,
-            }
-          : {}),
-        zIndex,
-      }}
-      onPointerDown={(event) => {
-        if (event.button !== 0) return
-        event.preventDefault()
-        clearTimeout(releaseTimer.current)
-        const current = position || {
-          x: event.currentTarget.offsetLeft,
-          y: event.currentTarget.offsetTop,
-        }
-        setPosition(current)
-        pointer.current = {
-          x: event.clientX - current.x,
-          y: event.clientY - current.y,
-          lastX: event.clientX,
-        }
-        setGrabbed(true)
-        setZIndex(999)
-        event.currentTarget.setPointerCapture(event.pointerId)
-      }}
-      onPointerMove={(event) => {
-        if (!pointer.current) return
-        const delta = event.clientX - pointer.current.lastX
-        pointer.current.lastX = event.clientX
-        setPosition({ x: event.clientX - pointer.current.x, y: event.clientY - pointer.current.y })
-        setTilt(Math.max(-20, Math.min(20, delta * 1.2)))
-      }}
-      onPointerUp={release}
-      onPointerCancel={release}
-      onLostPointerCapture={release}
-      aria-hidden="true"
-    >
-      <div
-        className={`sb-sticker-art${grabbed ? ' is-grabbed' : ''}`}
-        style={{ transform: `rotate(${5 + tilt}deg) scale(${grabbed ? 1.08 : 1})` }}
-      >
-        <div>
-          <img src={asset('images/logo.png')} draggable="false" alt="" />
-        </div>
-      </div>
-    </div>
   )
 }
 
@@ -405,7 +329,7 @@ function TikTokSection({ language }: { language: Language }) {
           })
         }
         const cards = Array.from(root.querySelectorAll<HTMLElement>('.sb-video-card'))
-        const targets = cards.map((card) => card.querySelector('a')!)
+        const targets = cards.map((card) => card.querySelector<HTMLElement>('.sb-video-preview')!)
         const handlers = cards.map((card, index) => {
           const enter = (event: MouseEvent) => {
             const target = targets[index]
@@ -449,16 +373,11 @@ function TikTokSection({ language }: { language: Language }) {
         <div className="sb-video-grid">
           {videos.map((name, i) => (
             <div className="sb-video-card" key={i}>
-              <a
-                href={external.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${language === 'en' ? 'Watch on TikTok' : 'Xem trên TikTok'} ${i + 1}`}
-              >
+              <div className="sb-video-preview">
                 <video src={asset(name)} autoPlay muted loop playsInline preload="metadata" />
                 <div className="sb-video-gradient" />
                 <span>TT{i + 1}</span>
-              </a>
+              </div>
             </div>
           ))}
         </div>
@@ -605,19 +524,7 @@ function FAQ({ language }: { language: Language }) {
                     </h3>
                     <div className="sb-faq-answer" id={`faq-${number}`} inert={!open}>
                       <div>
-                        <p>
-                          {item.answer
-                            .split(/(https:\/\/catering\.thesandwichbar\.nl)/)
-                            .map((text, j) =>
-                              text === external.order ? (
-                                <a href={text} key={j}>
-                                  {text}
-                                </a>
-                              ) : (
-                                text
-                              ),
-                            )}
-                        </p>
+                        <p>{item.answer}</p>
                       </div>
                     </div>
                   </article>
@@ -637,16 +544,46 @@ export default function HomePage({ language }: { language: Language }) {
   return (
     <main id="main-content" className="sb-home">
       <PalazzoTable language={language} />
-      <section className="sb-about">
-        <div>
-          <img src={asset('images/boiled-lobster.jpg')} alt="The Sea's Crown" loading="lazy" />
-          <div className="sb-about-copy">
-            {data.about.map((text) => (
-              <p key={text}>{text}</p>
-            ))}
+      <section id="about" className="sb-about" aria-labelledby="sb-about-title">
+        <div className="sb-about-inner">
+          <h2
+            id="sb-about-title"
+            aria-label={
+              en
+                ? 'One table, eight courses and seafood in season.'
+                : 'Một bàn tiệc, tám món và hải sản theo mùa.'
+            }
+          >
+            <span className="sb-about-title-line" aria-hidden="true">
+              <span>{en ? 'One table,' : 'Một bàn tiệc,'}</span>
+              <span className="sb-about-inline-image is-round">
+                <img src={asset('images/signature/garlic-prawns.webp')} alt="" loading="lazy" />
+              </span>
+              <em>{en ? 'eight courses' : 'tám món'}</em>
+            </span>
+            <span className="sb-about-title-line" aria-hidden="true">
+              <span>{en ? 'and seafood' : 'và hải sản'}</span>
+              <span className="sb-about-inline-image is-pill">
+                <img src={asset('images/lobster-dish.jpg')} alt="" loading="lazy" />
+              </span>
+              <em>{en ? 'in season.' : 'theo mùa.'}</em>
+            </span>
+          </h2>
+          <div className="sb-about-footer">
+            <div className="sb-about-brand">
+              <span className="sb-about-mark" aria-hidden="true">
+                <img src={asset('images/logo.png')} alt="" />
+              </span>
+              <span>
+                <strong>The Sea's Crown</strong>
+                <small>{en ? 'Crab, prawns, squid and lobster' : 'Cua, tôm, mực và tôm hùm'}</small>
+              </span>
+            </div>
+            <a className="sb-about-action" href={`/${language}/menu`}>
+              {en ? 'View the menu' : 'Xem thực đơn'}
+            </a>
           </div>
         </div>
-        <Sticker />
       </section>
       <section className="sb-catering-intro">
         <div className="sb-catering-inner">
@@ -666,8 +603,8 @@ export default function HomePage({ language }: { language: Language }) {
               ))}
             </div>
             <div className="sb-catering-actions">
-              <a href={external.order}>{data.cateringLinks[0]}</a>
-              <a href={`/${language}/catering`}>{data.cateringLinks[1]}</a>
+              <a href={cateringHref(language, 'booking')}>{data.cateringLinks[0]}</a>
+              <a href={cateringHref(language, 'preorder')}>{data.cateringLinks[1]}</a>
             </div>
           </div>
         </div>

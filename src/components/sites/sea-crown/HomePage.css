@@ -3,93 +3,143 @@
 }
 .sb-about {
   position: relative;
-  background: var(--color-cream);
-  padding: 0 24px 80px;
+  display: flex;
+  min-height: 100svh;
+  padding: clamp(96px, 11vh, 132px) 48px 72px;
+  overflow: hidden;
+  background: var(--color-dark);
+  color: var(--color-cream);
 }
-.sb-about > div:first-child {
-  max-width: 768px;
+.sb-about-inner {
+  width: min(100%, 1600px);
   margin: auto;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(72px, 12vh, 128px);
+}
+.sb-about h2 {
+  margin: 0;
+  color: var(--color-cream);
+  font-family: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  font-size: clamp(66px, 7.15vw, 124px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+.sb-about-title-line {
+  display: flex;
   align-items: center;
-  gap: 40px;
-  text-align: center;
+  gap: clamp(16px, 2vw, 34px);
+  white-space: nowrap;
 }
-.sb-about > div:first-child > img {
-  width: 66.6667%;
-  aspect-ratio: 5/3;
+.sb-about-title-line + .sb-about-title-line {
+  margin-top: clamp(18px, 3vh, 34px);
+}
+.sb-about-title-line em {
+  font-weight: 400;
+  letter-spacing: -0.065em;
+}
+.sb-about-inline-image {
+  display: inline-flex;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 48%, transparent);
+  box-shadow: 0 18px 44px rgb(0 0 0 / 42%);
+  transform: translateY(0.04em);
+}
+.sb-about-inline-image img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: center 70%;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.sb-about-copy {
+.sb-about-inline-image:hover img {
+  transform: scale(1.04);
+}
+.sb-about-inline-image.is-round {
+  width: clamp(86px, 8vw, 132px);
+  height: clamp(86px, 8vw, 132px);
+  border-radius: 50%;
+}
+.sb-about-inline-image.is-round img {
+  object-fit: contain;
+  background: #101112;
+}
+.sb-about-inline-image.is-pill {
+  width: clamp(190px, 18vw, 310px);
+  height: clamp(92px, 9vw, 146px);
+  border-radius: 999px;
+}
+.sb-about-inline-image.is-pill img {
+  object-position: center 59%;
+}
+.sb-about-footer {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.sb-about-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 360px;
+}
+.sb-about-brand > span:last-child {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  max-width: 672px;
-  color: var(--color-plum);
-  font-size: 18px;
-  line-height: 1.625;
+  gap: 2px;
 }
-.sb-about-sticker {
-  position: absolute;
-  right: 80px;
-  bottom: 40px;
-  z-index: 11;
-  touch-action: none;
-  cursor: grab;
-  user-select: none;
-  will-change: transform;
+.sb-about-brand strong {
+  font-family: 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 400;
 }
-.sb-about-sticker:active {
-  cursor: grabbing;
+.sb-about-brand small {
+  color: color-mix(in srgb, var(--color-cream) 64%, transparent);
+  font-size: 14px;
 }
-.sb-sticker-art {
-  animation: sb-sticker 3.2s ease-in-out 1.1s infinite;
-  transition:
-    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.3s ease;
-  filter: drop-shadow(0 4px 10px rgb(0 0 0 / 0.18));
-  transform-origin: center center;
-}
-.sb-sticker-art.is-grabbed {
-  animation: none;
-  transition:
-    transform 0.06s ease,
-    filter 0.15s ease;
-  filter: drop-shadow(0 16px 28px rgb(0 0 0 / 0.28));
-}
-.sb-sticker-art > div {
-  padding: 12px;
+.sb-about-mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
   overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 50%, transparent);
+  border-radius: 50%;
+  background: var(--color-cream);
 }
-.sb-about-sticker img {
-  width: 250px;
-  height: auto;
-  pointer-events: none;
-  opacity: 1;
-  filter: none;
-  mix-blend-mode: normal;
+.sb-about-mark img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
 }
-@keyframes sb-sticker {
-  0%,
-  100% {
-    transform: rotate(5deg);
-  }
-  18% {
-    transform: rotate(6.4deg) scale(1.009);
-  }
-  36% {
-    transform: rotate(4.1deg) scale(0.995);
-  }
-  54% {
-    transform: rotate(5.7deg) scale(1.005);
-  }
-  72% {
-    transform: rotate(3.9deg) scale(0.998);
-  }
-  90% {
-    transform: rotate(5.4deg) scale(1.003);
-  }
+.sb-about-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 1px solid color-mix(in srgb, var(--color-cream) 70%, transparent);
+  border-radius: 999px;
+  color: var(--color-cream);
+  font-size: 15px;
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+.sb-about-action:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold);
+  color: var(--color-ink);
+  transform: translateY(-2px);
+}
+.sb-about-action:active {
+  transform: translateY(0);
 }
 .sb-catering-intro {
   background: var(--color-plum);
@@ -522,7 +572,7 @@
   position: relative;
   width: 100%;
 }
-.sb-video-grid a {
+.sb-video-preview {
   display: block;
   position: relative;
   width: 100%;
@@ -541,7 +591,7 @@
   inset: 0;
   background: linear-gradient(to top, #000c, #0003, transparent);
 }
-.sb-video-grid a > span {
+.sb-video-preview > span {
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -759,6 +809,20 @@
   text-decoration: underline;
 }
 @media (max-width: 1023px) {
+  .sb-about {
+    padding-inline: 40px;
+  }
+  .sb-about h2 {
+    font-size: clamp(48px, 6.5vw, 64px);
+  }
+  .sb-about-inline-image.is-round {
+    width: clamp(68px, 8vw, 84px);
+    height: clamp(68px, 8vw, 84px);
+  }
+  .sb-about-inline-image.is-pill {
+    width: clamp(156px, 18vw, 200px);
+    height: clamp(74px, 9vw, 96px);
+  }
   .sb-catering-inner {
     flex-direction: column;
   }
@@ -784,8 +848,53 @@
   }
 }
 @media (max-width: 767px) {
-  .sb-about-sticker {
-    display: none;
+  .sb-about {
+    min-height: 760px;
+    padding: 80px 24px 56px;
+  }
+  .sb-about-inner {
+    gap: 72px;
+  }
+  .sb-about h2 {
+    font-size: clamp(42px, 12.2vw, 54px);
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+  }
+  .sb-about-title-line {
+    flex-wrap: wrap;
+    gap: 12px 14px;
+    white-space: normal;
+  }
+  .sb-about-title-line + .sb-about-title-line {
+    margin-top: 18px;
+  }
+  .sb-about-inline-image.is-round {
+    width: 64px;
+    height: 64px;
+  }
+  .sb-about-inline-image.is-pill {
+    width: 138px;
+    height: 66px;
+  }
+  .sb-about-footer {
+    align-items: flex-end;
+  }
+  .sb-about-brand {
+    min-width: 0;
+  }
+  .sb-about-mark {
+    width: 54px;
+    height: 54px;
+  }
+  .sb-about-mark img {
+    width: 46px;
+    height: 46px;
+  }
+  .sb-about-brand strong {
+    font-size: 19px;
+  }
+  .sb-about-brand small {
+    max-width: 200px;
   }
   .sb-catering-copy h2 {
     font-size: 36px;
@@ -852,6 +961,13 @@
   }
 }
 @media (max-width: 639px) {
+  .sb-about-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sb-about-action {
+    width: 100%;
+  }
   .sb-slider-heading {
     flex-direction: column;
     align-items: flex-start;
