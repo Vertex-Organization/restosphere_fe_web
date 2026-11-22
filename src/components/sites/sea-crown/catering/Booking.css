@@ -2063,15 +2063,29 @@
   }
 }
 
+.bk-deposit {
+  text-align: center;
+}
+
 .bk-deposit-body {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 20px;
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+}
+
+.bk-deposit .bk-done-details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 560px;
+}
+
+@media (max-width: 767px) {
+  .bk-deposit .bk-done-details {
+    grid-template-columns: 1fr;
+  }
 }
 
 .bk-deposit-qr {
-  width: 220px;
+  width: 240px;
   max-width: 100%;
   border: 1px solid color-mix(in srgb, var(--color-plum) 15%, transparent);
   border-radius: 12px;
