@@ -1,11 +1,21 @@
 import { formatVnd } from '../../../api/billing/money'
-import { hasPermission, openShiftOf, shiftSummary } from '../../../api/billing/selectors'
+import {
+  hasPermission,
+  openableScheduledShifts,
+  openShiftOf,
+  shiftSummary,
+} from '../../../api/billing/selectors'
 import type { CashierPermission, CashierStaff } from '../../../api/billing/types'
 import { ROLE_LABEL } from '../../../api/kitchen/labels'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
-import { formatTime, initials } from '../../../components/kitchen/format'
+import {
+  formatShiftRange,
+  formatTime,
+  initials,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { leaveCashier } from '../../../hooks/billing/useCashierAuth'
@@ -73,6 +83,10 @@ export default function CashierProfilePage() {
   const now = useNow()
   const shift = openShiftOf(data, user.id)
   const s = shift ? shiftSummary(data, shift) : null
+  const scheduled = openableScheduledShifts(data, user.id, new Date(now))[0]
+  const shiftText = scheduled
+    ? `${scheduled.shift.name} · ${formatShiftRange(scheduled.start, scheduled.end)}`
+    : 'Không có ca được xếp lúc này'
 
   return (
     <div className="c-profile">
@@ -82,12 +96,11 @@ export default function CashierProfilePage() {
         </span>
         <div className="c-profile-id">
           <h2 className="c-detail-title">{user.name}</h2>
-          <span className="k-profile-role">
-            {ROLE_LABEL[user.role]} · {user.position}
-          </span>
+          <span className="k-profile-role">{ROLE_LABEL[user.role]}</span>
           <span className="k-muted c-small">
-            {user.id} · đăng nhập bằng {user.username}
+            {shortCode(user.id)} · đăng nhập bằng {user.username}
           </span>
+          <span className="k-muted c-small">Ca làm: {shiftText}</span>
         </div>
         <button type="button" className="k-btn" onClick={leaveCashier}>
           <Icon name="logout" />
@@ -103,7 +116,7 @@ export default function CashierProfilePage() {
                 <Icon name="clock" size={14} />
                 Ca hiện tại
               </span>
-              <b className="c-stat-value">{shift.code}</b>
+              <b className="c-stat-value">{shortCode(shift.code)}</b>
               <span className="c-stat-sub">
                 Từ {formatTime(shift.openedAt)} ·{' '}
                 {shortDuration(minutesBetween(shift.openedAt, now))}

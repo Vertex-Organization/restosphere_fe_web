@@ -1,5 +1,7 @@
 import { authenticatedRequest } from '../auth'
 import { ApiError } from '../client'
+import { describeRejection } from './labels'
+import { itemActionSummary } from './rules'
 import { KitchenError } from './types'
 import type {
   CommandResult,
@@ -45,7 +47,13 @@ async function call<T>(request: Promise<T>): Promise<T> {
     if (error instanceof ApiError) {
       if (error.status === 0) throw new KitchenError('NETWORK', error.message)
       const code = STATUS_CODES[error.status]
-      if (code) throw new KitchenError(code, error.message)
+      if (code) {
+        const rejected = error.status === 400 || error.status === 409
+        throw new KitchenError(
+          code,
+          rejected ? describeRejection(error.detail, error.message) : error.message,
+        )
+      }
     }
     throw error
   }
@@ -237,7 +245,8 @@ export const kitchenService: KitchenService = {
       await post('kitchen/notifications/read', command.ids ? { ids: command.ids } : {})
       summary = 'Đã đánh dấu đã đọc'
     }
-    return { data: await load(), summary }
+    const data = await load()
+    return { data, summary: itemActionSummary(command, data, summary) }
   },
   subscribe: () => () => {},
 }

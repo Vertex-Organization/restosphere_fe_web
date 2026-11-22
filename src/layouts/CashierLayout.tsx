@@ -4,7 +4,7 @@ import { openShiftOf, pendingRequestCount, posRows, unreadCount } from '../api/b
 import type { CashierStaff } from '../api/billing/types'
 import { Icon, type IconName } from '../components/billing/Icon'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
-import { formatDayShort, formatTime, initials } from '../components/kitchen/format'
+import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
 import { KitchenLink as Link } from '../components/kitchen/KitchenLink'
 import { useCashierData } from '../hooks/billing/cashierDataContext'
 import { leaveCashier as signOut } from '../hooks/billing/useCashierAuth'
@@ -97,7 +97,7 @@ function AccountMenu({ user }: { user: CashierStaff }) {
         </span>
         <span className="k-account-text">
           <span className="k-account-name">{user.name}</span>
-          <span className="k-account-role">{user.position}</span>
+          <span className="k-account-role">{ROLE_LABEL[user.role]}</span>
         </span>
         <Icon name="chevronDown" size={14} />
         <span className="k-visually-hidden">Tài khoản</span>
@@ -107,7 +107,7 @@ function AccountMenu({ user }: { user: CashierStaff }) {
           <div className="k-menu-head">
             <strong>{user.name}</strong>
             <span>
-              {ROLE_LABEL[user.role]} · {user.position} · {user.id}
+              {ROLE_LABEL[user.role]} · {shortCode(user.id)}
             </span>
           </div>
           <Link
@@ -280,7 +280,7 @@ export function CashierLayout({ route, title, fill, children }: Props) {
                   className="c-shift-chip c-shift-chip--open"
                   title="Ca thu ngân đang mở"
                 >
-                  {shift.code} · từ {formatTime(shift.openedAt)}
+                  {shortCode(shift.code)} · từ {formatTime(shift.openedAt)}
                 </Link>
               ) : (
                 <Link to={cashierPaths.shift} className="c-shift-chip c-shift-chip--closed">

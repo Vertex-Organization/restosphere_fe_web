@@ -219,3 +219,87 @@ test('cashier opens a shift picked from the manager schedule and cannot use anot
     /không thuộc lịch/,
   )
 })
+
+test('openable scheduled shifts follow the [start - 30 min, end] window', async () => {
+  const { openableScheduledShifts, scheduledShiftWindow } = await import(
+    moduleUrl('src/api/billing/selectors.ts')
+  )
+  const at = new Date('2026-11-21T10:28:00+07:00')
+  const mk = (id, start, end, cashierId = cashier) => ({ id, name: id, start, end, cashierId })
+  const data = {
+    scheduledShifts: [
+      mk('in', '2026-11-21T10:00:00+07:00', '2026-11-21T21:28:00+07:00'),
+      mk('early', '2026-11-21T10:50:00+07:00', '2026-11-21T22:00:00+07:00'),
+      mk('too-early', '2026-11-21T11:00:00+07:00', '2026-11-21T22:00:00+07:00'),
+      mk('ended', '2026-11-21T06:00:00+07:00', '2026-11-21T10:27:00+07:00'),
+      mk('other', '2026-11-21T10:00:00+07:00', '2026-11-21T21:00:00+07:00', 'NV021'),
+      mk('bad', 'oops', 'oops'),
+    ],
+  }
+  const ids = openableScheduledShifts(data, cashier, at).map((o) => o.shift.id)
+  assert.deepEqual(ids, ['in', 'early'])
+  const overnight = scheduledShiftWindow(mk('n', '22:00', '06:00'), at)
+  assert.ok(overnight.end > overnight.start)
+})
+
+test('shortCode keeps the prefix and shows the last 8 characters without dashes', async () => {
+  const { shortCode } = await import(moduleUrl('src/components/kitchen/format.ts'))
+  const uuid = '3f2a9c1e-7b4d-4e8a-9d11-0a1b2c3d4e5f'
+  assert.equal(shortCode(uuid), '2C3D4E5F')
+  assert.equal(shortCode(`O-${uuid}`), 'O-2C3D4E5F')
+  assert.equal(shortCode('#O-3f2a9c1e-7b4d'), '#O-9C1E7B4D')
+  assert.equal(shortCode('PAY-001'), 'PAY-001')
+})
+
+test('rejection details and notification titles are shown in Vietnamese', async () => {
+  const { describeRejection, notificationTitle } = await import(
+    moduleUrl('src/api/kitchen/labels.ts')
+  )
+  assert.equal(
+    describeRejection('Outside scheduled shift window', 'x'),
+    'Ca đã chọn chưa tới giờ hoặc đã hết giờ',
+  )
+  assert.equal(describeRejection('A shift is already open', 'x'), 'Bạn đang có ca mở')
+  assert.equal(
+    describeRejection('Resolve pending transfers first', 'x'),
+    'Còn chuyển khoản chờ xác nhận, xử lý trước khi đóng ca',
+  )
+  assert.equal(describeRejection('Item changed; refresh', 'x'), 'Món vừa thay đổi, tải lại trang')
+  assert.equal(describeRejection('Something else', 'x'), 'Something else')
+  assert.equal(describeRejection(undefined, 'fallback'), 'fallback')
+  assert.equal(notificationTitle('PAYMENT_REQUEST', 'Payment requested'), 'Yêu cầu thanh toán')
+  assert.equal(notificationTitle('READY', 'Dish ready'), 'Món đã xong')
+  assert.equal(notificationTitle('NEW_ORDER', 'New order'), 'Đơn mới')
+  assert.equal(notificationTitle('UNKNOWN_KIND', 'Original'), 'Original')
+})
+
+test('weighed dishes count as one line and show their quantity with a unit', async () => {
+  const { quantityLabel } = await import(moduleUrl('src/components/kitchen/format.ts'))
+  const { billView } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  assert.equal(quantityLabel(3), '3')
+  assert.equal(quantityLabel(0.375), '0,375 kg')
+  assert.equal(quantityLabel(1.5, 'kg'), '1,5 kg')
+  const d = seed()
+  const bill = d.bills.find((b) => billView(d, b.id).items.some((i) => isBillable(i)))
+  const view = billView(d, bill.id)
+  const target = view.items.find((i) => isBillable(i))
+  target.quantity = 0.375
+  assert.equal(billView(d, bill.id).dishCount, view.items.filter((i) => isBillable(i)).length)
+})
+
+test('paid tab only lists bills paid since the open shift, or since midnight without a shift', async () => {
+  const { matchesFilter, paidSinceOf } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  const at = new Date('2026-11-21T10:28:00+07:00').getTime()
+  const open = {
+    shifts: [{ cashierId: cashier, status: 'OPEN', openedAt: '2026-11-21T08:00:00+07:00' }],
+  }
+  const since = paidSinceOf(open, cashier, at)
+  assert.equal(since, Date.parse('2026-11-21T08:00:00+07:00'))
+  const row = (paidAt) => ({ status: 'PAID', paidAt })
+  assert.equal(matchesFilter(row('2026-11-21T09:00:00+07:00'), 'paid', since), true)
+  assert.equal(matchesFilter(row('2026-11-21T07:59:00+07:00'), 'paid', since), false)
+  const none = paidSinceOf({ shifts: [] }, cashier, at)
+  const midnight = new Date(at)
+  midnight.setHours(0, 0, 0, 0)
+  assert.equal(none, midnight.getTime())
+})

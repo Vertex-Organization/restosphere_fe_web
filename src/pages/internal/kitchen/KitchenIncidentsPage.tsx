@@ -3,6 +3,7 @@ import {
   INCIDENT_STATUS_LABEL,
   INCIDENT_TYPE_LABEL,
   ITEM_STATUS_LABEL,
+  ROLE_LABEL,
   SEVERITY_LABEL,
 } from '../../../api/kitchen/labels'
 import { hasPermission, staffName } from '../../../api/kitchen/rules'
@@ -13,7 +14,7 @@ import type {
   IncidentType,
   KitchenData,
 } from '../../../api/kitchen/types'
-import { formatTime } from '../../../components/kitchen/format'
+import { formatTime, shortCode } from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenFilters } from '../../../components/kitchen/KitchenFilters'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
@@ -166,7 +167,7 @@ export default function KitchenIncidentsPage({
                 <option value="">Không gắn phiếu (thiết bị, khu bếp…)</option>
                 {orderOptions.map((o) => (
                   <option key={o.id} value={o.id}>
-                    #{o.code} · Bàn {o.tableCode}
+                    #{shortCode(o.code)} · Bàn {o.tableCode}
                     {o.sequence > 1 ? ` · lượt ${o.sequence}` : ''}
                   </option>
                 ))}
@@ -248,7 +249,7 @@ export default function KitchenIncidentsPage({
             <div className="k-field">
               <span className="k-label">Người báo</span>
               <span className="k-readonly">
-                {me.name} · {me.position}
+                {me.name} · {ROLE_LABEL[me.role]}
               </span>
             </div>
             <p className="k-hint">
@@ -282,7 +283,6 @@ function IncidentRow({ incident, data }: { incident: Incident; data: KitchenData
   return (
     <li className="k-incident">
       <div className="k-incident-top">
-        <span className="k-strong k-mono">{incident.code}</span>
         <span className="k-strong">{INCIDENT_TYPE_LABEL[incident.type]}</span>
         <Badge tone={SEVERITY_TONE[incident.severity]}>{SEVERITY_LABEL[incident.severity]}</Badge>
         <span className="k-incident-status">
@@ -296,7 +296,7 @@ function IncidentRow({ incident, data }: { incident: Incident; data: KitchenData
         {linkedOrder && (
           <>
             <KitchenLink className="k-link" to={kitchenPaths.ticket(linkedOrder.id)}>
-              Bàn {linkedOrder.tableCode} · #{linkedOrder.code}
+              Bàn {linkedOrder.tableCode} · #{shortCode(linkedOrder.code)}
             </KitchenLink>
             {linkedItem && ` · ${linkedItem.name}`} ·{' '}
           </>
@@ -304,6 +304,8 @@ function IncidentRow({ incident, data }: { incident: Incident; data: KitchenData
         {formatTime(incident.at)} · {staffName(data, incident.reporterId)}
         {incident.notifiedStaffIds.length > 0 &&
           ` · đã báo ${incident.notifiedStaffIds.map((id) => staffName(data, id)).join(', ')}`}
+        {' · '}
+        <span className="k-incident-code k-mono">{shortCode(incident.code)}</span>
       </p>
       {incident.response && (
         <p className="k-incident-reply">

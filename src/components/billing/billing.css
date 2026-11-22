@@ -475,8 +475,8 @@
   background: var(--k-surface);
   border-bottom: 1px solid var(--k-border);
 }
-.c-pos-search {
-  flex: none;
+.c-pos-tools .c-pos-search {
+  flex: 0 0 auto;
   width: 100%;
 }
 .c-pos-search .k-input {
@@ -1608,10 +1608,12 @@
   flex: 1;
   flex-direction: column;
   gap: 16px;
-  max-width: 760px;
   min-height: 0;
   padding: 20px 24px;
   overflow-y: auto;
+}
+.c-detail-pane .c-facts:not(.c-facts--flat) {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 190px));
 }
 .c-detail-head {
   display: flex;
@@ -2001,7 +2003,7 @@
 }
 .c-shift-list li {
   display: grid;
-  grid-template-columns: 64px 140px 100px 120px auto minmax(0, 1fr);
+  grid-template-columns: 96px 150px 110px 120px auto minmax(0, 1fr);
   align-items: center;
   gap: 12px;
   padding: 8px 0;
@@ -2011,6 +2013,10 @@
 .c-shift-list li:first-child {
   border-top: 0;
   padding-top: 0;
+}
+.c-shift-list li > * {
+  min-width: 0;
+  white-space: nowrap;
 }
 .c-shift-list .k-badge {
   justify-self: start;
@@ -2027,6 +2033,12 @@
   align-items: start;
   gap: 16px;
   padding: 20px;
+}
+.c-open-shift > *,
+.c-open-shift-form,
+.c-open-shift-form .k-input {
+  min-width: 0;
+  max-width: 100%;
 }
 .c-open-shift .c-card-title {
   margin: 0;
@@ -2440,7 +2452,7 @@
     grid-column: 1 / -1;
   }
   .c-shift-list li {
-    grid-template-columns: 64px minmax(0, 1fr) auto auto;
+    grid-template-columns: 96px minmax(0, 1fr) auto auto;
   }
   .c-shift-list li > :nth-child(3),
   .c-shift-list .c-shift-note {

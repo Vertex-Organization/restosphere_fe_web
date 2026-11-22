@@ -76,6 +76,7 @@ export interface OrderItem {
   /** Whole đồng, as priced when ordered. */
   unitPrice: number
   quantity: number
+  unit?: string
   note: string
   status: SentItemStatus
   servedAt?: string

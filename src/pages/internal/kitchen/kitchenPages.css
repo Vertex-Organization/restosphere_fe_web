@@ -849,6 +849,57 @@
   flex: 1;
   min-height: 0;
 }
+.k-history {
+  min-width: 0;
+  max-width: 100%;
+}
+.k-history .k-toolbar {
+  min-width: 0;
+  max-width: 100%;
+}
+.k-history .k-toolbar-count {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: auto;
+  text-align: right;
+  white-space: normal;
+}
+.k-history .k-table th.k-history-worker,
+.k-history .k-table td.k-history-worker {
+  padding-left: 24px;
+  text-align: left;
+}
+.k-history .k-table td .k-badge {
+  justify-content: center;
+  min-width: 120px;
+}
+.k-history .k-table td {
+  height: 32px;
+  padding-block: 4px;
+}
+.k-history .k-table .k-num {
+  text-align: center;
+}
+.k-history .k-table-wrap {
+  min-width: 0;
+}
+.k-history-dish {
+  display: block;
+  max-width: 340px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.k-history .k-table .k-center {
+  text-align: center;
+}
+.k-dash {
+  color: var(--k-text-3, #a3b1b5);
+}
+.k-nowrap {
+  white-space: nowrap;
+}
 .k-history-name {
   font-weight: 500;
 }
@@ -896,6 +947,10 @@
 }
 .k-incident-desc {
   font-size: 13.5px;
+}
+.k-incident-code {
+  color: var(--k-text-2);
+  font-size: 11px;
 }
 .k-incident-meta {
   font-size: 12px;

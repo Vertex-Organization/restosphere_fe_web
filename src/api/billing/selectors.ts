@@ -12,6 +12,7 @@ import type {
   OrderItem,
   Payment,
   RestaurantTable,
+  ScheduledShift,
   TableSession,
 } from './types'
 
@@ -30,6 +31,40 @@ export function staffName(data: CashierData, id?: string) {
 
 export function openShiftOf(data: CashierData, staffId: string): CashierShift | undefined {
   return data.shifts.find((s) => s.cashierId === staffId && s.status === 'OPEN')
+}
+
+const SHIFT_EARLY_OPEN_MS = 30 * 60_000
+const DAY_MS = 24 * 3_600_000
+
+function parseShiftBound(value: string, now: Date) {
+  const clock = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(value)
+  if (clock) {
+    const date = new Date(now)
+    date.setHours(Number(clock[1]), Number(clock[2]), 0, 0)
+    return date.getTime()
+  }
+  const parsed = Date.parse(value)
+  return Number.isNaN(parsed) ? null : parsed
+}
+
+export function scheduledShiftWindow(shift: ScheduledShift, now: Date) {
+  const start = parseShiftBound(shift.start, now)
+  const end = parseShiftBound(shift.end, now)
+  if (start === null || end === null) return null
+  return { start: new Date(start), end: new Date(end <= start ? end + DAY_MS : end) }
+}
+
+/** Shifts assigned to the cashier that can be opened right now: from 30 minutes before start until end. */
+export function openableScheduledShifts(data: CashierData, cashierId: string, now: Date) {
+  return data.scheduledShifts.flatMap((shift) => {
+    if (shift.cashierId !== cashierId) return []
+    const window = scheduledShiftWindow(shift, now)
+    if (!window) return []
+    const time = now.getTime()
+    const open =
+      time >= window.start.getTime() - SHIFT_EARLY_OPEN_MS && time <= window.end.getTime()
+    return open ? [{ shift, ...window }] : []
+  })
 }
 
 export const sessionItems = (data: CashierData, sessionId: string) => {
@@ -113,7 +148,7 @@ export function billView(data: CashierData, billId: string): BillView | null {
       (r) => r.status === 'PENDING' && BLOCKING_REQUESTS.includes(r.type),
     ),
     unserved: items.filter((i) => isBillable(i) && i.status !== 'SERVED'),
-    dishCount: items.reduce((sum, i) => (isBillable(i) ? sum + i.quantity : sum), 0),
+    dishCount: items.filter(isBillable).length,
   }
 }
 
@@ -270,14 +305,23 @@ export function posRows(data: CashierData, now: number): PosRow[] {
   )
 }
 
-export function matchesFilter(row: PosRow, filter: PosFilter) {
+/** Paid bills list starts at the open shift, or at midnight when no shift is open. */
+export function paidSinceOf(data: CashierData, staffId: string, now: number) {
+  const shift = openShiftOf(data, staffId)
+  if (shift) return Date.parse(shift.openedAt)
+  const midnight = new Date(now)
+  midnight.setHours(0, 0, 0, 0)
+  return midnight.getTime()
+}
+
+export function matchesFilter(row: PosRow, filter: PosFilter, paidSince = 0) {
   switch (filter) {
     case 'due':
       return row.status === 'PAYMENT_REQUESTED'
     case 'serving':
       return row.status === 'UNPAID'
     case 'paid':
-      return row.status === 'PAID'
+      return row.status === 'PAID' && !!row.paidAt && Date.parse(row.paidAt) >= paidSince
     default:
       return true
   }

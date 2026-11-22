@@ -5,7 +5,13 @@ import { hasPermission, staffName } from '../../../api/billing/selectors'
 import type { PaymentMethod, PaymentStatus } from '../../../api/billing/types'
 import { Icon } from '../../../components/billing/Icon'
 import { PaymentStatusBadge } from '../../../components/billing/ui'
-import { formatDate, formatTime, localDayKey, searchable } from '../../../components/kitchen/format'
+import {
+  formatDate,
+  formatTime,
+  localDayKey,
+  searchable,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
@@ -179,7 +185,7 @@ export default function CashierTransactionsPage() {
               >
                 <td>
                   <Link to={cashierPaths.transaction(payment.id)} className="k-link k-mono">
-                    {payment.code}
+                    {shortCode(payment.code)}
                   </Link>
                 </td>
                 <td>

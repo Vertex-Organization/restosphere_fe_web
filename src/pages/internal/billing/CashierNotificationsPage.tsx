@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatVnd } from '../../../api/billing/money'
 import { billView } from '../../../api/billing/selectors'
 import type { CashierNotification, CashierNotificationKind } from '../../../api/billing/types'
+import { notificationTitle } from '../../../api/kitchen/labels'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { ago } from '../../../components/billing/format'
 import { Icon } from '../../../components/billing/Icon'
@@ -132,7 +133,9 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
                             <Icon name={look.icon} size={15} />
                           </span>
                           <span className="c-note-text">
-                            <span className="c-note-title">{n.title}</span>
+                            <span className="c-note-title">
+                              {notificationTitle(n.kind, n.title)}
+                            </span>
                             <span className="c-note-body">{n.body}</span>
                           </span>
                           <span className="c-note-time">{formatTime(n.at)}</span>
@@ -196,7 +199,7 @@ function NoteDetail({ note: n, now }: { note: CashierNotification; now: number }
           <span className="c-detail-kicker">
             {look.label} · {formatTime(n.at)} ({ago(minutesBetween(n.at, now))})
           </span>
-          <h2 className="c-detail-title">{n.title}</h2>
+          <h2 className="c-detail-title">{notificationTitle(n.kind, n.title)}</h2>
         </div>
       </header>
       <p className="c-detail-body">{n.body}</p>

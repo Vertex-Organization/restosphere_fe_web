@@ -1,6 +1,6 @@
 import { ROLE_LABEL } from '../../../api/kitchen/labels'
 import { hasPermission } from '../../../api/kitchen/rules'
-import { initials, localDayKey } from '../../../components/kitchen/format'
+import { initials, localDayKey, shortCode } from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
@@ -12,6 +12,7 @@ export default function KitchenProfilePage() {
   const { data, user } = useKitchenSnapshot()
   const now = useNow()
   const me = data.staff.find((s) => s.id === user.id) ?? user
+  const shiftText = me.shift || 'Không có ca được xếp lúc này'
   const today = localDayKey(now)
   const onToday = (iso?: string) => !!iso && localDayKey(iso) === today
   const started = data.items.filter((i) => i.startedBy === me.id && onToday(i.startedAt)).length
@@ -25,11 +26,9 @@ export default function KitchenProfilePage() {
         </span>
         <div className="k-profile-id">
           <h2 className="k-h2">{me.name}</h2>
-          <p className="k-profile-role">
-            {ROLE_LABEL[me.role]} · {me.position}
-          </p>
+          <p className="k-profile-role">{ROLE_LABEL[me.role]}</p>
           <p className="k-muted">
-            Mã nhân viên {me.id} · {me.shift}
+            Mã nhân viên {shortCode(me.id)} · {shiftText}
           </p>
         </div>
       </section>
@@ -38,15 +37,11 @@ export default function KitchenProfilePage() {
         <h3 className="k-panel-title">Thông tin tài khoản</h3>
         <dl className="k-dl">
           <dt>Mã nhân viên</dt>
-          <dd>{me.id}</dd>
+          <dd>{shortCode(me.id)}</dd>
           <dt>Vai trò</dt>
-          <dd>
-            {ROLE_LABEL[me.role]} ({me.role})
-          </dd>
-          <dt>Chức vụ</dt>
-          <dd>{me.position}</dd>
+          <dd>{ROLE_LABEL[me.role]}</dd>
           <dt>Ca làm</dt>
-          <dd>{me.shift}</dd>
+          <dd>{shiftText}</dd>
           <dt>Tài khoản đăng nhập</dt>
           <dd className="k-mono">{me.username}</dd>
           <dt>Tình trạng món</dt>

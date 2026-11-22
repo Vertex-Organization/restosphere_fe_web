@@ -15,7 +15,12 @@ import {
 import { minutesBetween, waitTone } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
-import { formatDate, formatDuration, formatTime } from '../../../components/kitchen/format'
+import {
+  formatDate,
+  formatDuration,
+  formatTime,
+  shortCode,
+} from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { Badge, KitchenStatusBadge } from '../../../components/kitchen/KitchenStatusBadge'
@@ -144,7 +149,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
             <div className="k-ticket-title-row">
               <h2>Bàn {order.tableCode}</h2>
               <span>
-                Phiếu #{order.code} · Lượt {order.sequence}
+                Phiếu #{shortCode(order.code)} · Lượt {order.sequence}
               </span>
               {order.priority && (
                 <Badge tone="danger">
@@ -261,7 +266,8 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           type="button"
                           className="k-btn k-btn--primary k-btn--lg"
                           disabled={isPending(item.id)}
-                          onClick={() => setConfirmAction({ action: 'start', items: [item] })}
+                          aria-busy={isPending(item.id)}
+                          onClick={() => start([item])}
                         >
                           Bắt đầu món
                         </button>
@@ -271,7 +277,8 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           type="button"
                           className="k-btn k-btn--primary k-btn--lg"
                           disabled={isPending(item.id)}
-                          onClick={() => setConfirmAction({ action: 'complete', items: [item] })}
+                          aria-busy={isPending(item.id)}
+                          onClick={() => complete([item])}
                         >
                           Hoàn thành món
                         </button>
@@ -357,22 +364,24 @@ export default function KitchenTicketPage({ id }: { id: string }) {
             <ul className="k-rounds">
               {rounds.map((round) => {
                 const roundItems = data.items.filter((i) => i.orderId === round.id)
-                const left = roundItems.filter(
-                  (i) => i.status === 'SUBMITTED' || i.status === 'PREPARING',
+                const fresh = roundItems.filter((i) => i.status === 'SUBMITTED').length
+                const cooking = roundItems.filter((i) => i.status === 'PREPARING').length
+                const done = roundItems.filter(
+                  (i) => i.status === 'READY' || i.status === 'SERVED',
                 ).length
-                const ready = roundItems.filter((i) => i.status === 'READY').length
                 return (
                   <li key={round.id}>
                     <KitchenLink
                       to={kitchenPaths.ticket(round.id)}
                       aria-current={round.id === order.id ? 'page' : undefined}
                     >
-                      #{round.code} · Lượt {round.sequence}
+                      #{shortCode(round.code)} · Lượt {round.sequence}
                     </KitchenLink>
                     <span className="k-muted">
                       {formatTime(round.submittedAt)} · {roundItems.length} món
-                      {left ? ` · ${left} đang làm` : ''}
-                      {ready ? ` · ${ready} đã xong` : ''}
+                      {fresh ? ` · ${fresh} mới` : ''}
+                      {cooking ? ` · ${cooking} đang làm` : ''}
+                      {done ? ` · ${done} xong` : ''}
                     </span>
                   </li>
                 )

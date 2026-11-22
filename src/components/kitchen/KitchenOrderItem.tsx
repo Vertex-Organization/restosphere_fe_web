@@ -6,6 +6,7 @@ import { DishPhoto } from './DishPhoto'
 import { formatDuration, formatTime } from './format'
 import { Icon } from './Icon'
 import { KitchenStatusBadge } from './KitchenStatusBadge'
+import { ReasonHint } from './ReasonHint'
 
 export type KitchenItemAction = 'start' | 'complete'
 
@@ -86,10 +87,13 @@ export function KitchenActionConfirmDialog({
   )
 }
 
+const REJECT_REASONS = ['Hết nguyên liệu', 'Món không đạt', 'Khách đổi ý']
+
 export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () => void }) {
   const { run, isPending } = useKitchenSnapshot()
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
+  const hintId = useId()
   const [reason, setReason] = useState('')
   const [error, setError] = useState('')
   const pending = isPending(item.id)
@@ -102,7 +106,7 @@ export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () =>
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      className="k-panel"
+      className="k-panel k-reject-dialog"
       onCancel={(e) => {
         e.preventDefault()
         if (!pending) onClose()
@@ -133,8 +137,18 @@ export function RejectItemDialog({ item, onClose }: { item: Item; onClose: () =>
             maxLength={200}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            aria-describedby={hintId}
+            autoFocus
           />
+          <ReasonHint id={hintId} value={reason} />
         </label>
+        <div className="k-chips" role="group" aria-label="Lý do mẫu">
+          {REJECT_REASONS.map((text) => (
+            <button key={text} type="button" className="k-chip" onClick={() => setReason(text)}>
+              {text}
+            </button>
+          ))}
+        </div>
         {error && (
           <p role="alert" className="k-form-error">
             {error}

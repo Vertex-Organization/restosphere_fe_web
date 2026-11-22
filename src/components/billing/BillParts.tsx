@@ -3,7 +3,7 @@ import { ITEM_STATUS_LABEL } from '../../api/billing/labels'
 import { formatAmount, formatVnd, isBillable, lineTotal } from '../../api/billing/money'
 import type { BillView } from '../../api/billing/selectors'
 import type { Bill, BillingConfig, MenuEntry } from '../../api/billing/types'
-import { formatTime } from '../kitchen/format'
+import { formatTime, quantityLabel } from '../kitchen/format'
 import { DishThumb } from './ui'
 
 /**
@@ -43,7 +43,11 @@ export function BillLines({
                   {!compact && <DishThumb url={photos.get(item.menuItemId)} />}
                   <div className="c-line-main">
                     <span className="c-line-name">
-                      <b className="c-line-qty">{item.quantity}×</b>
+                      <b className="c-line-qty">
+                        {Number.isInteger(item.quantity)
+                          ? `${item.quantity}×`
+                          : quantityLabel(item.quantity, item.unit)}
+                      </b>
                       {item.name}
                       {pending && (
                         <span
