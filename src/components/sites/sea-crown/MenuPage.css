@@ -1,6 +1,6 @@
 .menu-page {
-  --menu-line: rgb(180 0 0 / 14%);
-  --menu-soft: #fff6f3;
+  --menu-line: color-mix(in srgb, var(--color-dark) 14%, transparent);
+  --menu-soft: color-mix(in srgb, var(--color-cream) 78%, white);
   --menu-surface: #ffffff;
   --menu-gutter: 20px;
 
@@ -384,8 +384,8 @@
 
 .menu-card-button:hover {
   transform: translateY(-3px);
-  border-color: rgb(180 0 0 / 32%);
-  box-shadow: 0 14px 28px -14px rgb(135 0 0 / 24%);
+  border-color: color-mix(in srgb, var(--color-dark) 32%, transparent);
+  box-shadow: 0 14px 28px -14px rgb(0 0 0 / 24%);
 }
 
 .menu-card-media {
@@ -420,7 +420,7 @@
   display: grid;
   place-items: center;
   height: 100%;
-  color: rgb(180 0 0 / 40%);
+  color: color-mix(in srgb, var(--color-dark) 40%, transparent);
 }
 
 .menu-card-flag {
@@ -559,7 +559,7 @@
 }
 
 .menu-chip--spicy {
-  background: #ffe1d6;
+  background: color-mix(in srgb, var(--color-gold) 24%, var(--color-cream));
 }
 
 .menu-chip--new {
@@ -692,7 +692,7 @@ html:has(.menu-dialog[open]) {
   place-items: center;
   aspect-ratio: 3 / 1;
   background: var(--menu-soft);
-  color: rgb(180 0 0 / 50%);
+  color: color-mix(in srgb, var(--color-dark) 50%, transparent);
 }
 
 .menu-dialog-content {
@@ -762,7 +762,7 @@ html:has(.menu-dialog[open]) {
 .menu-spice {
   display: flex;
   gap: 2px;
-  color: rgb(180 0 0 / 20%);
+  color: color-mix(in srgb, var(--color-dark) 20%, transparent);
 }
 
 .menu-spice .is-on {

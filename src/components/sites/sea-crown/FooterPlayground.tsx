@@ -140,7 +140,7 @@ export function FooterPlayground() {
           context.restore()
           context.beginPath()
           context.arc(0, 0, radius, 0, Math.PI * 2)
-          context.strokeStyle = '#ffc400'
+          context.strokeStyle = '#c9a56b'
           context.lineWidth = 4
           context.stroke()
           context.restore()

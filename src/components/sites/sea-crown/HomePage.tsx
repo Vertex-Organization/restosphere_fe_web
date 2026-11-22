@@ -3,14 +3,14 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Draggable } from 'gsap/Draggable'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
-import { BubbleLink } from './Shared'
+import { PalazzoTable } from './PalazzoTable'
 import { asset, external, type Language } from './siteData'
 import content from './homeContent.json'
 import './HomePage.css'
+import './PalazzoTable.css'
 
 gsap.registerPlugin(ScrollTrigger, Draggable, InertiaPlugin)
 
-const curve = 'M-71 371.6C126.3 260 593.5 65.8 934.5 80.8c313 13.8 497 136 572 200'
 const gallery = [
   'images/crab.jpg',
   'images/seafood-platter.jpg',
@@ -90,52 +90,6 @@ function ScrollPath({ location = false }: { location?: boolean }) {
         }
       />
     </svg>
-  )
-}
-
-function Slogan({ text }: { text: string }) {
-  const section = useRef<HTMLElement>(null)
-  const path = useRef<SVGTextPathElement>(null)
-
-  useLayoutEffect(() => {
-    if (!section.current || !path.current) return
-    const media = gsap.matchMedia()
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.set(path.current, { attr: { startOffset: '-50%' } })
-      gsap.to(path.current, {
-        attr: { startOffset: '0%' },
-        ease: 'none',
-        scrollTrigger: {
-          trigger: section.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.5,
-        },
-      })
-    })
-    return () => media.revert()
-  }, [text])
-
-  return (
-    <section className="sb-slogan" ref={section} aria-label={text}>
-      <svg viewBox="0 0 1440 442" fill="none" aria-hidden="true">
-        <path
-          fill="var(--color-cream)"
-          d="M-71 451.6C126.3 340 593.5 145.8 934.5 160.8c313 93.8 497 216 572 280L1511 900L-200 900Z"
-        />
-        <path stroke="var(--color-gold)" strokeWidth="160" d={curve} />
-      </svg>
-      <svg className="sb-slogan-text" viewBox="0 0 1440 442" aria-hidden="true">
-        <defs>
-          <path id="slogan-curve" d={curve} />
-        </defs>
-        <text dominantBaseline="central">
-          <textPath ref={path} href="#slogan-curve" startOffset="-50%">
-            {`${text} • `.repeat(4)}
-          </textPath>
-        </text>
-      </svg>
-    </section>
   )
 }
 
@@ -346,6 +300,7 @@ function SandwichSlider({ language }: { language: Language }) {
 
   return (
     <section
+      id="seafood-specialties"
       className="sb-sandwiches"
       aria-roledescription="carousel"
       aria-label={en ? 'Signature seafood dishes' : 'Các món hải sản đặc trưng'}
@@ -678,57 +633,9 @@ function FAQ({ language }: { language: Language }) {
 export default function HomePage({ language }: { language: Language }) {
   const data = content[language]
   const en = language === 'en'
-  const main = useRef<HTMLElement>(null)
-  useLayoutEffect(() => {
-    const root = main.current
-    if (!root) return
-    const targets = Array.from(
-      root.querySelectorAll<HTMLElement>(
-        '[data-hero-title], [data-hero-subtitle], .sb-hero-description > .sb-bubble',
-      ),
-    )
-    let tween: gsap.core.Tween | undefined
-    const enter = (event: Event) => {
-      const detail = (event as CustomEvent<{ reason?: string; delay?: number }>).detail
-      if (detail?.reason !== 'intro') return
-      tween?.kill()
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-        gsap.set(targets, { autoAlpha: 1, y: 0 })
-      else
-        tween = gsap.to(targets, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 1,
-          stagger: 0.2,
-          ease: 'power3.inOut',
-          delay: detail?.delay || 0,
-        })
-    }
-    window.addEventListener('sandwich:page-enter', enter)
-    return () => {
-      window.removeEventListener('sandwich:page-enter', enter)
-      tween?.kill()
-    }
-  }, [])
   return (
-    <main id="main-content" className="sb-home" ref={main}>
-      <section className="sb-hero">
-        <img
-          className="sb-hero-photo"
-          src={asset('images/seafood-platter.jpg')}
-          alt="The Sea's Crown"
-          fetchPriority="high"
-        />
-        <div className="sb-hero-shade" />
-        <div className="sb-hero-title">
-          <h1 data-hero-title>The Sea's Crown</h1>
-        </div>
-        <div className="sb-hero-description">
-          <p data-hero-subtitle>{data.hero}</p>
-          <BubbleLink href={`/${language}/menu`}>{data.heroButton}</BubbleLink>
-        </div>
-      </section>
-      <Slogan text={data.slogan} />
+    <main id="main-content" className="sb-home">
+      <PalazzoTable language={language} />
       <section className="sb-about">
         <div>
           <img src={asset('images/boiled-lobster.jpg')} alt="The Sea's Crown" loading="lazy" />

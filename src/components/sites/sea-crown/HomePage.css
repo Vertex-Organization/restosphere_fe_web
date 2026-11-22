@@ -1,88 +1,6 @@
 .sb-home {
   overflow: clip;
 }
-.sb-hero {
-  position: relative;
-  height: 130vh;
-  overflow: hidden;
-  clip-path: polygon(67% 92%, 41% 94%, 0% 100%, 0% 0%, 100% 0%, 100% 97%, 88% 93%);
-}
-.sb-hero-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 65%;
-}
-.sb-hero-shade {
-  position: absolute;
-  inset: 0;
-  background: #0003;
-}
-.sb-hero-title {
-  position: absolute;
-  top: 38%;
-  left: 50%;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
-  transform: translate(-50%, -50%);
-}
-.sb-hero h1 {
-  font-size: 128px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  text-align: center;
-  text-transform: uppercase;
-  color: var(--color-cream);
-}
-.sb-hero-description {
-  position: absolute;
-  bottom: 35vh;
-  right: 40px;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 16px;
-  text-align: right;
-  padding: 40px;
-  border-radius: 12px;
-  color: var(--color-cream);
-}
-.sb-hero-description > p {
-  max-width: 320px;
-  font-size: 16px;
-  line-height: 24px;
-}
-.sb-slogan {
-  position: relative;
-  z-index: 10;
-  margin-top: -16.95vw;
-  overflow: hidden;
-}
-.sb-slogan svg {
-  display: block;
-  width: 100%;
-  overflow: visible;
-}
-.sb-slogan-text {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  padding-top: 12px;
-}
-.sb-slogan text {
-  font-family: Poppins, sans-serif;
-  font-size: 128px;
-  font-weight: 700;
-  letter-spacing: 0.001em;
-  fill: var(--color-plum);
-}
 .sb-about {
   position: relative;
   background: var(--color-cream);
@@ -286,7 +204,7 @@
 .sb-membership-overlay {
   position: absolute;
   inset: 0;
-  background: rgb(180 0 0 / 0.5);
+  background: rgb(17 18 20 / 65%);
 }
 .sb-membership-inner {
   position: relative;
@@ -335,7 +253,7 @@
   width: 100%;
   margin: 0;
   border: 0;
-  border-top: 1px solid rgb(180 0 0 / 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-dark) 12%, transparent);
 }
 .sb-membership-card > div {
   display: flex;
@@ -493,7 +411,7 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: rgb(180 0 0 / 0.3);
+  background: color-mix(in srgb, var(--color-dark) 30%, transparent);
   transition:
     width 0.3s,
     background 0.3s;
@@ -612,7 +530,7 @@
   gap: 6px;
   font-size: 14px;
   font-weight: 500;
-  border-bottom: 1px solid rgb(180 0 0 / 0.4);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-dark) 42%, transparent);
   padding-bottom: 2px;
   margin-top: 12px;
 }
@@ -622,9 +540,9 @@
 .sb-opening-hours {
   margin-top: 24px;
   padding: 16px;
-  border: 1px solid rgb(180 0 0 / 0.1);
+  border: 1px solid color-mix(in srgb, var(--color-dark) 12%, transparent);
   border-radius: 16px;
-  background: rgb(255 255 255 / 0.5);
+  background: color-mix(in srgb, var(--color-cream) 72%, white);
   backdrop-filter: blur(4px);
 }
 .sb-hours-heading {
@@ -675,7 +593,7 @@
   margin-top: 2px;
 }
 .sb-day.is-today {
-  background: rgb(180 0 0 / 0.08);
+  background: color-mix(in srgb, var(--color-dark) 8%, transparent);
   color: var(--color-dark);
   font-weight: 600;
 }
@@ -765,7 +683,7 @@
   padding: 0 24px 24px;
   font-size: 14px;
   line-height: 1.625;
-  color: rgb(180 0 0 / 0.75);
+  color: var(--color-muted);
 }
 .sb-faq-answer a {
   overflow-wrap: anywhere;
@@ -797,19 +715,6 @@
   }
 }
 @media (max-width: 767px) {
-  .sb-hero h1 {
-    font-size: 72px;
-  }
-  .sb-hero-description > p {
-    font-size: 14px;
-    line-height: 20px;
-  }
-  .sb-slogan {
-    margin-top: -22.95vw;
-  }
-  .sb-slogan-text {
-    padding-top: 4px;
-  }
   .sb-about-sticker {
     display: none;
   }
