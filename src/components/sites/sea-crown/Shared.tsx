@@ -174,6 +174,9 @@ export function Header({ language, page }: { language: Language; page: string })
           aria-label={language === 'en' ? "The Sea's Crown — Home" : "The Sea's Crown — Trang chủ"}
         >
           <img src={asset('images/logo.png')} width="160" height="116" alt="The Sea's Crown" />
+          <span className="sb-logo-name" aria-hidden="true">
+            THE SEA'S CROWN
+          </span>
         </a>
         <div className="sb-header-right">
           <MagneticLink href={`/${language}/menu`} current={page === '/menu'}>

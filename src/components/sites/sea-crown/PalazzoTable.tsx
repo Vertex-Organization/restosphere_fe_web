@@ -18,9 +18,7 @@ type Course = {
 type Copy = {
   ariaLabel: string
   courseLabel: string
-  pairingLabel: string
   menuButton: string
-  priceText: string
   hintLabel: string
   previousLabel: string
   nextLabel: string
@@ -49,9 +47,7 @@ const localizedContent: Record<Language, { copy: Copy; courses: Course[] }> = {
     copy: {
       ariaLabel: 'Bàn xoay các món đặc sản',
       courseLabel: 'Món',
-      pairingLabel: 'Gợi ý đồ uống',
       menuButton: 'Xem thực đơn',
-      priceText: 'Giá theo thực đơn',
       hintLabel: 'Kéo bàn để xoay món',
       previousLabel: 'Món trước',
       nextLabel: 'Món tiếp theo',
@@ -59,52 +55,52 @@ const localizedContent: Record<Language, { copy: Copy; courses: Course[] }> = {
     },
     courses: [
       {
-        image: 'heirloom-tomato.jpg',
-        alt: 'Cà chua gia truyền với phô mai burrata và húng quế',
-        title: 'Cà chua gia truyền, *burrata,* húng quế',
-        note: 'Cà chua chín mọng, burrata xé tay và dầu húng quế ép lần đầu.',
+        image: 'lobster-bisque.png',
+        alt: 'Tôm hùm áp bơ với xốt bisque và trứng cá hồi',
+        title: 'Tôm hùm áp bơ, *bisque,* trứng cá hồi',
+        note: 'Thịt tôm hùm áp bơ, bisque cô đặc, trứng cá hồi và thì là non.',
       },
       {
-        image: 'langoustine.jpg',
-        alt: 'Tôm langoustine với cam đỏ và chanh ngón tay',
-        title: 'Tôm langoustine, *cam đỏ,* chanh ngón tay',
-        note: 'Tôm langoustine sống dùng cùng dầu thảo mộc, cam đỏ và tép chanh ngón tay.',
+        image: 'langoustine-crudo.png',
+        alt: 'Tôm langoustine crudo với cam đỏ và trứng cá',
+        title: 'Langoustine crudo, *cam đỏ,* trứng cá',
+        note: 'Langoustine tươi, cam đỏ, chanh ngón tay, dầu thảo mộc và trứng cá vàng.',
       },
       {
-        image: 'beetroot.jpg',
-        alt: 'Củ dền với kem hun khói và bánh mì lúa mạch đen',
-        title: 'Củ dền, *kem hun khói,* lúa mạch đen',
-        note: 'Củ dền cắt tay, crème fraîche hun khói và bánh lúa mạch đen giòn.',
+        image: 'king-crab-caviar.png',
+        alt: 'Cua hoàng đế với bơ, dưa leo và trứng cá tầm',
+        title: 'Cua hoàng đế, *bơ,* trứng cá tầm',
+        note: 'Thịt cua hoàng đế, kem bơ, dưa leo mỏng, yuzu và trứng cá tầm Oscietra.',
       },
       {
-        image: 'scallop.jpg',
-        alt: 'Sò điệp với bơ nâu và hạt phỉ',
-        title: 'Sò điệp, *bơ nâu,* hạt phỉ',
-        note: 'Sò điệp áp chảo cùng bơ sủi, hạt phỉ rang và ngọn đậu non.',
+        image: 'seared-scallops.png',
+        alt: 'Sò điệp áp chảo với bơ nâu và hạt phỉ',
+        title: 'Sò điệp áp chảo, *bơ nâu,* hạt phỉ',
+        note: 'Sò điệp áp chảo, kem súp lơ mịn, bơ nâu, hạt phỉ và xốt nấm truffle.',
       },
       {
-        image: 'agnolotti.jpg',
-        alt: 'Mì agnolotti với xô thơm và phô mai parmesan',
-        title: 'Mì agnolotti, *xô thơm,* parmesan lâu năm',
-        note: 'Mì được gói bằng tay mỗi chiều, dùng với bơ nâu xô thơm và parmesan 36 tháng.',
+        image: 'lobster-ravioli.png',
+        alt: 'Ravioli tôm hùm với xốt bơ hải sản và bottarga',
+        title: 'Ravioli tôm hùm, *bơ hải sản,* bottarga',
+        note: 'Ravioli nghệ tây gói tay, thịt tôm hùm, bơ hải sản, xô thơm và bottarga.',
       },
       {
-        image: 'black-cod.jpg',
+        image: 'miso-black-cod.png',
         alt: 'Cá tuyết đen với miso và nước dùng dashi',
         title: 'Cá tuyết đen, *miso,* dashi',
-        note: 'Cá ướp miso trắng trong ba ngày, dùng cùng dashi kombu và tỏi tây nướng.',
+        note: 'Cá tuyết đen phủ miso, dashi kombu, tỏi tây nướng, nấm shimeji và vỏ yuzu.',
       },
       {
-        image: 'duck.jpg',
-        alt: 'Ức vịt với anh đào và rau endive nướng',
-        title: 'Ức vịt, *anh đào,* endive nướng',
-        note: 'Ức vịt ủ khô, xốt anh đào morello và endive nướng lửa.',
+        image: 'chargrilled-octopus.png',
+        alt: 'Bạch tuộc nướng than với ớt đỏ và khoai tây',
+        title: 'Bạch tuộc nướng than, *ớt đỏ,* tỏi đen',
+        note: 'Xúc tu bạch tuộc nướng than, kem ớt đỏ hun khói, khoai tây confit và tỏi đen.',
       },
       {
-        image: 'chocolate.jpg',
-        alt: 'Sô-cô-la với cam đỏ và hạt cacao',
-        title: 'Sô-cô-la, *cam đỏ,* hạt cacao',
-        note: 'Kem sô-cô-la đen, cam đỏ và bánh hạt cacao giòn.',
+        image: 'oysters-caviar.png',
+        alt: 'Hàu tươi với trứng cá tầm và xốt champagne',
+        title: 'Hàu tươi, *trứng cá tầm,* champagne',
+        note: 'Ba hàu lạnh, trứng cá tầm Oscietra, xốt champagne, dưa leo và chanh vàng.',
       },
     ],
   },
@@ -112,9 +108,7 @@ const localizedContent: Record<Language, { copy: Copy; courses: Course[] }> = {
     copy: {
       ariaLabel: 'Rotating table of signature dishes',
       courseLabel: 'Course',
-      pairingLabel: 'Drink pairing',
       menuButton: 'View the menu',
-      priceText: 'Menu price',
       hintLabel: 'Drag the table to turn it',
       previousLabel: 'Previous course',
       nextLabel: 'Next course',
@@ -122,52 +116,52 @@ const localizedContent: Record<Language, { copy: Copy; courses: Course[] }> = {
     },
     courses: [
       {
-        image: 'heirloom-tomato.jpg',
-        alt: 'Heirloom tomato with burrata and basil',
-        title: 'Heirloom tomato, *burrata,* basil',
-        note: 'First tomatoes at their ripest, torn burrata and first-press basil oil.',
+        image: 'lobster-bisque.png',
+        alt: 'Butter-poached lobster with bisque and salmon roe',
+        title: 'Butter-poached lobster, *bisque,* salmon roe',
+        note: 'Butter-poached lobster, reduced shellfish bisque, salmon roe and young fennel.',
       },
       {
-        image: 'langoustine.jpg',
-        alt: 'Langoustine with blood orange and finger lime',
-        title: 'Langoustine, *blood orange,* finger lime',
-        note: 'Raw langoustine in herb oil, blood orange and finger lime pearls.',
+        image: 'langoustine-crudo.png',
+        alt: 'Langoustine crudo with blood orange and caviar',
+        title: 'Langoustine crudo, *blood orange,* caviar',
+        note: 'Pristine langoustine, blood orange, finger lime, herb oil and golden caviar.',
       },
       {
-        image: 'beetroot.jpg',
-        alt: 'Beetroot with smoked cream and rye',
-        title: 'Beetroot, *smoked cream,* rye',
-        note: 'Hand-cut beetroot tartare, smoked crème fraîche and crisp rye.',
+        image: 'king-crab-caviar.png',
+        alt: 'King crab with avocado, cucumber and Oscietra caviar',
+        title: 'King crab, *avocado,* Oscietra caviar',
+        note: 'King crab, avocado mousse, ribboned cucumber, yuzu and Oscietra caviar.',
       },
       {
-        image: 'scallop.jpg',
-        alt: 'Scallop with brown butter and hazelnut',
-        title: 'Scallop, *brown butter,* hazelnut',
-        note: 'Hand-dived scallops seared in foaming butter, toasted hazelnut and pea shoots.',
+        image: 'seared-scallops.png',
+        alt: 'Seared scallops with brown butter and hazelnut',
+        title: 'Seared scallops, *brown butter,* hazelnut',
+        note: 'Diver scallops, cauliflower purée, brown butter, toasted hazelnut and truffle jus.',
       },
       {
-        image: 'agnolotti.jpg',
-        alt: 'Agnolotti with sage and aged parmesan',
-        title: 'Agnolotti, *sage,* aged parmesan',
-        note: 'Pasta pinched by hand each afternoon, sage brown butter and 36-month parmesan.',
+        image: 'lobster-ravioli.png',
+        alt: 'Lobster ravioli with shellfish butter and bottarga',
+        title: 'Lobster ravioli, *shellfish butter,* bottarga',
+        note: 'Handmade saffron ravioli, lobster, shellfish beurre blanc, sage and bottarga.',
       },
       {
-        image: 'black-cod.jpg',
+        image: 'miso-black-cod.png',
         alt: 'Black cod with miso and dashi',
         title: 'Black cod, *miso,* dashi',
-        note: 'Cod cured for three days in white miso, kombu dashi and charred leek.',
+        note: 'Miso-glazed black cod, kombu dashi, charred leek, shimeji and fresh yuzu.',
       },
       {
-        image: 'duck.jpg',
-        alt: 'Duck with cherry and charred endive',
-        title: 'Duck, *cherry,* charred endive',
-        note: 'Dry-aged duck breast, morello cherry jus and endive from the grill.',
+        image: 'chargrilled-octopus.png',
+        alt: 'Chargrilled octopus with red pepper and black garlic',
+        title: 'Chargrilled octopus, *red pepper,* black garlic',
+        note: 'Charred octopus, smoked red-pepper purée, confit potato and black garlic glaze.',
       },
       {
-        image: 'chocolate.jpg',
-        alt: 'Chocolate with blood orange and cocoa nib',
-        title: 'Chocolate, *blood orange,* cocoa nib',
-        note: 'Dark chocolate crémeux, blood orange and cocoa nib tuile.',
+        image: 'oysters-caviar.png',
+        alt: 'Fresh oysters with Oscietra caviar and champagne mignonette',
+        title: 'Fresh oysters, *Oscietra caviar,* champagne',
+        note: 'Three chilled oysters, Oscietra caviar, champagne mignonette, cucumber and lemon.',
       },
     ],
   },
@@ -195,7 +189,6 @@ export function PalazzoTable({ language }: { language: Language }) {
   const visibleRef = useRef(false)
   const reducedMotionRef = useRef(false)
   const [active, setActive] = useState(3)
-  const [pairing, setPairing] = useState(true)
   const [entered, setEntered] = useState(false)
   const [metrics, setMetrics] = useState(() => getPalazzoTableMetrics(1440, 900))
   const motion = useRef<MotionState>({
@@ -556,22 +549,9 @@ export function PalazzoTable({ language }: { language: Language }) {
         </h2>
         <p key={`note-${active}`}>{activeCourse.note}</p>
         <div className="sb-palazzo-actions">
-          <button
-            type="button"
-            className="sb-palazzo-pairing"
-            role="switch"
-            aria-checked={pairing}
-            onClick={() => setPairing((value) => !value)}
-          >
-            <span className={pairing ? 'is-on' : ''} aria-hidden="true">
-              <i />
-            </span>
-            {copy.pairingLabel}
-          </button>
           <a className="sb-palazzo-menu-button" href={`/${language}/menu`}>
             {copy.menuButton}
           </a>
-          <span className="sb-palazzo-price">{copy.priceText}</span>
         </div>
       </div>
 
