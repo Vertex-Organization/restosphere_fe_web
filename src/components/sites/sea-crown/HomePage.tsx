@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Draggable } from 'gsap/Draggable'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
+import { MemberSignup } from './MemberSignup'
 import { BubbleLink } from './Shared'
 import { asset, external, type Language } from './siteData'
 import content from './homeContent.json'
@@ -775,14 +776,11 @@ export default function HomePage({ language }: { language: Language }) {
             <span>{en ? 'member' : 'thành viên'}</span>
           </h2>
           <div className="sb-membership-card">
-            {data.member.slice(0, 3).map((text) => (
+            {data.member.map((text) => (
               <p key={text}>{text}</p>
             ))}
             <hr />
-            <div>
-              <p>{data.member[3]}</p>
-              <a href={external.member}>{data.memberButton}</a>
-            </div>
+            <MemberSignup language={language} />
           </div>
         </div>
       </section>

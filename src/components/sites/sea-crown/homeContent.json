@@ -20,10 +20,8 @@
     "member": [
       "Kết nối cùng nhà hàng để mỗi lần ghé thăm là một dịp thưởng thức và sum họp đáng nhớ.",
       "Cập nhật thông tin món ăn và các chương trình dành cho thành viên theo từng thời điểm.",
-      "Liên hệ đội ngũ nhà hàng khi ghé thăm để tìm hiểu cách đăng ký và quyền lợi đang áp dụng.",
-      "Bạn đã là thành viên? Xem thông tin tài khoản tại đây."
+      "Điền thông tin bên dưới để đăng ký, nhà hàng sẽ nhận ra bạn qua số điện thoại khi đặt bàn."
     ],
-    "memberButton": "Xem tài khoản",
     "sandwichTitle": "Đặc sản",
     "sandwiches": [
       {
@@ -97,10 +95,8 @@
     "member": [
       "Stay connected with the restaurant and make every visit an occasion to enjoy and share.",
       "Find out about dishes and member programmes available at the time of your visit.",
-      "Speak with our restaurant team to learn how to join and which benefits currently apply.",
-      "Already a member? View your account details here."
+      "Fill in the form below to join; we will recognise you by your phone number when you book."
     ],
-    "memberButton": "View account",
     "sandwichTitle": "Signature",
     "sandwiches": [
       {
