@@ -29,8 +29,8 @@ Frontend RestoSphere dùng React 19, TypeScript và Vite. Đọc hướng dẫn 
 ## Git và quyền agent
 
 - Nhánh `feat/<name>`, `fix/<name>`, `refactor/<name>` tạo từ `develop`; `main` dành cho release. Không tự chuyển nhánh khi có thay đổi chưa lưu.
-- Commit dạng `<type>(<scope>): <description>` bằng tiếng Anh. Mỗi commit một việc; mọi thay đổi qua PR, cần ít nhất **1 người review** duyệt và các kiểm tra pass. PR nêu mục đích, ảnh hưởng API/BE/mobile và cách kiểm tra.
-- Agent chỉ commit cục bộ khi được yêu cầu rõ ràng; **không push**, force-push hoặc đổi lịch sử. Không tự stage, xóa hay ghi đè thay đổi của người khác. Không báo hoàn thành khi kiểm tra bắt buộc chưa pass.
+- Commit dạng `<type>(<scope>): <description>` bằng tiếng Anh. Mỗi commit một việc; mặc định mọi thay đổi qua PR, cần ít nhất **1 người review** duyệt và các kiểm tra pass. PR nêu mục đích, ảnh hưởng API/BE/mobile và cách kiểm tra. Chỉ push thẳng nhánh dùng chung khi người dùng yêu cầu rõ ràng.
+- Agent chỉ commit hoặc push khi được yêu cầu rõ ràng và chỉ push đúng remote/nhánh đã được chỉ định; **không force-push** hoặc đổi lịch sử. Không tự stage, xóa hay ghi đè thay đổi của người khác. Không báo hoàn thành khi kiểm tra bắt buộc chưa pass.
 
 ## File cá nhân và file dùng chung
 
