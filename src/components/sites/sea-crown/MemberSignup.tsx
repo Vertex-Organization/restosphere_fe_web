@@ -16,6 +16,7 @@ const COPY = {
     mailed: (email: string) => `Thư chào mừng đã được gửi tới ${email}.`,
     noEmail:
       'Bạn chưa để lại email nên sẽ không nhận thư chào mừng. Nhà hàng sẽ nhận ra bạn qua số điện thoại khi đặt bàn.',
+    notMailed: 'Nhà hàng sẽ nhận ra bạn qua số điện thoại khi đặt bàn.',
     again: 'Đăng ký thêm người khác',
     failed: 'Không thể đăng ký lúc này. Vui lòng thử lại.',
   },
@@ -31,6 +32,7 @@ const COPY = {
     mailed: (email: string) => `A welcome email is on its way to ${email}.`,
     noEmail:
       'You did not leave an email, so no welcome email will be sent. We will recognise you by your phone number when you book.',
+    notMailed: 'We will recognise you by your phone number when you book.',
     again: 'Register someone else',
     failed: 'We could not register you right now. Please try again.',
   },
@@ -39,8 +41,9 @@ const COPY = {
 export function MemberSignup({ language }: { language: Language }) {
   const t = COPY[language]
   const [sending, setSending] = useState(false)
-  const [error, setError] = useState<{ text: string; field?: string }>()
-  const [member, setMember] = useState<{ name: string; email?: string }>()
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState('')
+  const [member, setMember] = useState<{ name: string; email?: string; mailed: boolean }>()
   const today = new Date().toISOString().slice(0, 10)
 
   async function submit(e: FormEvent<HTMLFormElement>) {
@@ -48,7 +51,8 @@ export function MemberSignup({ language }: { language: Language }) {
     const form = new FormData(e.currentTarget)
     const text = (key: string) => String(form.get(key) ?? '').trim()
     setSending(true)
-    setError(undefined)
+    setFieldErrors({})
+    setFormError('')
     try {
       const saved = await customerService.register({
         fullName: text('fullName'),
@@ -57,12 +61,18 @@ export function MemberSignup({ language }: { language: Language }) {
         birthday: text('birthday') || undefined,
         marketingConsent: form.get('marketingConsent') === 'on',
       })
-      setMember({ name: saved.fullName, email: saved.email || undefined })
-    } catch (err) {
-      setError({
-        text: err instanceof Error ? err.message : t.failed,
-        field: err instanceof ApiError ? err.field : undefined,
+      setMember({
+        name: saved.fullName,
+        email: saved.email || undefined,
+        mailed: saved.welcomeEmailSent === true,
       })
+    } catch (err) {
+      const byField =
+        err instanceof ApiError
+          ? (err.errors ?? (err.field ? { [err.field]: err.message } : {}))
+          : {}
+      setFieldErrors(byField)
+      if (!Object.keys(byField).length) setFormError(err instanceof Error ? err.message : t.failed)
     } finally {
       setSending(false)
     }
@@ -72,7 +82,13 @@ export function MemberSignup({ language }: { language: Language }) {
     return (
       <div className="sb-member-done" role="status">
         <p>{t.done(member.name)}</p>
-        <span>{member.email ? t.mailed(member.email) : t.noEmail}</span>
+        <span>
+          {!member.email
+            ? t.noEmail
+            : member.mailed
+              ? t.mailed(member.email)
+              : t.notMailed}
+        </span>
         <button type="button" onClick={() => setMember(undefined)}>
           {t.again}
         </button>
@@ -80,9 +96,9 @@ export function MemberSignup({ language }: { language: Language }) {
     )
 
   const fieldError = (field: string) =>
-    error?.field === field && (
+    fieldErrors[field] && (
       <span role="alert" className="sb-member-error">
-        {error.text}
+        {fieldErrors[field]}
       </span>
     )
 
@@ -90,7 +106,14 @@ export function MemberSignup({ language }: { language: Language }) {
     <form className="sb-member-form" onSubmit={submit}>
       <label>
         {t.name} *
-        <input name="fullName" required maxLength={150} autoComplete="name" />
+        <input
+          name="fullName"
+          required
+          maxLength={150}
+          autoComplete="name"
+          aria-invalid={!!fieldErrors.fullName}
+        />
+        {fieldError('fullName')}
       </label>
       <label>
         {t.phone} *
@@ -101,25 +124,39 @@ export function MemberSignup({ language }: { language: Language }) {
           autoComplete="tel"
           placeholder="0901 234 567"
           maxLength={20}
-          aria-invalid={error?.field === 'phone'}
+          aria-invalid={!!fieldErrors.phone}
         />
         {fieldError('phone')}
       </label>
       <label>
         {t.email}
-        <input name="email" type="email" maxLength={254} autoComplete="email" />
+        <input
+          name="email"
+          type="email"
+          maxLength={254}
+          autoComplete="email"
+          aria-invalid={!!fieldErrors.email}
+        />
+        {fieldError('email')}
       </label>
       <label>
         {t.birthday}
-        <input name="birthday" type="date" max={today} autoComplete="bday" />
+        <input
+          name="birthday"
+          type="date"
+          max={today}
+          autoComplete="bday"
+          aria-invalid={!!fieldErrors.birthday}
+        />
+        {fieldError('birthday')}
       </label>
       <label className="sb-member-consent">
         <input name="marketingConsent" type="checkbox" />
         {t.consent}
       </label>
-      {error && !error.field && (
+      {formError && (
         <p role="alert" className="sb-member-error">
-          {error.text}
+          {formError}
         </p>
       )}
       <button type="submit" disabled={sending}>

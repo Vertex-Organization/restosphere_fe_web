@@ -7,13 +7,22 @@ export class ApiError extends Error {
   readonly detail?: string
   /** Request field the server blamed for a validation error, when it named one. */
   readonly field?: string
+  /** Per-field messages from bean validation (`@Valid`), keyed by request field. */
+  readonly errors?: Record<string, string>
 
-  constructor(status: number, message: string, detail?: string, field?: string) {
+  constructor(
+    status: number,
+    message: string,
+    detail?: string,
+    field?: string,
+    errors?: Record<string, string>,
+  ) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.detail = detail
     this.field = field
+    this.errors = errors
   }
 }
 
@@ -58,12 +67,18 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
     const body = (await response.json().catch(() => null)) as {
       detail?: unknown
       field?: unknown
+      errors?: unknown
     } | null
+    const errors =
+      body?.errors && typeof body.errors === 'object'
+        ? (body.errors as Record<string, string>)
+        : undefined
     throw new ApiError(
       response.status,
       errorMessage(response.status),
       typeof body?.detail === 'string' ? body.detail : undefined,
       typeof body?.field === 'string' ? body.field : undefined,
+      errors,
     )
   }
   if (response.status === 204) return undefined as T

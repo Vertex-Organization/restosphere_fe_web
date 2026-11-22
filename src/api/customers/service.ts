@@ -11,6 +11,8 @@ export interface MemberRegistration {
 export interface Member extends MemberRegistration {
   id: string
   status: 'ACTIVE' | 'LOCKED'
+  /** True only when the server actually queued the welcome email. */
+  welcomeEmailSent?: boolean
 }
 
 export const customerService = {
