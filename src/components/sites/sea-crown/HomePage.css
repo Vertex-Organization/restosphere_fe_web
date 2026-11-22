@@ -340,10 +340,13 @@
 .sb-member-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 14px 16px;
 }
+/* align-content: start keeps the input at its own height when a neighbour shows an error. */
 .sb-member-form label {
   display: grid;
+  align-content: start;
   gap: 6px;
   min-width: 0;
   font-size: 13px;
