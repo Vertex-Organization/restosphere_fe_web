@@ -1,6 +1,7 @@
 import { authenticatedRequest } from '../auth'
 import { ApiError } from '../client'
 import { describeRejection } from './labels'
+import { itemActionSummary } from './rules'
 import { KitchenError } from './types'
 import type {
   CommandResult,
@@ -244,7 +245,8 @@ export const kitchenService: KitchenService = {
       await post('kitchen/notifications/read', command.ids ? { ids: command.ids } : {})
       summary = 'Đã đánh dấu đã đọc'
     }
-    return { data: await load(), summary }
+    const data = await load()
+    return { data, summary: itemActionSummary(command, data, summary) }
   },
   subscribe: () => () => {},
 }

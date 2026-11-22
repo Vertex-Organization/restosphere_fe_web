@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ROLE_LABEL } from '../api/kitchen/labels'
-import { buildBoard, unreadCount } from '../api/kitchen/selectors'
+import { unreadCount } from '../api/kitchen/selectors'
 import type { StaffMember } from '../api/kitchen/types'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
-import { formatDayShort, formatTime, initials } from '../components/kitchen/format'
+import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
 import { Icon, type IconName } from '../components/kitchen/Icon'
 import { KitchenLink } from '../components/kitchen/KitchenLink'
 import { useKitchenData } from '../hooks/kitchen/kitchenDataContext'
@@ -99,7 +99,7 @@ function AccountMenu({ user }: { user: StaffMember }) {
         </span>
         <span className="k-account-text">
           <span className="k-account-name">{user.name}</span>
-          <span className="k-account-role">{user.position}</span>
+          <span className="k-account-role">{ROLE_LABEL[user.role]}</span>
         </span>
         <Icon name="chevronDown" size={14} />
         <span className="k-visually-hidden">Tài khoản</span>
@@ -109,7 +109,7 @@ function AccountMenu({ user }: { user: StaffMember }) {
           <div className="k-menu-head">
             <strong>{user.name}</strong>
             <span>
-              {ROLE_LABEL[user.role]} · {user.position} · {user.id}
+              {ROLE_LABEL[user.role]} · {shortCode(user.id)}
             </span>
           </div>
           <KitchenLink
@@ -167,7 +167,6 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
   const { user, data, loadError, refresh } = useKitchenData()
   const now = useNow()
   const content = useRef<HTMLElement>(null)
-  const counts = data ? buildBoard(data, now).counts : null
   const unread = data ? unreadCount(data, user.id) : 0
 
   const routeKey = route.name === 'ticket' ? `ticket:${route.id}` : route.name
@@ -259,19 +258,6 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
       <div className="k-main">
         <header className="k-header">
           <h1 className="k-page-title">{title}</h1>
-          {counts && (
-            <div className="k-hcounts" aria-label="Tình hình bếp">
-              <span className="k-hcount k-hcount--new">
-                <b>{counts.newItems}</b> món mới
-              </span>
-              <span className="k-hcount k-hcount--preparing">
-                <b>{counts.preparingItems}</b> món đang làm
-              </span>
-              <span className="k-hcount k-hcount--ready">
-                <b>{counts.readyItems}</b> món đã xong
-              </span>
-            </div>
-          )}
           <FeedbackSlot />
           <div className="k-header-tools">
             {loadError && data && (

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { shortName, staffName } from '../../api/kitchen/rules'
 import type { ActiveDishView, ReadyDishView } from '../../api/kitchen/selectors'
 import type { KitchenData, KitchenOrderItem as Item } from '../../api/kitchen/types'
@@ -7,59 +8,11 @@ import { DishPhoto } from './DishPhoto'
 import { Icon } from './Icon'
 import { KitchenLink } from './KitchenLink'
 import { KitchenStatusBadge } from './KitchenStatusBadge'
-import { KitchenTimer } from './KitchenTimer'
 
 const menuOf = (data: KitchenData, item: Item) =>
   data.menuItems.find((m) => m.id === item.menuItemId)
 
-interface ListItemProps {
-  dish: ActiveDishView
-  queuePosition: number
-  data: KitchenData
-  selected: boolean
-  onSelect: () => void
-}
-
-/** Large, glanceable row in the FIFO list. */
-export function KitchenDishListItem({
-  dish,
-  queuePosition,
-  data,
-  selected,
-  onSelect,
-}: ListItemProps) {
-  const { item, order } = dish
-  const note = item.note || order.priority?.reason
-  return (
-    <button type="button" className="k-order-list-item" aria-pressed={selected} onClick={onSelect}>
-      <span className="k-order-rank">{queuePosition}</span>
-      <DishPhoto menu={menuOf(data, item)} />
-      <span className="k-order-copy">
-        <span className="k-order-name">
-          <span className="k-order-dish-name">
-            <b>{item.quantity} ×</b> {item.name}
-          </span>
-          <KitchenStatusBadge status={item.status} />
-        </span>
-        <span className="k-order-meta">
-          <b>Bàn {order.tableCode}</b>
-          <time dateTime={item.submittedAt}>{formatTime(item.submittedAt)}</time>
-          <span className={`k-order-wait k-order-wait--${dish.tone}`}>
-            {dish.tone === 'late' ? 'Quá giờ' : 'Chờ'} {dish.minutes} phút
-          </span>
-        </span>
-        {note && (
-          <span className="k-order-note">
-            <Icon name="note" size={12} />
-            {note}
-          </span>
-        )}
-      </span>
-    </button>
-  )
-}
-
-interface DetailProps {
+interface RowProps {
   dish: ActiveDishView
   data: KitchenData
   isPending: (key: string) => boolean
@@ -68,124 +21,166 @@ interface DetailProps {
   onReject: (item: Item) => void
 }
 
-/** Detail pane for the selected dish; secondary actions stay out of the list. */
-export function KitchenDishDetail({
-  dish,
-  data,
-  isPending,
-  onStart,
-  onComplete,
+function DishActionMenu({
+  item,
+  orderId,
+  disabled,
   onReject,
-}: DetailProps) {
-  const { item, order } = dish
-  const pending = isPending(item.id)
-  const menu = menuOf(data, item)
+}: {
+  item: Item
+  orderId: string
+  disabled: boolean
+  onReject: (item: Item) => void
+}) {
+  const [place, setPlace] = useState<CSSProperties | null>(null)
+  const button = useRef<HTMLButtonElement>(null)
+  const menu = useRef<HTMLDivElement>(null)
+  const close = () => setPlace(null)
+
+  useEffect(() => {
+    if (!place) return
+    const onPointer = (event: PointerEvent) => {
+      const target = event.target as Node
+      if (menu.current?.contains(target) || button.current?.contains(target)) return
+      setPlace(null)
+    }
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setPlace(null)
+      button.current?.focus()
+    }
+    const onMove = () => setPlace(null)
+    document.addEventListener('pointerdown', onPointer)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('resize', onMove)
+    window.addEventListener('scroll', onMove, true)
+    menu.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus()
+    return () => {
+      document.removeEventListener('pointerdown', onPointer)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onMove)
+      window.removeEventListener('scroll', onMove, true)
+    }
+  }, [place])
+
+  const toggle = () => {
+    if (place) return close()
+    const rect = button.current?.getBoundingClientRect()
+    if (!rect) return
+    const right = window.innerWidth - rect.right
+    setPlace(
+      rect.bottom + 96 > window.innerHeight
+        ? { right, bottom: window.innerHeight - rect.top + 4 }
+        : { right, top: rect.bottom + 4 },
+    )
+  }
+
   return (
-    <article className="k-dish-detail" aria-labelledby="selected-dish-title">
-      <header className="k-dish-detail-head">
-        <div className="k-dish-detail-title">
-          <DishPhoto menu={menu} />
-          <div>
-            <p className="k-detail-label">Chi tiết món</p>
-            <h3 id="selected-dish-title">
-              {item.quantity} × {item.name}
-            </h3>
-          </div>
-        </div>
-        <div className="k-dish-detail-status">
-          <KitchenStatusBadge status={item.status} />
-          <KitchenTimer
-            label={dish.tone === 'late' ? 'Quá giờ ·' : 'Chờ'}
-            minutes={dish.minutes}
-            tone={dish.tone}
-          />
-        </div>
-      </header>
-      {(item.note || order.priority) && (
-        <div className="k-dish-detail-notes">
-          {item.note && (
-            <p>
-              <Icon name="note" size={14} />
-              <span>
-                <b>Lưu ý món</b>
-                {item.note}
-              </span>
-            </p>
+    <>
+      <button
+        ref={button}
+        type="button"
+        className="k-btn k-dish-more"
+        aria-label="Thêm thao tác"
+        aria-haspopup="menu"
+        aria-expanded={!!place}
+        onClick={toggle}
+      >
+        ⋯
+      </button>
+      {place && (
+        <div ref={menu} className="k-dish-menu" role="menu" style={place}>
+          {item.status === 'SUBMITTED' && (
+            <button
+              type="button"
+              role="menuitem"
+              className="k-dish-menu-item k-dish-menu-item--danger"
+              disabled={disabled}
+              onClick={() => {
+                close()
+                onReject(item)
+              }}
+            >
+              Từ chối món
+            </button>
           )}
-          {order.priority && (
-            <p>
-              <Icon name="flag" size={14} />
-              <span>
-                <b>Lưu ý từ phục vụ</b>
-                {order.priority.reason}
-              </span>
-            </p>
-          )}
+          <KitchenLink
+            role="menuitem"
+            className="k-dish-menu-item"
+            to={kitchenPaths.reportIncident(orderId, item.id)}
+            onClick={close}
+          >
+            Báo sự cố
+          </KitchenLink>
         </div>
       )}
-      <dl className="k-dish-facts">
-        <div>
-          <dt>Bàn</dt>
-          <dd>
-            {order.tableCode} · {order.area}
-          </dd>
+    </>
+  )
+}
+
+/** One dish per row: what, where, how long it has waited, and what to do next. */
+export function KitchenDishRow({ dish, data, isPending, onStart, onComplete, onReject }: RowProps) {
+  const { item, order } = dish
+  const pending = isPending(item.id)
+  const note = item.note || order.priority?.reason
+  return (
+    <article
+      className={`k-dish-row k-dish-row--${dish.tone}`}
+      role="listitem"
+      aria-label={`${item.quantity} ${item.name}, bàn ${order.tableCode}, chờ ${dish.minutes} phút`}
+    >
+      <div className="k-dish-row-main">
+        <DishPhoto menu={menuOf(data, item)} />
+        <div className="k-dish-row-copy">
+          <strong>
+            <b>{item.quantity} ×</b> {item.name}
+          </strong>
+          {note && (
+            <span className="k-note">
+              <Icon name="note" size={12} />
+              {note}
+            </span>
+          )}
         </div>
-        <div>
-          <dt>Giờ gọi</dt>
-          <dd>{formatTime(item.submittedAt)}</dd>
-        </div>
-        <div>
-          <dt>Bắt đầu</dt>
-          <dd>
-            {item.startedAt
-              ? `${formatTime(item.startedAt)} · ${staffName(data, item.startedBy)}`
-              : 'Chưa bắt đầu'}
-          </dd>
-        </div>
-        <div>
-          <dt>Thời gian chờ</dt>
-          <dd>{dish.minutes} phút</dd>
-        </div>
-      </dl>
-      <footer className="k-dish-detail-actions">
+      </div>
+      <div className="k-dish-row-cell">
+        <strong>Bàn {order.tableCode}</strong>
+        <small>{order.area}</small>
+      </div>
+      <div className="k-dish-row-cell">
+        <time dateTime={item.submittedAt}>{formatTime(item.submittedAt)}</time>
+        <span className={`k-order-wait k-order-wait--${dish.tone}`}>
+          {dish.tone === 'late' ? 'Quá giờ' : 'Chờ'} {dish.minutes} phút
+        </span>
+      </div>
+      <div className="k-dish-row-cell">
+        <KitchenStatusBadge status={item.status} />
+      </div>
+      <div className="k-dish-row-actions">
         {item.status === 'SUBMITTED' && (
           <button
             type="button"
-            className="k-btn k-btn--primary k-btn--lg"
+            className="k-btn k-btn--primary"
             disabled={pending}
+            aria-busy={pending}
             onClick={() => onStart(item)}
           >
-            Bắt đầu món
+            Bắt đầu
           </button>
         )}
         {item.status === 'PREPARING' && (
           <button
             type="button"
-            className="k-btn k-btn--primary k-btn--lg"
+            className="k-btn k-btn--primary"
             disabled={pending}
+            aria-busy={pending}
             onClick={() => onComplete(item)}
           >
-            Hoàn thành món
+            Hoàn thành
           </button>
         )}
-        {item.status === 'SUBMITTED' && (
-          <button
-            type="button"
-            className="k-btn k-btn--danger k-btn--lg"
-            disabled={pending}
-            onClick={() => onReject(item)}
-          >
-            Từ chối món
-          </button>
-        )}
-        <KitchenLink
-          className="k-btn k-btn--lg"
-          to={kitchenPaths.reportIncident(order.id, item.id)}
-        >
-          <Icon name="alert" size={15} />
-          Báo sự cố
-        </KitchenLink>
-      </footer>
+        <DishActionMenu item={item} orderId={order.id} disabled={pending} onReject={onReject} />
+      </div>
     </article>
   )
 }

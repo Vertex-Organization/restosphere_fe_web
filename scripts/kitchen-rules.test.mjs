@@ -160,3 +160,20 @@ test('head chef resolving a sous-chef menu request notifies with MENU_REQUEST an
   )
   assert.ok(done.outbox.some((m) => m.kind === 'MENU_AVAILABILITY' && m.audience === 'WAITER'))
 })
+
+test('single dish start and complete produce a short toast with dish and table', async () => {
+  const { itemActionSummary } = await import(moduleUrl('src/api/kitchen/rules.ts'))
+  const data = createSeedData(new Date('2026-11-12T12:00:00+07:00'))
+  const item = data.items[0]
+  const table = data.orders.find((o) => o.id === item.orderId).tableCode
+  const ref = { id: item.id, version: item.version }
+  assert.equal(
+    itemActionSummary({ type: 'start', items: [ref] }, data, 'x'),
+    `Đã bắt đầu ${item.name} · Bàn ${table}`,
+  )
+  assert.equal(
+    itemActionSummary({ type: 'complete', items: [ref] }, data, 'x'),
+    `Đã hoàn thành ${item.name} · Bàn ${table}`,
+  )
+  assert.equal(itemActionSummary({ type: 'start', items: [ref, ref] }, data, 'x'), 'x')
+})

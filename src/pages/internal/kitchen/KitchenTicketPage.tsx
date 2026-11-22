@@ -266,7 +266,8 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           type="button"
                           className="k-btn k-btn--primary k-btn--lg"
                           disabled={isPending(item.id)}
-                          onClick={() => setConfirmAction({ action: 'start', items: [item] })}
+                          aria-busy={isPending(item.id)}
+                          onClick={() => start([item])}
                         >
                           Bắt đầu món
                         </button>
@@ -276,7 +277,8 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           type="button"
                           className="k-btn k-btn--primary k-btn--lg"
                           disabled={isPending(item.id)}
-                          onClick={() => setConfirmAction({ action: 'complete', items: [item] })}
+                          aria-busy={isPending(item.id)}
+                          onClick={() => complete([item])}
                         >
                           Hoàn thành món
                         </button>

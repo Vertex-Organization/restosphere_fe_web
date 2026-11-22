@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { ITEM_STATUS_LABEL } from '../../../api/kitchen/labels'
-import { shortName, staffName } from '../../../api/kitchen/rules'
+import { staffName } from '../../../api/kitchen/rules'
 import type { KitchenOrder, KitchenOrderItem, SentItemStatus } from '../../../api/kitchen/types'
-import { DishPhoto } from '../../../components/kitchen/DishPhoto'
 import {
   formatDate,
   formatTime,
@@ -44,7 +43,6 @@ export default function KitchenHistoryPage() {
   const [status, setStatus] = useState<StatusFilter>('ALL')
 
   const orders = new Map(data.orders.map((o) => [o.id, o]))
-  const menus = new Map(data.menuItems.map((m) => [m.id, m]))
   const needle = searchable(query.trim())
   const rows: Row[] = data.items
     .map((item) => ({ item, order: orders.get(item.orderId)! }))
@@ -64,8 +62,20 @@ export default function KitchenHistoryPage() {
 
   const filtered = query || day !== today || status !== 'ALL'
   const time = (iso?: string) =>
-    iso ? (day ? formatTime(iso) : `${formatDate(iso).slice(0, 5)} ${formatTime(iso)}`) : '—'
-  const cook = (id?: string) => (id ? shortName(staffName(data, id)) : '—')
+    iso ? (
+      day ? (
+        formatTime(iso)
+      ) : (
+        `${formatDate(iso).slice(0, 5)} ${formatTime(iso)}`
+      )
+    ) : (
+      <span className="k-dash">—</span>
+    )
+  const cook = (id?: string) => (id ? staffName(data, id) : <span className="k-dash">—</span>)
+  const finishedAt = (item: KitchenOrderItem) =>
+    item.status === 'REJECTED' ? item.rejectedAt : item.readyAt
+  const doneBy = (item: KitchenOrderItem) =>
+    item.status === 'REJECTED' ? item.rejectedBy : (item.readyBy ?? item.startedBy)
 
   return (
     <div className="k-history">
@@ -131,11 +141,11 @@ export default function KitchenHistoryPage() {
               <th>Bàn</th>
               <th>Món</th>
               <th className="k-num">SL</th>
-              <th>Gửi</th>
-              <th>Bắt đầu</th>
-              <th>Hoàn thành</th>
-              <th>Người làm</th>
-              <th>Trạng thái</th>
+              <th className="k-center">Gửi</th>
+              <th className="k-center">Bắt đầu</th>
+              <th className="k-center">Hoàn thành</th>
+              <th className="k-history-worker">Người làm</th>
+              <th className="k-center">Trạng thái</th>
             </tr>
           </thead>
           <tbody>
@@ -148,20 +158,20 @@ export default function KitchenHistoryPage() {
                 </td>
                 <td className="k-strong">{order.tableCode}</td>
                 <td>
-                  <div className="k-cell-dish">
-                    <DishPhoto menu={menus.get(item.menuItemId)} size="sm" />
-                    <span>
-                      <span className="k-history-name">{item.name}</span>
-                      {item.note && <span className="k-history-note"> · {item.note}</span>}
-                    </span>
-                  </div>
+                  <span
+                    className="k-history-dish"
+                    title={item.note ? `${item.name} · ${item.note}` : item.name}
+                  >
+                    <span className="k-history-name">{item.name}</span>
+                    {item.note && <span className="k-history-note"> · {item.note}</span>}
+                  </span>
                 </td>
                 <td className="k-num k-strong">{quantityLabel(item.quantity, item.unit)}</td>
-                <td className="k-mono">{time(item.submittedAt)}</td>
-                <td className="k-mono">{time(item.startedAt)}</td>
-                <td className="k-mono">{time(item.readyAt)}</td>
-                <td>{cook(item.readyBy ?? item.startedBy)}</td>
-                <td>
+                <td className="k-mono k-center">{time(item.submittedAt)}</td>
+                <td className="k-mono k-center">{time(item.startedAt)}</td>
+                <td className="k-mono k-center">{time(finishedAt(item))}</td>
+                <td className="k-nowrap k-history-worker">{cook(doneBy(item))}</td>
+                <td className="k-center">
                   <KitchenStatusBadge status={item.status} />
                 </td>
               </tr>

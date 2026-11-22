@@ -97,7 +97,7 @@ function AccountMenu({ user }: { user: CashierStaff }) {
         </span>
         <span className="k-account-text">
           <span className="k-account-name">{user.name}</span>
-          <span className="k-account-role">{user.position}</span>
+          <span className="k-account-role">{ROLE_LABEL[user.role]}</span>
         </span>
         <Icon name="chevronDown" size={14} />
         <span className="k-visually-hidden">Tài khoản</span>
@@ -107,7 +107,7 @@ function AccountMenu({ user }: { user: CashierStaff }) {
           <div className="k-menu-head">
             <strong>{user.name}</strong>
             <span>
-              {ROLE_LABEL[user.role]} · {user.position} · {user.id}
+              {ROLE_LABEL[user.role]} · {shortCode(user.id)}
             </span>
           </div>
           <Link

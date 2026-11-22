@@ -343,3 +343,17 @@ export function applyKitchenCommand(
       throw new KitchenError('FORBIDDEN', 'Thao tác này không thuộc quyền của Bếp.')
   }
 }
+
+/** Short toast for a single dish started or completed, e.g. "Đã bắt đầu Cua rang me · Bàn A1". */
+export function itemActionSummary(
+  command: KitchenCommand,
+  data: KitchenData,
+  fallback: string,
+): string {
+  if ((command.type !== 'start' && command.type !== 'complete') || command.items.length !== 1)
+    return fallback
+  const item = data.items.find((i) => i.id === command.items[0].id)
+  const table = data.orders.find((o) => o.id === item?.orderId)?.tableCode
+  if (!item || !table) return fallback
+  return `${command.type === 'start' ? 'Đã bắt đầu' : 'Đã hoàn thành'} ${item.name} · Bàn ${table}`
+}
