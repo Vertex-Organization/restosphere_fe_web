@@ -255,28 +255,97 @@
   border: 0;
   border-top: 1px solid color-mix(in srgb, var(--color-dark) 12%, transparent);
 }
-.sb-membership-card > div {
+.sb-member-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px 16px;
+}
+/* align-content: start keeps the input at its own height when a neighbour shows an error. */
+.sb-member-form label {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-plum);
+}
+.sb-member-form input:not([type='checkbox']) {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid rgb(180 0 0 / 0.2);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-dark);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 400;
+}
+.sb-member-form input:focus-visible {
+  outline: 2px solid var(--color-plum);
+  outline-offset: 1px;
+}
+.sb-member-form input[aria-invalid='true'] {
+  border-color: #b91c1c;
+}
+.sb-member-form .sb-member-consent {
+  grid-column: 1 / -1;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.4;
 }
-.sb-membership-card > div p {
-  flex: 1;
-  font-size: 14px;
-  line-height: 1.375;
+.sb-member-consent input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  flex: none;
+  accent-color: var(--color-plum);
 }
-.sb-membership-card a {
-  flex-shrink: 0;
+.sb-member-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b91c1c;
+}
+.sb-member-form button,
+.sb-member-done button {
+  grid-column: 1 / -1;
+  justify-self: start;
   padding: 12px 28px;
+  border: 0;
+  border-radius: 999px;
   background: var(--color-plum);
   color: var(--color-cream);
   font-size: 14px;
   font-weight: 600;
-  border-radius: 999px;
+  cursor: pointer;
   transition: background 0.2s;
 }
-.sb-membership-card a:hover {
+.sb-member-form button:hover,
+.sb-member-done button:hover {
   background: var(--color-dark);
+}
+.sb-member-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.sb-member-done {
+  display: grid;
+  gap: 16px;
+}
+.sb-member-done p {
+  font-size: 18px;
+  color: var(--color-plum);
+}
+.sb-member-done span {
+  font-size: 14px;
+  line-height: 1.5;
 }
 .sb-sandwiches {
   position: relative;
@@ -787,11 +856,11 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  .sb-membership-card > div {
-    flex-direction: column;
-    align-items: stretch;
+  .sb-member-form {
+    grid-template-columns: 1fr;
   }
-  .sb-membership-card a {
-    text-align: center;
+  .sb-member-form button,
+  .sb-member-done button {
+    justify-self: stretch;
   }
 }

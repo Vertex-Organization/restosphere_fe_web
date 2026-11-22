@@ -4,6 +4,7 @@ import { ApiError } from '../../../../api/client'
 import { reservationService, type ReservationSettings } from '../../../../api/reservations/service'
 import type { Reservation } from '../../../../api/reservations/types'
 import { MenuIcon } from '../menu/MenuIcons'
+import DepositPanel from './DepositPanel'
 import type { Language } from '../siteData'
 import {
   BOOKING_COPY,
@@ -26,7 +27,6 @@ type BookingFormProps = {
 }
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
-const MAX_GUESTS = 60
 
 /** 10:00 – 21:30 every half hour. */
 const SLOTS = Array.from(
@@ -52,6 +52,19 @@ function restaurantNow(timeZone = TIME_ZONE) {
 }
 
 const DURATION_MINUTES = 120
+// Server field names whose errors render beside their input instead of the form footer.
+const SHOWN_INLINE = [
+  'date',
+  'time',
+  'durationMinutes',
+  'guests',
+  'areaId',
+  'name',
+  'phone',
+  'email',
+  'note',
+  'items',
+]
 const minutesOf = (slot: string) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3))
 
 /** Slots inside the restaurant's opening hours (arrival + duration); today's slots need at least an hour's notice. */
@@ -131,6 +144,17 @@ export function BookingForm({
   }, [])
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState('')
+  const [failedField, setFailedField] = useState('')
+  const fieldError = (...fields: string[]) =>
+    fields.includes(failedField) ? (
+      <p className="bk-error" role="alert">
+        {failed}
+      </p>
+    ) : null
+  const clearFailure = () => {
+    setFailed('')
+    setFailedField('')
+  }
   const [done, setDone] = useState<Reservation | null>(null)
   const [copied, setCopied] = useState(false)
 
@@ -149,8 +173,7 @@ export function BookingForm({
   const total = cartTotal(cart, dishes)
   const [minCovered, maxCovered] = cartGuestCoverage(cart, dishes)
   const hasFoodInCart = chosen.some((d) => d.serves)
-  const setGuestCount = (value: number) =>
-    onGuestsChange(Math.max(1, Math.min(MAX_GUESTS, Math.round(value) || 1)))
+  const setGuestCount = (value: number) => onGuestsChange(Math.round(value) || 0)
 
   function handleDateChange(nextDate: string) {
     setDate(nextDate)
@@ -162,14 +185,11 @@ export function BookingForm({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!onlineAllowed || sending || !time) {
-      if (!time) setFailed(t.failed)
-      return
-    }
+    if (!onlineAllowed || sending) return
     const form = new FormData(event.currentTarget)
     const text = (name: string) => String(form.get(name) ?? '').trim()
     setSending(true)
-    setFailed('')
+    clearFailure()
     try {
       const reservation = await reservationService.create({
         date,
@@ -187,9 +207,9 @@ export function BookingForm({
       onCartClear()
     } catch (error) {
       // Server reasons are Vietnamese; the English page keeps its own generic copy.
-      setFailed(
-        language === 'vi' && error instanceof ApiError && error.detail ? error.detail : t.failed,
-      )
+      const apiError = error instanceof ApiError ? error : undefined
+      setFailed(language === 'vi' && apiError?.detail ? apiError.detail : t.failed)
+      setFailedField(apiError?.field ?? '')
     } finally {
       setSending(false)
     }
@@ -203,6 +223,10 @@ export function BookingForm({
     } catch {
       // Fallback ignored if clipboard is blocked
     }
+  }
+
+  if (done?.deposit && !done.deposit.paidAt && done.status === 'PENDING') {
+    return <DepositPanel reservation={done} language={language} onPaid={setDone} />
   }
 
   if (done) {
@@ -293,8 +317,17 @@ export function BookingForm({
             <ul>
               {doneItems.map(({ dish, quantity }) => (
                 <li key={dish.id}>
-                  <span>
-                    {dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em>
+                  <span className="bk-summary-dish">
+                    <span className="bk-summary-thumb" aria-hidden="true">
+                      {dish.imageUrl ? (
+                        <img src={dish.imageUrl} alt="" />
+                      ) : (
+                        <MenuIcon name="dish" size={16} />
+                      )}
+                    </span>
+                    <span>
+                      {dish.name[language]} <em>× {formatQuantity(dish, quantity, language)}</em>
+                    </span>
                   </span>
                   <strong>{formatMoney(dish.price * quantity, language)}</strong>
                 </li>
@@ -320,7 +353,7 @@ export function BookingForm({
   }
 
   return (
-    <form className="bk-form" onSubmit={submit} onChange={() => setFailed('')}>
+    <form className="bk-form" noValidate onSubmit={submit} onChange={clearFailure}>
       <div className="bk-form-top">
         <a className="bk-link" href={`/${language}/reservation-status`}>
           {t.lookup}
@@ -353,11 +386,11 @@ export function BookingForm({
                 <input
                   id="bk-date"
                   type="date"
-                  required
                   min={today}
                   value={date}
                   onChange={(e) => handleDateChange(e.target.value)}
                 />
+                {fieldError('date')}
               </div>
 
               <div className="sb-catering-field">
@@ -377,20 +410,18 @@ export function BookingForm({
                     id="bk-guests"
                     type="number"
                     inputMode="numeric"
-                    min={1}
-                    max={MAX_GUESTS}
                     value={guests}
                     onChange={(e) => setGuestCount(Number(e.target.value))}
                   />
                   <button
                     type="button"
                     onClick={() => setGuestCount(guests + 1)}
-                    disabled={guests >= MAX_GUESTS}
                     aria-label={t.more}
                   >
                     +
                   </button>
                 </div>
+                {fieldError('guests')}
               </div>
             </div>
 
@@ -445,6 +476,7 @@ export function BookingForm({
                   )}
                 </div>
               )}
+              {fieldError('time', 'durationMinutes')}
             </div>
 
             <div>
@@ -471,6 +503,7 @@ export function BookingForm({
                   )
                 })}
               </div>
+              {fieldError('areaId')}
             </div>
           </fieldset>
         </div>
@@ -490,10 +523,10 @@ export function BookingForm({
                 <input
                   id="bk-name"
                   name="name"
-                  required
                   autoComplete="name"
                   placeholder={t.namePlaceholder}
                 />
+                {fieldError('name')}
               </div>
               <div className="sb-catering-field">
                 <label htmlFor="bk-phone">
@@ -503,11 +536,10 @@ export function BookingForm({
                   id="bk-phone"
                   name="phone"
                   type="tel"
-                  required
                   autoComplete="tel"
-                  pattern="[0-9+ ().-]{8,}"
                   placeholder={t.phonePlaceholder}
                 />
+                {fieldError('phone')}
               </div>
             </div>
 
@@ -520,11 +552,13 @@ export function BookingForm({
                 autoComplete="email"
                 placeholder={t.emailPlaceholder}
               />
+              {fieldError('email')}
             </div>
 
             <div className="sb-catering-field">
               <label htmlFor="bk-note">{t.note}</label>
               <textarea id="bk-note" name="note" rows={3} placeholder={t.notePlaceholder} />
+              {fieldError('note')}
             </div>
           </fieldset>
 
@@ -619,9 +653,10 @@ export function BookingForm({
                 {t.noPreorder} <a href="#catering-preorder">{t.pickDishes}</a>.
               </p>
             )}
+            {fieldError('items')}
           </section>
 
-          {failed && (
+          {failed && !SHOWN_INLINE.includes(failedField) && (
             <p className="bk-error" role="alert">
               {failed}
             </p>
