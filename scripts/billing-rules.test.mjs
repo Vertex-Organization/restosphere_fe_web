@@ -242,6 +242,69 @@ test('openable scheduled shifts follow the [start - 30 min, end] window', async 
   assert.ok(overnight.end > overnight.start)
 })
 
+test('open shift is overdue after its scheduled end or after 12 hours', async () => {
+  const { isShiftOverdue } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  const data = {
+    scheduledShifts: [
+      { id: 's1', name: 'Ca sáng', start: '06:00', end: '14:00', cashierId: cashier },
+      {
+        id: 's2',
+        name: 'Ca tối',
+        start: '2026-11-21T18:00:00+07:00',
+        end: '2026-11-22T02:00:00+07:00',
+        cashierId: cashier,
+      },
+    ],
+  }
+  const mk = (openedAt, scheduledShiftId, status = 'OPEN') => ({
+    id: 'x',
+    openedAt,
+    scheduledShiftId,
+    status,
+  })
+  const at = (iso) => new Date(iso)
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T06:05:00+07:00', 's1'), at('2026-11-21T13:59:00+07:00')),
+    false,
+  )
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T06:05:00+07:00', 's1'), at('2026-11-21T14:01:00+07:00')),
+    true,
+  )
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T06:05:00+07:00', 's1'), at('2026-11-22T07:00:00+07:00')),
+    true,
+  )
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T18:05:00+07:00', 's2'), at('2026-11-22T01:00:00+07:00')),
+    false,
+  )
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T08:00:00+07:00'), at('2026-11-21T19:59:00+07:00')),
+    false,
+  )
+  assert.equal(
+    isShiftOverdue(data, mk('2026-11-21T08:00:00+07:00'), at('2026-11-21T20:01:00+07:00')),
+    true,
+  )
+  assert.equal(
+    isShiftOverdue(
+      data,
+      mk('2026-11-21T06:05:00+07:00', 's1', 'CLOSED'),
+      at('2026-11-22T07:00:00+07:00'),
+    ),
+    false,
+  )
+})
+
+test('shortDuration matches the kitchen wait label', async () => {
+  const { shortDuration } = await import(moduleUrl('src/components/billing/format.ts'))
+  assert.equal(shortDuration(8), '8 phút')
+  assert.equal(shortDuration(75), '1 giờ 15 phút')
+  assert.equal(shortDuration(120), '2 giờ')
+  assert.equal(shortDuration(24 * 60 * 2 + 5), '2 ngày')
+})
+
 test('shortCode keeps the prefix and shows the last 8 characters without dashes', async () => {
   const { shortCode } = await import(moduleUrl('src/components/kitchen/format.ts'))
   const uuid = '3f2a9c1e-7b4d-4e8a-9d11-0a1b2c3d4e5f'

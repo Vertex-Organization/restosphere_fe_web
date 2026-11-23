@@ -439,11 +439,27 @@
   background: var(--k-warning-soft);
   border-color: var(--k-warning-border);
 }
+.c-shift-chip--overdue {
+  color: var(--k-warning-text);
+  background: var(--k-warning-soft);
+  border-color: var(--k-warning-border);
+}
 .c-hcount--due {
   --k-dot: var(--k-warning);
 }
 
 /* ── Counter (POS) ─────────────────────────────────────────────────────── */
+.c-pos-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+.c-pos-wrap > .c-pos {
+  flex: 1;
+  height: auto;
+}
 .c-pos {
   display: grid;
   grid-template-columns: minmax(0, 36fr) minmax(0, 64fr);

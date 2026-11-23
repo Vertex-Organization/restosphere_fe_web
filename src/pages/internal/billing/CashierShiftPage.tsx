@@ -9,6 +9,7 @@ import {
 } from '../../../api/billing/selectors'
 import type { CashierShift } from '../../../api/billing/types'
 import { minutesBetween } from '../../../api/kitchen/selectors'
+import { ShiftOverdueBanner } from '../../../components/billing/ShiftOverdueBanner'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { Alert, Badge, Dialog, MoneyInput } from '../../../components/billing/ui'
@@ -290,6 +291,9 @@ function CurrentShift({ shift }: { shift: CashierShift }) {
 
   return (
     <>
+      <ShiftOverdueBanner
+        onReconcile={canManage && !s.pendingCount ? () => setClosing(true) : undefined}
+      />
       <div className="c-stats">
         <Stat
           icon="clock"

@@ -67,6 +67,19 @@ export function openableScheduledShifts(data: CashierData, cashierId: string, no
   })
 }
 
+export const SHIFT_MAX_OPEN_MS = 12 * 3_600_000
+
+/** An open shift is overdue once its scheduled end has passed or it has been open for over 12 hours. */
+export function isShiftOverdue(data: CashierData, shift: CashierShift, now: Date) {
+  if (shift.status !== 'OPEN') return false
+  const opened = Date.parse(shift.openedAt)
+  if (Number.isNaN(opened)) return false
+  if (now.getTime() - opened > SHIFT_MAX_OPEN_MS) return true
+  const scheduled = data.scheduledShifts.find((s) => s.id === shift.scheduledShiftId)
+  const window = scheduled && scheduledShiftWindow(scheduled, new Date(opened))
+  return !!window && now.getTime() > window.end.getTime()
+}
+
 export const sessionItems = (data: CashierData, sessionId: string) => {
   const orderIds = new Set(data.orders.filter((o) => o.sessionId === sessionId).map((o) => o.id))
   return data.items.filter((i) => orderIds.has(i.orderId))

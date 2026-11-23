@@ -15,6 +15,7 @@ import {
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { DiscountDialog } from '../../../components/billing/BillDialogs'
 import { BillLines, BillTotals } from '../../../components/billing/BillParts'
+import { ShiftOverdueBanner } from '../../../components/billing/ShiftOverdueBanner'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { Alert, BillStatusBadge, Dialog } from '../../../components/billing/ui'
@@ -142,115 +143,118 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
   }
 
   return (
-    <div className="c-pos" data-view={selectedId ? 'detail' : 'list'}>
-      <section className="c-pos-list" aria-label="Bàn và hóa đơn">
-        <div className="c-pos-tools">
-          <label className="k-search c-pos-search">
-            <Icon name="search" size={15} />
-            <span className="k-visually-hidden">Tìm bàn hoặc mã hóa đơn</span>
-            <input
-              ref={search}
-              className="k-input"
-              type="search"
-              placeholder="Tìm bàn hoặc mã hóa đơn"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && visible[0]) select(visible[0].billId)
-                if (e.key === 'Escape') setQuery('')
-              }}
-            />
-            <kbd className="c-kbd" aria-hidden="true">
-              /
-            </kbd>
-          </label>
-          <div className="c-tabs" role="tablist" aria-label="Trạng thái">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                role="tab"
-                className="c-tab"
-                aria-selected={!needle && tab === t.id}
-                onClick={() => {
-                  setTab(t.id)
-                  setQuery('')
+    <div className="c-pos-wrap">
+      <ShiftOverdueBanner />
+      <div className="c-pos" data-view={selectedId ? 'detail' : 'list'}>
+        <section className="c-pos-list" aria-label="Bàn và hóa đơn">
+          <div className="c-pos-tools">
+            <label className="k-search c-pos-search">
+              <Icon name="search" size={15} />
+              <span className="k-visually-hidden">Tìm bàn hoặc mã hóa đơn</span>
+              <input
+                ref={search}
+                className="k-input"
+                type="search"
+                placeholder="Tìm bàn hoặc mã hóa đơn"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && visible[0]) select(visible[0].billId)
+                  if (e.key === 'Escape') setQuery('')
                 }}
-              >
-                {t.label}
-                <span className="c-tab-count">{counts[t.id]}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {visible.length ? (
-          <div ref={grid} className="c-tiles" onKeyDown={onGridKey}>
-            {visible.map((row) => {
-              const look = tileLook(row, now)
-              const amount = row.status === 'PAID' ? row.total : row.remaining
-              return (
+              />
+              <kbd className="c-kbd" aria-hidden="true">
+                /
+              </kbd>
+            </label>
+            <div className="c-tabs" role="tablist" aria-label="Trạng thái">
+              {TABS.map((t) => (
                 <button
-                  key={row.billId}
+                  key={t.id}
                   type="button"
-                  data-bill={row.billId}
-                  className={`c-tile c-tile--${look.tone}`}
-                  aria-current={row.billId === shownId ? 'true' : undefined}
-                  onClick={() => select(row.billId)}
-                  aria-label={`Bàn ${row.tableCode}, ${look.text}, ${formatVnd(amount)}`}
+                  role="tab"
+                  className="c-tab"
+                  aria-selected={!needle && tab === t.id}
+                  onClick={() => {
+                    setTab(t.id)
+                    setQuery('')
+                  }}
                 >
-                  <span className="c-tile-top">
-                    <span className="c-tile-table">{row.tableCode}</span>
-                    {look.time && (
-                      <span className={`c-tile-time c-tile-time--${look.timeTone}`}>
-                        {look.time}
-                      </span>
-                    )}
-                  </span>
-                  <span className="c-tile-amount">{formatVnd(amount)}</span>
-                  <span className="c-tile-state">
-                    <Icon name={look.icon} size={13} />
-                    {look.text}
-                  </span>
+                  {t.label}
+                  <span className="c-tab-count">{counts[t.id]}</span>
                 </button>
-              )
-            })}
+              ))}
+            </div>
           </div>
-        ) : (
-          <div className="c-empty">
-            <Icon name={needle ? 'search' : 'checkCircle'} size={22} />
-            {needle ? (
-              <p>Không có bàn hoặc hóa đơn khớp “{query.trim()}”.</p>
-            ) : tab === 'due' ? (
-              <>
-                <p>Không có bàn chờ thanh toán.</p>
-                {counts.serving > 0 && (
-                  <button
-                    type="button"
-                    className="k-btn k-btn--ghost"
-                    onClick={() => setTab('serving')}
-                  >
-                    Xem {counts.serving} bàn đang phục vụ
-                  </button>
-                )}
-              </>
-            ) : (
-              <p>Không có bàn nào.</p>
-            )}
-          </div>
-        )}
-      </section>
 
-      {shownId ? (
-        <BillPanel key={shownId} billId={shownId} />
-      ) : (
-        <section className="c-bill c-bill--empty">
-          <div className="c-empty">
-            <Icon name="receipt" size={22} />
-            <p>Chọn một bàn để xem hóa đơn.</p>
-          </div>
+          {visible.length ? (
+            <div ref={grid} className="c-tiles" onKeyDown={onGridKey}>
+              {visible.map((row) => {
+                const look = tileLook(row, now)
+                const amount = row.status === 'PAID' ? row.total : row.remaining
+                return (
+                  <button
+                    key={row.billId}
+                    type="button"
+                    data-bill={row.billId}
+                    className={`c-tile c-tile--${look.tone}`}
+                    aria-current={row.billId === shownId ? 'true' : undefined}
+                    onClick={() => select(row.billId)}
+                    aria-label={`Bàn ${row.tableCode}, ${look.text}, ${formatVnd(amount)}`}
+                  >
+                    <span className="c-tile-top">
+                      <span className="c-tile-table">{row.tableCode}</span>
+                      {look.time && (
+                        <span className={`c-tile-time c-tile-time--${look.timeTone}`}>
+                          {look.time}
+                        </span>
+                      )}
+                    </span>
+                    <span className="c-tile-amount">{formatVnd(amount)}</span>
+                    <span className="c-tile-state">
+                      <Icon name={look.icon} size={13} />
+                      {look.text}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="c-empty">
+              <Icon name={needle ? 'search' : 'checkCircle'} size={22} />
+              {needle ? (
+                <p>Không có bàn hoặc hóa đơn khớp “{query.trim()}”.</p>
+              ) : tab === 'due' ? (
+                <>
+                  <p>Không có bàn chờ thanh toán.</p>
+                  {counts.serving > 0 && (
+                    <button
+                      type="button"
+                      className="k-btn k-btn--ghost"
+                      onClick={() => setTab('serving')}
+                    >
+                      Xem {counts.serving} bàn đang phục vụ
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p>Không có bàn nào.</p>
+              )}
+            </div>
+          )}
         </section>
-      )}
+
+        {shownId ? (
+          <BillPanel key={shownId} billId={shownId} />
+        ) : (
+          <section className="c-bill c-bill--empty">
+            <div className="c-empty">
+              <Icon name="receipt" size={22} />
+              <p>Chọn một bàn để xem hóa đơn.</p>
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   )
 }
