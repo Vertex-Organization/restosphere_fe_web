@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ROLE_LABEL } from '../api/kitchen/labels'
-import { openShiftOf, pendingRequestCount, posRows, unreadCount } from '../api/billing/selectors'
+import {
+  isShiftOverdue,
+  openShiftOf,
+  pendingRequestCount,
+  posRows,
+  unreadCount,
+} from '../api/billing/selectors'
 import type { CashierStaff } from '../api/billing/types'
 import { Icon, type IconName } from '../components/billing/Icon'
+import { formatShiftOpened } from '../components/billing/format'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
 import { KitchenLink as Link } from '../components/kitchen/KitchenLink'
+import { CASHIER_PREVIEWS } from '../components/kitchen/notifyPreviews'
+import { NotifyModeMenu } from '../components/kitchen/NotifyModeMenu'
 import { useCashierData } from '../hooks/billing/cashierDataContext'
 import { leaveCashier as signOut } from '../hooks/billing/useCashierAuth'
 import { useNow } from '../hooks/kitchen/useNow'
@@ -171,12 +180,23 @@ interface Props {
 }
 
 export function CashierLayout({ route, title, fill, children }: Props) {
-  const { user, data, loadError, refresh } = useCashierData()
+  const {
+    user,
+    data,
+    loadError,
+    refresh,
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+  } = useCashierData()
   const now = useNow()
   const content = useRef<HTMLElement>(null)
   const unread = data ? unreadCount(data, user.id) : 0
   const requests = data ? pendingRequestCount(data) : 0
   const shift = data ? openShiftOf(data, user.id) : undefined
+  const overdue = data && shift ? isShiftOverdue(data, shift, new Date(now)) : false
   const due = data ? posRows(data, now).filter((r) => r.status === 'PAYMENT_REQUESTED').length : 0
 
   const routeKey =
@@ -277,10 +297,12 @@ export function CashierLayout({ route, title, fill, children }: Props) {
               {shift ? (
                 <Link
                   to={cashierPaths.shift}
-                  className="c-shift-chip c-shift-chip--open"
-                  title="Ca thu ngân đang mở"
+                  className={`c-shift-chip ${overdue ? 'c-shift-chip--overdue' : 'c-shift-chip--open'}`}
+                  title={overdue ? 'Ca đã quá giờ, cần đối soát và đóng ca' : 'Ca thu ngân đang mở'}
                 >
-                  {shortCode(shift.code)} · từ {formatTime(shift.openedAt)}
+                  {overdue
+                    ? `Ca mở từ ${formatShiftOpened(shift.openedAt)} · quá giờ`
+                    : `${shortCode(shift.code)} · từ ${formatTime(shift.openedAt)}`}
                 </Link>
               ) : (
                 <Link to={cashierPaths.shift} className="c-shift-chip c-shift-chip--closed">
@@ -321,6 +343,14 @@ export function CashierLayout({ route, title, fill, children }: Props) {
               <Icon name="bell" size={18} />
               {unread > 0 && <span className="k-bell-count">{unread > 9 ? '9+' : unread}</span>}
             </Link>
+            <NotifyModeMenu
+              notifyMode={notifyMode}
+              setNotifyMode={setNotifyMode}
+              notifyVolume={notifyVolume}
+              setNotifyVolume={setNotifyVolume}
+              previewSound={previewSound}
+              previews={CASHIER_PREVIEWS}
+            />
             <AccountMenu user={user} />
           </div>
         </header>

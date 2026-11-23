@@ -2,8 +2,11 @@ import { useDeferredValue, useState } from 'react'
 import { METHOD_LABEL, PAYMENT_STATUS_LABEL } from '../../../api/billing/labels'
 import { formatVnd } from '../../../api/billing/money'
 import { hasPermission, staffName } from '../../../api/billing/selectors'
+import { HISTORY_PAGE_SIZE, takePage } from '../../../api/kitchen/paging'
 import type { PaymentMethod, PaymentStatus } from '../../../api/billing/types'
 import { Icon } from '../../../components/billing/Icon'
+import { DayField } from '../../../components/kitchen/DayField'
+import { SelectMenu } from '../../../components/kitchen/SelectMenu'
 import { PaymentStatusBadge } from '../../../components/billing/ui'
 import {
   formatDate,
@@ -17,7 +20,6 @@ import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 import { cashierPaths, navigate } from '../../../routes/cashierRouter'
 
-const PAGE_SIZE = 20
 const METHODS: ('ALL' | PaymentMethod)[] = ['ALL', 'CASH', 'TRANSFER', 'CARD']
 const STATUSES: ('ALL' | PaymentStatus)[] = [
   'ALL',
@@ -36,7 +38,7 @@ export default function CashierTransactionsPage() {
   const [day, setDay] = useState(today)
   const [method, setMethod] = useState<'ALL' | PaymentMethod>('ALL')
   const [status, setStatus] = useState<'ALL' | PaymentStatus>('ALL')
-  const [page, setPage] = useState(0)
+  const [limit, setLimit] = useState(HISTORY_PAGE_SIZE)
   const needle = searchable(useDeferredValue(query).trim())
 
   if (!hasPermission(user, 'transactions.view')) {
@@ -71,15 +73,13 @@ export default function CashierTransactionsPage() {
     })
     .sort((a, b) => b.payment.createdAt.localeCompare(a.payment.createdAt))
 
-  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE))
-  const current = Math.min(page, pages - 1)
-  const shown = rows.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE)
+  const page = takePage(rows, limit)
   const succeeded = rows.filter((r) => r.payment.status === 'SUCCEEDED')
   const total = succeeded.reduce((sum, r) => sum + r.payment.amount, 0)
   const filtered = query || day !== today || method !== 'ALL' || status !== 'ALL'
   const reset = (fn: () => void) => {
     fn()
-    setPage(0)
+    setLimit(HISTORY_PAGE_SIZE)
   }
 
   return (
@@ -96,44 +96,33 @@ export default function CashierTransactionsPage() {
             onChange={(e) => reset(() => setQuery(e.target.value))}
           />
         </label>
-        <label className="k-inline-field">
-          <span className="k-label">Ngày</span>
-          <input
-            className="k-input"
-            type="date"
-            value={day}
-            max={today}
-            onChange={(e) => reset(() => setDay(e.target.value))}
-          />
-        </label>
-        <label className="k-inline-field">
+        <DayField value={day} now={now} onChange={(value) => reset(() => setDay(value))} />
+        <div className="k-inline-field">
           <span className="k-label">Phương thức</span>
-          <select
-            className="k-select"
+          <SelectMenu
             value={method}
-            onChange={(e) => reset(() => setMethod(e.target.value as typeof method))}
-          >
-            {METHODS.map((m) => (
-              <option key={m} value={m}>
-                {m === 'ALL' ? 'Tất cả' : METHOD_LABEL[m]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="k-inline-field">
+            onChange={(value) => reset(() => setMethod(value))}
+            buttonLabel="Phương thức"
+            listLabel="Phương thức"
+            options={METHODS.map((m) => ({
+              value: m,
+              label: m === 'ALL' ? 'Tất cả' : METHOD_LABEL[m],
+            }))}
+          />
+        </div>
+        <div className="k-inline-field">
           <span className="k-label">Trạng thái</span>
-          <select
-            className="k-select"
+          <SelectMenu
             value={status}
-            onChange={(e) => reset(() => setStatus(e.target.value as typeof status))}
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s === 'ALL' ? 'Tất cả' : PAYMENT_STATUS_LABEL[s]}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => reset(() => setStatus(value))}
+            buttonLabel="Trạng thái"
+            listLabel="Trạng thái"
+            options={STATUSES.map((st) => ({
+              value: st,
+              label: st === 'ALL' ? 'Tất cả' : PAYMENT_STATUS_LABEL[st],
+            }))}
+          />
+        </div>
         {filtered && (
           <button
             type="button"
@@ -167,14 +156,14 @@ export default function CashierTransactionsPage() {
               <th className="k-num">Số tiền</th>
               <th>Phương thức</th>
               <th>Thu ngân</th>
-              <th>Trạng thái</th>
+              <th className="k-center">Trạng thái</th>
               <th className="k-cell-actions">
                 <span className="k-visually-hidden">Xem</span>
               </th>
             </tr>
           </thead>
           <tbody>
-            {shown.map(({ payment, bill, table }) => (
+            {page.items.map(({ payment, bill, table }) => (
               <tr
                 key={payment.id}
                 className="c-clickable"
@@ -208,7 +197,7 @@ export default function CashierTransactionsPage() {
                 </td>
                 <td>{METHOD_LABEL[payment.method]}</td>
                 <td>{staffName(data, payment.createdBy)}</td>
-                <td>
+                <td className="k-center">
                   <PaymentStatusBadge status={payment.status} />
                 </td>
                 <td className="k-cell-actions">
@@ -221,30 +210,21 @@ export default function CashierTransactionsPage() {
         {!rows.length && <p className="k-empty">Không có giao dịch khớp bộ lọc.</p>}
       </div>
 
-      {pages > 1 && (
-        <nav className="c-pager" aria-label="Phân trang">
+      {rows.length > 0 && (
+        <div className="k-history-foot">
           <span className="k-muted">
-            Trang {current + 1}/{pages}
+            Đang hiện {page.shown} / {page.total} giao dịch
           </span>
-          <button
-            type="button"
-            className="k-btn k-icon-btn"
-            disabled={current === 0}
-            onClick={() => setPage(current - 1)}
-            aria-label="Trang trước"
-          >
-            <Icon name="chevronLeft" />
-          </button>
-          <button
-            type="button"
-            className="k-btn k-icon-btn"
-            disabled={current >= pages - 1}
-            onClick={() => setPage(current + 1)}
-            aria-label="Trang sau"
-          >
-            <Icon name="chevronRight" />
-          </button>
-        </nav>
+          {page.hasMore && (
+            <button
+              type="button"
+              className="k-btn"
+              onClick={() => setLimit((value) => value + HISTORY_PAGE_SIZE)}
+            >
+              Xem thêm
+            </button>
+          )}
+        </div>
       )}
     </div>
   )

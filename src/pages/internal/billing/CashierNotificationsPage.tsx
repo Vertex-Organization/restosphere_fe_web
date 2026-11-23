@@ -1,246 +1,151 @@
 import { useState } from 'react'
-import { formatVnd } from '../../../api/billing/money'
-import { billView } from '../../../api/billing/selectors'
-import type { CashierNotification, CashierNotificationKind } from '../../../api/billing/types'
-import { notificationTitle } from '../../../api/kitchen/labels'
+import { cashierKindShort, cashierNotificationParts } from '../../../api/billing/notifications'
+import type { CashierNotification } from '../../../api/billing/types'
+import {
+  buildDayView,
+  filterByRange,
+  NOTIFICATION_PAGE_SIZE,
+  type NotifyRange,
+} from '../../../api/kitchen/dayGroups'
+import { relativeAgo } from '../../../api/kitchen/notifications'
 import { minutesBetween } from '../../../api/kitchen/selectors'
-import { ago } from '../../../components/billing/format'
-import { Icon } from '../../../components/billing/Icon'
-import { cashierNotificationPresentation } from '../../../components/billing/notificationPresentation'
-import { BillStatusBadge } from '../../../components/billing/ui'
-import { formatTime, localDayKey } from '../../../components/kitchen/format'
-import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
+import { formatTime } from '../../../components/kitchen/format'
+import { Icon } from '../../../components/kitchen/Icon'
+import { SegmentedFilter } from '../../../components/kitchen/SegmentedFilter'
+import { SelectMenu, type SelectOption } from '../../../components/kitchen/SelectMenu'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 import { cashierPaths, navigate } from '../../../routes/cashierRouter'
 
-type Filter = 'all' | 'unread' | 'payment' | 'error' | 'request'
-const FILTERS: { id: Filter; label: string; kinds?: CashierNotificationKind[] }[] = [
-  { id: 'all', label: 'Tất cả' },
-  { id: 'unread', label: 'Chưa đọc' },
-  {
-    id: 'payment',
-    label: 'Thanh toán',
-    kinds: ['PAYMENT_REQUEST', 'PAYMENT_REQUEST_WITHDRAWN', 'TRANSFER_RECEIVED'],
-  },
-  { id: 'error', label: 'Lỗi', kinds: ['TRANSFER_FAILED'] },
-  { id: 'request', label: 'Yêu cầu', kinds: ['REQUEST_DECIDED'] },
+const RANGE_OPTIONS: SelectOption<NotifyRange>[] = [
+  { value: 'today', label: 'Hôm nay' },
+  { value: '3days', label: '3 ngày gần nhất' },
 ]
 
-/** The one thing a cashier usually does next with this notification. */
-function quickAction(n: CashierNotification): { label: string; to: string } | null {
-  if (n.kind === 'REQUEST_DECIDED' && n.requestId)
-    return { label: 'Xem yêu cầu', to: cashierPaths.request(n.requestId) }
-  if (n.kind === 'TRANSFER_FAILED' && n.billId)
-    return { label: 'Thu lại', to: cashierPaths.payment(n.billId) }
-  if (n.billId) return { label: 'Mở hóa đơn', to: cashierPaths.posBill(n.billId) }
+/** The page a cashier usually wants next for this notification. */
+function targetOf(n: CashierNotification) {
+  if (n.kind === 'REQUEST_DECIDED' && n.requestId) return cashierPaths.request(n.requestId)
+  if (n.kind === 'TRANSFER_FAILED' && n.billId) return cashierPaths.payment(n.billId)
+  if (n.billId) return cashierPaths.posBill(n.billId)
   return null
 }
 
-export default function CashierNotificationsPage({ selectedId }: { selectedId: string }) {
-  const { data, user, run } = useCashierSnapshot()
+export default function CashierNotificationsPage() {
+  const { data, user, run, isPending } = useCashierSnapshot()
   const now = useNow()
-  const [filter, setFilter] = useState<Filter>('all')
+  const [range, setRange] = useState<NotifyRange>('today')
+  const [filter, setFilter] = useState<'all' | 'unread'>('all')
+  const [limit, setLimit] = useState(NOTIFICATION_PAGE_SIZE)
+  const sorted = [...data.notifications].sort((a, b) => b.at.localeCompare(a.at))
   const isUnread = (n: CashierNotification) => !n.readBy.includes(user.id)
+  const inRange = filterByRange(sorted, now, range)
+  const unread = inRange.filter(isUnread)
+  const list = filter === 'unread' ? unread : inRange
+  const { groups, total, shown } = buildDayView(list, now, range, limit)
 
-  const all = [...data.notifications].sort((a, b) => b.at.localeCompare(a.at))
-  const unread = all.filter(isUnread).length
-  const pass = (n: CashierNotification, f: Filter) => {
-    const def = FILTERS.find((x) => x.id === f)!
-    return f === 'all' ? true : f === 'unread' ? isUnread(n) : def.kinds!.includes(n.kind)
-  }
-  const list = all.filter((n) => pass(n, filter))
-  const selected = all.find((n) => n.id === selectedId) ?? list[0]
-  const today = localDayKey(now)
-  const groups = [
-    { label: 'Hôm nay', items: list.filter((n) => localDayKey(n.at) === today) },
-    { label: 'Trước đó', items: list.filter((n) => localDayKey(n.at) !== today) },
-  ].filter((g) => g.items.length)
-
-  const markRead = (n: CashierNotification) => {
+  const open = (n: CashierNotification) => {
     if (isUnread(n))
       void run({ type: 'read-notifications', ids: [n.id] }, [`notif:${n.id}`], { quiet: true })
+    const to = targetOf(n)
+    if (to) navigate(to)
   }
-  const select = (n: CashierNotification) => {
-    markRead(n)
-    navigate(`${cashierPaths.notifications}?id=${encodeURIComponent(n.id)}`, { replace: true })
+
+  const changeRange = (next: NotifyRange) => {
+    setRange(next)
+    setLimit(NOTIFICATION_PAGE_SIZE)
+  }
+  const changeFilter = (next: 'all' | 'unread') => {
+    setFilter(next)
+    setLimit(NOTIFICATION_PAGE_SIZE)
   }
 
   return (
-    <div className="c-split c-split--notes" data-view={selectedId ? 'detail' : 'list'}>
-      <section className="c-card c-split-list" aria-label="Danh sách thông báo">
-        <div className="c-split-tools c-split-tools--row">
-          <div className="c-tabs c-tabs--scroll" role="tablist" aria-label="Lọc thông báo">
-            {FILTERS.map((f) => {
-              const count = f.id === 'unread' ? unread : 0
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  role="tab"
-                  className="c-tab"
-                  aria-selected={filter === f.id}
-                  onClick={() => setFilter(f.id)}
-                >
-                  {f.label}
-                  {count > 0 && <span className="c-tab-count">{count}</span>}
-                </button>
-              )
-            })}
-          </div>
+    <div className="k-page k-page--list">
+      <div className="k-toolbar">
+        <SelectMenu
+          value={range}
+          onChange={changeRange}
+          buttonLabel="Khoảng thời gian"
+          listLabel="Khoảng thời gian"
+          options={RANGE_OPTIONS}
+        />
+        <div className="k-toolbar-group">
+          <SegmentedFilter
+            label="Lọc thông báo"
+            value={filter}
+            onChange={changeFilter}
+            options={[
+              { value: 'all', label: 'Tất cả', count: inRange.length },
+              { value: 'unread', label: 'Chưa đọc', count: unread.length },
+            ]}
+          />
           <button
             type="button"
-            className="k-btn k-btn--ghost k-icon-btn"
-            title="Đánh dấu tất cả đã đọc"
-            aria-label="Đánh dấu tất cả đã đọc"
-            disabled={!unread}
+            className="k-btn k-btn--ghost"
+            disabled={!unread.length || isPending('notif:all')}
             onClick={() => {
               void run({ type: 'read-notifications' }, ['notif:all'])
             }}
           >
-            <Icon name="check" />
+            <Icon name="check" size={15} />
+            Đánh dấu đã đọc
           </button>
         </div>
-
-        {groups.length ? (
-          <div className="c-notes">
-            {groups.map((g) => (
-              <section key={g.label}>
-                <h4 className="c-notes-group">{g.label}</h4>
-                <ul>
-                  {g.items.map((n) => {
-                    const look = cashierNotificationPresentation(n.kind)
-                    const action = quickAction(n)
-                    const unreadNow = isUnread(n)
-                    return (
-                      <li
-                        key={n.id}
-                        className={[
-                          'c-note',
-                          unreadNow ? 'c-note--unread' : '',
-                          n.id === selected?.id ? 'c-note--current' : '',
-                        ]
-                          .join(' ')
-                          .trim()}
+      </div>
+      {groups.length > 0 ? (
+        <div className="k-notif-groups">
+          {groups.map((group) => (
+            <section key={group.id}>
+              {range === '3days' && <h3 className="k-notif-group">{group.label}</h3>}
+              <ul className="k-notifs">
+                {group.items.map((n) => {
+                  const fresh = isUnread(n)
+                  const openable = targetOf(n) !== null
+                  const { table, detail } = cashierNotificationParts(n, data)
+                  return (
+                    <li key={n.id}>
+                      <button
+                        type="button"
+                        className={`k-notif${fresh ? ' k-notif--unread' : ''}${openable ? '' : ' k-notif--static'}`}
+                        onClick={() => open(n)}
                       >
-                        <button
-                          type="button"
-                          className="c-note-main"
-                          onClick={() => select(n)}
-                          aria-current={n.id === selected?.id ? 'true' : undefined}
-                        >
-                          <span className={`c-icon-box c-icon-box--${look.tone}`}>
-                            <Icon name={look.icon} size={15} />
-                          </span>
-                          <span className="c-note-text">
-                            <span className="c-note-title">
-                              {notificationTitle(n.kind, n.title)}
-                            </span>
-                            <span className="c-note-body">{n.body}</span>
-                          </span>
-                          <span className="c-note-time">{formatTime(n.at)}</span>
-                        </button>
-                        {action && (
-                          <Link
-                            to={action.to}
-                            className="c-note-action"
-                            onClick={() => markRead(n)}
-                          >
-                            {action.label}
-                          </Link>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
-              </section>
-            ))}
-          </div>
-        ) : (
-          <div className="c-empty">
-            <Icon name="inbox" size={22} />
-            <p>{filter === 'unread' ? 'Đã đọc hết thông báo.' : 'Không có thông báo.'}</p>
-          </div>
-        )}
-      </section>
-
-      <section className="c-card c-split-detail" aria-label="Chi tiết thông báo">
-        {selected ? (
-          <NoteDetail note={selected} now={now} />
-        ) : (
-          <div className="c-empty">
-            <Icon name="bell" size={22} />
-            <p>Chọn một thông báo để xem chi tiết.</p>
-          </div>
-        )}
-      </section>
-    </div>
-  )
-}
-
-function NoteDetail({ note: n, now }: { note: CashierNotification; now: number }) {
-  const { data } = useCashierSnapshot()
-  const look = cashierNotificationPresentation(n.kind)
-  const view = n.billId ? billView(data, n.billId) : null
-  const payment = n.paymentId ? data.payments.find((p) => p.id === n.paymentId) : undefined
-  const action = quickAction(n)
-
-  return (
-    <div className="c-detail-pane">
-      <Link to={cashierPaths.notifications} className="k-back c-split-back">
-        <Icon name="chevronLeft" />
-        Danh sách
-      </Link>
-      <header className="c-detail-head">
-        <span className={`c-icon-box c-icon-box--lg c-icon-box--${look.tone}`}>
-          <Icon name={look.icon} size={20} />
-        </span>
-        <div className="c-detail-heading">
-          <span className="c-detail-kicker">
-            {look.label} · {formatTime(n.at)} ({ago(minutesBetween(n.at, now))})
-          </span>
-          <h2 className="c-detail-title">{notificationTitle(n.kind, n.title)}</h2>
+                        <span className="k-notif-dot" aria-hidden="true" />
+                        <span className="k-notif-kind">
+                          {fresh && <span className="k-visually-hidden">Chưa đọc: </span>}
+                          {cashierKindShort(n.kind)}
+                        </span>
+                        <span className="k-notif-subject">
+                          {table && <b>{table}</b>}
+                          {detail && <span className="k-notif-detail">{detail}</span>}
+                        </span>
+                        <span className="k-notif-progress" aria-hidden="true" />
+                        <time className="k-notif-time" dateTime={n.at}>
+                          {formatTime(n.at)} · {relativeAgo(minutesBetween(n.at, now))}
+                        </time>
+                        <span className="k-notif-chevron" aria-hidden="true">
+                          {openable ? '›' : ''}
+                        </span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </section>
+          ))}
+          {shown < total && (
+            <button
+              type="button"
+              className="k-btn k-btn--ghost k-notif-more"
+              onClick={() => setLimit((value) => value + NOTIFICATION_PAGE_SIZE)}
+            >
+              Xem thêm ({total - shown})
+            </button>
+          )}
         </div>
-      </header>
-      <p className="c-detail-body">{n.body}</p>
-
-      {view && (
-        <div className="c-context">
-          <div className="c-context-head">
-            <b>Bàn {view.table.code}</b>
-            <span className="k-muted">{view.bill.code}</span>
-            <BillStatusBadge status={view.bill.status} />
-          </div>
-          <div className="c-facts c-facts--flat">
-            <div>
-              <span>Tổng hóa đơn</span>
-              <b>{formatVnd(view.bill.totals.total)}</b>
-            </div>
-            <div>
-              <span>{view.bill.status === 'PAID' ? 'Đã thu' : 'Còn phải thu'}</span>
-              <b>{formatVnd(view.bill.status === 'PAID' ? view.paid : view.remaining)}</b>
-            </div>
-            {payment && (
-              <div>
-                <span>Giao dịch</span>
-                <b>
-                  <Link to={cashierPaths.transaction(payment.id)} className="k-link">
-                    {payment.code}
-                  </Link>
-                </b>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {action && (
-        <div className="c-detail-actions">
-          <Link to={action.to} className="k-btn k-btn--primary">
-            {action.label}
-            <Icon name="arrowRight" />
-          </Link>
-        </div>
+      ) : (
+        <p className="k-empty k-panel">
+          {filter === 'unread' ? 'Bạn đã đọc hết thông báo.' : 'Chưa có thông báo.'}
+        </p>
       )}
     </div>
   )

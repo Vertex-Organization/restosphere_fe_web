@@ -6,6 +6,8 @@ import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
 import { Icon, type IconName } from '../components/kitchen/Icon'
 import { KitchenLink } from '../components/kitchen/KitchenLink'
+import { KITCHEN_PREVIEWS } from '../components/kitchen/notifyPreviews'
+import { NotifyModeMenu } from '../components/kitchen/NotifyModeMenu'
 import { useKitchenData } from '../hooks/kitchen/kitchenDataContext'
 import { leaveKitchen as signOut } from '../hooks/kitchen/leaveKitchen'
 import { useNow } from '../hooks/kitchen/useNow'
@@ -34,13 +36,6 @@ const NAV: NavItem[] = [
     short: 'Lịch sử',
     icon: 'history',
     routes: ['history'],
-  },
-  {
-    to: kitchenPaths.incidents,
-    label: 'Sự cố',
-    short: 'Sự cố',
-    icon: 'alert',
-    routes: ['incidents'],
   },
   {
     to: kitchenPaths.menuStatus,
@@ -164,7 +159,18 @@ interface Props {
 }
 
 export function KitchenLayout({ route, title, fill, children }: Props) {
-  const { user, data, loadError, refresh } = useKitchenData()
+  const {
+    user,
+    data,
+    loadError,
+    refresh,
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+  } = useKitchenData()
+  const notify = { notifyMode, setNotifyMode, notifyVolume, setNotifyVolume, previewSound }
   const now = useNow()
   const content = useRef<HTMLElement>(null)
   const unread = data ? unreadCount(data, user.id) : 0
@@ -289,6 +295,7 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
               <Icon name="bell" size={18} />
               {unread > 0 && <span className="k-bell-count">{unread > 9 ? '9+' : unread}</span>}
             </KitchenLink>
+            <NotifyModeMenu {...notify} previews={KITCHEN_PREVIEWS} />
             <AccountMenu user={user} />
           </div>
         </header>

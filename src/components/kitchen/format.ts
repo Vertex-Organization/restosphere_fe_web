@@ -40,6 +40,12 @@ export function formatDuration(minutes: number) {
   return rest ? `${hours} giờ ${rest} phút` : `${hours} giờ`
 }
 
+export function formatWaitLabel(minutes: number) {
+  if (minutes < 60) return `${minutes} phút`
+  if (minutes < 24 * 60) return formatDuration(minutes)
+  return `${Math.floor(minutes / (24 * 60))} ngày`
+}
+
 /** Lower-case text without Vietnamese diacritics, for forgiving search. */
 export function searchable(text: string) {
   return text
@@ -80,4 +86,25 @@ const quantityFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 3
 export function quantityLabel(quantity: number, unit?: string) {
   if (Number.isInteger(quantity)) return String(quantity)
   return `${quantityFormat.format(quantity)} ${unit || 'kg'}`
+}
+
+export function formatCount(value: number) {
+  return value >= 100 ? '99+' : String(value)
+}
+
+/** "2026-11-23" -> "23/11/2026", whatever the browser's date locale is. */
+export function formatDayKey(value: string) {
+  const [year, month, day] = value.split('-')
+  return year && month && day ? `${day}/${month}/${year}` : 'dd/mm/yyyy'
+}
+
+export function dayKeyBefore(now: number, days: number) {
+  const date = new Date(now)
+  date.setDate(date.getDate() - days)
+  return localDayKey(date.getTime())
+}
+
+export function formatDishWait(tone: string, minutes: number) {
+  if (tone === 'late') return `Quá giờ ${formatWaitLabel(minutes)}`
+  return minutes < 1 ? 'Vừa gọi' : `Chờ ${minutes} phút`
 }

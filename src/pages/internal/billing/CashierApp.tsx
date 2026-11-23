@@ -58,7 +58,7 @@ function page(route: CashierRoute, params: URLSearchParams): ReactNode {
     case 'shift':
       return <CashierShiftPage />
     case 'notifications':
-      return <CashierNotificationsPage selectedId={params.get('id') ?? ''} />
+      return <CashierNotificationsPage />
     case 'profile':
       return <CashierProfilePage />
     default:

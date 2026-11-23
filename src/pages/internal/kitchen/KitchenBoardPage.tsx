@@ -2,11 +2,16 @@ import { useRef, useState, type KeyboardEvent } from 'react'
 import {
   buildActiveDishQueue,
   buildReadyDishQueue,
+  countLateActive,
   filterActiveDishes,
+  prioritizeActiveDishes,
 } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
-import { localDayKey } from '../../../components/kitchen/format'
+import { filterByStation, STATIONS, type StationId } from '../../../api/kitchen/stations'
+import { formatCount, localDayKey } from '../../../components/kitchen/format'
 import { KitchenBoardColumn } from '../../../components/kitchen/KitchenBoardColumn'
+import { ReportManagerDialog } from '../../../components/kitchen/ReportManagerDialog'
+import { StationMenu } from '../../../components/kitchen/StationMenu'
 import { RejectItemDialog } from '../../../components/kitchen/KitchenOrderItem'
 import { KitchenDishRow, KitchenReadyDishRow } from '../../../components/kitchen/KitchenTicketCard'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
@@ -23,37 +28,42 @@ const TABS: { id: BoardTab; label: string }[] = [
 ]
 
 export default function KitchenBoardPage() {
-  const { data, run, isPending } = useKitchenSnapshot()
+  const { data, run, isPending, flashNew, station, setStation } = useKitchenSnapshot()
   const now = useNow()
   const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
+  const [reportItem, setReportItem] = useState<KitchenOrderItem | null>(null)
   const [lateOnly, setLateOnly] = useState(false)
   const [tab, setTab] = useState<BoardTab>(() =>
-    filterActiveDishes(buildActiveDishQueue(data, now), 'new').length ? 'new' : 'preparing',
+    filterActiveDishes(
+      filterByStation(prioritizeActiveDishes(buildActiveDishQueue(data, now)), data, station),
+      'new',
+    ).length
+      ? 'new'
+      : 'preparing',
   )
   const tabRefs = useRef<Record<BoardTab, HTMLButtonElement | null>>({
     new: null,
     preparing: null,
     ready: null,
   })
-  const queue = buildActiveDishQueue(data, now)
-  const readyToday = buildReadyDishQueue(data, now).filter(
+  const allActive = prioritizeActiveDishes(buildActiveDishQueue(data, now))
+  const queue = filterByStation(allActive, data, station)
+  const readyToday = filterByStation(buildReadyDishQueue(data, now), data, station).filter(
     (dish) => !!dish.item.readyAt && localDayKey(dish.item.readyAt) === localDayKey(now),
   )
   const tabDishes = {
     new: filterActiveDishes(queue, 'new'),
     preparing: filterActiveDishes(queue, 'preparing'),
   }
-  const tabCounts: Record<BoardTab, { total: number; late: number }> = {
-    new: { total: tabDishes.new.length, late: filterActiveDishes(tabDishes.new, 'late').length },
-    preparing: {
-      total: tabDishes.preparing.length,
-      late: filterActiveDishes(tabDishes.preparing, 'late').length,
-    },
-    ready: {
-      total: readyToday.length,
-      late: readyToday.filter((dish) => dish.tone === 'late').length,
-    },
+  const tabCounts: Record<BoardTab, { total: number }> = {
+    new: { total: tabDishes.new.length },
+    preparing: { total: tabDishes.preparing.length },
+    ready: { total: readyToday.length },
   }
+  const lateCount = countLateActive(queue)
+  const stationCounts = Object.fromEntries(
+    STATIONS.map((option) => [option.id, filterByStation(allActive, data, option.id).length]),
+  ) as Record<StationId, number>
   const activeTab = tab === 'ready' ? null : tab
   const visible = activeTab
     ? lateOnly
@@ -91,10 +101,12 @@ export default function KitchenBoardPage() {
   return (
     <div className="k-board" data-tab={tab}>
       {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
+      {reportItem && <ReportManagerDialog item={reportItem} onClose={() => setReportItem(null)} />}
       <div className="k-board-bar">
+        <StationMenu value={station} counts={stationCounts} onChange={setStation} />
         <div className="k-board-tabs" role="tablist" aria-label="Trạng thái món bếp">
           {TABS.map((t) => {
-            const { total, late } = tabCounts[t.id]
+            const { total } = tabCounts[t.id]
             return (
               <button
                 key={t.id}
@@ -104,8 +116,8 @@ export default function KitchenBoardPage() {
                 id={`kitchen-tab-${t.id}`}
                 type="button"
                 role="tab"
-                className="k-board-tab"
-                aria-label={`${t.label}, ${total} món${late && t.id !== 'ready' ? `, ${late} trễ` : ''}`}
+                className={`k-board-tab${flashNew && t.id === 'new' ? ' k-board-tab--flash' : ''}`}
+                aria-label={`${t.label}, ${total} món`}
                 aria-selected={tab === t.id}
                 aria-controls={t.id === 'ready' ? 'kitchen-ready' : 'kitchen-active'}
                 tabIndex={tab === t.id ? 0 : -1}
@@ -113,10 +125,7 @@ export default function KitchenBoardPage() {
                 onKeyDown={onTabKeyDown}
               >
                 <span className="k-board-tab-label">{t.label}</span>
-                <span className="k-board-tab-count">{total}</span>
-                {late > 0 && t.id !== 'ready' && (
-                  <span className="k-board-tab-alert">{late} trễ</span>
-                )}
+                <span className="k-board-tab-count">{formatCount(total)}</span>
               </button>
             )
           })}
@@ -128,7 +137,7 @@ export default function KitchenBoardPage() {
             aria-pressed={lateOnly}
             onClick={() => setLateOnly((value) => !value)}
           >
-            Chỉ món quá giờ
+            Chỉ món quá giờ <span className="k-count">{formatCount(lateCount)}</span>
           </button>
         </div>
       </div>
@@ -149,7 +158,6 @@ export default function KitchenBoardPage() {
             <span>Món</span>
             <span>Bàn</span>
             <span>Giờ gọi</span>
-            <span>Trạng thái</span>
             <span>Thao tác</span>
           </div>
           {visible.map((dish) => (
@@ -161,6 +169,7 @@ export default function KitchenBoardPage() {
               onStart={start}
               onComplete={complete}
               onReject={setRejectItem}
+              onReport={setReportItem}
             />
           ))}
         </div>

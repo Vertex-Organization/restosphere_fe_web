@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { kitchenService } from '../../api/kitchen/service'
+import { isPollDue, POLL_VISIBLE_MS } from '../../api/kitchen/polling'
 import { ApiError } from '../../api/client'
 import {
   KitchenError,
@@ -7,11 +8,12 @@ import {
   type KitchenData,
   type StaffMember,
 } from '../../api/kitchen/types'
+import { useKitchenAlerts } from './useKitchenAlerts'
+import { useKitchenStation } from './useKitchenStation'
 import { KitchenDataContext, type Feedback, type KitchenDataValue } from './kitchenDataContext'
 
 /** Polling interval. The backend has no push channel yet; when it gets
  * WebSocket/SSE, `kitchenService.subscribe` can drive refreshes instead. */
-const POLL_MS = 5000
 const SUCCESS_VISIBLE_MS = 6000
 
 function messageOf(error: unknown) {
@@ -33,6 +35,16 @@ export function KitchenDataProvider({
   const pendingRef = useRef(new Set<string>())
   const loading = useRef(false)
   const feedbackId = useRef(0)
+  const { station, setStation } = useKitchenStation()
+  const {
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+    flashNew,
+    playFeedback,
+  } = useKitchenAlerts(data, station)
 
   // Only accept data at least as new as what is shown, so a slow poll cannot
   // undo a change that was just made.
@@ -60,15 +72,20 @@ export function KitchenDataProvider({
   }, [accept])
 
   useEffect(() => {
-    void refresh()
+    let lastLoad = Date.now()
+    const load = () => {
+      lastLoad = Date.now()
+      void refresh()
+    }
+    load()
     const timer = window.setInterval(() => {
-      if (!document.hidden) void refresh()
-    }, POLL_MS)
+      if (isPollDue(document.hidden, Date.now() - lastLoad)) load()
+    }, POLL_VISIBLE_MS)
     const unsubscribe = kitchenService.subscribe(() => {
       void refresh()
     })
     const onVisible = () => {
-      if (!document.hidden) void refresh()
+      if (!document.hidden) load()
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => {
@@ -96,6 +113,8 @@ export function KitchenDataProvider({
       try {
         const result = await kitchenService.execute(user, command)
         accept(result.data)
+        if (command.type === 'start') playFeedback('start')
+        if (command.type === 'complete') playFeedback('complete')
         if (result.summary)
           setFeedback({ id: ++feedbackId.current, tone: 'success', text: result.summary })
         return result.summary
@@ -117,7 +136,7 @@ export function KitchenDataProvider({
         setPending(new Set(pendingRef.current))
       }
     },
-    [accept, refresh, user],
+    [accept, playFeedback, refresh, user],
   )
 
   const value = useMemo<KitchenDataValue>(
@@ -130,8 +149,33 @@ export function KitchenDataProvider({
       isPending: (key) => pending.has(key),
       feedback,
       dismissFeedback: () => setFeedback(null),
+      announce: (text) => setFeedback({ id: ++feedbackId.current, tone: 'success', text }),
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
+      flashNew,
+      station,
+      setStation,
     }),
-    [user, data, loadError, refresh, run, pending, feedback],
+    [
+      user,
+      data,
+      loadError,
+      refresh,
+      run,
+      pending,
+      feedback,
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
+      flashNew,
+      station,
+      setStation,
+    ],
   )
 
   return <KitchenDataContext.Provider value={value}>{children}</KitchenDataContext.Provider>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ITEM_STATUS_LABEL } from '../../../api/kitchen/labels'
+import { HISTORY_PAGE_SIZE, takePage } from '../../../api/kitchen/paging'
 import { staffName } from '../../../api/kitchen/rules'
 import type { KitchenOrder, KitchenOrderItem, SentItemStatus } from '../../../api/kitchen/types'
 import {
@@ -10,7 +11,9 @@ import {
   searchable,
   shortCode,
 } from '../../../components/kitchen/format'
+import { DayField } from '../../../components/kitchen/DayField'
 import { Icon } from '../../../components/kitchen/Icon'
+import { SelectMenu } from '../../../components/kitchen/SelectMenu'
 import { KitchenLink } from '../../../components/kitchen/KitchenLink'
 import { KitchenStatusBadge } from '../../../components/kitchen/KitchenStatusBadge'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
@@ -41,6 +44,11 @@ export default function KitchenHistoryPage() {
   const [query, setQuery] = useState('')
   const [day, setDay] = useState(today)
   const [status, setStatus] = useState<StatusFilter>('ALL')
+  const [limit, setLimit] = useState(HISTORY_PAGE_SIZE)
+  const reset = (fn: () => void) => {
+    fn()
+    setLimit(HISTORY_PAGE_SIZE)
+  }
 
   const orders = new Map(data.orders.map((o) => [o.id, o]))
   const needle = searchable(query.trim())
@@ -60,6 +68,7 @@ export default function KitchenHistoryPage() {
         a.item.id.localeCompare(b.item.id, undefined, { numeric: true }),
     )
 
+  const page = takePage(rows, limit)
   const filtered = query || day !== today || status !== 'ALL'
   const time = (iso?: string) =>
     iso ? (
@@ -78,7 +87,7 @@ export default function KitchenHistoryPage() {
     item.status === 'REJECTED' ? item.rejectedBy : (item.readyBy ?? item.startedBy)
 
   return (
-    <div className="k-history">
+    <div className="k-history k-history--sized">
       <div className="k-toolbar" role="search">
         <label className="k-search">
           <Icon name="search" size={15} />
@@ -88,49 +97,38 @@ export default function KitchenHistoryPage() {
             type="search"
             placeholder="Mã phiếu, bàn, tên món…"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => reset(() => setQuery(e.target.value))}
           />
         </label>
-        <label className="k-inline-field">
-          <span className="k-label">Ngày</span>
-          <input
-            className="k-input"
-            type="date"
-            value={day}
-            max={today}
-            onChange={(e) => setDay(e.target.value)}
-          />
-        </label>
-        <label className="k-inline-field">
+        <DayField value={day} now={now} onChange={(value) => reset(() => setDay(value))} />
+        <div className="k-inline-field">
           <span className="k-label">Trạng thái</span>
-          <select
-            className="k-select"
+          <SelectMenu
             value={status}
-            onChange={(e) => setStatus(e.target.value as StatusFilter)}
-          >
-            {STATUS_OPTIONS.map((value) => (
-              <option key={value} value={value}>
-                {value === 'ALL' ? 'Tất cả' : ITEM_STATUS_LABEL[value]}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => reset(() => setStatus(value))}
+            buttonLabel="Trạng thái"
+            listLabel="Trạng thái"
+            options={STATUS_OPTIONS.map((value) => ({
+              value,
+              label: value === 'ALL' ? 'Tất cả' : ITEM_STATUS_LABEL[value],
+            }))}
+          />
+        </div>
         {filtered && (
           <button
             type="button"
             className="k-btn k-btn--ghost"
-            onClick={() => {
-              setQuery('')
-              setDay(today)
-              setStatus('ALL')
-            }}
+            onClick={() =>
+              reset(() => {
+                setQuery('')
+                setDay(today)
+                setStatus('ALL')
+              })
+            }
           >
             Xóa bộ lọc
           </button>
         )}
-        <span className="k-toolbar-count">
-          {rows.length} món{day ? '' : ' · mọi ngày'}
-        </span>
       </div>
 
       <div className="k-table-wrap k-table-wrap--fill">
@@ -149,7 +147,7 @@ export default function KitchenHistoryPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ item, order }) => (
+            {page.items.map(({ item, order }) => (
               <tr key={item.id}>
                 <td>
                   <KitchenLink className="k-link k-mono" to={kitchenPaths.ticket(order.id)}>
@@ -180,6 +178,22 @@ export default function KitchenHistoryPage() {
         </table>
         {!rows.length && <p className="k-empty">Không có món nào khớp bộ lọc.</p>}
       </div>
+      {rows.length > 0 && (
+        <div className="k-history-foot">
+          <span className="k-muted">
+            Đang hiện {page.shown} / {page.total} món
+          </span>
+          {page.hasMore && (
+            <button
+              type="button"
+              className="k-btn"
+              onClick={() => setLimit((value) => value + HISTORY_PAGE_SIZE)}
+            >
+              Xem thêm
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -439,11 +439,27 @@
   background: var(--k-warning-soft);
   border-color: var(--k-warning-border);
 }
+.c-shift-chip--overdue {
+  color: var(--k-warning-text);
+  background: var(--k-warning-soft);
+  border-color: var(--k-warning-border);
+}
 .c-hcount--due {
   --k-dot: var(--k-warning);
 }
 
 /* ── Counter (POS) ─────────────────────────────────────────────────────── */
+.c-pos-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+.c-pos-wrap > .c-pos {
+  flex: 1;
+  height: auto;
+}
 .c-pos {
   display: grid;
   grid-template-columns: minmax(0, 36fr) minmax(0, 64fr);
@@ -1589,6 +1605,19 @@
   min-width: 0;
 }
 .c-item-card-title,
+.c-item-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.c-stale {
+  color: var(--k-text);
+  font-weight: 700;
+}
+.c-older {
+  align-self: center;
+  margin: 8px 0;
+}
 .c-item-card-sub {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1777,7 +1806,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-right: 12px;
   border-bottom: 1px solid var(--k-border-soft);
 }
 .c-note:hover {
@@ -1787,25 +1815,15 @@
 .c-note--current:hover {
   background: var(--k-primary-soft);
 }
-.c-note--unread::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 5px;
-  width: 6px;
-  height: 6px;
-  margin-top: -3px;
-  border-radius: 50%;
-  background: var(--k-primary);
-}
 .c-note-main {
   display: grid;
   flex: 1;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   min-width: 0;
-  padding: 10px 6px 10px 16px;
+  min-height: 38px;
+  padding: 7px 14px;
   background: transparent;
   color: inherit;
   border: 0;
@@ -1816,53 +1834,35 @@
 .c-note-main:focus-visible {
   outline-offset: -2px;
 }
-.c-note-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
+.c-note-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
 }
-.c-note-title,
-.c-note-body {
+.c-note--unread .c-note-dot {
+  background: var(--k-info);
+}
+.c-note-line {
+  min-width: 0;
   overflow: hidden;
+  font-size: 13.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.c-note-title {
-  font-size: 13.5px;
-  font-weight: 500;
+.c-note--unread .c-note-line {
+  font-weight: 600;
 }
-.c-note--unread .c-note-title {
-  font-weight: 700;
-}
-.c-note-body {
-  font-size: 12px;
+.c-note--read {
   color: var(--k-text-2);
 }
 .c-note-time {
-  align-self: start;
-  margin-top: 2px;
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--k-text-2);
   font-variant-numeric: tabular-nums;
 }
-.c-note-action {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  height: 26px;
-  padding: 0 9px;
-  background: var(--k-surface);
-  color: var(--k-primary);
-  border: 1px solid var(--k-primary-border);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.c-note-action:hover {
-  background: var(--k-primary-soft);
+.c-notes-range {
+  padding: 8px 12px 0;
 }
 
 /* ── Shift ────────────────────────────────────────────────────────────── */
@@ -2232,6 +2232,56 @@
 }
 
 /* ── Transactions ─────────────────────────────────────────────────────── */
+.k-history .c-tx-table {
+  table-layout: fixed;
+  font-size: 14px;
+}
+.k-history .c-tx-table th {
+  font-size: 13px;
+}
+.k-history .c-tx-table td {
+  height: 37px;
+  padding-block: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.k-history .c-tx-table th:nth-child(1) {
+  width: 10%;
+}
+.k-history .c-tx-table th:nth-child(2) {
+  width: 11%;
+}
+.k-history .c-tx-table th:nth-child(3) {
+  width: 6%;
+}
+.k-history .c-tx-table th:nth-child(4) {
+  width: 11%;
+}
+.k-history .c-tx-table th:nth-child(5) {
+  width: 13%;
+}
+.k-history .c-tx-table th:nth-child(6) {
+  width: 12%;
+}
+.k-history .c-tx-table th:nth-child(7) {
+  width: 17%;
+}
+.k-history .c-tx-table th:nth-child(8) {
+  width: 15%;
+}
+.k-history .c-tx-table th:nth-child(9) {
+  width: 5%;
+}
+.k-history .c-tx-table td .k-badge {
+  min-width: 100px;
+}
+@media (max-width: 1100px) {
+  .k-history .c-tx-table {
+    table-layout: auto;
+    min-width: 960px;
+  }
+}
 .c-pager {
   display: flex;
   align-items: center;
@@ -2560,4 +2610,9 @@
     width: 100%;
     margin-left: 0;
   }
+}
+
+.c-notes-more {
+  display: flex;
+  margin: 10px auto 4px;
 }

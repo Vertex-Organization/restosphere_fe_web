@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { DishActionMenu } from '../../../components/kitchen/KitchenTicketCard'
+import { ReportManagerDialog } from '../../../components/kitchen/ReportManagerDialog'
 import {
   KitchenActionConfirmDialog,
   RejectItemDialog,
   type KitchenItemAction,
 } from '../../../components/kitchen/KitchenOrderItem'
-import { INCIDENT_STATUS_LABEL, INCIDENT_TYPE_LABEL } from '../../../api/kitchen/labels'
 import {
   canComplete,
   canStart,
@@ -12,6 +13,7 @@ import {
   shortName,
   staffName,
 } from '../../../api/kitchen/rules'
+import { isAlertNote } from '../../../api/kitchen/notes'
 import { minutesBetween, waitTone } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
@@ -37,6 +39,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
   const { data, run, isPending, user } = useKitchenSnapshot()
   const now = useNow()
   const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
+  const [reportItem, setReportItem] = useState<KitchenOrderItem | null>(null)
   const [confirmAction, setConfirmAction] = useState<{
     action: KitchenItemAction
     items: KitchenOrderItem[]
@@ -68,7 +71,6 @@ export default function KitchenTicketPage({ id }: { id: string }) {
   const rounds = data.orders
     .filter((o) => o.sessionId === order.sessionId)
     .sort((a, b) => a.sequence - b.sequence)
-  const incidents = data.incidents.filter((i) => i.orderId === order.id)
   const events = items
     .flatMap((item) => item.history.map((change) => ({ ...change, item })))
     .sort((a, b) => b.at.localeCompare(a.at))
@@ -125,6 +127,7 @@ export default function KitchenTicketPage({ id }: { id: string }) {
   return (
     <div className="k-page k-ticket-page">
       {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
+      {reportItem && <ReportManagerDialog item={reportItem} onClose={() => setReportItem(null)} />}
       {confirmAction && (
         <KitchenActionConfirmDialog
           action={confirmAction.action}
@@ -240,7 +243,9 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                         <span>{item.name}</span>
                       </div>
                       {item.note && (
-                        <span className="k-note">
+                        <span
+                          className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}
+                        >
                           <Icon name="note" size={13} />
                           {item.note}
                         </span>
@@ -283,23 +288,12 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                           Hoàn thành món
                         </button>
                       )}
-                      {allowed && canStart(item) && (
-                        <button
-                          type="button"
-                          className="k-btn k-btn--danger k-btn--lg"
-                          disabled={isPending(item.id)}
-                          onClick={() => setRejectItem(item)}
-                        >
-                          Từ chối
-                        </button>
-                      )}
-                      <KitchenLink
-                        className="k-btn k-btn--lg"
-                        to={kitchenPaths.reportIncident(order.id, item.id)}
-                      >
-                        <Icon name="alert" size={14} />
-                        Sự cố
-                      </KitchenLink>
+                      <DishActionMenu
+                        item={item}
+                        disabled={!allowed || isPending(item.id)}
+                        onReject={setRejectItem}
+                        onReport={setReportItem}
+                      />
                     </div>
                   </li>
                 )
@@ -388,24 +382,6 @@ export default function KitchenTicketPage({ id }: { id: string }) {
               })}
             </ul>
           </section>
-
-          {incidents.length > 0 && (
-            <section className="k-panel">
-              <h3 className="k-panel-title">Sự cố liên quan</h3>
-              <ul className="k-rounds">
-                {incidents.map((incident) => (
-                  <li key={incident.id}>
-                    <KitchenLink to={kitchenPaths.incidents}>
-                      {incident.code} · {INCIDENT_TYPE_LABEL[incident.type]}
-                    </KitchenLink>
-                    <span className="k-muted">
-                      {INCIDENT_STATUS_LABEL[incident.status]} · {formatTime(incident.at)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
         </aside>
       </div>
     </div>

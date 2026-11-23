@@ -1,4 +1,6 @@
 import { createContext, useContext } from 'react'
+import type { NotifyMode } from '../../api/kitchen/alerts'
+import type { KitchenSound } from '../../components/kitchen/notifySound'
 import type {
   CashierCommand,
   CashierData,
@@ -31,6 +33,11 @@ export interface CashierDataValue {
   isPending: (key: string) => boolean
   feedback: Feedback | null
   dismissFeedback: () => void
+  notifyMode: NotifyMode
+  setNotifyMode: (mode: NotifyMode) => void
+  notifyVolume: number
+  setNotifyVolume: (volume: number) => void
+  previewSound: (sound: KitchenSound) => void
 }
 
 export const CashierDataContext = createContext<CashierDataValue | null>(null)
