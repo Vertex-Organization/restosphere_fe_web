@@ -323,6 +323,48 @@ test('cashier notification rows show table, amount and a short kind label', asyn
   assert.match(orphan.detail, /b$/)
 })
 
+test('bill links pick the counter tab that lists the bill', async () => {
+  const { tabForRow } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  const paidAt = '2026-11-12T10:00:00+07:00'
+  assert.equal(tabForRow({ status: 'PAYMENT_REQUESTED' }), 'due')
+  assert.equal(tabForRow({ status: 'UNPAID' }), 'serving')
+  assert.equal(tabForRow({ status: 'PAID', paidAt }, Date.parse(paidAt) - 1), 'paid')
+  assert.equal(tabForRow({ status: 'PAID', paidAt }, Date.parse(paidAt) + 1), null)
+})
+
+test('pending requests turn stale after 30 minutes; done tab keeps today only', async () => {
+  const { isRequestStale, isHandledToday } = await import(moduleUrl('src/api/billing/selectors.ts'))
+  const at = Date.parse('2026-11-12T12:00:00+07:00')
+  const ago = (min) => new Date(at - min * 60_000).toISOString()
+  assert.equal(isRequestStale({ status: 'PENDING', requestedAt: ago(30) }, at), false)
+  assert.equal(isRequestStale({ status: 'PENDING', requestedAt: ago(31) }, at), true)
+  assert.equal(isRequestStale({ status: 'APPROVED', requestedAt: ago(90) }, at), false)
+  assert.equal(isHandledToday({ status: 'PENDING', requestedAt: ago(5) }, at), false)
+  assert.equal(
+    isHandledToday({ status: 'APPROVED', requestedAt: ago(5), decidedAt: ago(1) }, at),
+    true,
+  )
+  assert.equal(
+    isHandledToday({ status: 'REJECTED', requestedAt: ago(5), decidedAt: ago(60 * 30) }, at),
+    false,
+  )
+  assert.equal(isHandledToday({ status: 'WITHDRAWN', requestedAt: ago(60 * 30) }, at), false)
+})
+
+test('payment request sound fires only when the due count grows, never on first load', async () => {
+  const { paymentRequestArrived, dueTableCount } = await import(
+    moduleUrl('src/api/billing/alerts.ts')
+  )
+  assert.equal(paymentRequestArrived(null, 3), false)
+  assert.equal(paymentRequestArrived(2, 2), false)
+  assert.equal(paymentRequestArrived(3, 2), false)
+  assert.equal(paymentRequestArrived(2, 3), true)
+  assert.equal(paymentRequestArrived(0, 1), true)
+  const d = seed()
+  const due = d.bills.filter((b) => b.status === 'PAYMENT_REQUESTED').length
+  assert.equal(dueTableCount(d, now.getTime()) <= due, true)
+})
+
 test('shortCode keeps the prefix and shows the last 8 characters without dashes', async () => {
   const { shortCode } = await import(moduleUrl('src/components/kitchen/format.ts'))
   const uuid = '3f2a9c1e-7b4d-4e8a-9d11-0a1b2c3d4e5f'

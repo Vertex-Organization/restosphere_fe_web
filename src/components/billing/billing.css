@@ -1605,6 +1605,19 @@
   min-width: 0;
 }
 .c-item-card-title,
+.c-item-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.c-stale {
+  color: var(--k-text);
+  font-weight: 700;
+}
+.c-older {
+  align-self: center;
+  margin: 8px 0;
+}
 .c-item-card-sub {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2219,6 +2232,56 @@
 }
 
 /* ── Transactions ─────────────────────────────────────────────────────── */
+.k-history .c-tx-table {
+  table-layout: fixed;
+  font-size: 14px;
+}
+.k-history .c-tx-table th {
+  font-size: 13px;
+}
+.k-history .c-tx-table td {
+  height: 37px;
+  padding-block: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.k-history .c-tx-table th:nth-child(1) {
+  width: 10%;
+}
+.k-history .c-tx-table th:nth-child(2) {
+  width: 11%;
+}
+.k-history .c-tx-table th:nth-child(3) {
+  width: 6%;
+}
+.k-history .c-tx-table th:nth-child(4) {
+  width: 11%;
+}
+.k-history .c-tx-table th:nth-child(5) {
+  width: 13%;
+}
+.k-history .c-tx-table th:nth-child(6) {
+  width: 12%;
+}
+.k-history .c-tx-table th:nth-child(7) {
+  width: 17%;
+}
+.k-history .c-tx-table th:nth-child(8) {
+  width: 15%;
+}
+.k-history .c-tx-table th:nth-child(9) {
+  width: 5%;
+}
+.k-history .c-tx-table td .k-badge {
+  min-width: 100px;
+}
+@media (max-width: 1100px) {
+  .k-history .c-tx-table {
+    table-layout: auto;
+    min-width: 960px;
+  }
+}
 .c-pager {
   display: flex;
   align-items: center;

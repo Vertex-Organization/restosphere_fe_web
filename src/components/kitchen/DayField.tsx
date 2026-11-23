@@ -1,4 +1,4 @@
-import { dayKeyBefore } from './format'
+import { dayKeyBefore, formatDayKey } from './format'
 
 export function DayField({
   value,
@@ -15,13 +15,24 @@ export function DayField({
     <div className="k-inline-field">
       <label className="k-inline-field">
         <span className="k-label">Ngày</span>
-        <input
-          className="k-input k-input--date"
-          type="date"
-          value={value}
-          max={today}
-          onChange={(event) => onChange(event.target.value)}
-        />
+        <span className="k-datefield">
+          <span className="k-datefield-text">{formatDayKey(value)}</span>
+          <input
+            className="k-datefield-input"
+            type="date"
+            lang="vi-VN"
+            value={value}
+            max={today}
+            onChange={(event) => onChange(event.target.value)}
+            onClick={(event) => {
+              try {
+                event.currentTarget.showPicker()
+              } catch {
+                return
+              }
+            }}
+          />
+        </span>
       </label>
       <button type="button" className="k-chip k-chip--small" onClick={() => onChange(today)}>
         Hôm nay

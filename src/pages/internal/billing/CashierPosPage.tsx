@@ -8,6 +8,7 @@ import {
   paidSinceOf,
   paymentBlock,
   posRows,
+  tabForRow,
   type BillView,
   type PosFilter,
   type PosRow,
@@ -111,7 +112,28 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
       ? selectedId
       : (visible[0]?.billId ?? '')
 
-  const select = (billId: string) => navigate(cashierPaths.posBill(billId), { replace: true })
+  const [syncedId, setSyncedId] = useState('')
+  if (selectedId !== syncedId) {
+    setSyncedId(selectedId)
+    const target = rows.find((r) => r.billId === selectedId)
+    const targetTab = target && tabForRow(target, paidSince)
+    if (targetTab) {
+      setTab(targetTab)
+      setQuery('')
+    }
+  }
+
+  const select = (billId: string) => {
+    setSyncedId(billId)
+    navigate(cashierPaths.posBill(billId), { replace: true })
+  }
+
+  useEffect(() => {
+    if (!selectedId) return
+    grid.current
+      ?.querySelector<HTMLButtonElement>(`[data-bill="${CSS.escape(selectedId)}"]`)
+      ?.scrollIntoView({ block: 'nearest' })
+  }, [selectedId, tab])
 
   // "/" jumps to the search box from anywhere on the counter screen.
   useEffect(() => {

@@ -340,6 +340,30 @@ export function matchesFilter(row: PosRow, filter: PosFilter, paidSince = 0) {
   }
 }
 
+const POS_TABS: Exclude<PosFilter, 'all'>[] = ['due', 'serving', 'paid']
+
+/** The counter tab a bill belongs to, or null when no tab lists it (e.g. paid before the open shift). */
+export function tabForRow(row: PosRow, paidSince = 0) {
+  return POS_TABS.find((tab) => matchesFilter(row, tab, paidSince)) ?? null
+}
+
+// ── Requests ──────────────────────────────────────────────────────────────
+
+export const REQUEST_STALE_MINUTES = 30
+
+/** A pending request that has waited longer than 30 minutes. */
+export function isRequestStale(request: CashierRequest, now: number) {
+  if (request.status !== 'PENDING') return false
+  const at = Date.parse(request.requestedAt)
+  return !Number.isNaN(at) && now - at > REQUEST_STALE_MINUTES * 60_000
+}
+
+/** Handled (approved, rejected or withdrawn) today; falls back to the request time if undated. */
+export function isHandledToday(request: CashierRequest, now: number) {
+  if (request.status === 'PENDING') return false
+  return sameDay(request.decidedAt ?? request.requestedAt, now)
+}
+
 // ── Shift ─────────────────────────────────────────────────────────────────
 
 export interface ShiftSummary {

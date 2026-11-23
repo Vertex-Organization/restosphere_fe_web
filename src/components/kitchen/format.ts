@@ -92,6 +92,12 @@ export function formatCount(value: number) {
   return value >= 100 ? '99+' : String(value)
 }
 
+/** "2026-11-23" -> "23/11/2026", whatever the browser's date locale is. */
+export function formatDayKey(value: string) {
+  const [year, month, day] = value.split('-')
+  return year && month && day ? `${day}/${month}/${year}` : 'dd/mm/yyyy'
+}
+
 export function dayKeyBefore(now: number, days: number) {
   const date = new Date(now)
   date.setDate(date.getDate() - days)

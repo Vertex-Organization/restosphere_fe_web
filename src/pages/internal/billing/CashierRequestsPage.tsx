@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { METHOD_LABEL, REQUEST_TYPE_LABEL } from '../../../api/billing/labels'
 import { formatVnd } from '../../../api/billing/money'
-import { billView, staffName } from '../../../api/billing/selectors'
+import { billView, isHandledToday, isRequestStale, staffName } from '../../../api/billing/selectors'
 import type { CashierData, CashierRequest, RequestType } from '../../../api/billing/types'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { ago } from '../../../components/billing/format'
@@ -26,8 +26,11 @@ const TYPE_LOOK: Record<RequestType, { icon: IconName; tone: string }> = {
   PAYMENT_VOID: { icon: 'undo', tone: 'danger' },
 }
 
-const inTab = (r: CashierRequest, tab: Tab) =>
-  tab === 'all' ? true : tab === 'pending' ? r.status === 'PENDING' : r.status !== 'PENDING'
+const inTab = (r: CashierRequest, tab: Tab, now: number, olderShown: boolean) => {
+  if (tab === 'all') return true
+  if (tab === 'pending') return r.status === 'PENDING'
+  return r.status !== 'PENDING' && (olderShown || isHandledToday(r, now))
+}
 
 /** One-line summary of what is asked, e.g. "Giảm 15% · 151.050đ". */
 function headline(data: CashierData, r: CashierRequest) {
@@ -51,12 +54,18 @@ export default function CashierRequestsPage({ selectedId }: { selectedId: string
     selectedId || !data.requests.some((r) => r.status === 'PENDING') ? 'all' : 'pending',
   )
 
+  const [olderShown, setOlderShown] = useState(false)
+  const hasOlder =
+    tab === 'done' &&
+    !olderShown &&
+    data.requests.some((r) => r.status !== 'PENDING' && !isHandledToday(r, now))
+
   const tableOf = (billId: string) => billView(data, billId)?.table.code ?? '—'
   const counts = Object.fromEntries(
-    TABS.map((t) => [t.id, data.requests.filter((r) => inTab(r, t.id)).length]),
+    TABS.map((t) => [t.id, data.requests.filter((r) => inTab(r, t.id, now, olderShown)).length]),
   ) as Record<Tab, number>
   const rows = data.requests
-    .filter((r) => inTab(r, tab))
+    .filter((r) => inTab(r, tab, now, olderShown))
     .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))
   const selected = data.requests.find((r) => r.id === selectedId) ?? rows[0]
   const select = (id: string) => navigate(cashierPaths.request(id), { replace: true })
@@ -105,7 +114,12 @@ export default function CashierRequestsPage({ selectedId }: { selectedId: string
                         {ago(minutesBetween(r.requestedAt, now))}
                       </span>
                     </span>
-                    <RequestStatusBadge status={r.status} />
+                    <span className="c-item-card-status">
+                      {isRequestStale(r, now) && (
+                        <span className="k-badge k-badge--neutral c-stale">Chờ lâu</span>
+                      )}
+                      <RequestStatusBadge status={r.status} />
+                    </span>
                   </button>
                 </li>
               )
@@ -116,6 +130,15 @@ export default function CashierRequestsPage({ selectedId }: { selectedId: string
             <Icon name="checkCircle" size={22} />
             <p>{tab === 'pending' ? 'Không có yêu cầu nào đang chờ duyệt.' : 'Chưa có yêu cầu.'}</p>
           </div>
+        )}
+        {hasOlder && (
+          <button
+            type="button"
+            className="k-btn k-btn--ghost c-older"
+            onClick={() => setOlderShown(true)}
+          >
+            Xem cũ hơn
+          </button>
         )}
       </section>
 

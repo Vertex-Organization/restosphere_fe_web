@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { NOTIFY_MODES, type NotifyMode } from '../api/kitchen/alerts'
 import { ROLE_LABEL } from '../api/kitchen/labels'
 import { unreadCount } from '../api/kitchen/selectors'
 import type { StaffMember } from '../api/kitchen/types'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
-import type { KitchenSound } from '../components/kitchen/notifySound'
 import { Icon, type IconName } from '../components/kitchen/Icon'
 import { KitchenLink } from '../components/kitchen/KitchenLink'
+import { KITCHEN_PREVIEWS } from '../components/kitchen/notifyPreviews'
+import { NotifyModeMenu } from '../components/kitchen/NotifyModeMenu'
 import { useKitchenData } from '../hooks/kitchen/kitchenDataContext'
 import { leaveKitchen as signOut } from '../hooks/kitchen/leaveKitchen'
 import { useNow } from '../hooks/kitchen/useNow'
@@ -126,108 +126,6 @@ function AccountMenu({ user }: { user: StaffMember }) {
   )
 }
 
-const NOTIFY_OPTIONS: Record<NotifyMode, { label: string; icon: IconName }> = {
-  silent: { label: 'Im lặng', icon: 'volumeOff' },
-  vibrate: { label: 'Rung', icon: 'vibrate' },
-  sound: { label: 'Âm thanh', icon: 'volume' },
-}
-
-const PREVIEWS: { sound: KitchenSound; label: string }[] = [
-  { sound: 'new-dish', label: 'Đơn mới' },
-  { sound: 'start', label: 'Bắt đầu' },
-  { sound: 'complete', label: 'Hoàn thành' },
-]
-
-function NotifyModeMenu() {
-  const { notifyMode, setNotifyMode, notifyVolume, setNotifyVolume, previewSound } =
-    useKitchenData()
-  const [open, setOpen] = useState(false)
-  const root = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const onPointer = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) setOpen(false)
-    }
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('pointerdown', onPointer)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('pointerdown', onPointer)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open])
-
-  const current = NOTIFY_OPTIONS[notifyMode]
-  return (
-    <div className="k-account k-notify" ref={root}>
-      <button
-        type="button"
-        className="k-bell"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={`Chế độ thông báo: ${current.label}`}
-        title={`Chế độ thông báo: ${current.label}`}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <Icon name={current.icon} size={18} />
-      </button>
-      {open && (
-        <div className="k-menu k-notify-menu">
-          <div role="menu" aria-label="Chế độ thông báo">
-            {NOTIFY_MODES.map((mode) => (
-              <button
-                key={mode}
-                type="button"
-                role="menuitemradio"
-                aria-checked={mode === notifyMode}
-                className="k-menu-item"
-                onClick={() => {
-                  setNotifyMode(mode)
-                  setOpen(false)
-                }}
-              >
-                <Icon name={NOTIFY_OPTIONS[mode].icon} />
-                {NOTIFY_OPTIONS[mode].label}
-                {mode === notifyMode && <Icon name="check" size={14} className="k-notify-check" />}
-              </button>
-            ))}
-          </div>
-          <div className="k-notify-volume">
-            <label htmlFor="k-notify-volume">
-              Âm lượng <span>{Math.round(notifyVolume * 100)}%</span>
-            </label>
-            <input
-              id="k-notify-volume"
-              type="range"
-              min={0}
-              max={100}
-              step={5}
-              value={Math.round(notifyVolume * 100)}
-              onChange={(event) => setNotifyVolume(Number(event.target.value) / 100)}
-            />
-          </div>
-          <div className="k-notify-preview" role="group" aria-label="Nghe thử">
-            {PREVIEWS.map((preview) => (
-              <button
-                key={preview.sound}
-                type="button"
-                className="k-btn k-notify-test"
-                aria-label={`Nghe thử: ${preview.label}`}
-                onClick={() => previewSound(preview.sound)}
-              >
-                {preview.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
 function FeedbackSlot() {
   const { feedback, dismissFeedback } = useKitchenData()
   return (
@@ -261,7 +159,18 @@ interface Props {
 }
 
 export function KitchenLayout({ route, title, fill, children }: Props) {
-  const { user, data, loadError, refresh } = useKitchenData()
+  const {
+    user,
+    data,
+    loadError,
+    refresh,
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+  } = useKitchenData()
+  const notify = { notifyMode, setNotifyMode, notifyVolume, setNotifyVolume, previewSound }
   const now = useNow()
   const content = useRef<HTMLElement>(null)
   const unread = data ? unreadCount(data, user.id) : 0
@@ -386,7 +295,7 @@ export function KitchenLayout({ route, title, fill, children }: Props) {
               <Icon name="bell" size={18} />
               {unread > 0 && <span className="k-bell-count">{unread > 9 ? '9+' : unread}</span>}
             </KitchenLink>
-            <NotifyModeMenu />
+            <NotifyModeMenu {...notify} previews={KITCHEN_PREVIEWS} />
             <AccountMenu user={user} />
           </div>
         </header>

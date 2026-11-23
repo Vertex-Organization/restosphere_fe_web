@@ -2,6 +2,7 @@ import { useDeferredValue, useState } from 'react'
 import { METHOD_LABEL, PAYMENT_STATUS_LABEL } from '../../../api/billing/labels'
 import { formatVnd } from '../../../api/billing/money'
 import { hasPermission, staffName } from '../../../api/billing/selectors'
+import { HISTORY_PAGE_SIZE, takePage } from '../../../api/kitchen/paging'
 import type { PaymentMethod, PaymentStatus } from '../../../api/billing/types'
 import { Icon } from '../../../components/billing/Icon'
 import { DayField } from '../../../components/kitchen/DayField'
@@ -19,7 +20,6 @@ import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 import { cashierPaths, navigate } from '../../../routes/cashierRouter'
 
-const PAGE_SIZE = 20
 const METHODS: ('ALL' | PaymentMethod)[] = ['ALL', 'CASH', 'TRANSFER', 'CARD']
 const STATUSES: ('ALL' | PaymentStatus)[] = [
   'ALL',
@@ -38,7 +38,7 @@ export default function CashierTransactionsPage() {
   const [day, setDay] = useState(today)
   const [method, setMethod] = useState<'ALL' | PaymentMethod>('ALL')
   const [status, setStatus] = useState<'ALL' | PaymentStatus>('ALL')
-  const [page, setPage] = useState(0)
+  const [limit, setLimit] = useState(HISTORY_PAGE_SIZE)
   const needle = searchable(useDeferredValue(query).trim())
 
   if (!hasPermission(user, 'transactions.view')) {
@@ -73,15 +73,13 @@ export default function CashierTransactionsPage() {
     })
     .sort((a, b) => b.payment.createdAt.localeCompare(a.payment.createdAt))
 
-  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE))
-  const current = Math.min(page, pages - 1)
-  const shown = rows.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE)
+  const page = takePage(rows, limit)
   const succeeded = rows.filter((r) => r.payment.status === 'SUCCEEDED')
   const total = succeeded.reduce((sum, r) => sum + r.payment.amount, 0)
   const filtered = query || day !== today || method !== 'ALL' || status !== 'ALL'
   const reset = (fn: () => void) => {
     fn()
-    setPage(0)
+    setLimit(HISTORY_PAGE_SIZE)
   }
 
   return (
@@ -165,7 +163,7 @@ export default function CashierTransactionsPage() {
             </tr>
           </thead>
           <tbody>
-            {shown.map(({ payment, bill, table }) => (
+            {page.items.map(({ payment, bill, table }) => (
               <tr
                 key={payment.id}
                 className="c-clickable"
@@ -212,30 +210,21 @@ export default function CashierTransactionsPage() {
         {!rows.length && <p className="k-empty">Không có giao dịch khớp bộ lọc.</p>}
       </div>
 
-      {pages > 1 && (
-        <nav className="c-pager" aria-label="Phân trang">
+      {rows.length > 0 && (
+        <div className="k-history-foot">
           <span className="k-muted">
-            Trang {current + 1}/{pages}
+            Đang hiện {page.shown} / {page.total} giao dịch
           </span>
-          <button
-            type="button"
-            className="k-btn k-icon-btn"
-            disabled={current === 0}
-            onClick={() => setPage(current - 1)}
-            aria-label="Trang trước"
-          >
-            <Icon name="chevronLeft" />
-          </button>
-          <button
-            type="button"
-            className="k-btn k-icon-btn"
-            disabled={current >= pages - 1}
-            onClick={() => setPage(current + 1)}
-            aria-label="Trang sau"
-          >
-            <Icon name="chevronRight" />
-          </button>
-        </nav>
+          {page.hasMore && (
+            <button
+              type="button"
+              className="k-btn"
+              onClick={() => setLimit((value) => value + HISTORY_PAGE_SIZE)}
+            >
+              Xem thêm
+            </button>
+          )}
+        </div>
       )}
     </div>
   )

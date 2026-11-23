@@ -13,6 +13,7 @@ import {
   type Feedback,
   type RunResult,
 } from './cashierDataContext'
+import { useCashierAlerts } from './useCashierAlerts'
 
 /** Polling interval. The backend has no push channel yet; when it gets
  * WebSocket/SSE, `cashierService.subscribe` can drive refreshes instead. */
@@ -38,6 +39,8 @@ export function CashierDataProvider({
   const pendingRef = useRef(new Set<string>())
   const loading = useRef(false)
   const feedbackId = useRef(0)
+  const { notifyMode, setNotifyMode, notifyVolume, setNotifyVolume, previewSound } =
+    useCashierAlerts(data)
 
   // Only accept data at least as new as what is shown, so a slow poll cannot
   // undo a payment that was just recorded.
@@ -139,8 +142,26 @@ export function CashierDataProvider({
       isPending: (key) => pending.has(key),
       feedback,
       dismissFeedback: () => setFeedback(null),
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
     }),
-    [user, data, loadError, refresh, run, pending, feedback],
+    [
+      user,
+      data,
+      loadError,
+      refresh,
+      run,
+      pending,
+      feedback,
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
+    ],
   )
 
   return <CashierDataContext.Provider value={value}>{children}</CashierDataContext.Provider>

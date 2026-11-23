@@ -13,6 +13,8 @@ import { formatShiftOpened } from '../components/billing/format'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
 import { formatDayShort, formatTime, initials, shortCode } from '../components/kitchen/format'
 import { KitchenLink as Link } from '../components/kitchen/KitchenLink'
+import { CASHIER_PREVIEWS } from '../components/kitchen/notifyPreviews'
+import { NotifyModeMenu } from '../components/kitchen/NotifyModeMenu'
 import { useCashierData } from '../hooks/billing/cashierDataContext'
 import { leaveCashier as signOut } from '../hooks/billing/useCashierAuth'
 import { useNow } from '../hooks/kitchen/useNow'
@@ -178,7 +180,17 @@ interface Props {
 }
 
 export function CashierLayout({ route, title, fill, children }: Props) {
-  const { user, data, loadError, refresh } = useCashierData()
+  const {
+    user,
+    data,
+    loadError,
+    refresh,
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+  } = useCashierData()
   const now = useNow()
   const content = useRef<HTMLElement>(null)
   const unread = data ? unreadCount(data, user.id) : 0
@@ -331,6 +343,14 @@ export function CashierLayout({ route, title, fill, children }: Props) {
               <Icon name="bell" size={18} />
               {unread > 0 && <span className="k-bell-count">{unread > 9 ? '9+' : unread}</span>}
             </Link>
+            <NotifyModeMenu
+              notifyMode={notifyMode}
+              setNotifyMode={setNotifyMode}
+              notifyVolume={notifyVolume}
+              setNotifyVolume={setNotifyVolume}
+              previewSound={previewSound}
+              previews={CASHIER_PREVIEWS}
+            />
             <AccountMenu user={user} />
           </div>
         </header>
