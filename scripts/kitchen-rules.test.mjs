@@ -557,3 +557,15 @@ test('dish wait line says "Vừa gọi" under a minute and keeps overdue wording
   assert.equal(formatDishWait('late', 75), 'Quá giờ 1 giờ 15 phút')
   assert.equal(formatDishWait('late', 3000), 'Quá giờ 2 ngày')
 })
+
+test('hidden tabs poll every 15 seconds and visible tabs every 5', async () => {
+  const { isPollDue, pollInterval } = await import(moduleUrl('src/api/kitchen/polling.ts'))
+  assert.equal(pollInterval(false), 5000)
+  assert.equal(pollInterval(true), 15000)
+  assert.equal(isPollDue(false, 5000), true)
+  assert.equal(isPollDue(false, 2000), false)
+  assert.equal(isPollDue(true, 5000), false)
+  assert.equal(isPollDue(true, 10000), false)
+  assert.equal(isPollDue(true, 14600), true)
+  assert.equal(isPollDue(true, 15000), true)
+})

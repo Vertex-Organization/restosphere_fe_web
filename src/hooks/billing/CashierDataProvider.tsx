@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { cashierService } from '../../api/billing/service'
+import { isPollDue, POLL_VISIBLE_MS } from '../../api/kitchen/polling'
 import { ApiError } from '../../api/client'
 import {
   CashierError,
@@ -17,7 +18,6 @@ import { useCashierAlerts } from './useCashierAlerts'
 
 /** Polling interval. The backend has no push channel yet; when it gets
  * WebSocket/SSE, `cashierService.subscribe` can drive refreshes instead. */
-const POLL_MS = 5000
 const SUCCESS_VISIBLE_MS = 6000
 
 function messageOf(error: unknown) {
@@ -67,15 +67,20 @@ export function CashierDataProvider({
   }, [accept])
 
   useEffect(() => {
-    void refresh()
+    let lastLoad = Date.now()
+    const load = () => {
+      lastLoad = Date.now()
+      void refresh()
+    }
+    load()
     const timer = window.setInterval(() => {
-      if (!document.hidden) void refresh()
-    }, POLL_MS)
+      if (isPollDue(document.hidden, Date.now() - lastLoad)) load()
+    }, POLL_VISIBLE_MS)
     const unsubscribe = cashierService.subscribe(() => {
       void refresh()
     })
     const onVisible = () => {
-      if (!document.hidden) void refresh()
+      if (!document.hidden) load()
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => {
