@@ -305,6 +305,24 @@ test('shortDuration matches the kitchen wait label', async () => {
   assert.equal(shortDuration(24 * 60 * 2 + 5), '2 ngày')
 })
 
+test('cashier notification rows show table, amount and a short kind label', async () => {
+  const { cashierKindShort, cashierNotificationParts } = await import(
+    moduleUrl('src/api/billing/notifications.ts')
+  )
+  const d = seed()
+  assert.equal(cashierKindShort('TRANSFER_FAILED'), 'CK lỗi')
+  assert.equal(cashierKindShort('SOMETHING_NEW'), 'Thông báo')
+  const withBill = cashierNotificationParts(
+    { kind: 'PAYMENT_REQUEST', title: 't', body: 'b', billId: d.bills[0].id },
+    d,
+  )
+  assert.match(withBill.table, /^Bàn /)
+  assert.ok(withBill.detail.length > 0 && withBill.detail !== 'b')
+  const orphan = cashierNotificationParts({ kind: 'REQUEST_DECIDED', title: 't', body: 'b' }, d)
+  assert.equal(orphan.table, '')
+  assert.match(orphan.detail, /b$/)
+})
+
 test('shortCode keeps the prefix and shows the last 8 characters without dashes', async () => {
   const { shortCode } = await import(moduleUrl('src/components/kitchen/format.ts'))
   const uuid = '3f2a9c1e-7b4d-4e8a-9d11-0a1b2c3d4e5f'
