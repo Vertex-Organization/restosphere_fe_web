@@ -11,7 +11,6 @@ export type KitchenRoute =
   | { name: 'board' }
   | { name: 'ticket'; id: string }
   | { name: 'history' }
-  | { name: 'incidents' }
   | { name: 'menu-status' }
   | { name: 'notifications' }
   | { name: 'profile' }
@@ -58,6 +57,7 @@ export function useKitchenUrl() {
 
 export function matchKitchenRoute(pathname: string): KitchenRoute {
   const path = pathname.replace(/\/+$/, '')
+  if (path === `${KITCHEN_BASE}/incidents`) return { name: 'board' }
   if (path === KITCHEN_BASE) return { name: 'board' }
   const rest = path.slice(KITCHEN_BASE.length + 1)
   const ticket = /^tickets\/([\w-]+)$/.exec(rest)
@@ -65,8 +65,6 @@ export function matchKitchenRoute(pathname: string): KitchenRoute {
   switch (rest) {
     case 'history':
       return { name: 'history' }
-    case 'incidents':
-      return { name: 'incidents' }
     case 'menu-status':
       return { name: 'menu-status' }
     case 'notifications':
@@ -84,9 +82,6 @@ export const kitchenPaths = {
   board: KITCHEN_BASE,
   ticket: (id: string) => `${KITCHEN_BASE}/tickets/${encodeURIComponent(id)}`,
   history: `${KITCHEN_BASE}/history`,
-  incidents: `${KITCHEN_BASE}/incidents`,
-  reportIncident: (orderId: string, itemId?: string) =>
-    `${KITCHEN_BASE}/incidents?order=${encodeURIComponent(orderId)}${itemId ? `&item=${encodeURIComponent(itemId)}` : ''}`,
   menuStatus: `${KITCHEN_BASE}/menu-status`,
   notifications: `${KITCHEN_BASE}/notifications`,
   profile: `${KITCHEN_BASE}/profile`,

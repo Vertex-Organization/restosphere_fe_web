@@ -3,12 +3,9 @@ import { isAlertNote } from '../../api/kitchen/notes'
 import { shortName, staffName } from '../../api/kitchen/rules'
 import type { ActiveDishView, ReadyDishView } from '../../api/kitchen/selectors'
 import type { KitchenData, KitchenOrderItem as Item } from '../../api/kitchen/types'
-import { kitchenPaths } from '../../routes/kitchenRouter'
-import { formatTime, formatWaitLabel } from './format'
+import { formatDishWait, formatTime } from './format'
 import { DishPhoto } from './DishPhoto'
 import { Icon } from './Icon'
-import { KitchenLink } from './KitchenLink'
-import { KitchenStatusBadge } from './KitchenStatusBadge'
 
 const menuOf = (data: KitchenData, item: Item) =>
   data.menuItems.find((m) => m.id === item.menuItemId)
@@ -16,23 +13,23 @@ const menuOf = (data: KitchenData, item: Item) =>
 interface RowProps {
   dish: ActiveDishView
   data: KitchenData
-  stationName?: string
   isPending: (key: string) => boolean
   onStart: (item: Item) => void
   onComplete: (item: Item) => void
   onReject: (item: Item) => void
+  onReport: (item: Item) => void
 }
 
-function DishActionMenu({
+export function DishActionMenu({
   item,
-  orderId,
   disabled,
   onReject,
+  onReport,
 }: {
   item: Item
-  orderId: string
   disabled: boolean
   onReject: (item: Item) => void
+  onReport: (item: Item) => void
 }) {
   const [place, setPlace] = useState<CSSProperties | null>(null)
   const button = useRef<HTMLButtonElement>(null)
@@ -106,14 +103,17 @@ function DishActionMenu({
               Từ chối món
             </button>
           )}
-          <KitchenLink
+          <button
+            type="button"
             role="menuitem"
             className="k-dish-menu-item"
-            to={kitchenPaths.reportIncident(orderId, item.id)}
-            onClick={close}
+            onClick={() => {
+              close()
+              onReport(item)
+            }}
           >
-            Báo sự cố
-          </KitchenLink>
+            Báo quản lý
+          </button>
         </div>
       )}
     </>
@@ -124,11 +124,11 @@ function DishActionMenu({
 export function KitchenDishRow({
   dish,
   data,
-  stationName,
   isPending,
   onStart,
   onComplete,
   onReject,
+  onReport,
 }: RowProps) {
   const { item, order } = dish
   const pending = isPending(item.id)
@@ -140,25 +140,26 @@ export function KitchenDishRow({
     <article
       className={`k-dish-row k-dish-row--${dish.tone}`}
       role="listitem"
-      aria-label={`${item.quantity} ${item.name}, bàn ${order.tableCode}, chờ ${dish.minutes} phút`}
+      aria-label={`${item.quantity} ${item.name}, bàn ${order.tableCode}, ${formatDishWait(dish.tone, dish.minutes).toLowerCase()}`}
     >
       <div className="k-dish-row-main">
         <DishPhoto menu={menuOf(data, item)} />
         <div className="k-dish-row-copy">
-          <strong>
-            <b>{item.quantity} ×</b> {item.name}
-          </strong>
-          {priorityText && (
-            <span
-              className="k-priority-tag"
-              tabIndex={0}
-              title={priorityText}
-              aria-label={priorityText}
-            >
-              Ưu tiên
-            </span>
-          )}
-          {stationName && <span className="k-station-tag">{stationName}</span>}
+          <div className="k-dish-row-title">
+            <strong>
+              <b>{item.quantity} ×</b> {item.name}
+            </strong>
+            {priorityText && (
+              <span
+                className="k-priority-tag"
+                tabIndex={0}
+                title={priorityText}
+                aria-label={priorityText}
+              >
+                Ưu tiên
+              </span>
+            )}
+          </div>
           {note && (
             <span className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}>
               <Icon name="note" size={12} />
@@ -174,13 +175,8 @@ export function KitchenDishRow({
       <div className="k-dish-row-cell">
         <time dateTime={item.submittedAt}>{formatTime(item.submittedAt)}</time>
         <span className={`k-order-wait k-order-wait--${dish.tone}`}>
-          {dish.tone === 'late'
-            ? `Quá giờ ${formatWaitLabel(dish.minutes)}`
-            : `Chờ ${dish.minutes} phút`}
+          {formatDishWait(dish.tone, dish.minutes)}
         </span>
-      </div>
-      <div className="k-dish-row-cell">
-        <KitchenStatusBadge status={item.status} />
       </div>
       <div className="k-dish-row-actions">
         {item.status === 'SUBMITTED' && (
@@ -205,22 +201,14 @@ export function KitchenDishRow({
             Hoàn thành
           </button>
         )}
-        <DishActionMenu item={item} orderId={order.id} disabled={pending} onReject={onReject} />
+        <DishActionMenu item={item} disabled={pending} onReject={onReject} onReport={onReport} />
       </div>
     </article>
   )
 }
 
 /** One finished dish waiting for service, ordered by completion time. */
-export function KitchenReadyDishRow({
-  dish,
-  data,
-  stationName,
-}: {
-  dish: ReadyDishView
-  data: KitchenData
-  stationName?: string
-}) {
+export function KitchenReadyDishRow({ dish, data }: { dish: ReadyDishView; data: KitchenData }) {
   const { item, order, waiter } = dish
   const cookName = item.readyBy ? shortName(staffName(data, item.readyBy)) : 'Không rõ'
   return (
@@ -235,7 +223,6 @@ export function KitchenReadyDishRow({
           <strong>
             <b>{item.quantity} ×</b> {item.name}
           </strong>
-          {stationName && <span className="k-station-tag">{stationName}</span>}
           {item.note && (
             <span className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}>
               <Icon name="note" size={12} />

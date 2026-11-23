@@ -4,6 +4,8 @@ import { formatVnd } from '../../../api/billing/money'
 import { hasPermission, staffName } from '../../../api/billing/selectors'
 import type { PaymentMethod, PaymentStatus } from '../../../api/billing/types'
 import { Icon } from '../../../components/billing/Icon'
+import { DayField } from '../../../components/kitchen/DayField'
+import { SelectMenu } from '../../../components/kitchen/SelectMenu'
 import { PaymentStatusBadge } from '../../../components/billing/ui'
 import {
   formatDate,
@@ -96,44 +98,33 @@ export default function CashierTransactionsPage() {
             onChange={(e) => reset(() => setQuery(e.target.value))}
           />
         </label>
-        <label className="k-inline-field">
-          <span className="k-label">Ngày</span>
-          <input
-            className="k-input"
-            type="date"
-            value={day}
-            max={today}
-            onChange={(e) => reset(() => setDay(e.target.value))}
-          />
-        </label>
-        <label className="k-inline-field">
+        <DayField value={day} now={now} onChange={(value) => reset(() => setDay(value))} />
+        <div className="k-inline-field">
           <span className="k-label">Phương thức</span>
-          <select
-            className="k-select"
+          <SelectMenu
             value={method}
-            onChange={(e) => reset(() => setMethod(e.target.value as typeof method))}
-          >
-            {METHODS.map((m) => (
-              <option key={m} value={m}>
-                {m === 'ALL' ? 'Tất cả' : METHOD_LABEL[m]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="k-inline-field">
+            onChange={(value) => reset(() => setMethod(value))}
+            buttonLabel="Phương thức"
+            listLabel="Phương thức"
+            options={METHODS.map((m) => ({
+              value: m,
+              label: m === 'ALL' ? 'Tất cả' : METHOD_LABEL[m],
+            }))}
+          />
+        </div>
+        <div className="k-inline-field">
           <span className="k-label">Trạng thái</span>
-          <select
-            className="k-select"
+          <SelectMenu
             value={status}
-            onChange={(e) => reset(() => setStatus(e.target.value as typeof status))}
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s === 'ALL' ? 'Tất cả' : PAYMENT_STATUS_LABEL[s]}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={(value) => reset(() => setStatus(value))}
+            buttonLabel="Trạng thái"
+            listLabel="Trạng thái"
+            options={STATUSES.map((st) => ({
+              value: st,
+              label: st === 'ALL' ? 'Tất cả' : PAYMENT_STATUS_LABEL[st],
+            }))}
+          />
+        </div>
         {filtered && (
           <button
             type="button"

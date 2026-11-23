@@ -4,14 +4,15 @@ import { KitchenDataProvider } from '../../../hooks/kitchen/KitchenDataProvider'
 import { useKitchenUser } from '../../../hooks/kitchen/useKitchenAuth'
 import { KitchenLayout } from '../../../layouts/KitchenLayout'
 import {
+  KITCHEN_BASE,
   kitchenPaths,
   matchKitchenRoute,
+  navigate,
   useKitchenUrl,
   type KitchenRoute,
 } from '../../../routes/kitchenRouter'
 import KitchenBoardPage from './KitchenBoardPage'
 import KitchenHistoryPage from './KitchenHistoryPage'
-import KitchenIncidentsPage from './KitchenIncidentsPage'
 import KitchenMenuStatusPage from './KitchenMenuStatusPage'
 import KitchenNotificationsPage from './KitchenNotificationsPage'
 import KitchenProfilePage from './KitchenProfilePage'
@@ -23,7 +24,6 @@ const TITLES: Record<KitchenRoute['name'], string> = {
   board: 'Bảng bếp',
   ticket: 'Chi tiết phiếu',
   history: 'Lịch sử chế biến',
-  incidents: 'Sự cố',
   'menu-status': 'Tình trạng món',
   notifications: 'Thông báo',
   profile: 'Cá nhân',
@@ -31,7 +31,7 @@ const TITLES: Record<KitchenRoute['name'], string> = {
   'not-found': 'Không tìm thấy trang',
 }
 
-function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactNode {
+function page(route: KitchenRoute): ReactNode {
   switch (route.name) {
     case 'board':
       return <KitchenBoardPage />
@@ -39,15 +39,6 @@ function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactN
       return <KitchenTicketPage key={route.id} id={route.id} />
     case 'history':
       return <KitchenHistoryPage />
-    // Re-mount when a new ticket is passed in so the form starts prefilled.
-    case 'incidents':
-      return (
-        <KitchenIncidentsPage
-          key={url}
-          orderId={params.get('order') ?? ''}
-          itemId={params.get('item') ?? ''}
-        />
-      )
     case 'menu-status':
       return <KitchenMenuStatusPage />
     case 'notifications':
@@ -70,7 +61,7 @@ function page(route: KitchenRoute, params: URLSearchParams, url: string): ReactN
 /** Entry of the kitchen workspace (/staff/kitchen): its own shell, never the customer header/footer.
  * Sign-in happens once at /staff/login; this module only checks the role. */
 export default function KitchenApp() {
-  const { url, pathname, params } = useKitchenUrl()
+  const { pathname } = useKitchenUrl()
   const route = matchKitchenRoute(pathname)
   const user = useKitchenUser()
 
@@ -80,6 +71,10 @@ export default function KitchenApp() {
     root.lang = 'vi'
     return () => root.classList.remove('kds-html')
   }, [])
+
+  useEffect(() => {
+    if (pathname === `${KITCHEN_BASE}/incidents`) navigate(kitchenPaths.board, { replace: true })
+  }, [pathname])
 
   const blocked = useStaffGate('KITCHEN', !!user)
   if (blocked || !user) return blocked
@@ -91,7 +86,7 @@ export default function KitchenApp() {
         title={TITLES[route.name]}
         fill={route.name === 'board' || route.name === 'history'}
       >
-        {page(route, params, url)}
+        {page(route)}
       </KitchenLayout>
     </KitchenDataProvider>
   )

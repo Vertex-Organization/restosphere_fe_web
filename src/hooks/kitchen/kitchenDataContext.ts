@@ -23,6 +23,7 @@ export interface KitchenDataValue {
   isPending: (key: string) => boolean
   feedback: Feedback | null
   dismissFeedback: () => void
+  announce: (text: string) => void
   notifyMode: NotifyMode
   setNotifyMode: (mode: NotifyMode) => void
   notifyVolume: number

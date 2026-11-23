@@ -144,6 +144,7 @@ export function KitchenDataProvider({
       isPending: (key) => pending.has(key),
       feedback,
       dismissFeedback: () => setFeedback(null),
+      announce: (text) => setFeedback({ id: ++feedbackId.current, tone: 'success', text }),
       notifyMode,
       setNotifyMode,
       notifyVolume,

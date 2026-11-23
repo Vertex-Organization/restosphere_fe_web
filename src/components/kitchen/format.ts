@@ -87,3 +87,18 @@ export function quantityLabel(quantity: number, unit?: string) {
   if (Number.isInteger(quantity)) return String(quantity)
   return `${quantityFormat.format(quantity)} ${unit || 'kg'}`
 }
+
+export function formatCount(value: number) {
+  return value >= 100 ? '99+' : String(value)
+}
+
+export function dayKeyBefore(now: number, days: number) {
+  const date = new Date(now)
+  date.setDate(date.getDate() - days)
+  return localDayKey(date.getTime())
+}
+
+export function formatDishWait(tone: string, minutes: number) {
+  if (tone === 'late') return `Quá giờ ${formatWaitLabel(minutes)}`
+  return minutes < 1 ? 'Vừa gọi' : `Chờ ${minutes} phút`
+}

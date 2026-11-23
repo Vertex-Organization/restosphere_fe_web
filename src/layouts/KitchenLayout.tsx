@@ -38,13 +38,6 @@ const NAV: NavItem[] = [
     routes: ['history'],
   },
   {
-    to: kitchenPaths.incidents,
-    label: 'Sự cố',
-    short: 'Sự cố',
-    icon: 'alert',
-    routes: ['incidents'],
-  },
-  {
     to: kitchenPaths.menuStatus,
     label: 'Tình trạng món',
     short: 'Thực đơn',

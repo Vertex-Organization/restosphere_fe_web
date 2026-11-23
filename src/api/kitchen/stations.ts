@@ -4,7 +4,7 @@ export type StationId = 'all' | 'grill' | 'wok' | 'steam' | 'bar'
 export type DishStationId = Exclude<StationId, 'all'>
 
 export const STATIONS: readonly { id: StationId; label: string }[] = [
-  { id: 'all', label: 'Tất cả' },
+  { id: 'all', label: 'Tất cả trạm' },
   { id: 'grill', label: 'Bếp nướng' },
   { id: 'wok', label: 'Bếp chiên – xào' },
   { id: 'steam', label: 'Bếp hấp – lẩu' },

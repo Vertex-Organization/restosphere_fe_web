@@ -2,13 +2,21 @@ import { useState } from 'react'
 import { formatVnd } from '../../../api/billing/money'
 import { billView } from '../../../api/billing/selectors'
 import type { CashierNotification, CashierNotificationKind } from '../../../api/billing/types'
+import {
+  buildDayView,
+  filterByRange,
+  NOTIFICATION_PAGE_SIZE,
+  type NotifyRange,
+} from '../../../api/kitchen/dayGroups'
 import { notificationTitle } from '../../../api/kitchen/labels'
+import { notificationLine } from '../../../api/kitchen/notifications'
 import { minutesBetween } from '../../../api/kitchen/selectors'
 import { ago } from '../../../components/billing/format'
 import { Icon } from '../../../components/billing/Icon'
 import { cashierNotificationPresentation } from '../../../components/billing/notificationPresentation'
 import { BillStatusBadge } from '../../../components/billing/ui'
-import { formatTime, localDayKey } from '../../../components/kitchen/format'
+import { formatTime } from '../../../components/kitchen/format'
+import { KitchenFilters } from '../../../components/kitchen/KitchenFilters'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
@@ -41,21 +49,28 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
   const { data, user, run } = useCashierSnapshot()
   const now = useNow()
   const [filter, setFilter] = useState<Filter>('all')
+  const [range, setRange] = useState<NotifyRange>('today')
+  const [limit, setLimit] = useState(NOTIFICATION_PAGE_SIZE)
   const isUnread = (n: CashierNotification) => !n.readBy.includes(user.id)
 
   const all = [...data.notifications].sort((a, b) => b.at.localeCompare(a.at))
-  const unread = all.filter(isUnread).length
+  const inRange = filterByRange(all, now, range)
+  const unread = inRange.filter(isUnread).length
   const pass = (n: CashierNotification, f: Filter) => {
     const def = FILTERS.find((x) => x.id === f)!
     return f === 'all' ? true : f === 'unread' ? isUnread(n) : def.kinds!.includes(n.kind)
   }
-  const list = all.filter((n) => pass(n, filter))
+  const list = inRange.filter((n) => pass(n, filter))
   const selected = all.find((n) => n.id === selectedId) ?? list[0]
-  const today = localDayKey(now)
-  const groups = [
-    { label: 'Hôm nay', items: list.filter((n) => localDayKey(n.at) === today) },
-    { label: 'Trước đó', items: list.filter((n) => localDayKey(n.at) !== today) },
-  ].filter((g) => g.items.length)
+  const { groups, total, shown } = buildDayView(list, now, range, limit)
+  const changeRange = (next: NotifyRange) => {
+    setRange(next)
+    setLimit(NOTIFICATION_PAGE_SIZE)
+  }
+  const changeFilter = (next: Filter) => {
+    setFilter(next)
+    setLimit(NOTIFICATION_PAGE_SIZE)
+  }
 
   const markRead = (n: CashierNotification) => {
     if (isUnread(n))
@@ -80,7 +95,7 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
                   role="tab"
                   className="c-tab"
                   aria-selected={filter === f.id}
-                  onClick={() => setFilter(f.id)}
+                  onClick={() => changeFilter(f.id)}
                 >
                   {f.label}
                   {count > 0 && <span className="c-tab-count">{count}</span>}
@@ -101,23 +116,32 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
             <Icon name="check" />
           </button>
         </div>
+        <div className="c-notes-range">
+          <KitchenFilters
+            label="Khoảng thời gian"
+            value={range}
+            onChange={changeRange}
+            options={[
+              { value: 'today', label: 'Hôm nay' },
+              { value: '3days', label: '3 ngày' },
+            ]}
+          />
+        </div>
 
-        {groups.length ? (
+        {groups.length > 0 ? (
           <div className="c-notes">
             {groups.map((g) => (
-              <section key={g.label}>
-                <h4 className="c-notes-group">{g.label}</h4>
+              <section key={g.id}>
+                {range === '3days' && <h4 className="c-notes-group">{g.label}</h4>}
                 <ul>
                   {g.items.map((n) => {
-                    const look = cashierNotificationPresentation(n.kind)
-                    const action = quickAction(n)
                     const unreadNow = isUnread(n)
                     return (
                       <li
                         key={n.id}
                         className={[
                           'c-note',
-                          unreadNow ? 'c-note--unread' : '',
+                          unreadNow ? 'c-note--unread' : 'c-note--read',
                           n.id === selected?.id ? 'c-note--current' : '',
                         ]
                           .join(' ')
@@ -129,32 +153,30 @@ export default function CashierNotificationsPage({ selectedId }: { selectedId: s
                           onClick={() => select(n)}
                           aria-current={n.id === selected?.id ? 'true' : undefined}
                         >
-                          <span className={`c-icon-box c-icon-box--${look.tone}`}>
-                            <Icon name={look.icon} size={15} />
+                          <span className="c-note-dot" aria-hidden="true" />
+                          <span className="c-note-line">
+                            {unreadNow && <span className="k-visually-hidden">Chưa đọc: </span>}
+                            {notificationLine(notificationTitle(n.kind, n.title), n.body)}
                           </span>
-                          <span className="c-note-text">
-                            <span className="c-note-title">
-                              {notificationTitle(n.kind, n.title)}
-                            </span>
-                            <span className="c-note-body">{n.body}</span>
-                          </span>
-                          <span className="c-note-time">{formatTime(n.at)}</span>
+                          <time className="c-note-time" dateTime={n.at}>
+                            {formatTime(n.at)}
+                          </time>
                         </button>
-                        {action && (
-                          <Link
-                            to={action.to}
-                            className="c-note-action"
-                            onClick={() => markRead(n)}
-                          >
-                            {action.label}
-                          </Link>
-                        )}
                       </li>
                     )
                   })}
                 </ul>
               </section>
             ))}
+            {shown < total && (
+              <button
+                type="button"
+                className="k-btn k-btn--ghost c-notes-more"
+                onClick={() => setLimit((value) => value + NOTIFICATION_PAGE_SIZE)}
+              >
+                Xem thêm ({total - shown})
+              </button>
+            )}
           </div>
         ) : (
           <div className="c-empty">

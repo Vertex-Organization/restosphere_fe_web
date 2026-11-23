@@ -12,6 +12,7 @@ import { minutesBetween } from '../../../api/kitchen/selectors'
 import { shortDuration } from '../../../components/billing/format'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { Alert, Badge, Dialog, MoneyInput } from '../../../components/billing/ui'
+import { SelectMenu } from '../../../components/kitchen/SelectMenu'
 import {
   formatDate,
   formatShiftRange,
@@ -150,25 +151,25 @@ function OpenShift() {
           void submit()
         }}
       >
-        <label className="k-field">
+        <div className="k-field">
           <span>Ca đã xếp</span>
           {openable.length ? (
-            <select
-              className="k-input"
+            <SelectMenu
+              block
               value={scheduledShiftId}
-              onChange={(e) => setPicked(e.target.value)}
+              onChange={setPicked}
               disabled={!canManage}
-            >
-              {openable.map(({ shift, start, end }) => (
-                <option key={shift.id} value={shift.id}>
-                  {shift.name} · {formatShiftRange(start, end)}
-                </option>
-              ))}
-            </select>
+              buttonLabel="Ca đã xếp"
+              listLabel="Ca đã xếp"
+              options={openable.map(({ shift, start, end }) => ({
+                value: shift.id,
+                label: `${shift.name} · ${formatShiftRange(start, end)}`,
+              }))}
+            />
           ) : (
             <span className="k-hint">Không có ca được xếp lúc này</span>
           )}
-        </label>
+        </div>
         <MoneyInput
           label="Tiền đầu ca"
           value={float}

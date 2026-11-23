@@ -1,6 +1,5 @@
 import type {
   IncidentSeverity,
-  IncidentStatus,
   IncidentType,
   MenuAvailability,
   NotificationKind,
@@ -39,12 +38,6 @@ export const SEVERITY_LABEL: Record<IncidentSeverity, string> = {
   LOW: 'Thấp',
   MEDIUM: 'Trung bình',
   HIGH: 'Cao',
-}
-
-export const INCIDENT_STATUS_LABEL: Record<IncidentStatus, string> = {
-  OPEN: 'Chờ xử lý',
-  ACKNOWLEDGED: 'Đã tiếp nhận',
-  RESOLVED: 'Đã xử lý',
 }
 
 export const MENU_STATUS_LABEL: Record<MenuAvailability, string> = {

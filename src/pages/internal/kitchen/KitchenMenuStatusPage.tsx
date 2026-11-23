@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { MENU_STATUS_LABEL } from '../../../api/kitchen/labels'
+import {
+  applyMenuStatusFilter,
+  discontinuedLast,
+  menuFilterCounts,
+  type MenuStatusFilter,
+} from '../../../api/kitchen/menuStatus'
 import { hasPermission, staffName } from '../../../api/kitchen/rules'
+import { inStation, STATIONS, type StationId } from '../../../api/kitchen/stations'
 import type { MenuAvailability, MenuItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
 import { formatTime, formatWhen, searchable } from '../../../components/kitchen/format'
 import { Icon } from '../../../components/kitchen/Icon'
-import { KitchenFilters } from '../../../components/kitchen/KitchenFilters'
+import { SegmentedFilter } from '../../../components/kitchen/SegmentedFilter'
+import { SelectMenu } from '../../../components/kitchen/SelectMenu'
 import { Badge, type BadgeTone } from '../../../components/kitchen/KitchenStatusBadge'
 import { useKitchenSnapshot } from '../../../hooks/kitchen/kitchenDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
@@ -21,15 +29,17 @@ export default function KitchenMenuStatusPage() {
   const me = data.staff.find((s) => s.id === user.id) ?? user
   const canEdit = hasPermission(me, 'kitchen.menu.availability')
   const now = useNow()
-  const [category, setCategory] = useState('all')
+  const [station, setStation] = useState<StationId>('all')
+  const [statusFilter, setStatusFilter] = useState<MenuStatusFilter>('all')
   const [query, setQuery] = useState('')
   const [confirming, setConfirming] = useState<string | null>(null)
 
   const needle = searchable(query.trim())
-  const rows = data.menuItems
-    .filter((m) => category === 'all' || m.categoryId === category)
+  const base = data.menuItems
+    .filter((m) => inStation(data, m.id, station))
     .filter((m) => !needle || searchable(m.name).includes(needle))
-  const soldOut = data.menuItems.filter((m) => m.status === 'SOLD_OUT').length
+  const counts = menuFilterCounts(base)
+  const rows = discontinuedLast(applyMenuStatusFilter(base, statusFilter))
   const categoryName = (id: string) => data.menuCategories.find((c) => c.id === id)?.name ?? '—'
 
   const setStatus = async (menu: MenuItem, status: 'AVAILABLE' | 'SOLD_OUT') => {
@@ -42,8 +52,7 @@ export default function KitchenMenuStatusPage() {
 
   const action = (menu: MenuItem) => {
     const busy = isPending(`menu:${menu.id}`)
-    if (menu.status === 'DISCONTINUED')
-      return <span className="k-muted">Do Quản lý (Manager) quản lý</span>
+    if (menu.status === 'DISCONTINUED') return <span>Quản lý đã ngừng bán</span>
     if (canEdit) {
       if (menu.status === 'SOLD_OUT') {
         return (
@@ -112,7 +121,7 @@ export default function KitchenMenuStatusPage() {
       <p className="k-callout">
         <Icon name="info" size={14} />
         {canEdit
-          ? 'Bạn có thể báo món tạm hết hoặc mở bán lại. Giá, thêm hoặc xóa món do Quản lý (Manager) quản lý.'
+          ? 'Bếp báo tạm hết hoặc mở bán lại. Giá và thực đơn do Quản lý quản lý.'
           : 'Bạn chỉ xem được tình trạng món. Gửi yêu cầu để Bếp trưởng hoặc Quản lý ca cập nhật.'}
       </p>
       <div className="k-toolbar">
@@ -127,21 +136,31 @@ export default function KitchenMenuStatusPage() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
-        <KitchenFilters
-          label="Danh mục"
-          value={category}
-          onChange={setCategory}
-          options={[
-            { value: 'all', label: 'Tất cả' },
-            ...data.menuCategories.map((c) => ({ value: c.id, label: c.name })),
-          ]}
+        <SelectMenu
+          value={station}
+          onChange={setStation}
+          buttonLabel="Lọc theo trạm bếp"
+          listLabel="Trạm bếp"
+          options={STATIONS.map((option) => ({
+            value: option.id,
+            label: option.label,
+          }))}
         />
-        <span className="k-toolbar-count">
-          {data.menuItems.length} món · {soldOut} tạm hết
-        </span>
+        <div className="k-toolbar-group">
+          <SegmentedFilter
+            label="Lọc theo tình trạng"
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { value: 'all', label: 'Tất cả', count: counts.all },
+              { value: 'available', label: 'Còn bán', count: counts.available },
+              { value: 'soldout', label: 'Tạm hết', count: counts.soldout },
+            ]}
+          />
+        </div>
       </div>
       <div className="k-table-wrap">
-        <table className="k-table">
+        <table className="k-table k-table--roomy k-menu-table">
           <thead>
             <tr>
               <th>Món</th>
@@ -163,7 +182,7 @@ export default function KitchenMenuStatusPage() {
                     <span className="k-strong">{menu.name}</span>
                   </span>
                 </td>
-                <td>{categoryName(menu.categoryId)}</td>
+                <td className="k-muted">{categoryName(menu.categoryId)}</td>
                 <td className="k-center">
                   <Badge tone={TONE[menu.status]}>{MENU_STATUS_LABEL[menu.status]}</Badge>
                 </td>
@@ -178,7 +197,7 @@ export default function KitchenMenuStatusPage() {
             ))}
           </tbody>
         </table>
-        {!rows.length && <p className="k-empty">Không có món nào khớp tìm kiếm.</p>}
+        {!rows.length && <p className="k-empty">Không có món nào khớp bộ lọc.</p>}
       </div>
     </div>
   )
