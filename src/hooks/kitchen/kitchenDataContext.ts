@@ -1,4 +1,7 @@
 import { createContext, useContext } from 'react'
+import type { NotifyMode } from '../../api/kitchen/alerts'
+import type { StationId } from '../../api/kitchen/stations'
+import type { KitchenSound } from '../../components/kitchen/notifySound'
 import type { KitchenCommand, KitchenData, StaffMember } from '../../api/kitchen/types'
 
 export interface Feedback {
@@ -20,6 +23,14 @@ export interface KitchenDataValue {
   isPending: (key: string) => boolean
   feedback: Feedback | null
   dismissFeedback: () => void
+  notifyMode: NotifyMode
+  setNotifyMode: (mode: NotifyMode) => void
+  notifyVolume: number
+  setNotifyVolume: (volume: number) => void
+  previewSound: (sound: KitchenSound) => void
+  flashNew: boolean
+  station: StationId
+  setStation: (station: StationId) => void
 }
 
 export const KitchenDataContext = createContext<KitchenDataValue | null>(null)

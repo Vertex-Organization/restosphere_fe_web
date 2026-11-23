@@ -1023,7 +1023,7 @@ html.kds-html {
   min-height: 68px;
   padding: 10px 16px;
   background: var(--k-surface);
-  --k-row-accent: transparent;
+  --k-row-accent: var(--k-success);
 }
 .k-dish-row::before {
   content: '';
@@ -1163,4 +1163,64 @@ dialog.k-reject-dialog {
   .k-dish-row-actions {
     grid-column: 1 / -1;
   }
+}
+
+@keyframes k-tab-flash {
+  0%,
+  100% {
+    background: transparent;
+  }
+  50% {
+    background: var(--k-primary-soft, #d9f0ea);
+  }
+}
+.k-board-tab--flash {
+  animation: k-tab-flash 0.5s ease-in-out 4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-board-tab--flash {
+    animation: none;
+    background: var(--k-primary-soft, #d9f0ea);
+  }
+}
+
+.k-station-field {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+}
+.k-station-field .k-select {
+  height: 32px;
+}
+.k-station-tag {
+  display: inline-block;
+  align-self: flex-start;
+  width: fit-content;
+  padding: 1px 7px;
+  border-radius: var(--k-radius-xs);
+  background: #f3f5f5;
+  color: var(--k-text-3, #7d8c90);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.k-note--alert {
+  background: var(--k-danger-soft);
+  color: #8f2a25;
+  font-weight: 600;
+}
+.k-priority-tag {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 1px 7px;
+  border-radius: var(--k-radius-xs);
+  background: var(--k-danger);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: help;
 }

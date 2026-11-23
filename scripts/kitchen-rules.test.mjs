@@ -177,3 +177,137 @@ test('single dish start and complete produce a short toast with dish and table',
   )
   assert.equal(itemActionSummary({ type: 'start', items: [ref, ref] }, data, 'x'), 'x')
 })
+
+test('wait label switches to hours then days for long overdue dishes', async () => {
+  const { formatWaitLabel } = await import(moduleUrl('src/components/kitchen/format.ts'))
+  assert.equal(formatWaitLabel(59), '59 phút')
+  assert.equal(formatWaitLabel(60), '1 giờ')
+  assert.equal(formatWaitLabel(75), '1 giờ 15 phút')
+  assert.equal(formatWaitLabel(24 * 60 - 1), '23 giờ 59 phút')
+  assert.equal(formatWaitLabel(24 * 60), '1 ngày')
+  assert.equal(formatWaitLabel(3 * 24 * 60 + 500), '3 ngày')
+})
+
+test('new dish detection ignores first load, removals and unchanged queues', async () => {
+  const { submittedDishIds, hasNewDishes, parseNotifyMode } = await import(
+    moduleUrl('src/api/kitchen/alerts.ts')
+  )
+  const data = seed()
+  const ids = submittedDishIds(data)
+  assert.ok(ids.size > 0)
+  assert.equal(hasNewDishes(null, ids), false)
+  assert.equal(hasNewDishes(ids, new Set(ids)), false)
+  const fewer = new Set([...ids].slice(1))
+  assert.equal(hasNewDishes(ids, fewer), false)
+  assert.equal(hasNewDishes(fewer, ids), true)
+  assert.equal(hasNewDishes(ids, new Set([...fewer, 'brand-new'])), true)
+  assert.equal(parseNotifyMode(null), 'silent')
+  assert.equal(parseNotifyMode('bogus'), 'silent')
+  assert.equal(parseNotifyMode('sound'), 'sound')
+  assert.equal(parseNotifyMode('vibrate'), 'vibrate')
+})
+
+test('notify volume parses to a clamped 0..1 value with 0.8 default', async () => {
+  const { parseNotifyVolume } = await import(moduleUrl('src/api/kitchen/alerts.ts'))
+  assert.equal(parseNotifyVolume(null), 0.8)
+  assert.equal(parseNotifyVolume(''), 0.8)
+  assert.equal(parseNotifyVolume('abc'), 0.8)
+  assert.equal(parseNotifyVolume('0.35'), 0.35)
+  assert.equal(parseNotifyVolume('0'), 0)
+  assert.equal(parseNotifyVolume('7'), 1)
+  assert.equal(parseNotifyVolume('-2'), 0)
+})
+
+test('stationOf maps by dish name first, then category, then falls back to wok', async () => {
+  const { stationOf, inStation } = await import(moduleUrl('src/api/kitchen/stations.ts'))
+  const data = {
+    menuCategories: [
+      { id: 'c1', name: 'Cua & tôm' },
+      { id: 'c2', name: 'Cà phê & trà' },
+      { id: 'c3', name: 'Mực & cá' },
+      { id: 'c4', name: 'Lẩu' },
+      { id: 'c5', name: 'Danh mục lạ' },
+      { id: 'c6', name: 'Đồ uống' },
+      { id: 'c7', name: 'Hải sản' },
+    ],
+    menuItems: [
+      { id: 'a', name: '  tôm   NƯỚNG ', categoryId: 'c1' },
+      { id: 'b', name: 'Mâm hải sản', categoryId: 'c5' },
+      { id: 'c', name: 'Món chưa xếp', categoryId: 'c1' },
+      { id: 'd', name: 'Trà đào', categoryId: 'c2' },
+      { id: 'e', name: 'Cá lạ', categoryId: 'c3' },
+      { id: 'f', name: 'Lẩu mới', categoryId: 'c4' },
+      { id: 'g', name: 'Món bí ẩn', categoryId: 'c5' },
+      { id: 'h', name: 'Món mồ côi', categoryId: 'missing' },
+      { id: 'i', name: 'Nước suối', categoryId: 'c6' },
+      { id: 'j', name: 'Món biển lạ', categoryId: 'c7' },
+    ],
+  }
+  assert.equal(stationOf(data, 'a'), 'grill')
+  assert.equal(stationOf(data, 'b'), 'steam')
+  assert.equal(stationOf(data, 'c'), 'steam')
+  assert.equal(stationOf(data, 'd'), 'bar')
+  assert.equal(stationOf(data, 'e'), 'grill')
+  assert.equal(stationOf(data, 'f'), 'steam')
+  assert.equal(stationOf(data, 'g'), 'wok')
+  assert.equal(stationOf(data, 'h'), 'wok')
+  assert.equal(stationOf(data, 'unknown-id'), 'wok')
+  assert.equal(stationOf(data, 'i'), 'bar')
+  assert.equal(stationOf(data, 'j'), 'steam')
+  assert.equal(inStation(data, 'a', 'all'), true)
+  assert.equal(inStation(data, 'a', 'grill'), true)
+  assert.equal(inStation(data, 'a', 'wok'), false)
+})
+
+test('new dish alert only counts dishes of the selected station', async () => {
+  const { hasNewDishesInStation } = await import(moduleUrl('src/api/kitchen/alerts.ts'))
+  const data = {
+    menuCategories: [],
+    menuItems: [
+      { id: 'grill-dish', name: 'Cá nướng', categoryId: 'x' },
+      { id: 'wok-dish', name: 'Bò lúc lắc', categoryId: 'x' },
+    ],
+    items: [
+      { id: 'i1', menuItemId: 'grill-dish', status: 'SUBMITTED' },
+      { id: 'i2', menuItemId: 'wok-dish', status: 'SUBMITTED' },
+    ],
+  }
+  const seen = new Set(['i1'])
+  assert.equal(hasNewDishesInStation(null, data, 'all'), false)
+  assert.equal(hasNewDishesInStation(seen, data, 'all'), true)
+  assert.equal(hasNewDishesInStation(seen, data, 'wok'), true)
+  assert.equal(hasNewDishesInStation(seen, data, 'grill'), false)
+})
+
+test('priority dishes lead the board while the rest keep FIFO order', async () => {
+  const { prioritizeActiveDishes } = await import(moduleUrl('src/api/kitchen/selectors.ts'))
+  const queue = buildActiveDishQueue(seed(), now.getTime())
+  const sorted = prioritizeActiveDishes(queue)
+  assert.equal(sorted.length, queue.length)
+  const firstPlain = sorted.findIndex((dish) => !dish.order.priority)
+  assert.ok(sorted.slice(0, firstPlain).every((dish) => dish.order.priority))
+  assert.ok(sorted.slice(firstPlain).every((dish) => !dish.order.priority))
+  assert.ok(sorted.some((dish) => dish.order.priority))
+  const plain = queue.filter((dish) => !dish.order.priority)
+  assert.deepEqual(
+    sorted.slice(firstPlain).map((dish) => dish.item.id),
+    plain.map((dish) => dish.item.id),
+  )
+})
+
+test('isAlertNote flags allergy and dietary notes with or without diacritics', async () => {
+  const { isAlertNote } = await import(moduleUrl('src/api/kitchen/notes.ts'))
+  for (const note of [
+    'Khách dị ứng tôm',
+    'di ung hai san',
+    'Không cay',
+    'KHONG hanh',
+    'Kiêng đồ sống',
+    'kieng mon man',
+    'Món chay',
+    'an CHAY',
+  ])
+    assert.equal(isAlertNote(note), true, note)
+  for (const note of ['Ít cay', 'Lên món trước', 'Thêm đá', 'Chạy nhanh', '', undefined, null])
+    assert.equal(isAlertNote(note), false, String(note))
+})

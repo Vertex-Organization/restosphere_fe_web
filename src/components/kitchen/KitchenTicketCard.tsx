@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { isAlertNote } from '../../api/kitchen/notes'
 import { shortName, staffName } from '../../api/kitchen/rules'
 import type { ActiveDishView, ReadyDishView } from '../../api/kitchen/selectors'
 import type { KitchenData, KitchenOrderItem as Item } from '../../api/kitchen/types'
 import { kitchenPaths } from '../../routes/kitchenRouter'
-import { formatTime } from './format'
+import { formatTime, formatWaitLabel } from './format'
 import { DishPhoto } from './DishPhoto'
 import { Icon } from './Icon'
 import { KitchenLink } from './KitchenLink'
@@ -15,6 +16,7 @@ const menuOf = (data: KitchenData, item: Item) =>
 interface RowProps {
   dish: ActiveDishView
   data: KitchenData
+  stationName?: string
   isPending: (key: string) => boolean
   onStart: (item: Item) => void
   onComplete: (item: Item) => void
@@ -119,10 +121,21 @@ function DishActionMenu({
 }
 
 /** One dish per row: what, where, how long it has waited, and what to do next. */
-export function KitchenDishRow({ dish, data, isPending, onStart, onComplete, onReject }: RowProps) {
+export function KitchenDishRow({
+  dish,
+  data,
+  stationName,
+  isPending,
+  onStart,
+  onComplete,
+  onReject,
+}: RowProps) {
   const { item, order } = dish
   const pending = isPending(item.id)
   const note = item.note || order.priority?.reason
+  const priorityText = order.priority
+    ? `Ưu tiên: ${order.priority.reason} · Yêu cầu bởi ${staffName(data, order.priority.by)}`
+    : undefined
   return (
     <article
       className={`k-dish-row k-dish-row--${dish.tone}`}
@@ -135,8 +148,19 @@ export function KitchenDishRow({ dish, data, isPending, onStart, onComplete, onR
           <strong>
             <b>{item.quantity} ×</b> {item.name}
           </strong>
+          {priorityText && (
+            <span
+              className="k-priority-tag"
+              tabIndex={0}
+              title={priorityText}
+              aria-label={priorityText}
+            >
+              Ưu tiên
+            </span>
+          )}
+          {stationName && <span className="k-station-tag">{stationName}</span>}
           {note && (
-            <span className="k-note">
+            <span className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}>
               <Icon name="note" size={12} />
               {note}
             </span>
@@ -150,7 +174,9 @@ export function KitchenDishRow({ dish, data, isPending, onStart, onComplete, onR
       <div className="k-dish-row-cell">
         <time dateTime={item.submittedAt}>{formatTime(item.submittedAt)}</time>
         <span className={`k-order-wait k-order-wait--${dish.tone}`}>
-          {dish.tone === 'late' ? 'Quá giờ' : 'Chờ'} {dish.minutes} phút
+          {dish.tone === 'late'
+            ? `Quá giờ ${formatWaitLabel(dish.minutes)}`
+            : `Chờ ${dish.minutes} phút`}
         </span>
       </div>
       <div className="k-dish-row-cell">
@@ -186,7 +212,15 @@ export function KitchenDishRow({ dish, data, isPending, onStart, onComplete, onR
 }
 
 /** One finished dish waiting for service, ordered by completion time. */
-export function KitchenReadyDishRow({ dish, data }: { dish: ReadyDishView; data: KitchenData }) {
+export function KitchenReadyDishRow({
+  dish,
+  data,
+  stationName,
+}: {
+  dish: ReadyDishView
+  data: KitchenData
+  stationName?: string
+}) {
   const { item, order, waiter } = dish
   const cookName = item.readyBy ? shortName(staffName(data, item.readyBy)) : 'Không rõ'
   return (
@@ -201,8 +235,9 @@ export function KitchenReadyDishRow({ dish, data }: { dish: ReadyDishView; data:
           <strong>
             <b>{item.quantity} ×</b> {item.name}
           </strong>
+          {stationName && <span className="k-station-tag">{stationName}</span>}
           {item.note && (
-            <span className="k-note">
+            <span className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}>
               <Icon name="note" size={12} />
               {item.note}
             </span>

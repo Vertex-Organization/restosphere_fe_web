@@ -7,6 +7,8 @@ import {
   type KitchenData,
   type StaffMember,
 } from '../../api/kitchen/types'
+import { useKitchenAlerts } from './useKitchenAlerts'
+import { useKitchenStation } from './useKitchenStation'
 import { KitchenDataContext, type Feedback, type KitchenDataValue } from './kitchenDataContext'
 
 /** Polling interval. The backend has no push channel yet; when it gets
@@ -33,6 +35,16 @@ export function KitchenDataProvider({
   const pendingRef = useRef(new Set<string>())
   const loading = useRef(false)
   const feedbackId = useRef(0)
+  const { station, setStation } = useKitchenStation()
+  const {
+    notifyMode,
+    setNotifyMode,
+    notifyVolume,
+    setNotifyVolume,
+    previewSound,
+    flashNew,
+    playFeedback,
+  } = useKitchenAlerts(data, station)
 
   // Only accept data at least as new as what is shown, so a slow poll cannot
   // undo a change that was just made.
@@ -96,6 +108,8 @@ export function KitchenDataProvider({
       try {
         const result = await kitchenService.execute(user, command)
         accept(result.data)
+        if (command.type === 'start') playFeedback('start')
+        if (command.type === 'complete') playFeedback('complete')
         if (result.summary)
           setFeedback({ id: ++feedbackId.current, tone: 'success', text: result.summary })
         return result.summary
@@ -117,7 +131,7 @@ export function KitchenDataProvider({
         setPending(new Set(pendingRef.current))
       }
     },
-    [accept, refresh, user],
+    [accept, playFeedback, refresh, user],
   )
 
   const value = useMemo<KitchenDataValue>(
@@ -130,8 +144,32 @@ export function KitchenDataProvider({
       isPending: (key) => pending.has(key),
       feedback,
       dismissFeedback: () => setFeedback(null),
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
+      flashNew,
+      station,
+      setStation,
     }),
-    [user, data, loadError, refresh, run, pending, feedback],
+    [
+      user,
+      data,
+      loadError,
+      refresh,
+      run,
+      pending,
+      feedback,
+      notifyMode,
+      setNotifyMode,
+      notifyVolume,
+      setNotifyVolume,
+      previewSound,
+      flashNew,
+      station,
+      setStation,
+    ],
   )
 
   return <KitchenDataContext.Provider value={value}>{children}</KitchenDataContext.Provider>

@@ -186,6 +186,13 @@ export function buildActiveDishQueue(data: KitchenData, now: number): ActiveDish
     )
 }
 
+export function prioritizeActiveDishes(dishes: ActiveDishView[]) {
+  return [
+    ...dishes.filter((dish) => dish.order.priority),
+    ...dishes.filter((dish) => !dish.order.priority),
+  ]
+}
+
 export function filterActiveDishes(dishes: ActiveDishView[], filter: KitchenFilter) {
   switch (filter) {
     case 'new':

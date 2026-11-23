@@ -40,6 +40,12 @@ export function formatDuration(minutes: number) {
   return rest ? `${hours} giờ ${rest} phút` : `${hours} giờ`
 }
 
+export function formatWaitLabel(minutes: number) {
+  if (minutes < 60) return `${minutes} phút`
+  if (minutes < 24 * 60) return formatDuration(minutes)
+  return `${Math.floor(minutes / (24 * 60))} ngày`
+}
+
 /** Lower-case text without Vietnamese diacritics, for forgiving search. */
 export function searchable(text: string) {
   return text

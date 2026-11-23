@@ -483,6 +483,13 @@
 .k-table .k-num {
   width: 1%;
 }
+.k-table th.k-center,
+.k-table td.k-center {
+  text-align: center;
+}
+.k-table td.k-center .k-badge {
+  justify-content: center;
+}
 .k-cell-stack {
   display: flex;
   flex-direction: column;
@@ -879,7 +886,7 @@
   padding-block: 4px;
 }
 .k-history .k-table .k-num {
-  text-align: center;
+  text-align: left;
 }
 .k-history .k-table-wrap {
   min-width: 0;

@@ -167,7 +167,7 @@ export default function CashierTransactionsPage() {
               <th className="k-num">Số tiền</th>
               <th>Phương thức</th>
               <th>Thu ngân</th>
-              <th>Trạng thái</th>
+              <th className="k-center">Trạng thái</th>
               <th className="k-cell-actions">
                 <span className="k-visually-hidden">Xem</span>
               </th>
@@ -208,7 +208,7 @@ export default function CashierTransactionsPage() {
                 </td>
                 <td>{METHOD_LABEL[payment.method]}</td>
                 <td>{staffName(data, payment.createdBy)}</td>
-                <td>
+                <td className="k-center">
                   <PaymentStatusBadge status={payment.status} />
                 </td>
                 <td className="k-cell-actions">

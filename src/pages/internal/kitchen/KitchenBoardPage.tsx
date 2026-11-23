@@ -3,8 +3,16 @@ import {
   buildActiveDishQueue,
   buildReadyDishQueue,
   filterActiveDishes,
+  prioritizeActiveDishes,
 } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
+import {
+  filterByStation,
+  parseStationId,
+  STATIONS,
+  stationLabel,
+  stationOf,
+} from '../../../api/kitchen/stations'
 import { localDayKey } from '../../../components/kitchen/format'
 import { KitchenBoardColumn } from '../../../components/kitchen/KitchenBoardColumn'
 import { RejectItemDialog } from '../../../components/kitchen/KitchenOrderItem'
@@ -23,20 +31,29 @@ const TABS: { id: BoardTab; label: string }[] = [
 ]
 
 export default function KitchenBoardPage() {
-  const { data, run, isPending } = useKitchenSnapshot()
+  const { data, run, isPending, flashNew, station, setStation } = useKitchenSnapshot()
   const now = useNow()
   const [rejectItem, setRejectItem] = useState<KitchenOrderItem | null>(null)
   const [lateOnly, setLateOnly] = useState(false)
   const [tab, setTab] = useState<BoardTab>(() =>
-    filterActiveDishes(buildActiveDishQueue(data, now), 'new').length ? 'new' : 'preparing',
+    filterActiveDishes(
+      filterByStation(prioritizeActiveDishes(buildActiveDishQueue(data, now)), data, station),
+      'new',
+    ).length
+      ? 'new'
+      : 'preparing',
   )
   const tabRefs = useRef<Record<BoardTab, HTMLButtonElement | null>>({
     new: null,
     preparing: null,
     ready: null,
   })
-  const queue = buildActiveDishQueue(data, now)
-  const readyToday = buildReadyDishQueue(data, now).filter(
+  const queue = filterByStation(
+    prioritizeActiveDishes(buildActiveDishQueue(data, now)),
+    data,
+    station,
+  )
+  const readyToday = filterByStation(buildReadyDishQueue(data, now), data, station).filter(
     (dish) => !!dish.item.readyAt && localDayKey(dish.item.readyAt) === localDayKey(now),
   )
   const tabDishes = {
@@ -92,6 +109,21 @@ export default function KitchenBoardPage() {
     <div className="k-board" data-tab={tab}>
       {rejectItem && <RejectItemDialog item={rejectItem} onClose={() => setRejectItem(null)} />}
       <div className="k-board-bar">
+        <label className="k-station-field">
+          <span className="k-label">Trạm</span>
+          <select
+            className="k-select"
+            value={station}
+            aria-label="Lọc theo trạm bếp"
+            onChange={(event) => setStation(parseStationId(event.target.value))}
+          >
+            {STATIONS.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="k-board-tabs" role="tablist" aria-label="Trạng thái món bếp">
           {TABS.map((t) => {
             const { total, late } = tabCounts[t.id]
@@ -104,7 +136,7 @@ export default function KitchenBoardPage() {
                 id={`kitchen-tab-${t.id}`}
                 type="button"
                 role="tab"
-                className="k-board-tab"
+                className={`k-board-tab${flashNew && t.id === 'new' ? ' k-board-tab--flash' : ''}`}
                 aria-label={`${t.label}, ${total} món${late && t.id !== 'ready' ? `, ${late} trễ` : ''}`}
                 aria-selected={tab === t.id}
                 aria-controls={t.id === 'ready' ? 'kitchen-ready' : 'kitchen-active'}
@@ -157,6 +189,9 @@ export default function KitchenBoardPage() {
               key={dish.item.id}
               dish={dish}
               data={data}
+              stationName={
+                station === 'all' ? stationLabel(stationOf(data, dish.item.menuItemId)) : undefined
+              }
               isPending={isPending}
               onStart={start}
               onComplete={complete}
@@ -190,7 +225,14 @@ export default function KitchenBoardPage() {
             <span>Phục vụ bàn</span>
           </div>
           {readyVisible.map((dish) => (
-            <KitchenReadyDishRow key={dish.item.id} dish={dish} data={data} />
+            <KitchenReadyDishRow
+              key={dish.item.id}
+              dish={dish}
+              data={data}
+              stationName={
+                station === 'all' ? stationLabel(stationOf(data, dish.item.menuItemId)) : undefined
+              }
+            />
           ))}
         </div>
       </KitchenBoardColumn>

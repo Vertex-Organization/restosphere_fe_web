@@ -12,6 +12,8 @@ import {
   shortName,
   staffName,
 } from '../../../api/kitchen/rules'
+import { isAlertNote } from '../../../api/kitchen/notes'
+import { stationLabel, stationOf } from '../../../api/kitchen/stations'
 import { minutesBetween, waitTone } from '../../../api/kitchen/selectors'
 import type { KitchenOrderItem } from '../../../api/kitchen/types'
 import { DishPhoto } from '../../../components/kitchen/DishPhoto'
@@ -238,9 +240,14 @@ export default function KitchenTicketPage({ id }: { id: string }) {
                       <div className="k-ticket-item-title">
                         <strong>{item.quantity} ×</strong>
                         <span>{item.name}</span>
+                        <span className="k-station-tag">
+                          {stationLabel(stationOf(data, item.menuItemId))}
+                        </span>
                       </div>
                       {item.note && (
-                        <span className="k-note">
+                        <span
+                          className={isAlertNote(item.note) ? 'k-note k-note--alert' : 'k-note'}
+                        >
                           <Icon name="note" size={13} />
                           {item.note}
                         </span>

@@ -146,7 +146,7 @@ export default function KitchenMenuStatusPage() {
             <tr>
               <th>Món</th>
               <th>Danh mục</th>
-              <th>Tình trạng</th>
+              <th className="k-center">Tình trạng</th>
               <th>Cập nhật</th>
               <th className="k-cell-actions">Thao tác</th>
             </tr>
@@ -164,7 +164,7 @@ export default function KitchenMenuStatusPage() {
                   </span>
                 </td>
                 <td>{categoryName(menu.categoryId)}</td>
-                <td>
+                <td className="k-center">
                   <Badge tone={TONE[menu.status]}>{MENU_STATUS_LABEL[menu.status]}</Badge>
                 </td>
                 <td className="k-mono">
