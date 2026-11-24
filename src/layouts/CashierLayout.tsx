@@ -28,7 +28,7 @@ interface NavItem {
   short: string
   icon: IconName
   routes: CashierRoute['name'][]
-  count?: 'requests' | 'unread'
+  count?: 'requests' | 'unread' | 'deposits'
 }
 
 const NAV: NavItem[] = [
@@ -45,6 +45,14 @@ const NAV: NavItem[] = [
     short: 'Giao dịch',
     icon: 'list',
     routes: ['transactions', 'transaction'],
+  },
+  {
+    to: cashierPaths.deposits,
+    label: 'Cọc chờ thu',
+    short: 'Cọc',
+    icon: 'cash',
+    routes: ['deposits', 'deposit-receipt'],
+    count: 'deposits',
   },
   {
     to: cashierPaths.requests,
@@ -195,6 +203,7 @@ export function CashierLayout({ route, title, fill, children }: Props) {
   const content = useRef<HTMLElement>(null)
   const unread = data ? unreadCount(data, user.id) : 0
   const requests = data ? pendingRequestCount(data) : 0
+  const deposits = data ? data.pendingDeposits.length : 0
   const shift = data ? openShiftOf(data, user.id) : undefined
   const overdue = data && shift ? isShiftOverdue(data, shift, new Date(now)) : false
   const due = data ? posRows(data, now).filter((r) => r.status === 'PAYMENT_REQUESTED').length : 0
@@ -215,8 +224,14 @@ export function CashierLayout({ route, title, fill, children }: Props) {
   const navLinks = (variant: 'side' | 'bottom') =>
     NAV.map((item) => {
       const current = item.routes.includes(route.name)
-      const count = item.count === 'unread' ? unread : item.count === 'requests' ? requests : 0
-      const countLabel = item.count === 'unread' ? `${count} chưa đọc` : `${count} chờ duyệt`
+      const counts = { unread, requests, deposits }
+      const count = item.count ? counts[item.count] : 0
+      const countLabel =
+        item.count === 'unread'
+          ? `${count} chưa đọc`
+          : item.count === 'deposits'
+            ? `${count} cọc chờ thu`
+            : `${count} chờ duyệt`
       return (
         <Link
           key={item.to}

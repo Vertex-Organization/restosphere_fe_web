@@ -13,6 +13,8 @@ export type CashierRoute =
   | { name: 'payment'; billId: string }
   | { name: 'transactions' }
   | { name: 'transaction'; id: string }
+  | { name: 'deposits' }
+  | { name: 'deposit-receipt'; id: string }
   | { name: 'receipt'; id: string }
   | { name: 'requests' }
   | { name: 'shift' }
@@ -24,7 +26,7 @@ export type CashierRoute =
 export const isCashierPath = (pathname: string) =>
   pathname === CASHIER_BASE || pathname.startsWith(`${CASHIER_BASE}/`)
 
-const withId = /^(bills|payments|transactions|receipts)\/([\w-]+)$/
+const withId = /^(bills|payments|transactions|receipts|deposit-receipts)\/([\w-]+)$/
 
 export function matchCashierRoute(pathname: string): CashierRoute {
   const path = pathname.replace(/\/+$/, '')
@@ -40,6 +42,8 @@ export function matchCashierRoute(pathname: string): CashierRoute {
         return { name: 'payment', billId: id }
       case 'transactions':
         return { name: 'transaction', id }
+      case 'deposit-receipts':
+        return { name: 'deposit-receipt', id }
       default:
         return { name: 'receipt', id }
     }
@@ -47,6 +51,8 @@ export function matchCashierRoute(pathname: string): CashierRoute {
   switch (rest) {
     case 'transactions':
       return { name: 'transactions' }
+    case 'deposits':
+      return { name: 'deposits' }
     case 'requests':
       return { name: 'requests' }
     case 'shift':
@@ -73,6 +79,8 @@ export const cashierPaths = {
   transactions: `${CASHIER_BASE}/transactions`,
   transaction: (id: string) => `${CASHIER_BASE}/transactions/${enc(id)}`,
   receipt: (billId: string) => `${CASHIER_BASE}/receipts/${enc(billId)}`,
+  deposits: `${CASHIER_BASE}/deposits`,
+  depositReceipt: (paymentId: string) => `${CASHIER_BASE}/deposit-receipts/${enc(paymentId)}`,
   requests: `${CASHIER_BASE}/requests`,
   request: (id: string) => `${CASHIER_BASE}/requests?id=${enc(id)}`,
   shift: `${CASHIER_BASE}/shift`,

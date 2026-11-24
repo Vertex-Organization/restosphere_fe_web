@@ -19,6 +19,8 @@ import CashierRequestsPage from './CashierRequestsPage'
 import CashierShiftPage from './CashierShiftPage'
 import CashierTransactionPage from './CashierTransactionPage'
 import CashierTransactionsPage from './CashierTransactionsPage'
+import CashierDepositsPage from './CashierDepositsPage'
+import CashierDepositReceiptPage from './CashierDepositReceiptPage'
 // Shared staff design tokens and primitives (scoped under .kds / k-*), then cashier-specific styles.
 import '../../../components/kitchen/kitchen.css'
 import '../kitchen/kitchenPages.css'
@@ -30,6 +32,8 @@ const TITLES: Record<CashierRoute['name'], string> = {
   payment: 'Thanh toán',
   transactions: 'Lịch sử giao dịch',
   transaction: 'Chi tiết giao dịch',
+  deposits: 'Cọc chờ thu',
+  'deposit-receipt': 'Biên nhận cọc',
   receipt: 'Hóa đơn in',
   requests: 'Yêu cầu xử lý',
   shift: 'Ca thu ngân',
@@ -53,6 +57,10 @@ function page(route: CashierRoute, params: URLSearchParams): ReactNode {
       return <CashierTransactionPage key={route.id} id={route.id} />
     case 'receipt':
       return <CashierReceiptPage key={route.id} billId={route.id} />
+    case 'deposits':
+      return <CashierDepositsPage />
+    case 'deposit-receipt':
+      return <CashierDepositReceiptPage key={route.id} paymentId={route.id} />
     case 'requests':
       return <CashierRequestsPage selectedId={params.get('id') ?? ''} />
     case 'shift':
