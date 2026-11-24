@@ -488,8 +488,8 @@ export function createManagerData(now = new Date()): ManagerData {
     revision: 1,
     seedDay: today,
     areas: [
-      { id: 'A', name: 'Khu A · Tầng trệt' },
-      { id: 'B', name: 'Khu B · Tầng 1' },
+      { id: 'A', name: 'Khu A · Tầng trệt', active: true, sortOrder: 0 },
+      { id: 'B', name: 'Khu B · Tầng 1', active: true, sortOrder: 1 },
     ],
     tables,
     sessions,

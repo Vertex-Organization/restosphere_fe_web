@@ -40,6 +40,19 @@ const decision = (id = 'PD-021') => ({
   reason: 'Đã kiểm tra thông tin',
 })
 
+test('area updates preserve tables and bookings, sort areas and enforce permissions and bounds', () => {
+  const d = seed()
+  const area = { ...d.areas[0], active: false, sortOrder: 5 }
+  const updated = execute(d, { type: 'area.update', area })
+  assert.deepEqual(updated.areas.at(-1), area)
+  assert.deepEqual(updated.tables, d.tables)
+  assert.deepEqual(updated.reservations, d.reservations)
+  assert.equal(d.areas[0].active, true)
+  for (const sortOrder of [-1, 0.5, NaN, 2147483648])
+    assert.throws(() => execute(d, { type: 'area.update', area: { ...area, sortOrder } }))
+  assert.throws(() => execute(d, { type: 'area.update', area }, { ...manager, permissions: [] }))
+})
+
 test('reservation uses server area IDs and propagates server validation and lookup failures', async () => {
   const previous = globalThis.fetch
   const calls = []

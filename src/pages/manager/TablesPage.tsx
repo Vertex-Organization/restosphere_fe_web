@@ -29,7 +29,9 @@ export default function TablesPage({ selectedId }: { selectedId: string }) {
   const [status, setStatus] = useState('')
   const [selected, setSelected] = useState(selectedId)
   const [editing, setEditing] = useState(false)
+  const [editingArea, setEditingArea] = useState('')
   if (!d) return null
+  const areaToEdit = d.areas.find((a) => a.id === editingArea)
   const table = d.tables.find((t) => t.id === selected)
   const session = d.sessions.find((s) => s.id === table?.sessionId)
   const bookings = d.reservations.filter((r) => r.tableId === selected)
@@ -65,14 +67,17 @@ export default function TablesPage({ selectedId }: { selectedId: string }) {
           .map((a) => (
             <Panel
               key={a.id}
-              title={a.name}
+              title={`${a.name}${a.active ? '' : ' · Tạm đóng'}`}
               aside={
                 <span className="m-muted">
                   {
                     d.tables.filter((t) => t.areaId === a.id && (!status || t.status === status))
                       .length
                   }{' '}
-                  / {d.tables.filter((t) => t.areaId === a.id).length} bàn
+                  / {d.tables.filter((t) => t.areaId === a.id).length} bàn · Thứ tự {a.sortOrder}
+                  {user.permissions.includes('tables.edit') && (
+                    <Button onClick={() => setEditingArea(a.id)}>Cập nhật khu vực</Button>
+                  )}
                 </span>
               }
             >
@@ -101,6 +106,27 @@ export default function TablesPage({ selectedId }: { selectedId: string }) {
             </Panel>
           ))}
       </div>
+      {areaToEdit && (
+        <FormDialog
+          title={`Khu vực ${areaToEdit.name}`}
+          description="Khu tạm đóng không nhận đặt bàn hoặc xếp bàn mới. Dữ liệu hiện có được giữ nguyên."
+          initial={{ active: areaToEdit.active, sortOrder: String(areaToEdit.sortOrder) }}
+          fields={[
+            { key: 'active', label: 'Đang hoạt động', type: 'checkbox' },
+            { key: 'sortOrder', label: 'Thứ tự hiển thị', type: 'number' },
+          ]}
+          onClose={() => setEditingArea('')}
+          onSubmit={async (v) => {
+            const sortOrder = v.sortOrder === '' ? NaN : Number(v.sortOrder)
+            if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 2147483647)
+              throw new ManagerError('Thứ tự phải là số nguyên từ 0 đến 2147483647.', 'sortOrder')
+            await execute({
+              type: 'area.update',
+              area: { ...areaToEdit, active: !!v.active, sortOrder },
+            })
+          }}
+        />
+      )}
       {table && !editing && (
         <DetailDialog
           title={`Bàn ${table.code}`}

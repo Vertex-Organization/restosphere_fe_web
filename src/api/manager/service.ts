@@ -564,6 +564,14 @@ export const managerService = {
     }
   },
   async execute(command: ManagerCommand): Promise<ManagerData> {
+    if (command.type === 'area.update') {
+      const { id, name, active, sortOrder } = command.area
+      await authenticatedRequest<Area>(`areas/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ name, active, sortOrder }),
+      })
+      return managerService.load()
+    }
     if (command.type === 'category.save') {
       const { id, name, sort, visible, group } = command.category
       await authenticatedRequest<CategoryDto>(

@@ -16,6 +16,7 @@ function requireValue(condition: unknown, message: string, field?: string): asse
 const permissions: Record<ManagerCommand['type'], Permission | null> = {
   'reservation.move': 'reservations.edit',
   'table.update': 'tables.edit',
+  'area.update': 'tables.edit',
   'employee.assign': 'employees.assign',
   'shift.save': 'shifts.manage',
   'menu.save': 'menu.manage',
@@ -57,6 +58,27 @@ export function applyManagerCommand(
   let text = ''
   const areaExists = (id: string) => data.areas.some((a) => a.id === id)
   switch (command.type) {
+    case 'area.update': {
+      const area = data.areas.find((a) => a.id === command.area.id)
+      requireValue(area, 'Không tìm thấy khu vực.')
+      requireValue(
+        command.area.name.trim().length > 0 && command.area.name.trim().length <= 100,
+        'Tên khu vực phải từ 1 đến 100 ký tự.',
+        'name',
+      )
+      requireValue(
+        Number.isInteger(command.area.sortOrder) &&
+          command.area.sortOrder >= 0 &&
+          command.area.sortOrder <= 2147483647,
+        'Thứ tự phải là số nguyên từ 0 đến 2147483647.',
+        'sortOrder',
+      )
+      Object.assign(area, command.area, { name: command.area.name.trim() })
+      data.areas.sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+      entityId = area.id
+      text = `Cập nhật khu vực ${area.name}`
+      break
+    }
     case 'reservation.move': {
       const r = data.reservations.find((r) => r.id === command.id)
       requireValue(

@@ -19,6 +19,8 @@ export interface ManagerUser {
 export interface Area {
   id: string
   name: string
+  active: boolean
+  sortOrder: number
 }
 export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'CLEANING' | 'OUT_OF_SERVICE'
 export interface RestaurantTable {
@@ -267,6 +269,7 @@ export interface ManagerReport {
   }
 }
 export type ManagerCommand =
+  | { type: 'area.update'; area: Area }
   | { type: 'reservation.move'; id: string; tableId: string; reason: string }
   | {
       type: 'table.update'
