@@ -5,6 +5,7 @@ import MenuPage from './MenuPage'
 import CateringPage from './CateringPage'
 import LegalPage from './LegalPage'
 import ReservationStatusPage from './ReservationStatusPage'
+import PaymentResultPage from './PaymentResultPage'
 import { useSiteLocation } from './LocationContext'
 import { PageTransitionProvider } from './PageTransition'
 import type { Language } from './siteData'
@@ -16,9 +17,16 @@ function Site() {
   const page = pathname.replace(/^\/(vi|nl|en)(?=\/|$)/, '') || '/'
   const legal = page === '/privacy' || page === '/terms'
   const isStatus = page === '/reservation-status'
-  const known = ['/', '/menu', '/catering', '/privacy', '/terms', '/reservation-status'].includes(
-    page,
-  )
+  const isPaymentResult = page === '/payment/result'
+  const known = [
+    '/',
+    '/menu',
+    '/catering',
+    '/privacy',
+    '/terms',
+    '/reservation-status',
+    '/payment/result',
+  ].includes(page)
 
   useEffect(() => {
     document.documentElement.lang = language
@@ -64,6 +72,7 @@ function Site() {
         />
       )}
       {isStatus && <ReservationStatusPage key={pathname} language={language} />}
+      {isPaymentResult && <PaymentResultPage key={pathname} language={language} />}
       {!known && (
         <main id="main-content" className="not-found">
           <h1>404</h1>

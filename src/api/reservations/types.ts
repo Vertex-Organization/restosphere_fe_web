@@ -21,6 +21,7 @@ export interface ReservationRequest {
   /** HH:mm */
   time: string
   guests: number
+  /** Empty means no preference; reception seats the guests in any zone with room. */
   areaId: string
   startsAt?: string
   durationMinutes?: number
@@ -38,8 +39,14 @@ export interface Deposit {
   paidAt?: string
   /** Transfer note the customer must use. */
   reference: string
-  /** Present only while the deposit is unpaid and the restaurant set a bank account. */
-  bank?: { bankName?: string; accountNumber: string; accountName?: string }
+  /** The payOS link the guest pays; present only while the deposit is unpaid. */
+  payos?: { paymentId: string; orderCode: number; checkoutUrl: string; qrCode?: string }
+}
+
+export interface PaymentStatus {
+  status: string
+  paid: boolean
+  reservationStatus?: ReservationStatus
 }
 
 export interface Reservation extends ReservationRequest {

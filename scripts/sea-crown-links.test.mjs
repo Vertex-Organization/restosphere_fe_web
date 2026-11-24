@@ -11,7 +11,15 @@ test('builds localized catering links for both call-to-action targets', () => {
 
 test('recognizes every public Sea Crown route as internal navigation', () => {
   for (const language of ['vi', 'en']) {
-    for (const page of ['', '/menu', '/catering', '/privacy', '/terms', '/reservation-status']) {
+    for (const page of [
+      '',
+      '/menu',
+      '/catering',
+      '/privacy',
+      '/terms',
+      '/reservation-status',
+      '/payment/result',
+    ]) {
       assert.equal(isSiteRoute(`/${language}${page}`), true, `/${language}${page}`)
     }
   }

@@ -122,6 +122,13 @@ export const BOOKING_COPY = {
     fewer: 'Bớt một khách',
     more: 'Thêm một khách',
     area: 'Không gian chỗ ngồi',
+    noAreaPreference: 'Không yêu cầu khu',
+    noAreaHint: 'Lễ tân sẽ xếp bàn ở khu còn chỗ.',
+    depositPolicy:
+      'Tôi đã đọc và đồng ý: tiền cọc (50% tạm tính món đặt trước) không được hoàn lại dù hủy hoặc không đến.',
+    depositPolicyNeeded: 'Vui lòng đồng ý chính sách không hoàn cọc để tiếp tục.',
+    depositNotice:
+      'Đặt món trước cần cọc 50% tạm tính, thanh toán qua payOS. Tiền cọc không hoàn lại.',
     step1: 'Thời gian & Không gian tiệc',
     step2: 'Thông tin người đặt & Thực đơn',
     name: 'Họ và tên người đặt',
@@ -210,6 +217,13 @@ export const BOOKING_COPY = {
     fewer: 'One guest fewer',
     more: 'One guest more',
     area: 'Seating zone',
+    noAreaPreference: 'No preference',
+    noAreaHint: 'Reception will seat you in any zone with room.',
+    depositPolicy:
+      'I have read and agree: the deposit (50% of the pre-ordered dishes) is non-refundable, whether I cancel or do not show up.',
+    depositPolicyNeeded: 'Please accept the non-refundable deposit policy to continue.',
+    depositNotice:
+      'Pre-ordering requires a 50% deposit paid through payOS. The deposit is non-refundable.',
     step1: 'Date, Time & Seating Zone',
     step2: 'Host Details & Pre-order Summary',
     name: 'Host full name',

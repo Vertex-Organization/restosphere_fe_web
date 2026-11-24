@@ -64,6 +64,7 @@ const SHOWN_INLINE = [
   'email',
   'note',
   'items',
+  'depositPolicy',
 ]
 const minutesOf = (slot: string) => Number(slot.slice(0, 2)) * 60 + Number(slot.slice(3))
 
@@ -121,6 +122,7 @@ export function BookingForm({
     initialSlots.includes('18:30') ? '18:30' : (initialSlots[0] ?? ''),
   )
   const [area, setArea] = useState('')
+  const [acceptedPolicy, setAcceptedPolicy] = useState(false)
   const [settingsError, setSettingsError] = useState('')
   useEffect(() => {
     let active = true
@@ -129,7 +131,6 @@ export function BookingForm({
       .then((value) => {
         if (active) {
           setSettings(value)
-          setArea(value.areas[0]?.id ?? '')
         }
       })
       .catch((error: unknown) => {
@@ -168,7 +169,7 @@ export function BookingForm({
   const lunchSlots = slots.filter((s) => Number(s.slice(0, 2)) < 15)
   const dinnerSlots = slots.filter((s) => Number(s.slice(0, 2)) >= 15)
 
-  const onlineAllowed = !!settings?.onlineReservations && !!area
+  const onlineAllowed = !!settings?.onlineReservations
   const chosen = dishes.filter((d) => cart[d.id])
   const total = cartTotal(cart, dishes)
   const [minCovered, maxCovered] = cartGuestCoverage(cart, dishes)
@@ -186,6 +187,11 @@ export function BookingForm({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!onlineAllowed || sending) return
+    if (chosen.length > 0 && !acceptedPolicy) {
+      setFailed(t.depositPolicyNeeded)
+      setFailedField('depositPolicy')
+      return
+    }
     const form = new FormData(event.currentTarget)
     const text = (name: string) => String(form.get(name) ?? '').trim()
     setSending(true)
@@ -480,10 +486,17 @@ export function BookingForm({
             </div>
 
             <div>
-              <span className="bk-label">
-                {t.area} <span className="bk-required">*</span>
-              </span>
+              <span className="bk-label">{t.area}</span>
               <div className="bk-area-cards" role="radiogroup" aria-label={t.area}>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={area === ''}
+                  className={`bk-area-card${area === '' ? ' is-selected' : ''}`}
+                  onClick={() => setArea('')}
+                >
+                  <strong className="bk-area-name">{t.noAreaPreference}</strong>
+                </button>
                 {settings?.areas.map((a) => {
                   const selected = area === a.id
                   return (
@@ -503,6 +516,7 @@ export function BookingForm({
                   )
                 })}
               </div>
+              {area === '' && <p className="bk-summary-note">{t.noAreaHint}</p>}
               {fieldError('areaId')}
             </div>
           </fieldset>
@@ -655,6 +669,21 @@ export function BookingForm({
             )}
             {fieldError('items')}
           </section>
+
+          {chosen.length > 0 && (
+            <div className="bk-policy">
+              <p className="bk-summary-note">{t.depositNotice}</p>
+              <label className="bk-check">
+                <input
+                  type="checkbox"
+                  checked={acceptedPolicy}
+                  onChange={(event) => setAcceptedPolicy(event.target.checked)}
+                />
+                <span>{t.depositPolicy}</span>
+              </label>
+              {fieldError('depositPolicy')}
+            </div>
+          )}
 
           {failed && !SHOWN_INLINE.includes(failedField) && (
             <p className="bk-error" role="alert">

@@ -13,7 +13,7 @@ export const external = {
 export const cateringHref = (language: Language, section: CateringSection) =>
   `/${language}/catering#catering-${section}`
 
-const sitePages = new Set(['/', '/menu', '/catering', '/privacy', '/terms', '/reservation-status'])
+const sitePages = new Set(['/', '/menu', '/catering', '/privacy', '/terms', '/reservation-status', '/payment/result'])
 
 export const isSiteRoute = (pathname: string) => {
   const page = pathname.replace(/^\/(vi|nl|en)(?=\/|$)/, '').replace(/\/+$/, '') || '/'

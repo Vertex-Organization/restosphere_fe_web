@@ -1,5 +1,5 @@
 import { ApiError, apiRequest } from '../client'
-import type { Reservation, ReservationRequest } from './types'
+import type { PaymentStatus, Reservation, ReservationRequest } from './types'
 
 export interface ReservationSettings {
   onlineReservations: boolean
@@ -36,6 +36,21 @@ export const reservationService = {
       return await request<Reservation>('reservations/lookup', {
         method: 'POST',
         body: JSON.stringify({ code: code.trim(), phone: phone.trim() }),
+      })
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null
+      throw error
+    }
+  },
+  async paymentStatus(
+    orderCode: number,
+    code: string,
+    phone: string,
+  ): Promise<PaymentStatus | null> {
+    try {
+      return await request<PaymentStatus>('reservations/payment-status', {
+        method: 'POST',
+        body: JSON.stringify({ orderCode, code: code.trim(), phone: phone.trim() }),
       })
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) return null
