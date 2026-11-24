@@ -224,7 +224,7 @@ export function applyDevEvent(current: CashierData, event: DevEvent, now: Date):
       const payment = data.payments.find((p) => p.id === event.paymentId)
       const bill = data.bills.find((b) => b.id === payment?.billId)
       if (!payment || !bill) throw new CashierError('NOT_FOUND', 'Không tìm thấy giao dịch.')
-      if (payment.method !== 'TRANSFER' || payment.status !== 'PENDING')
+      if (payment.method !== 'PAYOS' || payment.status !== 'PENDING')
         throw new CashierError('CONFLICT', 'Giao dịch không còn chờ xác nhận.')
       const table = tableCodeOf(data, bill)
       payment.completedAt = at

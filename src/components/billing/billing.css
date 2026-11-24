@@ -2413,6 +2413,17 @@
 .c-r-sub dt {
   padding-left: 10px;
 }
+.c-r-qr {
+  padding: 8px 0;
+  border-top: 1px dashed #999;
+  text-align: center;
+}
+.c-r-qr img {
+  display: block;
+  margin: 0 auto 4px;
+  width: 44mm;
+  height: 44mm;
+}
 .c-r-foot {
   padding-top: 8px;
   border-top: 1px dashed #999;

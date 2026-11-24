@@ -372,8 +372,6 @@ export interface ShiftSummary {
   cashCount: number
   transfer: number
   transferCount: number
-  card: number
-  cardCount: number
   /** All money received in the shift, whatever the method. */
   revenue: number
   pendingCount: number
@@ -391,8 +389,6 @@ export function shiftSummary(data: CashierData, shift: CashierShift): ShiftSumma
     cashCount: 0,
     transfer: 0,
     transferCount: 0,
-    card: 0,
-    cardCount: 0,
     revenue: 0,
     pendingCount: 0,
     pendingAmount: 0,
@@ -414,12 +410,9 @@ export function shiftSummary(data: CashierData, shift: CashierShift): ShiftSumma
     if (p.method === 'CASH') {
       summary.cash += p.amount
       summary.cashCount += 1
-    } else if (p.method === 'TRANSFER') {
+    } else {
       summary.transfer += p.amount
       summary.transferCount += 1
-    } else {
-      summary.card += p.amount
-      summary.cardCount += 1
     }
   }
   summary.expectedCash += summary.cash

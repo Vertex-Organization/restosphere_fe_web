@@ -132,7 +132,7 @@ export interface Bill {
   history: BillEvent[]
 }
 
-export type PaymentMethod = 'CASH' | 'TRANSFER' | 'CARD'
+export type PaymentMethod = 'CASH' | 'PAYOS' | 'MANUAL_TRANSFER'
 
 /**
  * PENDING   transfer requested, money not verified yet
@@ -154,7 +154,14 @@ export interface Payment {
   /** Cash only: what the guest handed over and the change given back. */
   tendered?: number
   change?: number
-  /** Transfer only: the unique text the guest types as the transfer description. */
+  /** payOS only: the link the guest can pay, its QR content and the payOS order code. */
+  checkoutUrl?: string
+  qrCode?: string
+  orderCode?: number
+  /** A deposit belongs to a reservation until the guest checks in. */
+  reservationId?: string
+  proofImageUrl?: string
+  /** Manual transfer only: the unique text the guest types as the transfer description. */
   transferContent?: string
   /** Bank transaction reference, once verified. */
   bankReference?: string
@@ -266,6 +273,8 @@ export interface BankAccount {
   bankName: string
   accountNumber: string
   accountName: string
+  /** 6-digit napas BIN; with the account number it builds the static VietQR. */
+  bin?: string
 }
 
 /**
@@ -294,6 +303,18 @@ export interface MenuEntry {
   imageUrl?: string
 }
 
+/** A booking reception handed to the cashier to take the deposit in cash. */
+export interface PendingDeposit {
+  reservationId: string
+  code: string
+  customerName: string
+  phone: string
+  startsAt: string
+  amount: number
+  dueAt: string
+  requestedAt: string
+}
+
 export interface CashierData {
   schema: 1
   seedDay: string
@@ -314,6 +335,7 @@ export interface CashierData {
   shifts: CashierShift[]
   scheduledShifts: ScheduledShift[]
   notifications: CashierNotification[]
+  pendingDeposits: PendingDeposit[]
   outbox: OutboxMessage[]
   /** Idempotency keys already processed → payment id, so a retried submit never charges twice. */
   processedKeys: Record<string, string>
@@ -343,15 +365,29 @@ export type CashierCommand =
       tendered: number
       idempotencyKey: string
     }
+  | { type: 'create-payos-link'; billId: string; billVersion: number }
+  | { type: 'refresh-payment'; paymentId: string }
   | {
-      type: 'create-transfer'
+      type: 'pay-manual-transfer'
       billId: string
       billVersion: number
       amount: number
       idempotencyKey: string
+      transactionReference: string
+      proofImageUrl?: string
+      managerEmail: string
+      managerPassword: string
     }
-  | { type: 'confirm-transfer'; paymentId: string; bankReference: string }
-  | { type: 'cancel-transfer'; paymentId: string }
+  | { type: 'deposit-cash'; reservationId: string; tendered: number; idempotencyKey: string }
+  | {
+      type: 'deposit-manual-transfer'
+      reservationId: string
+      idempotencyKey: string
+      transactionReference: string
+      proofImageUrl?: string
+      managerEmail: string
+      managerPassword: string
+    }
   | { type: 'open-shift'; openingFloat: number; scheduledShiftId?: string }
   | { type: 'close-shift'; shiftId: string; countedCash: number; note: string }
   | { type: 'read-notifications'; ids?: string[] }

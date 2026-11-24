@@ -18,8 +18,8 @@ import { cashierPaths } from '../../../routes/cashierRouter'
 
 const METHODS: { id: PaymentMethod; icon: IconName; hint: string }[] = [
   { id: 'CASH', icon: 'cash', hint: 'Nhận tiền tại quầy' },
-  { id: 'TRANSFER', icon: 'bank', hint: 'Chờ tiền về tài khoản' },
-  { id: 'CARD', icon: 'card', hint: 'Chưa hỗ trợ' },
+  { id: 'PAYOS', icon: 'bank', hint: 'Khách quét QR, tự ghi nhận' },
+  { id: 'MANUAL_TRANSFER', icon: 'bank', hint: 'Khi payOS lỗi, quản lý xác nhận' },
 ]
 
 /** One key per payment attempt: a retried submit of the same attempt can never be recorded twice. */
@@ -34,7 +34,7 @@ function newAttemptKey(billId: string) {
 export default function CashierPaymentPage({ billId }: { billId: string }) {
   const { data, user } = useCashierSnapshot()
   const view = billView(data, billId)
-  const [method, setMethod] = useState<PaymentMethod>(() => (view?.pending ? 'TRANSFER' : 'CASH'))
+  const [method, setMethod] = useState<PaymentMethod>(() => (view?.pending ? 'PAYOS' : 'CASH'))
   const [doneId, setDoneId] = useState<string | null>(null)
 
   if (!view) {
@@ -56,7 +56,7 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
 
   const { bill, table } = view
   const done = doneId ? data.payments.find((p) => p.id === doneId) : undefined
-  const effective = view.pending ? 'TRANSFER' : method
+  const effective = view.pending ? 'PAYOS' : method
 
   let main
   if (done) {
@@ -77,7 +77,7 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
         </div>
         <div className="c-methods" role="radiogroup" aria-label="Phương thức thanh toán">
           {METHODS.map((m) => {
-            const enabled = data.config.methods[m.id] && (!view.pending || m.id === 'TRANSFER')
+            const enabled = data.config.methods[m.id] && (!view.pending || m.id === 'PAYOS')
             return (
               <label key={m.id} className="c-method">
                 <input
@@ -112,7 +112,16 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
             onDone={setDoneId}
           />
         )}
-        {effective === 'TRANSFER' && <TransferPanel data={data} view={view} user={user} />}
+        {effective === 'PAYOS' && <PayosPanel data={data} view={view} user={user} />}
+        {effective === 'MANUAL_TRANSFER' && (
+          <ManualTransferPanel
+            key={`${bill.id}:${bill.version}`}
+            data={data}
+            view={view}
+            user={user}
+            onDone={setDoneId}
+          />
+        )}
       </>
     )
   }
@@ -325,7 +334,7 @@ function CashForm({
   )
 }
 
-function TransferPanel({
+function PayosPanel({
   data,
   view,
   user,
@@ -335,15 +344,147 @@ function TransferPanel({
   user: CashierStaff
 }) {
   const { run, isPending } = useCashierSnapshot()
+  const [error, setError] = useState('')
+  const busy = isPending(`pay:${view.bill.id}`)
+
+  if (view.pending) return <PendingPayos payment={view.pending} user={user} />
+  const block = paymentBlock(data, view, user)
+  if (block)
+    return (
+      <Alert tone="warning" icon="info">
+        {block.text}
+      </Alert>
+    )
+
+  const create = async () => {
+    if (busy) return
+    const outcome = await run(
+      { type: 'create-payos-link', billId: view.bill.id, billVersion: view.bill.version },
+      [`pay:${view.bill.id}`],
+    )
+    if (outcome && !outcome.ok) setError(outcome.error)
+  }
+
+  return (
+    <div className="c-tender">
+      <p className="k-hint">
+        Tạo mã QR cho phần còn lại {formatVnd(view.remaining)}. Khách quét bằng ứng dụng ngân hàng,
+        hệ thống tự ghi nhận khi tiền về. In phiếu để khách quét ngay trên bill.
+      </p>
+      {error && (
+        <Alert tone="danger" icon="alert">
+          {error}
+        </Alert>
+      )}
+      <button
+        type="button"
+        className="k-btn k-btn--primary c-confirm"
+        disabled={busy}
+        aria-busy={busy}
+        onClick={() => void create()}
+      >
+        {busy ? 'Đang tạo…' : `Tạo mã QR ${formatVnd(view.remaining)}`}
+      </button>
+    </div>
+  )
+}
+
+function PendingPayos({ payment, user }: { payment: Payment; user: CashierStaff }) {
+  const { run, isPending } = useCashierSnapshot()
+  const [error, setError] = useState('')
+  const busy = isPending(`pay:${payment.billId}`)
+  const canCreate = hasPermission(user, 'payments.create')
+
+  const refresh = async () => {
+    if (busy) return
+    const outcome = await run({ type: 'refresh-payment', paymentId: payment.id }, [
+      `pay:${payment.billId}`,
+    ])
+    if (outcome && !outcome.ok) setError(outcome.error)
+  }
+
+  return (
+    <div className="c-tender">
+      <ol className="c-steps" aria-label="Trạng thái thanh toán payOS">
+        <li className="c-step c-step--done">
+          <Icon name="check" size={13} />
+          Đã tạo mã QR {formatTime(payment.createdAt)}
+        </li>
+        <li className="c-step c-step--current" aria-current="step">
+          <span className="k-spinner c-step-spin" aria-hidden="true" />
+          Đang chờ khách quét
+        </li>
+        <li className="c-step">Đã nhận tiền</li>
+      </ol>
+      <dl className="c-transfer">
+        <div className="c-transfer-amount">
+          <dt>Số tiền</dt>
+          <dd>{formatVnd(payment.amount)}</dd>
+        </div>
+        {payment.checkoutUrl && (
+          <div>
+            <dt>Link thanh toán</dt>
+            <dd className="k-mono">
+              <a href={payment.checkoutUrl} target="_blank" rel="noreferrer">
+                Mở trang thanh toán
+              </a>{' '}
+              <CopyButton value={payment.checkoutUrl} label="link thanh toán" />
+            </dd>
+          </div>
+        )}
+      </dl>
+      <PayosQr payment={payment} />
+      {error && (
+        <Alert tone="danger" icon="alert">
+          {error}
+        </Alert>
+      )}
+      <div className="c-row-actions">
+        <Link to={cashierPaths.receipt(payment.billId)} className="k-btn k-btn--outline">
+          <Icon name="printer" />
+          In bill có QR
+        </Link>
+        {canCreate && (
+          <button
+            type="button"
+            className="k-btn k-btn--primary"
+            disabled={busy}
+            aria-busy={busy}
+            onClick={() => void refresh()}
+          >
+            Kiểm tra lại
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ManualTransferPanel({
+  data,
+  view,
+  user,
+  onDone,
+}: {
+  data: CashierData
+  view: BillView
+  user: CashierStaff
+  onDone: (id: string) => void
+}) {
+  const { run, isPending } = useCashierSnapshot()
   const [split, setSplit] = useState(false)
   const [amount, setAmount] = useState<number | null>(null)
+  const [reference, setReference] = useState('')
+  const [proof, setProof] = useState('')
+  const [managerEmail, setManagerEmail] = useState('')
+  const [managerPassword, setManagerPassword] = useState('')
+  const [checked, setChecked] = useState(false)
   const [error, setError] = useState('')
   const attempt = useRef<string | null>(null)
   const busy = isPending(`pay:${view.bill.id}`)
   const bank = data.config.bank
-
-  if (view.pending) return <PendingTransfer data={data} payment={view.pending} user={user} />
   const block = paymentBlock(data, view, user)
+
   if (block)
     return (
       <Alert tone="warning" icon="info">
@@ -358,23 +499,42 @@ function TransferPanel({
     )
 
   const collect = split ? amount : view.remaining
-  const create = async () => {
+  const edit =
+    <T,>(setter: (value: T) => void) =>
+    (value: T) => {
+      attempt.current = null
+      setError('')
+      setter(value)
+    }
+
+  const submit = async () => {
     if (busy) return
     if (!collect || collect <= 0 || collect > view.remaining)
       return setError(`Số tiền từ 1đ đến ${formatVnd(view.remaining)}.`)
+    if (!reference.trim()) return setError('Nhập mã giao dịch trên sao kê ngân hàng.')
+    if (!managerEmail.trim() || !managerPassword)
+      return setError('Quản lý nhập email và mật khẩu để xác nhận.')
+    if (!checked) return setError('Quản lý xác nhận đã thấy tiền vào tài khoản nhà hàng.')
     attempt.current ??= newAttemptKey(view.bill.id)
     const outcome = await run(
       {
-        type: 'create-transfer',
+        type: 'pay-manual-transfer',
         billId: view.bill.id,
         billVersion: view.bill.version,
         amount: collect,
         idempotencyKey: attempt.current,
+        transactionReference: reference.trim(),
+        ...(proof.trim() ? { proofImageUrl: proof.trim() } : {}),
+        managerEmail: managerEmail.trim(),
+        managerPassword,
       },
       [`pay:${view.bill.id}`],
     )
-    if (outcome && !outcome.ok) setError(outcome.error)
-    if (outcome?.ok) attempt.current = null
+    if (!outcome) return
+    setManagerPassword('')
+    if (!outcome.ok) return setError(outcome.error)
+    attempt.current = null
+    if (outcome.result.ref) onDone(outcome.result.ref)
   }
 
   return (
@@ -383,22 +543,13 @@ function TransferPanel({
       noValidate
       onSubmit={(e) => {
         e.preventDefault()
-        void create()
+        void submit()
       }}
     >
-      {split && (
-        <MoneyInput
-          label="Số tiền chuyển khoản"
-          value={amount}
-          onChange={(v) => {
-            attempt.current = null
-            setError('')
-            setAmount(v)
-          }}
-          aside={<span className="k-hint">Tối đa {formatVnd(view.remaining)}</span>}
-          autoFocus
-        />
-      )}
+      <Alert tone="info" icon="info">
+        Chỉ dùng khi payOS lỗi. Khách chuyển vào đúng tài khoản chính thức của nhà hàng; quản lý
+        kiểm tra ứng dụng ngân hàng rồi xác nhận ngay tại quầy.
+      </Alert>
       <div className="c-bankcard">
         <Icon name="bank" size={18} />
         <div>
@@ -408,10 +559,74 @@ function TransferPanel({
           </span>
         </div>
       </div>
-      <p className="k-hint">
-        Nội dung chuyển khoản được tạo tự động. Hóa đơn chỉ được tính là đã thanh toán khi tiền được
-        xác minh.
-      </p>
+      <StaticQr data={data} amount={collect} />
+      {split && (
+        <MoneyInput
+          label="Số tiền chuyển khoản"
+          value={amount}
+          onChange={edit(setAmount)}
+          aside={<span className="k-hint">Tối đa {formatVnd(view.remaining)}</span>}
+        />
+      )}
+      <div className="k-field">
+        <label className="k-label" htmlFor="bank-ref">
+          Mã giao dịch ngân hàng
+        </label>
+        <input
+          id="bank-ref"
+          className="k-input k-mono"
+          autoComplete="off"
+          spellCheck={false}
+          maxLength={150}
+          value={reference}
+          onChange={(e) => edit(setReference)(e.target.value)}
+          placeholder="Mã trên sao kê hoặc app ngân hàng"
+        />
+      </div>
+      <div className="k-field">
+        <label className="k-label" htmlFor="bank-proof">
+          Ảnh chứng từ (đường dẫn, không bắt buộc)
+        </label>
+        <input
+          id="bank-proof"
+          className="k-input"
+          autoComplete="off"
+          maxLength={500}
+          value={proof}
+          onChange={(e) => edit(setProof)(e.target.value)}
+          placeholder="https://"
+        />
+      </div>
+      <div className="k-field">
+        <label className="k-label" htmlFor="mgr-email">
+          Email quản lý
+        </label>
+        <input
+          id="mgr-email"
+          className="k-input"
+          type="email"
+          autoComplete="off"
+          value={managerEmail}
+          onChange={(e) => edit(setManagerEmail)(e.target.value)}
+        />
+      </div>
+      <div className="k-field">
+        <label className="k-label" htmlFor="mgr-password">
+          Mật khẩu quản lý
+        </label>
+        <input
+          id="mgr-password"
+          className="k-input"
+          type="password"
+          autoComplete="new-password"
+          value={managerPassword}
+          onChange={(e) => edit(setManagerPassword)(e.target.value)}
+        />
+      </div>
+      <label className="k-check">
+        <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+        Tôi đã thấy {collect ? formatVnd(collect) : 'số tiền'} vào tài khoản nhà hàng.
+      </label>
       {error && (
         <Alert tone="danger" icon="alert">
           {error}
@@ -423,184 +638,46 @@ function TransferPanel({
         disabled={busy || !collect}
         aria-busy={busy}
       >
-        {busy ? 'Đang tạo…' : `Tạo yêu cầu chuyển khoản ${collect ? formatVnd(collect) : ''}`}
+        {busy ? 'Đang ghi nhận…' : `Quản lý xác nhận ${collect ? formatVnd(collect) : ''}`}
       </button>
-      <button
-        type="button"
-        className="c-text-btn"
-        onClick={() => {
-          attempt.current = null
-          setSplit(!split)
-        }}
-      >
+      <button type="button" className="c-text-btn" onClick={() => edit(setSplit)(!split)}>
         {split ? 'Chuyển khoản toàn bộ' : 'Chia nhiều phương thức (thu một phần)'}
       </button>
     </form>
   )
 }
 
-function PendingTransfer({
-  data,
-  payment,
-  user,
-}: {
-  data: CashierData
-  payment: Payment
-  user: CashierStaff
-}) {
-  const { run, isPending } = useCashierSnapshot()
-  const [manual, setManual] = useState(false)
-  const [reference, setReference] = useState('')
-  const [checked, setChecked] = useState(false)
-  const [error, setError] = useState('')
-  const busy = isPending(`pay:${payment.billId}`)
+/** Static VietQR of the restaurant account; shown only when the BIN and account are set. */
+function StaticQr({ data, amount }: { data: CashierData; amount: number | null }) {
   const bank = data.config.bank
-  const bankLine = bank
-    ? [bank.bankName, bank.accountName].filter((part) => part?.trim()).join(' · ')
-    : ''
-  const canConfirm = hasPermission(user, 'payments.confirm_transfer')
-
-  const confirm = async () => {
-    if (busy) return
-    if (!reference.trim()) return setError('Nhập mã giao dịch trên sao kê ngân hàng.')
-    if (!checked) return setError('Xác nhận bạn đã kiểm tra tiền vào tài khoản.')
-    const outcome = await run(
-      { type: 'confirm-transfer', paymentId: payment.id, bankReference: reference },
-      [`pay:${payment.billId}`],
-    )
-    if (outcome && !outcome.ok) setError(outcome.error)
-  }
-
+  if (!bank || !/^\d{6}$/.test(bank.bin ?? '')) return null
+  const params = new URLSearchParams({ accountName: bank.accountName })
+  if (amount && amount > 0) params.set('amount', String(amount))
   return (
-    <div className="c-tender">
-      <ol className="c-steps" aria-label="Trạng thái chuyển khoản">
-        <li className="c-step c-step--done">
-          <Icon name="check" size={13} />
-          Đã tạo yêu cầu {formatTime(payment.createdAt)}
-        </li>
-        <li className="c-step c-step--current" aria-current="step">
-          <span className="k-spinner c-step-spin" aria-hidden="true" />
-          Đang chờ tiền về
-        </li>
-        <li className="c-step">Đã xác minh</li>
-      </ol>
-      <dl className="c-transfer">
-        <div className="c-transfer-amount">
-          <dt>Số tiền</dt>
-          <dd>{formatVnd(payment.amount)}</dd>
-        </div>
-        <div>
-          <dt>Nội dung</dt>
-          <dd className="k-mono c-strong">
-            {payment.transferContent}{' '}
-            <CopyButton value={payment.transferContent ?? ''} label="nội dung chuyển khoản" />
-          </dd>
-        </div>
-        {bank && (
-          <div>
-            <dt>Tài khoản</dt>
-            <dd className="k-mono">
-              {bank.accountNumber}{' '}
-              <CopyButton value={bank.accountNumber.replace(/\s/g, '')} label="số tài khoản" />
-            </dd>
-          </div>
-        )}
-        {bankLine && (
-          <div>
-            <dt>Ngân hàng</dt>
-            <dd>{bankLine}</dd>
-          </div>
-        )}
-      </dl>
-      {data.config.qrImageUrl ? (
-        <img
-          className="c-qr"
-          src={data.config.qrImageUrl}
-          alt="Mã QR tài khoản nhận tiền của nhà hàng"
-          width={160}
-          height={160}
-        />
-      ) : (
-        <p className="k-hint">
-          Chưa cấu hình ảnh QR. Khách chuyển theo số tài khoản và đúng nội dung ở trên. Hệ thống
-          chưa kết nối ngân hàng để tự xác minh.
-        </p>
-      )}
+    <img
+      className="c-qr"
+      src={`https://img.vietqr.io/image/${bank.bin}-${bank.accountNumber.replace(/\s/g, '')}-compact2.png?${params}`}
+      alt="Mã QR chuyển khoản vào tài khoản nhà hàng"
+      width={160}
+      height={160}
+    />
+  )
+}
 
-      {manual && canConfirm ? (
-        <form
-          className="c-manual"
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault()
-            void confirm()
-          }}
-        >
-          <div className="k-field">
-            <label className="k-label" htmlFor="bank-ref">
-              Mã giao dịch ngân hàng
-            </label>
-            <input
-              id="bank-ref"
-              className="k-input k-mono"
-              autoComplete="off"
-              spellCheck={false}
-              maxLength={40}
-              autoFocus
-              value={reference}
-              onChange={(e) => {
-                setReference(e.target.value)
-                setError('')
-              }}
-              placeholder="Mã trên sao kê hoặc app ngân hàng"
-            />
-          </div>
-          <label className="k-check">
-            <input
-              type="checkbox"
-              checked={checked}
-              onChange={(e) => setChecked(e.target.checked)}
-            />
-            Tôi đã thấy {formatVnd(payment.amount)} vào tài khoản với đúng nội dung.
-          </label>
-          {error && (
-            <Alert tone="danger" icon="alert">
-              {error}
-            </Alert>
-          )}
-          <div className="c-row-actions">
-            <button type="button" className="k-btn" onClick={() => setManual(false)}>
-              Quay lại
-            </button>
-            <button type="submit" className="k-btn k-btn--primary" disabled={busy} aria-busy={busy}>
-              Xác nhận đã nhận tiền
-            </button>
-          </div>
-        </form>
-      ) : (
-        <div className="c-row-actions">
-          <button
-            type="button"
-            className="k-btn k-btn--danger"
-            disabled={busy}
-            onClick={() => {
-              void run({ type: 'cancel-transfer', paymentId: payment.id }, [
-                `pay:${payment.billId}`,
-              ])
-            }}
-          >
-            Hủy yêu cầu
-          </button>
-          {canConfirm ? (
-            <button type="button" className="k-btn k-btn--outline" onClick={() => setManual(true)}>
-              Xác nhận thủ công…
-            </button>
-          ) : (
-            <span className="k-hint">Chờ ngân hàng xác minh hoặc báo thu ngân chính.</span>
-          )}
-        </div>
-      )}
-    </div>
+// TODO(confirm): no QR library is installed (adding one needs approval), so the payOS QR content is
+// drawn by a public image service; swap for a local generator once a dependency is approved.
+function PayosQr({ payment }: { payment: Payment }) {
+  if (!payment.qrCode) {
+    return <p className="k-hint">payOS chưa trả nội dung QR, dùng link thanh toán ở trên.</p>
+  }
+  return (
+    <img
+      className="c-qr"
+      src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(payment.qrCode)}`}
+      alt={`Mã QR payOS ${payment.code}`}
+      width={160}
+      height={160}
+    />
   )
 }
 
@@ -632,8 +709,8 @@ function PaymentResult({
       <p className="c-result-line">
         {settled ? (
           <>
-            Hóa đơn {view.bill.code} đã thanh toán đủ. Bàn {view.table.code} chỉ trống sau khi phục
-            vụ xác nhận khách rời và dọn bàn.
+            Hóa đơn {view.bill.code} đã thanh toán đủ. Phiên phục vụ đã đóng và bàn{' '}
+            {view.table.code} đã được trả.
           </>
         ) : (
           <>

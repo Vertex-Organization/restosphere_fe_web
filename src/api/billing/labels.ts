@@ -54,8 +54,8 @@ export const TABLE_STATUS_LABEL: Record<TableStatus, string> = {
 
 export const METHOD_LABEL: Record<PaymentMethod, string> = {
   CASH: 'Tiền mặt',
-  TRANSFER: 'Chuyển khoản',
-  CARD: 'Thẻ',
+  PAYOS: 'Chuyển khoản payOS',
+  MANUAL_TRANSFER: 'Chuyển khoản thủ công',
 }
 
 export const PAYMENT_STATUS_LABEL: Record<PaymentStatus, string> = {

@@ -20,7 +20,7 @@ import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { useNow } from '../../../hooks/kitchen/useNow'
 import { cashierPaths, navigate } from '../../../routes/cashierRouter'
 
-const METHODS: ('ALL' | PaymentMethod)[] = ['ALL', 'CASH', 'TRANSFER', 'CARD']
+const METHODS: ('ALL' | PaymentMethod)[] = ['ALL', 'CASH', 'PAYOS', 'MANUAL_TRANSFER']
 const STATUSES: ('ALL' | PaymentStatus)[] = [
   'ALL',
   'SUCCEEDED',

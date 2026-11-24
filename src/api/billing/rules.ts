@@ -253,10 +253,10 @@ function findPayment(data: CashierData, paymentId: string): Payment {
   return payment
 }
 
-function pendingTransfer(data: CashierData, paymentId: string) {
+function pendingPayos(data: CashierData, paymentId: string) {
   const payment = findPayment(data, paymentId)
-  if (payment.method !== 'TRANSFER')
-    throw new CashierError('INVALID', 'Giao dịch không phải chuyển khoản.')
+  if (payment.method !== 'PAYOS')
+    throw new CashierError('INVALID', 'Chỉ kiểm tra lại được thanh toán payOS.')
   if (payment.status !== 'PENDING') {
     throw new CashierError(
       'CONFLICT',
@@ -485,7 +485,7 @@ export function applyCashierCommand(
     }
 
     case 'pay-cash':
-    case 'create-transfer': {
+    case 'pay-manual-transfer': {
       // A retried submit (lost response, double click in two tabs) returns the
       // payment already recorded under this key instead of charging again.
       const done = data.processedKeys[command.idempotencyKey]
@@ -494,14 +494,12 @@ export function applyCashierCommand(
       if (!/^[\w-]{8,64}$/.test(command.idempotencyKey))
         throw new CashierError('INVALID', 'Thiếu mã chống trùng giao dịch.')
 
-      const method = command.type === 'pay-cash' ? 'CASH' : 'TRANSFER'
+      const method = command.type === 'pay-cash' ? 'CASH' : 'MANUAL_TRANSFER'
       if (!data.config.methods[method])
         throw new CashierError(
           'INVALID',
           `Nhà hàng chưa bật thanh toán ${METHOD_LABEL[method].toLowerCase()}.`,
         )
-      if (method === 'TRANSFER' && !data.config.bank)
-        throw new CashierError('INVALID', 'Chưa cấu hình tài khoản nhận chuyển khoản.')
       requirePermission(actor, 'payments.create', 'Tài khoản không có quyền thu tiền.')
       const view = findView(data, command.billId)
       checkVersion(view.bill, command.billVersion)
@@ -514,10 +512,11 @@ export function applyCashierCommand(
         billId: view.bill.id,
         shiftId: shift.id,
         method,
-        status: method === 'CASH' ? 'SUCCEEDED' : 'PENDING',
+        status: 'SUCCEEDED',
         amount: command.amount,
         createdBy: actor.id,
         createdAt: at,
+        completedAt: at,
       }
       if (command.type === 'pay-cash') {
         if (!isMoney(command.tendered) || command.tendered > MAX_AMOUNT)
@@ -530,84 +529,87 @@ export function applyCashierCommand(
         }
         payment.tendered = command.tendered
         payment.change = command.tendered - command.amount
-        payment.completedAt = at
       } else {
-        payment.transferContent = `${view.bill.code} ${payment.code}`
+        const reference = command.transactionReference.trim().toUpperCase()
+        if (!reference)
+          throw new CashierError('INVALID', 'Nhập mã giao dịch trên sao kê ngân hàng.')
+        if (data.payments.some((p) => p.bankReference === reference)) {
+          throw new CashierError(
+            'CONFLICT',
+            `Mã ngân hàng ${reference} đã được dùng cho giao dịch khác.`,
+          )
+        }
+        if (!command.managerEmail.trim() || !command.managerPassword)
+          throw new CashierError('FORBIDDEN', 'Quản lý cần nhập email và mật khẩu để xác nhận.')
+        payment.bankReference = reference
+        payment.verifiedBy = command.managerEmail.trim()
+        if (command.proofImageUrl) payment.proofImageUrl = command.proofImageUrl
       }
       data.payments.push(payment)
       data.processedKeys[command.idempotencyKey] = payment.id
 
       const bill = view.bill
-      if (method === 'CASH') {
-        touch(bill, at, actor.id, `Thu tiền mặt ${formatVnd(payment.amount)} (${payment.code})`)
-        const settled = settleIfPaid(data, bill, at, actor.id)
-        const change = payment.change ? ` · Trả lại ${formatVnd(payment.change)}` : ''
-        return finish(
-          data,
-          `Đã thu ${formatVnd(payment.amount)} tiền mặt · ${bill.code}${change}${settled ? ' · Đã thanh toán đủ' : ''}`,
-          payment.id,
-        )
-      }
       touch(
         bill,
         at,
         actor.id,
-        `Tạo yêu cầu chuyển khoản ${formatVnd(payment.amount)} (${payment.code})`,
-      )
-      return finish(
-        data,
-        `Đã tạo yêu cầu chuyển khoản ${formatVnd(payment.amount)} · Chờ tiền về`,
-        payment.id,
-      )
-    }
-
-    case 'confirm-transfer': {
-      requirePermission(
-        actor,
-        'payments.confirm_transfer',
-        'Bạn không có quyền xác nhận thủ công. Chờ ngân hàng xác minh hoặc báo thu ngân chính/Quản lý.',
-      )
-      const { payment, bill } = pendingTransfer(data, command.paymentId)
-      const reference = command.bankReference.trim().toUpperCase()
-      if (!/^[A-Z0-9][A-Z0-9./_-]{5,39}$/.test(reference)) {
-        throw new CashierError(
-          'INVALID',
-          'Nhập mã giao dịch ngân hàng (6–40 ký tự, chữ không dấu và số).',
-        )
-      }
-      if (data.payments.some((p) => p.bankReference === reference)) {
-        throw new CashierError(
-          'CONFLICT',
-          `Mã ngân hàng ${reference} đã được dùng cho giao dịch khác.`,
-        )
-      }
-      payment.status = 'SUCCEEDED'
-      payment.completedAt = at
-      payment.bankReference = reference
-      payment.verifiedBy = actor.id
-      touch(
-        bill,
-        at,
-        actor.id,
-        `Xác nhận thủ công chuyển khoản ${formatVnd(payment.amount)} (${payment.code}, mã NH ${reference})`,
+        `${method === 'CASH' ? 'Thu tiền mặt' : 'Chuyển khoản thủ công'} ${formatVnd(payment.amount)} (${payment.code})`,
       )
       const settled = settleIfPaid(data, bill, at, actor.id)
+      const change = payment.change ? ` · Trả lại ${formatVnd(payment.change)}` : ''
       return finish(
         data,
-        `Đã xác nhận ${formatVnd(payment.amount)} chuyển khoản · ${bill.code}${settled ? ' · Đã thanh toán đủ' : ''}`,
+        `Đã thu ${formatVnd(payment.amount)} ${METHOD_LABEL[method].toLowerCase()} · ${bill.code}${change}${settled ? ' · Đã thanh toán đủ' : ''}`,
         payment.id,
       )
     }
 
-    case 'cancel-transfer': {
-      requirePermission(actor, 'payments.create')
-      const { payment, bill } = pendingTransfer(data, command.paymentId)
-      payment.status = 'CANCELLED'
-      payment.completedAt = at
-      payment.cancelledBy = actor.id
-      touch(bill, at, actor.id, `Hủy yêu cầu chuyển khoản ${payment.code}`)
-      return finish(data, `Đã hủy yêu cầu chuyển khoản ${payment.code}`, payment.id)
+    case 'create-payos-link': {
+      requirePermission(actor, 'payments.create', 'Tài khoản không có quyền thu tiền.')
+      if (!data.config.methods.PAYOS)
+        throw new CashierError('INVALID', 'payOS chưa được bật trên máy chủ.')
+      const view = findView(data, command.billId)
+      checkVersion(view.bill, command.billVersion)
+      const shift = requirePayable(data, view, actor)
+      const live = data.payments.find(
+        (p) =>
+          p.billId === view.bill.id &&
+          p.method === 'PAYOS' &&
+          p.status === 'PENDING' &&
+          p.amount === view.remaining,
+      )
+      if (live) return finish(data, `Dùng lại mã QR ${live.code}`, live.id)
+      for (const p of data.payments) {
+        if (p.billId === view.bill.id && p.method === 'PAYOS' && p.status === 'PENDING')
+          p.status = 'CANCELLED'
+      }
+      const payment: Payment = {
+        id: makeId(data, 'pay'),
+        code: nextCode(data, 'payment'),
+        billId: view.bill.id,
+        shiftId: shift.id,
+        method: 'PAYOS',
+        status: 'PENDING',
+        amount: view.remaining,
+        createdBy: actor.id,
+        createdAt: at,
+        orderCode: data.nextId,
+        checkoutUrl: `https://pay.payos.vn/fake/${data.nextId}`,
+        qrCode: `FAKE-QR-${data.nextId}`,
+      }
+      data.payments.push(payment)
+      touch(view.bill, at, actor.id, `Tạo QR payOS ${formatVnd(payment.amount)} (${payment.code})`)
+      return finish(data, `Đã tạo QR payOS ${formatVnd(payment.amount)}`, payment.id)
     }
+
+    case 'refresh-payment': {
+      const { payment } = pendingPayos(data, command.paymentId)
+      return finish(data, `${payment.code} vẫn đang chờ khách thanh toán`, payment.id)
+    }
+
+    case 'deposit-cash':
+    case 'deposit-manual-transfer':
+      throw new CashierError('INVALID', 'Thu cọc chỉ thực hiện được qua máy chủ.')
 
     case 'open-shift': {
       requirePermission(actor, 'shifts.manage', 'Bạn không có quyền mở ca.')

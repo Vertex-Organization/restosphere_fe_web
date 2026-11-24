@@ -38,7 +38,7 @@ const CONFIG: BillingConfig = {
   restaurantName: "The Sea's Crown",
   serviceChargeRate: null,
   taxRate: null,
-  methods: { CASH: true, TRANSFER: true, CARD: false },
+  methods: { CASH: true, PAYOS: true, MANUAL_TRANSFER: true },
   bank: {
     bankName: 'Ngân hàng mô phỏng',
     accountNumber: '0123 456 789',
@@ -222,7 +222,7 @@ const SESSIONS: SeedSession[] = [
         ],
       },
     ],
-    payments: [{ method: 'TRANSFER', at: Y + 102, doneAt: Y + 100, bank: true }],
+    payments: [{ method: 'PAYOS', at: Y + 102, doneAt: Y + 100, bank: true }],
   },
   {
     bill: 93,
@@ -262,7 +262,7 @@ const SESSIONS: SeedSession[] = [
         ],
       },
     ],
-    payments: [{ method: 'TRANSFER', at: Y + 62, doneAt: Y + 60, bank: true }],
+    payments: [{ method: 'PAYOS', at: Y + 62, doneAt: Y + 60, bank: true }],
   },
 
   // Earlier today, guests gone and tables cleaned.
@@ -307,7 +307,7 @@ const SESSIONS: SeedSession[] = [
       },
     ],
     discount: { mode: 'PERCENT', value: 5, reason: 'Khách thân thiết', at: 108 },
-    payments: [{ method: 'TRANSFER', at: 106, doneAt: 104, bank: true }],
+    payments: [{ method: 'PAYOS', at: 106, doneAt: 104, bank: true }],
   },
   // A cash payment recorded by mistake, voided through an approved request, then paid by transfer.
   {
@@ -330,7 +330,7 @@ const SESSIONS: SeedSession[] = [
     ],
     payments: [
       { method: 'CASH', at: 96, tendered: 374_000, voided: { at: 92, request: 1 } },
-      { method: 'TRANSFER', at: 91, doneAt: 90, bank: true },
+      { method: 'PAYOS', at: 91, doneAt: 90, bank: true },
     ],
   },
   // Discount above the cashier's limit, approved by the manager; split between cash and transfer.
@@ -362,7 +362,7 @@ const SESSIONS: SeedSession[] = [
     },
     payments: [
       { method: 'CASH', amount: 500_000, at: 78, tendered: 500_000 },
-      { method: 'TRANSFER', at: 77, doneAt: 76, bank: true },
+      { method: 'PAYOS', at: 77, doneAt: 76, bank: true },
     ],
   },
   {
@@ -479,7 +479,7 @@ const SESSIONS: SeedSession[] = [
         ],
       },
     ],
-    payments: [{ method: 'TRANSFER', at: 24, doneAt: 22, bank: true }],
+    payments: [{ method: 'PAYOS', at: 24, doneAt: 22, bank: true }],
   },
   // B02: transfer requested, money not verified yet.
   {
@@ -499,7 +499,7 @@ const SESSIONS: SeedSession[] = [
         ],
       },
     ],
-    payments: [{ method: 'TRANSFER', at: 3, status: 'PENDING' }],
+    payments: [{ method: 'PAYOS', at: 3, status: 'PENDING' }],
   },
   // A05: one cancelled dish (not billed) and a failed transfer attempt.
   {
@@ -521,7 +521,7 @@ const SESSIONS: SeedSession[] = [
     ],
     payments: [
       {
-        method: 'TRANSFER',
+        method: 'PAYOS',
         at: 13,
         status: 'FAILED',
         doneAt: 10,
@@ -882,7 +882,7 @@ export function createSeedData(now: Date): CashierData {
     })
   for (const p of payments) {
     const bill = bills.find((b) => b.id === p.billId)!
-    if (p.method === 'TRANSFER') {
+    if (p.method !== 'CASH') {
       p.transferContent = `${bill.code} ${p.code}`
       if (p.status === 'SUCCEEDED')
         p.bankReference = `FT${p.completedAt!.slice(2, 10).replace(/-/g, '')}${p.id.slice(-4)}68`

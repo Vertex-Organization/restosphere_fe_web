@@ -19,6 +19,7 @@ import type {
   DiscountMode,
   Payment,
   PaymentMethod,
+  PendingDeposit,
   PaymentStatus,
   RequestStatus,
   RequestType,
@@ -106,8 +107,13 @@ interface PaymentDto {
   amount: number
   tendered?: number | null
   change?: number | null
+  reservationId?: string | null
   transferContent?: string | null
   bankReference?: string | null
+  proofImageUrl?: string | null
+  checkoutUrl?: string | null
+  qrCode?: string | null
+  orderCode?: number | null
   verifiedBy?: string | null
   createdBy: string
   createdAt: string
@@ -175,7 +181,7 @@ interface MeDto {
 
 const REQUEST_TYPES: RequestType[] = ['DISCOUNT', 'BILL_ADJUSTMENT', 'PAYMENT_VOID']
 const PAYMENT_STATUSES: PaymentStatus[] = ['PENDING', 'SUCCEEDED', 'FAILED', 'CANCELLED', 'VOIDED']
-const PAYMENT_METHODS: PaymentMethod[] = ['CASH', 'TRANSFER', 'CARD']
+const PAYMENT_METHODS: PaymentMethod[] = ['CASH', 'PAYOS', 'MANUAL_TRANSFER']
 const REQUEST_STATUSES: RequestStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'WITHDRAWN']
 const BILL_STATUSES: BillStatus[] = ['UNPAID', 'PAYMENT_REQUESTED', 'PAID']
 
@@ -218,8 +224,13 @@ function toPayment(dto: PaymentDto): Payment {
     amount: dto.amount,
     ...(dto.tendered != null ? { tendered: dto.tendered } : {}),
     ...(dto.change != null ? { change: dto.change } : {}),
+    ...(dto.reservationId ? { reservationId: dto.reservationId } : {}),
     ...(dto.transferContent ? { transferContent: dto.transferContent } : {}),
     ...(dto.bankReference ? { bankReference: dto.bankReference } : {}),
+    ...(dto.proofImageUrl ? { proofImageUrl: dto.proofImageUrl } : {}),
+    ...(dto.checkoutUrl ? { checkoutUrl: dto.checkoutUrl } : {}),
+    ...(dto.qrCode ? { qrCode: dto.qrCode } : {}),
+    ...(dto.orderCode != null ? { orderCode: dto.orderCode } : {}),
     ...(dto.verifiedBy ? { verifiedBy: dto.verifiedBy } : {}),
     createdBy: dto.createdBy,
     createdAt: dto.createdAt,
@@ -315,7 +326,18 @@ function mergeStaff(staff: CashierStaff[], me: MeDto): CashierStaff[] {
 }
 
 async function load(): Promise<CashierData> {
-  const [snapshot, bills, payments, shifts, scheduled, requests, notifications, config, me] =
+  const [
+    snapshot,
+    bills,
+    payments,
+    shifts,
+    scheduled,
+    requests,
+    notifications,
+    config,
+    me,
+    deposits,
+  ] =
     await Promise.all([
       get<CashierData>('workspaces/cashier'),
       get<BillDto[] | null>('cashier/bills'),
@@ -326,6 +348,7 @@ async function load(): Promise<CashierData> {
       get<NotificationDto[] | null>('cashier/notifications'),
       get<ConfigDto>('cashier/config'),
       get<MeDto>('cashier/me'),
+      get<PendingDeposit[] | null>('cashier/deposits/pending'),
     ])
   return {
     ...snapshot,
@@ -335,6 +358,7 @@ async function load(): Promise<CashierData> {
     scheduledShifts: scheduled ?? [],
     requests: (requests ?? []).flatMap((dto) => toRequest(dto) ?? []),
     notifications: (notifications ?? []).map(toNotification),
+    pendingDeposits: deposits ?? [],
     config: toConfig(config, snapshot.config),
     staff: mergeStaff(snapshot.staff, me),
   }
@@ -406,27 +430,59 @@ export const cashierService: CashierService = {
         ).id
         summary = 'Đã ghi nhận thanh toán tiền mặt'
         break
-      case 'create-transfer':
+      case 'create-payos-link':
         ref = (
-          await post<{ id: string }>(`cashier/bills/${id(command.billId)}/payments/transfer`, {
+          await post<{ id: string }>(`cashier/bills/${id(command.billId)}/payos-link`, {
             billVersion: command.billVersion,
-            amount: command.amount,
+          })
+        ).id
+        summary = 'Đã tạo mã QR payOS'
+        break
+      case 'refresh-payment':
+        await post(`payments/${id(command.paymentId)}/refresh`)
+        ref = command.paymentId
+        summary = 'Đã kiểm tra lại với payOS'
+        break
+      case 'pay-manual-transfer':
+        ref = (
+          await post<{ id: string }>(
+            `cashier/bills/${id(command.billId)}/payments/manual-transfer`,
+            {
+              billVersion: command.billVersion,
+              amount: command.amount,
+              idempotencyKey: command.idempotencyKey,
+              transactionReference: command.transactionReference,
+              ...(command.proofImageUrl ? { proofImageUrl: command.proofImageUrl } : {}),
+              managerEmail: command.managerEmail,
+              managerPassword: command.managerPassword,
+            },
+          )
+        ).id
+        summary = 'Đã ghi nhận chuyển khoản thủ công, quản lý đã xác nhận'
+        break
+      case 'deposit-cash':
+        ref = (
+          await post<{ id: string }>(`cashier/reservations/${id(command.reservationId)}/deposit/cash`, {
+            tendered: command.tendered,
             idempotencyKey: command.idempotencyKey,
           })
         ).id
-        summary = 'Đã tạo giao dịch chuyển khoản, chờ xác nhận'
+        summary = 'Đã thu cọc tiền mặt'
         break
-      case 'confirm-transfer':
-        await post(`cashier/payments/${id(command.paymentId)}/confirm`, {
-          bankReference: command.bankReference,
-        })
-        ref = command.paymentId
-        summary = 'Đã xác nhận chuyển khoản'
-        break
-      case 'cancel-transfer':
-        await post(`cashier/payments/${id(command.paymentId)}/cancel`)
-        ref = command.paymentId
-        summary = 'Đã hủy giao dịch chuyển khoản'
+      case 'deposit-manual-transfer':
+        ref = (
+          await post<{ id: string }>(
+            `cashier/reservations/${id(command.reservationId)}/deposit/manual-transfer`,
+            {
+              idempotencyKey: command.idempotencyKey,
+              transactionReference: command.transactionReference,
+              ...(command.proofImageUrl ? { proofImageUrl: command.proofImageUrl } : {}),
+              managerEmail: command.managerEmail,
+              managerPassword: command.managerPassword,
+            },
+          )
+        ).id
+        summary = 'Đã thu cọc chuyển khoản thủ công, quản lý đã xác nhận'
         break
       case 'open-shift':
         ref = (

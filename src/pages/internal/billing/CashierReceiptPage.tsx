@@ -66,6 +66,7 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
       })
   }
   const succeeded = view.payments.filter((p) => p.status === 'SUCCEEDED')
+  const livePayos = view.payments.find((p) => p.method === 'PAYOS' && p.status === 'PENDING')
   const cashierId = succeeded.at(-1)?.createdBy ?? user.id
   const at = paid && bill.paidAt ? bill.paidAt : new Date(now).toISOString()
   const { config } = data
@@ -87,6 +88,11 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
           <Link to={cashierPaths.bill(bill.id)} className="k-btn k-btn--ghost">
             Chi tiết hóa đơn
           </Link>
+          {!paid && !livePayos && data.config.methods.PAYOS && (
+            <Link to={cashierPaths.payment(bill.id)} className="k-btn k-btn--outline">
+              Tạo QR payOS để in
+            </Link>
+          )}
           <button type="button" className="k-btn k-btn--primary" onClick={() => window.print()}>
             <Icon name="printer" />
             In
@@ -195,7 +201,7 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
                     </div>
                   </>
                 )}
-                {p.method === 'TRANSFER' && p.bankReference && (
+                {p.method !== 'CASH' && p.bankReference && (
                   <div className="c-r-sub">
                     <dt>Mã GD</dt>
                     <dd>{p.bankReference}</dd>
@@ -216,6 +222,18 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
             </div>
           </dl>
         ) : null}
+
+        {!paid && livePayos?.qrCode && (
+          <div className="c-r-qr">
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(livePayos.qrCode)}`}
+              alt="Mã QR thanh toán payOS"
+              width={160}
+              height={160}
+            />
+            <p className="c-r-small">Quét mã bằng ứng dụng ngân hàng để thanh toán</p>
+          </div>
+        )}
 
         <footer className="c-r-foot">
           <p>Cảm ơn quý khách! Hẹn gặp lại.</p>

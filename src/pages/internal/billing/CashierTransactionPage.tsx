@@ -116,7 +116,7 @@ export default function CashierTransactionPage({ id }: { id: string }) {
               <dd>{formatVnd(payment.change ?? 0)}</dd>
             </>
           )}
-          {payment.method === 'TRANSFER' && (
+          {payment.method !== 'CASH' && (
             <>
               <dt>Nội dung CK</dt>
               <dd className="k-mono">{payment.transferContent ?? '—'}</dd>

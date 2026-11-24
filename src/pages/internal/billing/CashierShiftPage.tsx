@@ -328,8 +328,9 @@ function CurrentShift({ shift }: { shift: CashierShift }) {
           <MethodBar s={s} />
           {s.pendingCount > 0 && (
             <Alert tone="info" icon="hourglass">
-              {s.pendingCount} chuyển khoản ({formatVnd(s.pendingAmount)}) đang chờ, chưa tính vào
-              doanh thu.
+              {s.pendingCount} mã QR payOS ({formatVnd(s.pendingAmount)}) chưa thanh toán, chưa
+              tính vào doanh thu. Không đóng ca được cho tới khi khách trả, hoặc bấm Kiểm tra lại /
+              hủy mã.
             </Alert>
           )}
         </section>
@@ -357,7 +358,7 @@ function CurrentShift({ shift }: { shift: CashierShift }) {
           </p>
           <div className="c-drawer-action">
             {s.pendingCount > 0 && (
-              <span className="k-hint">Xử lý chuyển khoản đang chờ trước khi đóng ca.</span>
+              <span className="k-hint">Xử lý mã QR payOS đang chờ trước khi đóng ca.</span>
             )}
             <button
               type="button"
