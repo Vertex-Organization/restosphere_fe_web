@@ -11,6 +11,7 @@ import type { CashierData, CashierStaff, Payment, PaymentMethod } from '../../..
 import { BillLines, BillTotals } from '../../../components/billing/BillParts'
 import { Icon, type IconName } from '../../../components/billing/Icon'
 import { QrCode } from '../../../components/billing/QrCode'
+import { buildVietQr } from '../../../api/billing/vietqr'
 import { Alert, CopyButton, MoneyInput, PaymentStatusBadge } from '../../../components/billing/ui'
 import { formatTime } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
@@ -560,7 +561,7 @@ function ManualTransferPanel({
           </span>
         </div>
       </div>
-      <StaticQr data={data} amount={collect} />
+      <StaticQr data={data} amount={collect} note={view.bill.code} />
       {split && (
         <MoneyInput
           label="Số tiền chuyển khoản"
@@ -649,20 +650,25 @@ function ManualTransferPanel({
 }
 
 /** Static VietQR of the restaurant account; shown only when the BIN and account are set. */
-function StaticQr({ data, amount }: { data: CashierData; amount: number | null }) {
+function StaticQr({
+  data,
+  amount,
+  note,
+}: {
+  data: CashierData
+  amount: number | null
+  note: string
+}) {
   const bank = data.config.bank
-  if (!bank || !/^\d{6}$/.test(bank.bin ?? '')) return null
-  const params = new URLSearchParams({ accountName: bank.accountName })
-  if (amount && amount > 0) params.set('amount', String(amount))
-  return (
-    <img
-      className="c-qr"
-      src={`https://img.vietqr.io/image/${bank.bin}-${bank.accountNumber.replace(/\s/g, '')}-compact2.png?${params}`}
-      alt="Mã QR chuyển khoản vào tài khoản nhà hàng"
-      width={160}
-      height={160}
-    />
-  )
+  if (!bank) return null
+  const payload = buildVietQr({
+    bin: bank.bin ?? '',
+    accountNumber: bank.accountNumber,
+    ...(amount && amount > 0 ? { amount } : {}),
+    note,
+  })
+  if (!payload) return null
+  return <QrCode value={payload} label="Mã QR chuyển khoản vào tài khoản nhà hàng" />
 }
 
 function PayosQr({ payment }: { payment: Payment }) {

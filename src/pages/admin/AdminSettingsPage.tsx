@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
 import { ApiError } from '../../api/client'
+import { QRCodeSVG } from 'qrcode.react'
 import type { AdminSettings, DiscountLimits } from '../../api/admin/types'
+import { buildVietQr } from '../../api/billing/vietqr'
 import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
 
 const TWO_DECIMALS = /^\d+(\.\d{1,2})?$/
@@ -121,29 +123,29 @@ const BANK_ACCOUNT = /^\d{6,20}$/
 
 /** Shows the QR a guest would scan at the counter, so a wrong BIN or account is seen before saving. */
 function StaticQrPreview({ billing }: { billing: AdminSettings['billing'] }) {
-  const bin = billing.bankBin ?? ''
-  const ready = BANK_BIN.test(bin) && BANK_ACCOUNT.test(billing.bankAccount)
+  const payload = buildVietQr({
+    bin: billing.bankBin ?? '',
+    accountNumber: billing.bankAccount,
+  })
   return (
     <div className="a-setting-row">
       <div>
         <h3>Xem trước QR chuyển khoản</h3>
         <p>
-          {ready
+          {payload
             ? 'Quét thử bằng ứng dụng ngân hàng để kiểm tra đúng tài khoản nhà hàng.'
             : 'Nhập đủ mã BIN và số tài khoản để xem trước.'}
         </p>
       </div>
-      {ready && (
-        <img
+      {payload && (
+        <QRCodeSVG
           className="a-qr-preview"
-          width={160}
-          height={160}
-          alt="QR chuyển khoản tĩnh của nhà hàng"
-          src={`https://img.vietqr.io/image/${bin}-${billing.bankAccount}-compact2.png${
-            billing.bankAccountName
-              ? `?accountName=${encodeURIComponent(billing.bankAccountName)}`
-              : ''
-          }`}
+          value={payload}
+          size={160}
+          level="M"
+          marginSize={2}
+          role="img"
+          aria-label="QR chuyển khoản tĩnh của nhà hàng"
         />
       )}
     </div>
