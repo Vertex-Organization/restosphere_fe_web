@@ -10,6 +10,7 @@ import {
 import type { CashierData, CashierStaff, Payment, PaymentMethod } from '../../../api/billing/types'
 import { BillLines, BillTotals } from '../../../components/billing/BillParts'
 import { Icon, type IconName } from '../../../components/billing/Icon'
+import { QrCode } from '../../../components/billing/QrCode'
 import { Alert, CopyButton, MoneyInput, PaymentStatusBadge } from '../../../components/billing/ui'
 import { formatTime } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
@@ -664,21 +665,11 @@ function StaticQr({ data, amount }: { data: CashierData; amount: number | null }
   )
 }
 
-// TODO(confirm): no QR library is installed (adding one needs approval), so the payOS QR content is
-// drawn by a public image service; swap for a local generator once a dependency is approved.
 function PayosQr({ payment }: { payment: Payment }) {
   if (!payment.qrCode) {
     return <p className="k-hint">payOS chưa trả nội dung QR, dùng link thanh toán ở trên.</p>
   }
-  return (
-    <img
-      className="c-qr"
-      src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(payment.qrCode)}`}
-      alt={`Mã QR payOS ${payment.code}`}
-      width={160}
-      height={160}
-    />
-  )
+  return <QrCode value={payment.qrCode} label={`Mã QR payOS ${payment.code}`} />
 }
 
 function PaymentResult({

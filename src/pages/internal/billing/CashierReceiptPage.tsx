@@ -3,6 +3,7 @@ import { METHOD_LABEL } from '../../../api/billing/labels'
 import { formatAmount, formatVnd, isBillable } from '../../../api/billing/money'
 import { billView, hasPermission, staffName } from '../../../api/billing/selectors'
 import { Icon } from '../../../components/billing/Icon'
+import { QrCode } from '../../../components/billing/QrCode'
 import { formatDate, formatTime, quantityLabel } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
@@ -225,12 +226,7 @@ export default function CashierReceiptPage({ billId }: { billId: string }) {
 
         {!paid && livePayos?.qrCode && (
           <div className="c-r-qr">
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(livePayos.qrCode)}`}
-              alt="Mã QR thanh toán payOS"
-              width={160}
-              height={160}
-            />
+            <QrCode value={livePayos.qrCode} label="Mã QR thanh toán payOS" size={160} />
             <p className="c-r-small">Quét mã bằng ứng dụng ngân hàng để thanh toán</p>
           </div>
         )}
