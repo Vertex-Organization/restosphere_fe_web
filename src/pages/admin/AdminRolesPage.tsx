@@ -15,9 +15,7 @@ import {
 import { ROLE_LABELS } from '../../components/admin/constants'
 
 const EMPTY_USERS: AdminUser[] = []
-const ASSIGNABLE_ROLES = ADMIN_ROLES.filter((role) => role !== 'CUSTOMER')
 const ROLE_ICONS = {
-  CUSTOMER: 'user',
   RECEPTIONIST: 'clipboard',
   WAITER: 'utensils',
   KITCHEN: 'cookingPot',
@@ -27,7 +25,6 @@ const ROLE_ICONS = {
 } as const
 
 const ROLE_INFO: Record<AdminRole, { description: string; access: string }> = {
-  CUSTOMER: { description: 'Tài khoản khách hàng', access: 'Customer Web' },
   RECEPTIONIST: {
     description: 'Tiếp nhận và điều phối đặt bàn',
     access: 'Ứng dụng di động (Staff app)',
@@ -199,7 +196,7 @@ export default function AdminRolesPage() {
                 value={nextRole}
                 onChange={(event) => setNextRole(event.target.value as AdminRole)}
               >
-                {ASSIGNABLE_ROLES.map((role) => (
+                {ADMIN_ROLES.map((role) => (
                   <option key={role} value={role}>
                     {ROLE_LABELS[role]}
                   </option>

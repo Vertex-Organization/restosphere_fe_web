@@ -11,7 +11,7 @@ import type {
 export const adminService: AdminService = {
   async load(signal) {
     const [users, restaurant, settings, discountLimits, auditLogs] = await Promise.all([
-      authenticatedRequest<AdminUser[]>('admin/users', { signal }),
+      authenticatedRequest<AdminUser[]>('admin/employees', { signal }),
       authenticatedRequest<RestaurantProfile>('admin/restaurant', { signal }),
       authenticatedRequest<AdminSettings>('admin/settings', { signal }),
       authenticatedRequest<DiscountLimits>('admin/settings/discount-limits', { signal }),
@@ -35,7 +35,7 @@ export const adminService: AdminService = {
     }
     if (command.type === 'user.status') {
       await authenticatedRequest<AdminUser>(
-        `admin/users/${encodeURIComponent(command.id)}/status`,
+        `admin/employees/${encodeURIComponent(command.id)}/status`,
         {
           method: 'PATCH',
           body: JSON.stringify({ status: command.status }),
@@ -44,7 +44,7 @@ export const adminService: AdminService = {
       return adminService.load()
     }
     if (command.type === 'user.role') {
-      await authenticatedRequest<AdminUser>(`admin/users/${encodeURIComponent(command.id)}/role`, {
+      await authenticatedRequest<AdminUser>(`admin/employees/${encodeURIComponent(command.id)}/role`, {
         method: 'PATCH',
         body: JSON.stringify({ role: command.role }),
       })
@@ -58,7 +58,7 @@ export const adminService: AdminService = {
       return adminService.load()
     }
     if (command.type === 'user.create') {
-      await authenticatedRequest<AdminUser>('admin/users', {
+      await authenticatedRequest<AdminUser>('admin/employees', {
         method: 'POST',
         body: JSON.stringify(command.user),
       })

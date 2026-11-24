@@ -1,5 +1,4 @@
 export const ADMIN_ROLES = [
-  'CUSTOMER',
   'RECEPTIONIST',
   'WAITER',
   'KITCHEN',

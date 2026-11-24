@@ -17,7 +17,6 @@ import {
 } from '../../components/admin/ui'
 import { ROLE_LABELS } from '../../components/admin/constants'
 
-const STAFF_ROLES = ADMIN_ROLES.filter((role) => role !== 'CUSTOMER')
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const EMPTY_FORM = { fullName: '', email: '', role: 'WAITER' as AdminRole | '' }
 type FormErrors = { fullName?: string; email?: string; role?: string; form?: string }
@@ -29,7 +28,7 @@ function validate(form: typeof EMPTY_FORM): FormErrors {
   if (fullName.length < 2 || fullName.length > 150)
     errors.fullName = 'Nhập họ tên từ 2 đến 150 ký tự.'
   if (!EMAIL_PATTERN.test(email) || email.length > 254) errors.email = 'Nhập email hợp lệ.'
-  if (!form.role || form.role === 'CUSTOMER') errors.role = 'Chọn vai trò.'
+  if (!form.role) errors.role = 'Chọn vai trò.'
   return errors
 }
 
@@ -135,8 +134,8 @@ export default function AdminUsersPage() {
   return (
     <>
       <PageHeader
-        title="Quản lý tài khoản"
-        description="Tìm kiếm, lọc và quản lý quyền truy cập tài khoản."
+        title="Quản lý nhân viên"
+        description="Tìm kiếm, lọc và quản lý quyền truy cập tài khoản nhân viên."
         actions={
           <Button tone="primary" onClick={openCreate}>
             Tạo tài khoản
@@ -298,7 +297,7 @@ export default function AdminUsersPage() {
                 value={form.role}
                 onChange={(event) => changeForm('role', event.target.value)}
               >
-                {STAFF_ROLES.map((item) => (
+                {ADMIN_ROLES.map((item) => (
                   <option key={item} value={item}>
                     {ROLE_LABELS[item]}
                   </option>

@@ -14,7 +14,7 @@ export function AccountStats() {
     },
     {
       label: 'Tài khoản nhân viên',
-      value: data.users.filter((user) => user.role !== 'CUSTOMER').length,
+      value: data.users.length,
       detail: 'Nhân sự nhà hàng',
       icon: 'user' as const,
       tone: 'info',
