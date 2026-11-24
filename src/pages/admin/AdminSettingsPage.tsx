@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
 import { ApiError } from '../../api/client'
-import type { DiscountLimits } from '../../api/admin/types'
+import type { AdminSettings, DiscountLimits } from '../../api/admin/types'
 import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
 
 const TWO_DECIMALS = /^\d+(\.\d{1,2})?$/
@@ -116,6 +116,40 @@ function DiscountLimitsCard({ source }: { source: DiscountLimits }) {
   )
 }
 
+const BANK_BIN = /^\d{6}$/
+const BANK_ACCOUNT = /^\d{6,20}$/
+
+/** Shows the QR a guest would scan at the counter, so a wrong BIN or account is seen before saving. */
+function StaticQrPreview({ billing }: { billing: AdminSettings['billing'] }) {
+  const bin = billing.bankBin ?? ''
+  const ready = BANK_BIN.test(bin) && BANK_ACCOUNT.test(billing.bankAccount)
+  return (
+    <div className="a-setting-row">
+      <div>
+        <h3>Xem trước QR chuyển khoản</h3>
+        <p>
+          {ready
+            ? 'Quét thử bằng ứng dụng ngân hàng để kiểm tra đúng tài khoản nhà hàng.'
+            : 'Nhập đủ mã BIN và số tài khoản để xem trước.'}
+        </p>
+      </div>
+      {ready && (
+        <img
+          className="a-qr-preview"
+          width={160}
+          height={160}
+          alt="QR chuyển khoản tĩnh của nhà hàng"
+          src={`https://img.vietqr.io/image/${bin}-${billing.bankAccount}-compact2.png${
+            billing.bankAccountName
+              ? `?accountName=${encodeURIComponent(billing.bankAccountName)}`
+              : ''
+          }`}
+        />
+      )}
+    </div>
+  )
+}
+
 export default function AdminSettingsPage() {
   const { data, execute } = useAdminData()
   const source = data?.settings
@@ -146,8 +180,10 @@ export default function AdminSettingsPage() {
       !TWO_DECIMALS.test(String(settings.billing.vatPercent))
     )
       return setMessage('Phí dịch vụ và VAT chỉ được tối đa 2 chữ số thập phân.')
-    if (settings.billing.bankAccount && !/^\d{6,20}$/.test(settings.billing.bankAccount))
+    if (settings.billing.bankAccount && !BANK_ACCOUNT.test(settings.billing.bankAccount))
       return setMessage('Số tài khoản chỉ gồm chữ số, dài 6 đến 20 ký tự (hoặc để trống).')
+    if (settings.billing.bankBin && !BANK_BIN.test(settings.billing.bankBin))
+      return setMessage('Mã BIN gồm đúng 6 chữ số (hoặc để trống).')
     try {
       await execute({ type: 'settings.update', settings })
       setMessage('Đã lưu cài đặt.')
@@ -313,6 +349,23 @@ export default function AdminSettingsPage() {
               }
             />
           </div>
+          <div className="a-setting-row">
+            <div>
+              <h3>Mã BIN ngân hàng</h3>
+              <p>6 chữ số theo Napas (ví dụ 970436 cho Vietcombank), dùng để tạo QR tĩnh.</p>
+            </div>
+            <input
+              className="a-input"
+              inputMode="numeric"
+              maxLength={6}
+              aria-label="Mã BIN ngân hàng"
+              value={settings.billing.bankBin ?? ''}
+              onChange={(event) =>
+                update('billing', { ...settings.billing, bankBin: event.target.value })
+              }
+            />
+          </div>
+          <StaticQrPreview billing={settings.billing} />
         </SectionCard>
         {data?.discountLimits && <DiscountLimitsCard source={data.discountLimits} />}
         <SectionCard

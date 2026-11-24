@@ -43,6 +43,8 @@ export interface AdminSettings {
     serviceChargePercent: number
     vatPercent: number
     bankAccount: string
+    /** 6-digit napas BIN of the bank; with the account number it builds the static VietQR. */
+    bankBin?: string
     bankName?: string
     bankAccountName?: string
   }
