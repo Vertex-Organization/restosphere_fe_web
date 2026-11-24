@@ -25,7 +25,7 @@ test('production sources do not import fixture datasets or persist business stat
 test('role services call their REST endpoints through the shared authenticated client', () => {
   const expected = {
     'src/api/admin/service.ts': [
-      'admin/users',
+      'admin/employees',
       'admin/restaurant',
       'admin/settings',
       'admin/audit-logs',
