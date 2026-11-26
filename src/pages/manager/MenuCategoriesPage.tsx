@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { WorkspaceSummary } from '../../components/manager/WorkspaceSummary'
 import { useState } from 'react'
 import type { MenuCategory } from '../../api/manager/types'
@@ -67,7 +68,7 @@ export default function MenuCategoriesPage() {
           {rows.map((c) => (
             <tr key={c.id}>
               <td>{c.sort}</td>
-              <td className="m-code">{c.id}</td>
+              <td className="m-code">{shortCode(c.id)}</td>
               <td>
                 <strong>{c.name}</strong>
               </td>

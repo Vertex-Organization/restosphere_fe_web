@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { WorkspaceSummary } from '../../components/manager/WorkspaceSummary'
 import { useState } from 'react'
 import { businessDay } from '../../api/manager/dates'
@@ -94,7 +95,7 @@ export default function EmployeesPage() {
                   </span>
                   <div>
                     <strong>{e.name}</strong>
-                    <small>{e.email || e.id}</small>
+                    <small>{e.email || shortCode(e.id)}</small>
                   </div>
                 </div>
               </td>
@@ -119,7 +120,7 @@ export default function EmployeesPage() {
       {employee && !editing && (
         <DetailDialog
           title={employee.name}
-          subtitle={`${employee.email || employee.id} · ${employee.position}`}
+          subtitle={`${employee.email || shortCode(employee.id)} · ${employee.position}`}
           entityId={employee.id}
           onClose={() => setSelected('')}
           actions={

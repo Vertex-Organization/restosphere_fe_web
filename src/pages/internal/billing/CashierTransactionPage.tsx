@@ -82,7 +82,7 @@ export default function CashierTransactionPage({ id }: { id: string }) {
         </div>
         <dl className="k-dl c-dl-ids">
           <dt>Payment ID</dt>
-          <dd className="k-mono">{payment.id}</dd>
+          <dd className="k-mono">{shortCode(payment.id)}</dd>
           <dt>Mã giao dịch</dt>
           <dd>{shortCode(payment.code)}</dd>
           <dt>Hóa đơn</dt>
@@ -92,7 +92,7 @@ export default function CashierTransactionPage({ id }: { id: string }) {
                 <Link to={cashierPaths.bill(bill.id)} className="k-link">
                   {bill.code}
                 </Link>{' '}
-                <span className="k-muted k-mono">({bill.id})</span>
+                <span className="k-muted k-mono">({shortCode(bill.id)})</span>
               </>
             ) : (
               '—'

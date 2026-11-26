@@ -1,3 +1,4 @@
+import { shortCode } from '../kitchen/format'
 import { useEffect } from 'react'
 import { leaveStaffArea, type StaffAccount } from '../../api/staff/auth'
 import {
@@ -47,7 +48,7 @@ export function StaffAccessDenied({ session, workspace, reason }: Props) {
                 Bạn đang đăng nhập bằng <b>{session.name}</b> · {STAFF_ROLE_LABEL[session.role]}.{' '}
                 {reason === 'role'
                   ? `Khu ${label} chỉ dành cho vai trò ${STAFF_ROLE_LABEL[workspace]}.`
-                  : `Dữ liệu khu ${label} chưa có hồ sơ mã ${session.id}.`}
+                  : `Dữ liệu khu ${label} chưa có hồ sơ mã ${shortCode(session.id)}.`}
               </p>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { WorkspaceSummary } from '../../components/manager/WorkspaceSummary'
 import { useState } from 'react'
 import type { Approval } from '../../api/manager/types'
@@ -120,7 +121,7 @@ export default function ApprovalsPage({ selectedId }: { selectedId: string }) {
                 </span>
               </td>
               <td>{employeeName(d, a.requestedBy)}</td>
-              <td>{a.targetLabel ?? a.targetId}</td>
+              <td>{a.targetLabel ?? shortCode(a.targetId)}</td>
               <td className="m-num m-request-amount">
                 {a.amount ? money(a.amount) : '—'}
                 {a.amount > user.approvalLimit && <small className="m-danger">Vượt hạn mức</small>}

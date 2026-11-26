@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { useState, type FormEvent } from 'react'
 import { AccountStats } from '../../components/admin/AccountStats'
 import { ADMIN_ROLES, type AccountStatus, type AdminRole } from '../../api/admin/types'
@@ -234,7 +235,7 @@ export default function AdminUsersPage() {
           onClose={close}
           footer={<Button onClick={close}>Đóng</Button>}
         >
-          <p>{selected.id}</p>
+          <p>{shortCode(selected.id)}</p>
           <RoleBadge role={selected.role} /> <StatusBadge status={selected.status} />
           <p>
             <AdminLink to={`${adminPath('roles')}?user=${encodeURIComponent(selected.id)}`}>

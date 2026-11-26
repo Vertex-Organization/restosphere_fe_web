@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { businessDay, dateLabel, minutes, money, time } from '../../api/manager/dates'
 import {
   dashboard,
@@ -354,7 +355,7 @@ export default function ManagerDashboardPage() {
                       <span
                         title={`${employeeName(d, a.requestedBy)} · ${dateLabel(a.requestedAt)}`}
                       >
-                        {a.id} · {employeeName(d, a.requestedBy)} · {time(a.requestedAt)}
+                        {a.code} · {employeeName(d, a.requestedBy)} · {time(a.requestedAt)}
                       </span>
                       {a.amount > 0 && <b>{money(a.amount)}</b>}
                     </div>
@@ -408,7 +409,7 @@ export default function ManagerDashboardPage() {
                       <Icon name="user" size={12} />
                       {employeeName(d, e.actorId)}
                     </span>
-                    <span className="m-recent-code">{e.entityId}</span>
+                    <span className="m-recent-code">{shortCode(e.entityId)}</span>
                   </div>
                 </div>
               </li>

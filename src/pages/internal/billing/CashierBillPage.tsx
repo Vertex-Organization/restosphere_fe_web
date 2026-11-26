@@ -18,7 +18,7 @@ import {
   PaymentStatusBadge,
   RequestStatusBadge,
 } from '../../../components/billing/ui'
-import { formatDate, formatTime } from '../../../components/kitchen/format'
+import { formatDate, formatTime, shortCode } from '../../../components/kitchen/format'
 import { KitchenLink as Link } from '../../../components/kitchen/KitchenLink'
 import { useCashierSnapshot } from '../../../hooks/billing/cashierDataContext'
 import { cashierPaths } from '../../../routes/cashierRouter'
@@ -214,14 +214,16 @@ export default function CashierBillPage({ id }: { id: string }) {
             <summary>Mã tham chiếu</summary>
             <dl className="k-dl c-dl-ids">
               <dt>Bill ID</dt>
-              <dd className="k-mono">{bill.id}</dd>
+              <dd className="k-mono">{shortCode(bill.id)}</dd>
               <dt>TableSession</dt>
-              <dd className="k-mono">{session.id}</dd>
+              <dd className="k-mono">{shortCode(session.id)}</dd>
               <dt>Table ID</dt>
-              <dd className="k-mono">{table.id}</dd>
+              <dd className="k-mono">{table.code}</dd>
               <dt>Order</dt>
               <dd className="k-mono">
-                {view.rounds.map(({ order }) => `${order.id} (lượt ${order.sequence})`).join(', ')}
+                {view.rounds
+                  .map(({ order }) => `${shortCode(order.code)} (lượt ${order.sequence})`)
+                  .join(', ')}
               </dd>
               <dt>Tạo hóa đơn</dt>
               <dd>{when(bill.createdAt)}</dd>

@@ -1,3 +1,4 @@
+import { shortCode } from '../../components/kitchen/format'
 import { WorkspaceSummary } from '../../components/manager/WorkspaceSummary'
 import { useState, type ChangeEvent } from 'react'
 import { money, dateLabel } from '../../api/manager/dates'
@@ -212,7 +213,7 @@ export default function MenuPage() {
                   </div>
                 </div>
               </td>
-              <td className="m-code">{m.id}</td>
+              <td className="m-code">{shortCode(m.id)}</td>
               <td>{d.categories.find((c) => c.id === m.categoryId)?.name}</td>
               <td className="m-num">
                 {money(m.price)}
