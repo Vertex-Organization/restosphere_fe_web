@@ -2,6 +2,8 @@ import { useEffect, useId, useState, type ReactNode } from 'react'
 import { Badge, Dialog } from '../billing/ui'
 import { Icon, type IconName } from '../billing/Icon'
 import { KitchenLink } from '../kitchen/KitchenLink'
+import { SelectMenu } from '../shared/SelectMenu'
+import { DayField } from '../shared/DayField'
 import { dateLabel, time } from '../../api/manager/dates'
 import { employeeName } from '../../api/manager/selectors'
 import { ManagerError } from '../../api/manager/rules'
@@ -165,21 +167,16 @@ export function Filter({
   options: { value: string; label: string }[]
 }) {
   return (
-    <label className="m-filter">
-      <span className="k-visually-hidden">{label}</span>
-      <select
-        className="k-select"
-        aria-label={label}
+    <div className="m-filter">
+      <SelectMenu
+        block
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {options.map((o) => (
-          <option value={o.value} key={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
+        options={options}
+        onChange={onChange}
+        buttonLabel={label}
+        listLabel={label}
+      />
+    </div>
   )
 }
 export function DateFilter({
@@ -192,16 +189,9 @@ export function DateFilter({
   label?: string
 }) {
   return (
-    <label className="m-date-filter">
-      <span>{label}</span>
-      <input
-        aria-label={label}
-        className="k-input"
-        type="date"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </label>
+    <div className="m-date-filter">
+      <DayField value={value} onChange={onChange} label={label} />
+    </div>
   )
 }
 export function RowAction({
@@ -384,9 +374,9 @@ export function FormDialog({
       if (e instanceof ManagerError && e.field)
         requestAnimationFrame(() => {
           const field = document.getElementById(`${id}-${e.field}`)
-          ;(field?.matches('input,select,textarea')
+          ;(field?.matches('input,select,textarea,button')
             ? field
-            : field?.querySelector<HTMLElement>('input,select,textarea')
+            : field?.querySelector<HTMLElement>('input,select,textarea,button')
           )?.focus()
         })
     } finally {
@@ -436,18 +426,18 @@ export function FormDialog({
                 {f.label}
               </label>
               {f.type === 'select' ? (
-                <select
-                  {...common}
-                  className="k-select"
+                <SelectMenu
+                  block
+                  id={fieldId}
                   value={String(values[f.key] ?? '')}
-                  onChange={(e) => change(e.target.value)}
-                >
-                  {f.options?.map((o) => (
-                    <option key={o.value} value={o.value} disabled={o.disabled}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
+                  options={f.options ?? []}
+                  onChange={change}
+                  buttonLabel={f.label}
+                  listLabel={f.label}
+                  disabled={common.disabled}
+                  invalid={invalid}
+                  describedBy={common['aria-describedby']}
+                />
               ) : f.type === 'textarea' ? (
                 <textarea
                   {...common}

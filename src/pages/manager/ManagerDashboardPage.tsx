@@ -10,15 +10,7 @@ import {
 import { useManagerData } from '../../hooks/manager/ManagerDataProvider'
 import { useNow } from '../../hooks/kitchen/useNow'
 import { managerPath } from '../../routes/managerRouter'
-import {
-  Button,
-  DataTable,
-  Icon,
-  Link,
-  PageHeading,
-  Panel,
-  Status,
-} from '../../components/manager/ui'
+import { DataTable, Icon, Link, PageHeading, Panel, Status } from '../../components/manager/ui'
 import { APPROVAL_TYPE, incidentTitle } from '../../api/manager/labels'
 
 export default function ManagerDashboardPage() {
@@ -72,14 +64,17 @@ export default function ManagerDashboardPage() {
               <i />
               Theo dõi vận hành
             </span>
-            <Button
-              icon="refresh"
+            <button
+              type="button"
+              className="k-btn k-icon-btn"
+              aria-label="Làm mới dữ liệu"
+              title="Làm mới dữ liệu"
               onClick={() => {
                 void refresh()
               }}
             >
-              Làm mới dữ liệu
-            </Button>
+              <Icon name="refresh" />
+            </button>
           </>
         }
       />

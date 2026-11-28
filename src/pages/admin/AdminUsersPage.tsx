@@ -16,6 +16,7 @@ import {
   RoleBadge,
   StatusBadge,
 } from '../../components/admin/ui'
+import { SelectMenu } from '../../components/shared/SelectMenu'
 import { ROLE_LABELS } from '../../components/admin/constants'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -160,35 +161,33 @@ export default function AdminUsersPage() {
               setPage(1)
             }}
           />
-          <select
-            className="a-select"
-            aria-label="Lọc vai trò"
+          <SelectMenu
             value={role}
-            onChange={(event) => {
-              setRole(event.target.value as AdminRole | '')
+            options={[
+              { value: '', label: 'Tất cả vai trò' },
+              ...ADMIN_ROLES.map((item) => ({ value: item, label: ROLE_LABELS[item] })),
+            ]}
+            buttonLabel="Lọc vai trò"
+            listLabel="Lọc vai trò"
+            onChange={(next) => {
+              setRole(next as AdminRole | '')
               setPage(1)
             }}
-          >
-            <option value="">Tất cả vai trò</option>
-            {ADMIN_ROLES.map((item) => (
-              <option key={item} value={item}>
-                {ROLE_LABELS[item]}
-              </option>
-            ))}
-          </select>
-          <select
-            className="a-select"
-            aria-label="Lọc trạng thái"
+          />
+          <SelectMenu
             value={status}
-            onChange={(event) => {
-              setStatus(event.target.value as AccountStatus | '')
+            options={[
+              { value: '', label: 'Tất cả trạng thái' },
+              { value: 'ACTIVE', label: 'Hoạt động' },
+              { value: 'LOCKED', label: 'Đã khóa' },
+            ]}
+            buttonLabel="Lọc trạng thái"
+            listLabel="Lọc trạng thái"
+            onChange={(next) => {
+              setStatus(next as AccountStatus | '')
               setPage(1)
             }}
-          >
-            <option value="">Tất cả trạng thái</option>
-            <option value="ACTIVE">Hoạt động</option>
-            <option value="LOCKED">Đã khóa</option>
-          </select>
+          />
         </div>
         <DataTable
           labels={['Tài khoản', 'Vai trò', 'Trạng thái', 'Ngày tạo', '']}
@@ -293,17 +292,14 @@ export default function AdminUsersPage() {
               />
             </Field>
             <Field label="Vai trò" error={formErrors.role}>
-              <select
-                className="a-select"
+              <SelectMenu
+                block
                 value={form.role}
-                onChange={(event) => changeForm('role', event.target.value)}
-              >
-                {ADMIN_ROLES.map((item) => (
-                  <option key={item} value={item}>
-                    {ROLE_LABELS[item]}
-                  </option>
-                ))}
-              </select>
+                options={ADMIN_ROLES.map((item) => ({ value: item, label: ROLE_LABELS[item] }))}
+                buttonLabel="Vai trò"
+                listLabel="Vai trò"
+                onChange={(next) => changeForm('role', next)}
+              />
             </Field>
             {formErrors.form && (
               <p className="a-form-error" role="alert">

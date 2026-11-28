@@ -246,23 +246,8 @@ html.a-html {
 .a-role-switcher {
   display: flex;
   align-items: center;
-  height: 36px;
-  padding: 0 8px 0 10px;
-  border: 1px solid var(--a-border);
-  border-radius: 7px;
+  gap: 6px;
   color: var(--a-primary);
-  background: #fff;
-}
-.a-role-switcher select {
-  height: 34px;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--a-ink);
-  font-weight: 500;
-  font-size: 12px;
-  padding: 0 22px 0 8px;
-  cursor: pointer;
 }
 .a-account-wrap {
   position: relative;
@@ -1548,15 +1533,8 @@ html.a-html {
   .a-breadcrumb > svg {
     display: none;
   }
-  .a-role-switcher {
-    padding: 0 5px;
-  }
   .a-role-switcher > svg {
     display: none;
-  }
-  .a-role-switcher select {
-    width: 92px;
-    padding-left: 6px;
   }
   .a-page-header {
     align-items: flex-start;

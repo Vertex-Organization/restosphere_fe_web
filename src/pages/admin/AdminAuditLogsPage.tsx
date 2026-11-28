@@ -4,6 +4,8 @@ import type { AuditLog } from '../../api/admin/types'
 import { useAdminData } from '../../hooks/admin/AdminDataProvider'
 import { DataTable, EmptyState, Icon, PageHeader } from '../../components/admin/ui'
 
+import { SelectMenu } from '../../components/shared/SelectMenu'
+import { DayField } from '../../components/shared/DayField'
 import { AUDIT_ACTION_LABELS as ACTIONS } from '../../components/admin/constants'
 
 export default function AdminAuditLogsPage() {
@@ -61,19 +63,16 @@ export default function AdminAuditLogsPage() {
           </div>
         </header>
         <div className="a-toolbar">
-          <select
-            className="a-select"
-            aria-label="Lọc loại hành động"
+          <SelectMenu
             value={action}
-            onChange={(event) => setAction(event.target.value as AuditLog['action'] | '')}
-          >
-            <option value="">Tất cả hành động</option>
-            {Object.entries(ACTIONS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+            options={[
+              { value: '', label: 'Tất cả hành động' },
+              ...Object.entries(ACTIONS).map(([value, label]) => ({ value, label })),
+            ]}
+            buttonLabel="Lọc loại hành động"
+            listLabel="Lọc loại hành động"
+            onChange={(next) => setAction(next as AuditLog['action'] | '')}
+          />
           <label className="a-search">
             <span className="a-sr-only">Tìm người thực hiện</span>
             <Icon name="search" size={17} />
@@ -84,15 +83,7 @@ export default function AdminAuditLogsPage() {
               placeholder="Người thực hiện"
             />
           </label>
-          <label className="a-date-field">
-            <span>Từ ngày</span>
-            <input
-              className="a-input"
-              type="date"
-              value={from}
-              onChange={(event) => setFrom(event.target.value)}
-            />
-          </label>
+          <DayField value={from} label="Từ ngày" onChange={setFrom} />
         </div>
         {error ? (
           <p className="a-form-error" role="alert">

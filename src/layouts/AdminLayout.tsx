@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { AuthUser } from '../api/auth'
 import { adminSignOut } from '../api/admin/auth'
 import { BrandLogo } from '../components/kitchen/BrandLogo'
+import { SelectMenu } from '../components/shared/SelectMenu'
 import { AdminLink, ErrorState, Icon, LoadingState } from '../components/admin/ui'
 import { useAdminData } from '../hooks/admin/AdminDataProvider'
 import { adminPath, type AdminPage } from '../routes/adminRouter'
@@ -174,17 +175,19 @@ export function AdminLayout({
             <label className="a-role-switcher">
               <span className="a-sr-only">Chuyển giao diện</span>
               <Icon name="refresh" size={15} />
-              <select
-                aria-label="Chuyển giao diện"
-                defaultValue={WORKSPACES.ADMIN.base}
-                onChange={(event) => window.location.assign(event.target.value)}
-              >
-                <option value={WORKSPACES.ADMIN.base}>Admin</option>
-                <option value={WORKSPACES.MANAGER.base}>Manager</option>
-                <option value={WORKSPACES.KITCHEN.base}>Kitchen</option>
-                <option value={WORKSPACES.CASHIER.base}>Cashier</option>
-                <option value="/">Customer</option>
-              </select>
+              <SelectMenu
+                value={WORKSPACES.ADMIN.base}
+                options={[
+                  { value: WORKSPACES.ADMIN.base, label: 'Admin' },
+                  { value: WORKSPACES.MANAGER.base, label: 'Manager' },
+                  { value: WORKSPACES.KITCHEN.base, label: 'Kitchen' },
+                  { value: WORKSPACES.CASHIER.base, label: 'Cashier' },
+                  { value: '/', label: 'Trang khách' },
+                ]}
+                buttonLabel="Chuyển giao diện"
+                listLabel="Chuyển giao diện"
+                onChange={(next) => window.location.assign(next)}
+              />
             </label>
             <div className="a-account-wrap">
               <button

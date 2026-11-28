@@ -12,6 +12,7 @@ import {
   PageHeader,
   RoleBadge,
 } from '../../components/admin/ui'
+import { SelectMenu } from '../../components/shared/SelectMenu'
 import { ROLE_LABELS } from '../../components/admin/constants'
 
 const EMPTY_USERS: AdminUser[] = []
@@ -171,18 +172,20 @@ export default function AdminRolesPage() {
               />
             </Field>
             <Field label="Tài khoản">
-              <select
-                className="a-select"
+              <SelectMenu
+                block
                 value={userId}
-                onChange={(event) => setUserId(event.target.value)}
-              >
-                <option value="">Chọn tài khoản</option>
-                {options.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.fullName} · {user.email}
-                  </option>
-                ))}
-              </select>
+                options={[
+                  { value: '', label: 'Chọn tài khoản' },
+                  ...options.map((user) => ({
+                    value: user.id,
+                    label: `${user.fullName} · ${user.email}`,
+                  })),
+                ]}
+                buttonLabel="Tài khoản"
+                listLabel="Tài khoản"
+                onChange={setUserId}
+              />
             </Field>
             {selected && (
               <div className="a-current-role">
@@ -191,17 +194,14 @@ export default function AdminRolesPage() {
               </div>
             )}
             <Field label="Vai trò mới">
-              <select
-                className="a-select"
+              <SelectMenu
+                block
                 value={nextRole}
-                onChange={(event) => setNextRole(event.target.value as AdminRole)}
-              >
-                {ADMIN_ROLES.map((role) => (
-                  <option key={role} value={role}>
-                    {ROLE_LABELS[role]}
-                  </option>
-                ))}
-              </select>
+                options={ADMIN_ROLES.map((role) => ({ value: role, label: ROLE_LABELS[role] }))}
+                buttonLabel="Vai trò mới"
+                listLabel="Vai trò mới"
+                onChange={(next) => setNextRole(next as AdminRole)}
+              />
             </Field>
             {nextRole === 'ADMIN' && (
               <p className="a-admin-warning">

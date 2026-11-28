@@ -4,6 +4,7 @@ import { ApiError } from '../../api/client'
 import { QRCodeSVG } from 'qrcode.react'
 import type { AdminSettings, DiscountLimits } from '../../api/admin/types'
 import { buildVietQr } from '../../api/billing/vietqr'
+import { SelectMenu } from '../../components/shared/SelectMenu'
 import { Button, DemoNotice, Icon, PageHeader, SectionCard } from '../../components/admin/ui'
 
 const TWO_DECIMALS = /^\d+(\.\d{1,2})?$/
@@ -250,16 +251,18 @@ export default function AdminSettingsPage() {
             </div>
             <label className="a-compact-field">
               <span className="a-sr-only">Thời gian giữ bàn</span>
-              <select
-                className="a-select"
-                value={settings.tableHoldMinutes}
-                onChange={(event) => update('tableHoldMinutes', Number(event.target.value))}
-              >
-                <option value={10}>10 phút</option>
-                <option value={15}>15 phút</option>
-                <option value={20}>20 phút</option>
-                <option value={30}>30 phút</option>
-              </select>
+              <SelectMenu
+                value={String(settings.tableHoldMinutes)}
+                options={[
+                  { value: '10', label: '10 phút' },
+                  { value: '15', label: '15 phút' },
+                  { value: '20', label: '20 phút' },
+                  { value: '30', label: '30 phút' },
+                ]}
+                buttonLabel="Thời gian giữ bàn"
+                listLabel="Thời gian giữ bàn"
+                onChange={(next) => update('tableHoldMinutes', Number(next))}
+              />
             </label>
           </div>
           <div className="a-setting-row">
@@ -414,26 +417,26 @@ export default function AdminSettingsPage() {
               <h3>Múi giờ hệ thống</h3>
               <p>Dùng để hiển thị thời gian trong Admin Web.</p>
             </div>
-            <select
-              className="a-select"
+            <SelectMenu
               value={settings.timezone}
-              onChange={(event) => update('timezone', event.target.value)}
-            >
-              <option value="Asia/Ho_Chi_Minh">Asia/Ho_Chi_Minh</option>
-            </select>
+              options={[{ value: 'Asia/Ho_Chi_Minh', label: 'Asia/Ho_Chi_Minh' }]}
+              buttonLabel="Múi giờ hệ thống"
+              listLabel="Múi giờ hệ thống"
+              onChange={(next) => update('timezone', next)}
+            />
           </div>
           <div className="a-setting-row">
             <div>
               <h3>Đơn vị tiền tệ</h3>
               <p>Đồng bộ với dữ liệu thanh toán khi Backend hỗ trợ cấu hình chung.</p>
             </div>
-            <select
-              className="a-select"
+            <SelectMenu
               value={settings.currency}
-              onChange={(event) => update('currency', event.target.value)}
-            >
-              <option value="VND">VND</option>
-            </select>
+              options={[{ value: 'VND', label: 'VND' }]}
+              buttonLabel="Đơn vị tiền tệ"
+              listLabel="Đơn vị tiền tệ"
+              onChange={(next) => update('currency', next)}
+            />
           </div>
         </SectionCard>
         {message && (
