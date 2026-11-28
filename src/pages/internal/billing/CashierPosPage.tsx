@@ -214,6 +214,7 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
               {visible.map((row) => {
                 const look = tileLook(row, now)
                 const amount = row.status === 'PAID' ? row.total : row.remaining
+                const codes = row.tableCode.split(' + ')
                 return (
                   <button
                     key={row.billId}
@@ -226,9 +227,11 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
                   >
                     <span className="c-tile-top">
                       <span className="c-tile-table">
-                        {row.tableCode}
+                        {codes[0]}
                         {row.merged && (
-                          <span className="k-badge k-badge--neutral c-merged-badge">Ghép bàn</span>
+                          <span className="k-badge k-badge--neutral c-merged-badge">
+                            +{codes.length - 1} bàn
+                          </span>
                         )}
                       </span>
                       {look.time && (
@@ -237,6 +240,11 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
                         </span>
                       )}
                     </span>
+                    {row.merged && (
+                      <span className="c-tile-merged" title={`Ghép: ${codes.join(' · ')}`}>
+                        Ghép: {codes.join(' · ')}
+                      </span>
+                    )}
                     <span className="c-tile-amount">{formatVnd(amount)}</span>
                     <span className="c-tile-state">
                       <Icon name={look.icon} size={13} />

@@ -595,6 +595,13 @@
   color: var(--k-text-2);
   font-size: 12px;
 }
+.c-tile-merged {
+  overflow: hidden;
+  color: var(--k-text-2);
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .c-tile-top {
   display: flex;
   align-items: baseline;
@@ -602,12 +609,17 @@
   gap: 6px;
 }
 .c-tile-table {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 17px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
 .c-tile-time {
+  flex-shrink: 0;
   font-size: 11.5px;
   font-weight: 600;
   color: var(--k-text-2);
