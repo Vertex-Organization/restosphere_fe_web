@@ -56,7 +56,7 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
       </div>
     )
 
-  const { bill, table } = view
+  const { bill } = view
   const done = doneId ? data.payments.find((p) => p.id === doneId) : undefined
   const effective = view.pending ? 'PAYOS' : method
 
@@ -135,7 +135,10 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
           <Icon name="chevronLeft" />
           Quầy
         </Link>
-        <h2 className="c-page-title">Thanh toán · Bàn {table.code}</h2>
+        <h2 className="c-page-title">
+          Thanh toán · Bàn {view.tables.map((t) => t.code).join(' + ')}
+          {view.merged && <span className="k-badge k-badge--neutral c-merged-badge">Ghép bàn</span>}
+        </h2>
         <span className="c-bill-code">{bill.code}</span>
       </div>
 
@@ -146,7 +149,12 @@ export default function CashierPaymentPage({ billId }: { billId: string }) {
 
         <aside className="c-card c-pay-summary" aria-label="Hóa đơn">
           <div className="c-summary-head">
-            <b>Bàn {table.code}</b>
+            <b>Bàn {view.tables.map((t) => t.code).join(' + ')}</b>
+            {view.merged && (
+              <span className="c-merged-note">
+                Hóa đơn chung của các bàn: {view.tables.map((t) => t.code).join(', ')}
+              </span>
+            )}
             <span>
               {view.session.guests} khách · {view.dishCount} món
             </span>

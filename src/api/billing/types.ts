@@ -52,6 +52,7 @@ export interface RestaurantTable {
 export interface TableSession {
   id: string
   tableId: string
+  billId?: string
   guests: number
   waiterId: string
   openedAt: string

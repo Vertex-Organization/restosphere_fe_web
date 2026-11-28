@@ -105,6 +105,8 @@ export interface BillView {
   bill: Bill
   session: TableSession
   table: RestaurantTable
+  tables: RestaurantTable[]
+  merged: boolean
   waiterName: string
   rounds: OrderRound[]
   items: OrderItem[]
@@ -121,6 +123,18 @@ export interface BillView {
   unserved: OrderItem[]
   /** Number of dishes (quantities of billable lines). */
   dishCount: number
+}
+
+export function billTables(data: CashierData, bill: Bill, session: TableSession) {
+  const sessions = data.sessions
+    .filter((s) => s.id === session.id || (!s.closedAt && s.billId === bill.id))
+    .sort((a, b) => a.openedAt.localeCompare(b.openedAt))
+  const tables: RestaurantTable[] = []
+  for (const item of sessions) {
+    const table = data.tables.find((t) => t.id === item.tableId)
+    if (table && !tables.includes(table)) tables.push(table)
+  }
+  return tables
 }
 
 export function billView(data: CashierData, billId: string): BillView | null {
@@ -144,10 +158,13 @@ export function billView(data: CashierData, billId: string): BillView | null {
   const requests = data.requests
     .filter((r) => r.billId === bill.id)
     .sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))
+  const tables = billTables(data, bill, session)
   return {
     bill,
     session,
     table,
+    tables,
+    merged: tables.length > 1,
     waiterName: staffName(data, session.waiterId),
     rounds,
     items,
@@ -245,6 +262,7 @@ export interface PosRow {
   billId: string
   billCode: string
   tableCode: string
+  merged: boolean
   area: string
   guests: number
   status: BillStatus
@@ -287,7 +305,8 @@ export function posRows(data: CashierData, now: number): PosRow[] {
     rows.push({
       billId: bill.id,
       billCode: bill.code,
-      tableCode: view.table.code,
+      tableCode: view.tables.map((t) => t.code).join(' + '),
+      merged: view.merged,
       area: view.table.area,
       guests: session.guests,
       status: bill.status,
@@ -302,7 +321,7 @@ export function posRows(data: CashierData, now: number): PosRow[] {
       requestPending: !!view.blockingRequest,
       unserved: view.unserved.length,
       guestLeft: !!session.guestLeftAt,
-      search: `${view.table.code} ${bill.code} ${view.table.area} ${BILL_STATUS_LABEL[bill.status]}`,
+      search: `${view.tables.map((t) => t.code).join(' ')} ${bill.code} ${view.table.area} ${BILL_STATUS_LABEL[bill.status]}`,
     })
   }
   const rank: Record<BillStatus, number> = { PAYMENT_REQUESTED: 0, UNPAID: 1, PAID: 2 }

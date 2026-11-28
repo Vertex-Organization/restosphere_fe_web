@@ -219,13 +219,18 @@ export default function CashierPosPage({ selectedId }: { selectedId: string }) {
                     key={row.billId}
                     type="button"
                     data-bill={row.billId}
-                    className={`c-tile c-tile--${look.tone}`}
+                    className={`c-tile c-tile--${look.tone}${row.merged ? ' c-tile--merged' : ''}`}
                     aria-current={row.billId === shownId ? 'true' : undefined}
                     onClick={() => select(row.billId)}
-                    aria-label={`Bàn ${row.tableCode}, ${look.text}, ${formatVnd(amount)}`}
+                    aria-label={`Bàn ${row.tableCode}${row.merged ? ' (ghép bàn)' : ''}, ${look.text}, ${formatVnd(amount)}`}
                   >
                     <span className="c-tile-top">
-                      <span className="c-tile-table">{row.tableCode}</span>
+                      <span className="c-tile-table">
+                        {row.tableCode}
+                        {row.merged && (
+                          <span className="k-badge k-badge--neutral c-merged-badge">Ghép bàn</span>
+                        )}
+                      </span>
                       {look.time && (
                         <span className={`c-tile-time c-tile-time--${look.timeTone}`}>
                           {look.time}

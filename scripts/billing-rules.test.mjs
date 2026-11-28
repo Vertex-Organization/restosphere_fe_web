@@ -24,6 +24,7 @@ function moduleUrl(file) {
 const { createSeedData } = await import(moduleUrl('scripts/fixtures/billing.ts'))
 const { isBillable, subtotalOf } = await import(moduleUrl('src/api/billing/money.ts'))
 const { applyCashierCommand } = await import(moduleUrl('src/api/billing/rules.ts'))
+const { billView, posRows } = await import(moduleUrl('src/api/billing/selectors.ts'))
 const { applyDevEvent } = await import(moduleUrl('scripts/fixtures/billingEvents.ts'))
 
 const now = new Date('2026-11-12T12:00:00+07:00')
@@ -425,4 +426,43 @@ test('paid tab only lists bills paid since the open shift, or since midnight wit
   const midnight = new Date(at)
   midnight.setHours(0, 0, 0, 0)
   assert.equal(none, midnight.getTime())
+})
+
+test('a bill shared by several open sessions is a merged bill with every table', () => {
+  const d = seed()
+  const view = billView(d, 'bill_0115')
+  assert.equal(view.merged, true)
+  assert.deepEqual(
+    view.tables.map((t) => t.code),
+    ['A01', 'A04'],
+  )
+  const row = posRows(d, now.getTime()).find((r) => r.billId === 'bill_0115')
+  assert.equal(row.merged, true)
+  assert.equal(row.tableCode, 'A01 + A04')
+  assert.match(row.search, /A04/)
+})
+
+test('a single-table bill, or a session without billId, stays a single table', () => {
+  const d = seed()
+  const single = billView(d, 'bill_0112')
+  assert.equal(single.merged, false)
+  assert.equal(single.tables.length, 1)
+  const row = posRows(d, now.getTime()).find((r) => r.billId === 'bill_0112')
+  assert.equal(row.merged, false)
+  assert.equal(row.tableCode, single.table.code)
+
+  for (const session of d.sessions) delete session.billId
+  const legacy = billView(d, 'bill_0115')
+  assert.equal(legacy.merged, false)
+  assert.deepEqual(
+    legacy.tables.map((t) => t.code),
+    ['A01'],
+  )
+})
+
+test('closed sessions of the same billId do not join the merged tables', () => {
+  const d = seed()
+  const extra = d.sessions.find((s) => s.id === 'ts_0115_2')
+  extra.closedAt = now.toISOString()
+  assert.equal(billView(d, 'bill_0115').merged, false)
 })

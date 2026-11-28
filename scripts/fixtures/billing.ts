@@ -175,6 +175,7 @@ interface SeedSession {
   requested?: number
   guestLeft?: number
   closed?: number
+  joined?: string[]
   rounds: SeedRound[]
   discount?: { mode: DiscountMode; value: number; reason: string; at: number; request?: number }
   payments?: SeedPayment[]
@@ -602,6 +603,7 @@ const SESSIONS: SeedSession[] = [
   {
     bill: 115,
     table: 'A01',
+    joined: ['A04'],
     guests: 2,
     waiter: 'NV003',
     opened: 10,
@@ -730,6 +732,7 @@ export function createSeedData(now: Date): CashierData {
     const session: TableSession = {
       id: `ts_${code}`,
       tableId: tableId(spec.table),
+      billId: `bill_${code}`,
       guests: spec.guests,
       waiterId: spec.waiter,
       openedAt: ago(spec.opened),
@@ -737,6 +740,14 @@ export function createSeedData(now: Date): CashierData {
       closedAt: spec.closed === undefined ? undefined : ago(spec.closed),
     }
     sessions.push(session)
+    spec.joined?.forEach((joinedTable, index) => {
+      sessions.push({
+        ...session,
+        id: `ts_${code}_${index + 2}`,
+        tableId: tableId(joinedTable),
+        openedAt: ago(spec.opened - index - 1),
+      })
+    })
     const bill: Bill = {
       id: `bill_${code}`,
       code: `HD${code}`,
